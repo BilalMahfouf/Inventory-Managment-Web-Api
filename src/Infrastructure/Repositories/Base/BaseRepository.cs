@@ -1,0 +1,70 @@
+﻿using Application.Abstractions.Repositories.Base;
+using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Infrastructure.Repositories.Base
+{
+    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
+    {
+        protected readonly InventoryManagmentDBContext _context;
+        protected readonly DbSet<TEntity> _dbSet;
+
+        public BaseRepository(InventoryManagmentDBContext context)
+        {
+            _context = context;
+            _dbSet = _context.Set<TEntity>();
+        }
+
+        public void Add(TEntity entity)
+        {
+            _dbSet.Add(entity);
+        }
+
+        public async Task<TEntity?> FindAsync(Expression<Func<TEntity, bool>> predicate
+            ,string includeProperties="", CancellationToken cancellationToken = default)
+        {
+            IQueryable<TEntity> query = _dbSet;
+            query = query.Where(predicate);
+
+            foreach (var includeProperty in includeProperties.Split
+                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            return await query.FirstOrDefaultAsync(cancellationToken);
+        }
+
+        public async Task<IEnumerable<TEntity>> GetAllAsync(
+            Expression<Func<TEntity, bool>> filter = null
+            , string includeProperties = ""
+            , CancellationToken cancellationToken=default)
+        {
+            IQueryable<TEntity> query = _dbSet;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            foreach (var includeProperty in includeProperties.Split
+                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            return await query.ToListAsync(cancellationToken);
+        }
+
+        public void Update(TEntity entity)
+        {
+            _dbSet.Update(entity);
+        }
+    }
+}
