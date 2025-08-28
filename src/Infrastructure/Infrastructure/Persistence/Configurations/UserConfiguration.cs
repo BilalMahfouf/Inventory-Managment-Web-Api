@@ -27,6 +27,7 @@ namespace Infrastructure.Persistence.Configurations
             entity.Property(e => e.FirstName).HasMaxLength(100);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.LastName).HasMaxLength(100);
+            entity.Property(e => e.UserName).HasMaxLength(100);
             entity.Property(e => e.PasswordHash).HasMaxLength(255);
             entity.Property(e => e.RoleId).HasDefaultValue(1);
             entity.Property(e => e.UpdatedAt).HasColumnType("datetime");

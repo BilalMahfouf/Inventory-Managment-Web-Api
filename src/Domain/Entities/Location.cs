@@ -1,10 +1,11 @@
 ﻿#nullable enable
+using Domain.Abstractions;
 using System;
 using System.Collections.Generic;
 
 namespace Domain.Entities;
 
-public partial class Location
+public partial class Location : IEntity
 {
     public int Id { get; set; }
 

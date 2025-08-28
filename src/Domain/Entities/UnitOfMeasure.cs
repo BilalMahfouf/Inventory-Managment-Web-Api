@@ -1,10 +1,11 @@
 ﻿#nullable enable
+using Domain.Abstractions;
 using System;
 using System.Collections.Generic;
 
 namespace Domain.Entities;
 
-public partial class UnitOfMeasure
+public partial class UnitOfMeasure : IEntity
 {
     public int Id { get; set; }
 

@@ -1,10 +1,11 @@
 ﻿#nullable enable
+using Domain.Abstractions;
 using System;
 using System.Collections.Generic;
 
 namespace Domain.Entities;
 
-public partial class SalesOrder
+public partial class SalesOrder : IEntity
 {
     public int Id { get; set; }
 

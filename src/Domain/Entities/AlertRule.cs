@@ -1,11 +1,12 @@
 ﻿#nullable enable
 
+using Domain.Abstractions;
 using System;
 using System.Collections.Generic;
 
 namespace Domain.Entities;
 
-public partial class AlertRule
+public partial class AlertRule : IEntity
 {
     public int Id { get; set; }
 

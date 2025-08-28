@@ -1,10 +1,11 @@
 ﻿#nullable enable
+using Domain.Abstractions;
 using System;
 using System.Collections.Generic;
 
 namespace Domain.Entities;
 
-public partial class UserRole
+public partial class UserRole : IEntity
 {
     public int Id { get; set; }
 

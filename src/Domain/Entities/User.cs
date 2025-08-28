@@ -1,10 +1,11 @@
 ﻿#nullable enable
+using Domain.Abstractions;
 using System;
 using System.Collections.Generic;
 
 namespace Domain.Entities;
 
-public partial class User
+public partial class User : IEntity
 {
     public int Id { get; set; }
 
@@ -15,6 +16,8 @@ public partial class User
     public string FirstName { get; set; } = null!;
 
     public string LastName { get; set; } = null!;
+
+    public string UserName { get; set; } = null!;
 
     public int RoleId { get; set; }
 
