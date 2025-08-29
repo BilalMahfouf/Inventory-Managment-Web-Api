@@ -1,10 +1,13 @@
 ﻿using Application.Abstractions.Auth;
 using Application.Abstractions.Repositories.Base;
+using Application.Abstractions.UnitOfWork;
 using Application.Common.Abstractions;
 using Infrastructure.Authentication;
 using Infrastructure.Common;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Base;
+using Infrastructure.UnitOfWork;
+using Infrastructure.UOW;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +33,7 @@ namespace Infrastructure
                 options.SingingKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? throw new InvalidOperationException("JWT_SECRET_KEY environment variable is not set");
                 options.Issuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? throw new InvalidOperationException("JWT_ISSUER environment variable is not set");
                 options.Audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? throw new InvalidOperationException("JWT_AUDIENCE environment variable is not set");
-                options.LifeTime = byte.Parse(Environment.GetEnvironmentVariable("JWT_ACCESS_TOKEN_LIFETIME_HOURS") ?? "1");
+                options.LifeTime = byte.Parse(Environment.GetEnvironmentVariable("JWT_ACCESS_TOKEN_LIFETIME_MINUTES") ?? "15");
             });
 
             var connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
@@ -44,6 +47,7 @@ namespace Infrastructure
             }).AddJwtBearer(options =>
             {
                 options.SaveToken = true;
+               
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -60,6 +64,7 @@ namespace Infrastructure
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IJwtProvider, JwtProvider>();
             services.AddSingleton<IPasswordHasher, Argon2PasswordHasher>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
             return services;
