@@ -10,6 +10,8 @@ namespace Application.Abstractions.Auth
     public interface IJwtProvider
     {
         string GenerateToken(User user);
+
+        string GenerateRefreshToken();
         public DateTimeOffset GetTokenExpiration();
     }
 }

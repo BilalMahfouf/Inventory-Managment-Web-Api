@@ -6,7 +6,6 @@ using Infrastructure.Authentication;
 using Infrastructure.Common;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Base;
-using Infrastructure.UnitOfWork;
 using Infrastructure.UOW;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;

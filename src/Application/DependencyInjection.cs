@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Services;
+﻿using Application.Abstractions.Services.User;
 using Application.Services.Auth;
 using Microsoft.Extensions.DependencyInjection;
 using System;

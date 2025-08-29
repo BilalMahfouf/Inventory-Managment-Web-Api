@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Repositories.Base;
+using Domain.Abstractions;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,7 +11,8 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.Base
 {
-    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
+    public class BaseRepository<TEntity> : IBaseRepository<TEntity> 
+        where TEntity : class,IEntity
     {
         protected readonly InventoryManagmentDBContext _context;
         protected readonly DbSet<TEntity> _dbSet;
@@ -30,7 +32,7 @@ namespace Infrastructure.Repositories.Base
             ,CancellationToken cancellationToken = default, string includeProperties = "")
         {
             IQueryable<TEntity> query = _dbSet;
-            query = query.Where(predicate);
+            
 
             foreach (var includeProperty in includeProperties.Split
                 (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
@@ -38,7 +40,7 @@ namespace Infrastructure.Repositories.Base
                 query = query.Include(includeProperty);
             }
 
-            return await query.FirstOrDefaultAsync(cancellationToken);
+            return await query.FirstOrDefaultAsync(predicate,cancellationToken);
         }
 
         public async Task<IEnumerable<TEntity>> GetAllAsync(

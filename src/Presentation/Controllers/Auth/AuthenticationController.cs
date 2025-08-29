@@ -1,7 +1,10 @@
-﻿using Application.Abstractions.Services;
+﻿using Application.Abstractions.Services.User;
 using Application.DTOs.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Extensions;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Presentation.Controllers.Auth
 {
@@ -16,12 +19,23 @@ namespace Presentation.Controllers.Auth
             _service = service;
         }
 
-        [HttpGet("login")]
-        public async Task<ActionResult<LoginResponse>> LoginAsync(
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<ActionResult<LoginResponse>> LoginAsync([FromBody]
             LoginRequest loginRequest,CancellationToken cancellationToken)
         {
             var response= await _service.LoginAsync(loginRequest,cancellationToken);
-            return Ok(response);
+            return response.HandleResult();
         }
+
+        [HttpPost("refresh-token")]
+
+        public async Task<ActionResult<LoginResponse>> RefreshTokenAsync(
+           [FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
+        {
+            var response = await _service.RefreshTokenAsync(request, cancellationToken);
+            return response.HandleResult();
+        }
+        
     }
 }

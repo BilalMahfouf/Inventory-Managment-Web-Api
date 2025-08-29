@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Common
 {
-    public class Argon2PasswordHasher : IPasswordHasher
+    internal class Argon2PasswordHasher : IPasswordHasher
     {
         public string HashPassword(string password)
         {
@@ -17,7 +17,7 @@ namespace Infrastructure.Common
 
         public bool VerifyPassword(string hashedPassword, string providedPassword)
         {
-            return Argon2.Verify(hashedPassword, providedPassword);
+            return Argon2.Verify(hashedPassword,providedPassword);
         }
     }
 }

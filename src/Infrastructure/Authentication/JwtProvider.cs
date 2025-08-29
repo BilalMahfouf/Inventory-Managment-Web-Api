@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,7 +35,7 @@ namespace Infrastructure.Authentication
                 , _jwtOptions.Audience
                 , claims
                 , null
-                , DateTime.UtcNow.AddHours(_jwtOptions.LifeTime)
+                , DateTime.UtcNow.AddMinutes(_jwtOptions.LifeTime)
                 , signingCredentials);
             var tokenValue= new JwtSecurityTokenHandler().WriteToken(token);
 
@@ -60,7 +61,7 @@ namespace Infrastructure.Authentication
 
         public DateTimeOffset GetTokenExpiration()
         {
-            return DateTimeOffset.UtcNow.AddHours(_jwtOptions.LifeTime);
+            return DateTimeOffset.UtcNow.AddMinutes(_jwtOptions.LifeTime);
         }
         private List<Claim> GetUserClaims(User user)
         {
@@ -75,6 +76,11 @@ namespace Infrastructure.Authentication
             };
 
             return claims;
+        }
+
+        public string GenerateRefreshToken()
+        {
+            return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
         }
     }
 }
