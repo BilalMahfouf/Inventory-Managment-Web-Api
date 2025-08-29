@@ -12,9 +12,9 @@ namespace Application.Abstractions.Repositories.Base
     {
         Task<IEnumerable<TEntity>> GetAllAsync(
             Expression<Func<TEntity, bool>> filter = null,
-            string includeProperties = "",CancellationToken cancellationToken=default);
+            CancellationToken cancellationToken = default ,string includeProperties = "");
         Task<TEntity?> FindAsync(Expression<Func<TEntity, bool>> predicate
-            , string includeProperties = "", CancellationToken cancellationToken = default);
+           , CancellationToken cancellationToken = default, string includeProperties = "");
         void Add(TEntity entity);
         void Update(TEntity entity);
     }

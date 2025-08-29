@@ -27,7 +27,7 @@ namespace Infrastructure.Repositories.Base
         }
 
         public async Task<TEntity?> FindAsync(Expression<Func<TEntity, bool>> predicate
-            ,string includeProperties="", CancellationToken cancellationToken = default)
+            ,CancellationToken cancellationToken = default, string includeProperties = "")
         {
             IQueryable<TEntity> query = _dbSet;
             query = query.Where(predicate);
@@ -43,8 +43,9 @@ namespace Infrastructure.Repositories.Base
 
         public async Task<IEnumerable<TEntity>> GetAllAsync(
             Expression<Func<TEntity, bool>> filter = null
+            , CancellationToken cancellationToken = default
             , string includeProperties = ""
-            , CancellationToken cancellationToken=default)
+            )
         {
             IQueryable<TEntity> query = _dbSet;
 

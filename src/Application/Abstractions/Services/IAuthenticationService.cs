@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.Authentication;
-using Application.Result;
+using Application.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
