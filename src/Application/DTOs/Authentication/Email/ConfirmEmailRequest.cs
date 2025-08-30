@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTOs.Authentication
+namespace Application.DTOs.Authentication.Email
 {
-    public  record LoginRequest(string Email,string Password);
+    public sealed record ConfirmEmailRequest(string Email,string Token);
     
 }

@@ -1,4 +1,7 @@
 ﻿using Application.DTOs.Authentication;
+using Application.DTOs.Authentication.Email;
+using Application.DTOs.Authentication.Login;
+using Application.DTOs.Authentication.Password;
 using Application.Results;
 using System;
 using System.Collections.Generic;
@@ -17,6 +20,12 @@ namespace Application.Abstractions.Services.User
             ,CancellationToken cancellationToken=default);
 
         Task<Result<string>> ResetPasswordAsync(ResetPasswordRequest request
+            , CancellationToken cancellationToken = default);
+
+        Task<Result<string>> ForgetPasswordAsync(ForgetPasswordRequest request,
+            CancellationToken cancellationToken = default);
+
+        Task<Result<string>> ConfirmEmailAsync(ConfirmEmailRequest request
             , CancellationToken cancellationToken = default);
     }
 }

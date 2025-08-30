@@ -1,9 +1,14 @@
 ﻿using Application.Abstractions.Auth;
+using Application.Abstractions.Repositories;
 using Application.Abstractions.Repositories.Base;
+using Application.Abstractions.Services.Email;
 using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
 using Application.Common.Abstractions;
 using Application.DTOs.Authentication;
+using Application.DTOs.Authentication.Login;
+using Application.DTOs.Authentication.Password;
+using Application.DTOs.Email;
 using Application.Helpers.Auth;
 using Application.Results;
 using Domain.Entities;
@@ -15,6 +20,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.XPath;
@@ -26,17 +32,18 @@ namespace Application.Services.Auth
         private readonly IBaseRepository<User> _userRepository;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IJwtProvider _jwtProvider;
-        private readonly IBaseRepository<UserSession> _userSessionRepository;
+        private readonly IUserSessionRepository _userSessionRepository;
         private readonly IUnitOfWork _uow;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IEmailService _emailService;
 
         public AuthenticationService(IBaseRepository<User> userRepository
             , IPasswordHasher passwordHasher
             , IJwtProvider jwtProvider
-            , IBaseRepository<UserSession> userSessionRepository
+            , IUserSessionRepository userSessionRepository
             , IUnitOfWork uow
             , ICurrentUserService currentUserService
-            )
+            , IEmailService emailService)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
@@ -44,6 +51,7 @@ namespace Application.Services.Auth
             _userSessionRepository = userSessionRepository;
             _uow = uow;
             _currentUserService = currentUserService;
+            _emailService = emailService;
         }
         private async Task<Result<string>> CreateRefreshToken(int userId
             ,CancellationToken cancellationToken)
@@ -57,6 +65,7 @@ namespace Application.Services.Auth
                     CreatedAt = DateTime.UtcNow,
                     ExpiresAt = DateTime.UtcNow.AddDays(7),
                     Token = token,
+                    TokenType=(byte)TokenType.Refresh
                 };
                 _userSessionRepository.Add(userSession);
                 var result = await _uow.SaveChangesAsync(cancellationToken);
@@ -110,7 +119,7 @@ namespace Application.Services.Auth
         }
 
         public async Task<Result<LoginResponse>> RefreshTokenAsync
-            (RefreshTokenRequest request, CancellationToken cancellationToken)
+            (RefreshTokenRequest request, CancellationToken cancellationToken=default)
         {
             
             try
@@ -146,7 +155,91 @@ namespace Application.Services.Auth
         }
 
         public async Task<Result<string>> ResetPasswordAsync(ResetPasswordRequest request
-            ,CancellationToken cancellationToken)
+            ,CancellationToken cancellationToken=default)
+        {
+            try
+            {
+                var user =await _userRepository.FindAsync(u => u.Email == request.Email,
+                    cancellationToken, "UserSessions");
+                if (user is null)
+                {
+                    return Result<string>.NotFound(nameof(user));
+                }
+                if (!user.UserSessions.Any(u => u.Token == request.Token &&
+                u.ExpiresAt > DateTime.UtcNow
+                && u.TokenType == (byte)TokenType.ResetPassword))  
+                {
+                    return Result<string>.Failure("Wrong credentials", ErrorType.Unauthorized);
+                }
+                var newPasswordHash=_passwordHasher.HashPassword(request.Password);
+                user.PasswordHash = newPasswordHash;
+                user.UpdatedAt = DateTime.UtcNow;
+                user.UpdatedByUserId = user.Id;
+                _userRepository.Update(user);
+
+                // delete all the user tokens
+                await _userSessionRepository.DeleteAllSessionsByUserIdAsync(user.Id
+                    , cancellationToken);
+                await _uow.SaveChangesAsync(cancellationToken);
+                return Result<string>.Success("Password changed successfully");
+
+            }
+            catch(Exception ex)
+            {
+                // to do log error
+                return Result<string>.Failure($"Error while resetting the password: {ex.Message}"
+                    , ErrorType.InternalServerError);
+            }
+        }
+
+        public async Task<Result<string>> ForgetPasswordAsync(
+            ForgetPasswordRequest request,CancellationToken cancellationToken=default)
+        {
+            try
+            {
+                var user =await _userRepository.FindAsync(u => u.Email == request.Email
+                ,cancellationToken);
+                if (user is null)
+                {
+                    return Result<string>.NotFound(nameof(user));
+                }
+                var token = _jwtProvider.GenerateToken(user);
+                var userSession = new UserSession()
+                {
+                    UserId = user.Id,
+                    Token = token,
+                    TokenType = (byte)TokenType.ResetPassword,
+                    CreatedAt = DateTime.UtcNow,
+                    ExpiresAt = DateTime.UtcNow.AddMinutes(15)
+                };
+                _userSessionRepository.Add(userSession);
+                await _uow.SaveChangesAsync(cancellationToken);
+                var param = new Dictionary<string, string>
+                {
+                    {"token",token},
+                    {"email",user.Email}
+                };
+                string link = $"{request.ClientUri}?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(request.Email)}";
+                var body = $@"
+                            <p>Click here to reset your password:</p>
+                            <a href=""{link}"">Reset Password</a>";
+
+                var message = new SendEmailRequest(user.Email, "Reset Password", body);
+                await _emailService.SendEmailAsync(message, cancellationToken);
+                return Result<string>.Success("Check your email");
+            }
+            catch(Exception ex)
+            {
+                return Result<string>.Failure($"Error:{ex.Message}",
+                    ErrorType.InternalServerError);
+            }
+
+        }
+
+       
+
+        private async Task<Result<string>> ChangePasswordAsync(ChangePasswordRequest request
+            , CancellationToken cancellationToken)
         {
             try
             {
@@ -170,12 +263,14 @@ namespace Application.Services.Auth
                 await _uow.SaveChangesAsync(cancellationToken);
                 return Result<string>.Success("Password changed successfully");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // to do log error
-                return Result<string>.Failure($"Error while resetting the password"
+                return Result<string>.Failure($"Error while changing the password: {ex.Message}"
                     , ErrorType.InternalServerError);
             }
         }
+
+
     }
 }

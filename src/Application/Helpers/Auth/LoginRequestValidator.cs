@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Repositories.Base;
 using Application.Common.Abstractions;
-using Application.DTOs.Authentication;
+using Application.DTOs.Authentication.Login;
 using Application.Results;
 using Domain.Entities;
 using Domain.Enums;

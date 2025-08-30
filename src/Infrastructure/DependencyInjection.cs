@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Auth;
+using Application.Abstractions.Repositories;
 using Application.Abstractions.Repositories.Base;
 using Application.Abstractions.Services.Email;
 using Application.Abstractions.Services.User;
@@ -8,6 +9,7 @@ using Infrastructure.Authentication;
 using Infrastructure.Common;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Base;
+using Infrastructure.Repositories.User;
 using Infrastructure.Services;
 using Infrastructure.Services.Email;
 using Infrastructure.UOW;
@@ -72,6 +74,7 @@ namespace Infrastructure
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddHttpContextAccessor();
             services.AddSingleton<IEmailService, EmailService>();
+            services.AddScoped<IUserSessionRepository, UserSessionRepository>();
 
             // Email Options config 
             services.Configure<EmailOptions>(options =>

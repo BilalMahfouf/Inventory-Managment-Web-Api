@@ -3,6 +3,7 @@ using Application.DTOs.Email;
 using Application.Results;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;

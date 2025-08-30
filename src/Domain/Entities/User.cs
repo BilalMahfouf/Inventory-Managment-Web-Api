@@ -42,5 +42,6 @@ public partial class User : IEntity
     public virtual User? DeletedByUser { get; set; }
     public virtual UserRole Role { get; set; } = null!;
     public virtual User? UpdatedByUser { get; set; }
+    public virtual ICollection<UserSession> UserSessions { get; set; } = new List<UserSession>();
 
 }
