@@ -27,18 +27,21 @@ namespace Application.Services.Auth
         private readonly IJwtProvider _jwtProvider;
         private readonly IBaseRepository<UserSession> _userSessionRepository;
         private readonly IUnitOfWork _uow;
+        private readonly ICurrentUserService _currentUserService;
 
         public AuthenticationService(IBaseRepository<User> userRepository
             , IPasswordHasher passwordHasher
             , IJwtProvider jwtProvider
             , IBaseRepository<UserSession> userSessionRepository
-            , IUnitOfWork uow)
+            , IUnitOfWork uow
+            , ICurrentUserService currentUserService)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _jwtProvider = jwtProvider;
             _userSessionRepository = userSessionRepository;
             _uow = uow;
+            _currentUserService = currentUserService;
         }
         private async Task<Result<string>> CreateRefreshToken(int userId
             ,CancellationToken cancellationToken)
@@ -140,9 +143,37 @@ namespace Application.Services.Auth
             }
         }
 
-        public async Task<Result> ResetPassword(ResetPasswordRequest request)
+        public async Task<Result<string>> ResetPasswordAsync(ResetPasswordRequest request
+            ,CancellationToken cancellationToken)
         {
-
+            try
+            {
+                // to do validate Email is confirmed
+                var user = await _userRepository
+                    .FindAsync(u => u.Id == _currentUserService.UserId
+                    , cancellationToken);
+                if (user is null)
+                {
+                    return Result<string>.NotFound(nameof(user));
+                }
+                if (!_passwordHasher.VerifyPassword(user.PasswordHash, request.OldPassword))
+                {
+                    return Result<string>.Failure("Wrong old password", ErrorType.BadRequest);
+                }
+                var newPasswordHash = _passwordHasher.HashPassword(request.NewPassword);
+                user.PasswordHash = newPasswordHash;
+                user.UpdatedByUserId = user.Id;
+                user.UpdatedAt = DateTime.UtcNow;
+                _userRepository.Update(user);
+                await _uow.SaveChangesAsync(cancellationToken);
+                return Result<string>.Success("Password changed successfully");
+            }
+            catch(Exception ex)
+            {
+                // to do log error
+                return Result<string>.Failure($"Error while resetting the password"
+                    , ErrorType.InternalServerError);
+            }
         }
     }
 }

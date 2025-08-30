@@ -67,6 +67,7 @@ namespace Infrastructure
             services.AddSingleton<IPasswordHasher, Argon2PasswordHasher>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddHttpContextAccessor();
 
 
             return services;
