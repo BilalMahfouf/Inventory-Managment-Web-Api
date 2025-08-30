@@ -22,9 +22,9 @@ namespace Infrastructure.UOW
             return _context.DisposeAsync();
         }
 
-        public Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
-            return _context.SaveChangesAsync(cancellationToken);
+            return await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

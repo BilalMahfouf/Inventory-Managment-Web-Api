@@ -12,6 +12,7 @@ public partial class UserSession : IEntity
     public int UserId { get; set; }
 
     public string Token { get; set; } = null!;
+    public byte TokenType { get; set; }
 
     public DateTime? ExpiresAt { get; set; }
 

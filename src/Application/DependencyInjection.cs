@@ -1,5 +1,7 @@
 ﻿using Application.Abstractions.Services.User;
+using Application.Helpers.Auth;
 using Application.Services.Auth;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;

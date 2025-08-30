@@ -1,5 +1,9 @@
-﻿using Application.Abstractions.Services.User;
+﻿using Application.Abstractions.Services.Email;
+using Application.Abstractions.Services.User;
 using Application.DTOs.Authentication;
+using Application.DTOs.Authentication.Login;
+using Application.DTOs.Authentication.Password;
+using Application.DTOs.Email;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -38,13 +42,29 @@ namespace Presentation.Controllers.Auth
             return response.HandleResult();
         }
 
-        [HttpPut("reset-password")]
-        [Authorize]
+        [HttpPost("reset-password")]
+
         public async Task<ActionResult<string>> ResetPasswordAsync(
             ResetPasswordRequest request
             ,CancellationToken cancellationToken)
         {
             var response =await _service.ResetPasswordAsync(request, cancellationToken);
+            return response.HandleResult();
+        }
+
+        [HttpPost("forget-password")]
+        public async Task<ActionResult<string>> ForgetPasswordAsync(
+            ForgetPasswordRequest request,CancellationToken cancellationToken)
+        {
+            var response = await _service.ForgetPasswordAsync(request, cancellationToken);
+            return response.HandleResult();
+        }
+
+        [HttpPost("confirm-email")]
+        public async Task<ActionResult<string>>> ConfirmEmailAsync(ConfirmEmailRequest request
+            ,CancellationToken cancellationToken)
+        {
+            var response=await _service.ConfirmEmailAsync(request, cancellationToken);
             return response.HandleResult();
         }
         

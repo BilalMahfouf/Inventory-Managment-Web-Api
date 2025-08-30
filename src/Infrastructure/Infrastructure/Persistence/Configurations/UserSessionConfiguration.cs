@@ -22,8 +22,9 @@ namespace Infrastructure.Persistence.Configurations
                 .HasColumnType("datetime");
             entity.Property(e => e.ExpiresAt).HasColumnType("datetime");
             entity.Property(e => e.Token).HasMaxLength(500);
+            entity.Property(e => e.TokenType).IsRequired();
 
-            entity.HasOne(d => d.User).WithMany()
+            entity.HasOne(d => d.User).WithMany(d=>d.UserSessions)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UserSessions_Users");
