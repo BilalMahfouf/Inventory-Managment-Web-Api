@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.XPath;
@@ -34,7 +35,8 @@ namespace Application.Services.Auth
             , IJwtProvider jwtProvider
             , IBaseRepository<UserSession> userSessionRepository
             , IUnitOfWork uow
-            , ICurrentUserService currentUserService)
+            , ICurrentUserService currentUserService
+            )
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;

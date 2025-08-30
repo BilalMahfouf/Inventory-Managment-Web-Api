@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Auth;
 using Application.Abstractions.Repositories.Base;
+using Application.Abstractions.Services.Email;
 using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
 using Application.Common.Abstractions;
@@ -8,6 +9,7 @@ using Infrastructure.Common;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Base;
 using Infrastructure.Services;
+using Infrastructure.Services.Email;
 using Infrastructure.UOW;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -18,6 +20,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Security;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -68,8 +71,16 @@ namespace Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddHttpContextAccessor();
+            services.AddSingleton<IEmailService, EmailService>();
 
-
+            // Email Options config 
+            services.Configure<EmailOptions>(options =>
+            {
+                options.Port = configuration.GetValue<int>("EMAIL_CONFIGURATIONS:PORT");
+                options.Host = configuration.GetValue<string>("EMAIL_CONFIGURATIONS:HOST") ?? throw new InvalidOperationException("EMAIL_CONFIGURATIONS_HOST is not set");
+                options.Password= Environment.GetEnvironmentVariable("EMAIL_CONFIGURATIONS_PASSWORD") ?? throw new InvalidOperationException("EMAIL_CONFIGURATIONS_PASSWORD environment variable is not set");
+                options.Email = Environment.GetEnvironmentVariable("EMAIL_CONFIGURATIONS_EMAIL") ?? throw new InvalidOperationException("EMAIL_CONFIGURATIONS_EMAIL environment variable is not set");
+            });
             return services;
 
         }
