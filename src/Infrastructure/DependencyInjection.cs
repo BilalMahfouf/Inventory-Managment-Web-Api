@@ -1,11 +1,13 @@
 ﻿using Application.Abstractions.Auth;
 using Application.Abstractions.Repositories.Base;
+using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
 using Application.Common.Abstractions;
 using Infrastructure.Authentication;
 using Infrastructure.Common;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Base;
+using Infrastructure.Services;
 using Infrastructure.UOW;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -64,6 +66,8 @@ namespace Infrastructure
             services.AddScoped<IJwtProvider, JwtProvider>();
             services.AddSingleton<IPasswordHasher, Argon2PasswordHasher>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddHttpContextAccessor();
 
 
             return services;

@@ -15,5 +15,8 @@ namespace Application.Abstractions.Services.User
 
         Task<Result<LoginResponse>> RefreshTokenAsync(RefreshTokenRequest request
             ,CancellationToken cancellationToken=default);
+
+        Task<Result<string>> ResetPasswordAsync(ResetPasswordRequest request
+            , CancellationToken cancellationToken = default);
     }
 }

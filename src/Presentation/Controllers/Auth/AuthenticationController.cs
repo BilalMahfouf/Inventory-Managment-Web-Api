@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Extensions;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 
 namespace Presentation.Controllers.Auth
 {
@@ -34,6 +35,16 @@ namespace Presentation.Controllers.Auth
            [FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
         {
             var response = await _service.RefreshTokenAsync(request, cancellationToken);
+            return response.HandleResult();
+        }
+
+        [HttpPut("reset-password")]
+        [Authorize]
+        public async Task<ActionResult<string>> ResetPasswordAsync(
+            ResetPasswordRequest request
+            ,CancellationToken cancellationToken)
+        {
+            var response =await _service.ResetPasswordAsync(request, cancellationToken);
             return response.HandleResult();
         }
         
