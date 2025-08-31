@@ -6,6 +6,7 @@ using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
 using Application.Common.Abstractions;
 using Application.DTOs.Authentication;
+using Application.DTOs.Authentication.Email;
 using Application.DTOs.Authentication.Login;
 using Application.DTOs.Authentication.Password;
 using Application.DTOs.Email;
@@ -236,6 +237,11 @@ namespace Application.Services.Auth
 
         }
 
+        public Task<Result<string>> ConfirmEmailAsync(ConfirmEmailRequest request
+            , CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
        
 
         private async Task<Result<string>> ChangePasswordAsync(ChangePasswordRequest request
