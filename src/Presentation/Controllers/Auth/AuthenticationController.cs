@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Services.Email;
 using Application.Abstractions.Services.User;
 using Application.DTOs.Authentication;
+using Application.DTOs.Authentication.Email;
 using Application.DTOs.Authentication.Login;
 using Application.DTOs.Authentication.Password;
 using Application.DTOs.Email;
@@ -61,12 +62,21 @@ namespace Presentation.Controllers.Auth
         }
 
         [HttpPost("confirm-email")]
-        public async Task<ActionResult<string>>> ConfirmEmailAsync(ConfirmEmailRequest request
+        public async Task<ActionResult<string>> ConfirmEmailAsync(ConfirmEmailRequest request
             ,CancellationToken cancellationToken)
         {
             var response=await _service.ConfirmEmailAsync(request, cancellationToken);
             return response.HandleResult();
         }
-        
+
+        [HttpPost("send-confirm-email")]
+        public async Task<ActionResult<string>> SendConfirmEmailAsync(
+            SendConfirmEmailRequest request,CancellationToken cancellationToken)
+        {
+            var response = await _service.SendConfirmEmailAsync(request
+                , cancellationToken);
+            return response.HandleResult();
+        }
+
     }
 }

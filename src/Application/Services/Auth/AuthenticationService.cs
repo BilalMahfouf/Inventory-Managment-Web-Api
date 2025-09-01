@@ -6,10 +6,12 @@ using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
 using Application.Common.Abstractions;
 using Application.DTOs.Authentication;
+using Application.DTOs.Authentication.Email;
 using Application.DTOs.Authentication.Login;
 using Application.DTOs.Authentication.Password;
 using Application.DTOs.Email;
 using Application.Helpers.Auth;
+using Application.Helpers.Util;
 using Application.Results;
 using Domain.Entities;
 using Domain.Enums;
@@ -36,6 +38,7 @@ namespace Application.Services.Auth
         private readonly IUnitOfWork _uow;
         private readonly ICurrentUserService _currentUserService;
         private readonly IEmailService _emailService;
+        private readonly IBaseRepository<ConfirmEmailToken> _confirmEmailRepository;
 
         public AuthenticationService(IBaseRepository<User> userRepository
             , IPasswordHasher passwordHasher
@@ -43,7 +46,8 @@ namespace Application.Services.Auth
             , IUserSessionRepository userSessionRepository
             , IUnitOfWork uow
             , ICurrentUserService currentUserService
-            , IEmailService emailService)
+            , IEmailService emailService
+            , IBaseRepository<ConfirmEmailToken> confirmEmailRepository)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
@@ -52,6 +56,7 @@ namespace Application.Services.Auth
             _uow = uow;
             _currentUserService = currentUserService;
             _emailService = emailService;
+            _confirmEmailRepository = confirmEmailRepository;
         }
         private async Task<Result<string>> CreateRefreshToken(int userId
             ,CancellationToken cancellationToken)
@@ -214,12 +219,8 @@ namespace Application.Services.Auth
                 };
                 _userSessionRepository.Add(userSession);
                 await _uow.SaveChangesAsync(cancellationToken);
-                var param = new Dictionary<string, string>
-                {
-                    {"token",token},
-                    {"email",user.Email}
-                };
-                string link = $"{request.ClientUri}?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(request.Email)}";
+                var link = Utility.GenerateResponseLink(request.Email, token
+                    , request.ClientUri);
                 var body = $@"
                             <p>Click here to reset your password:</p>
                             <a href=""{link}"">Reset Password</a>";
@@ -236,41 +237,99 @@ namespace Application.Services.Auth
 
         }
 
-       
-
-        private async Task<Result<string>> ChangePasswordAsync(ChangePasswordRequest request
+        public async Task<Result<string>> ConfirmEmailAsync(ConfirmEmailRequest request
             , CancellationToken cancellationToken)
         {
             try
             {
-                // to do validate Email is confirmed
-                var user = await _userRepository
-                    .FindAsync(u => u.Id == _currentUserService.UserId
-                    , cancellationToken);
+                var user = await _userRepository.FindAsync(u => u.Email == request.Email
+               , cancellationToken, "ConfirmEmailTokens");
                 if (user is null)
                 {
                     return Result<string>.NotFound(nameof(user));
                 }
-                if (!_passwordHasher.VerifyPassword(user.PasswordHash, request.OldPassword))
+                if (user.EmailConfirmed)
                 {
-                    return Result<string>.Failure("Wrong old password", ErrorType.BadRequest);
+                    return Result<string>.Failure("Email Already Confirmed"
+                        , ErrorType.BadRequest);
                 }
-                var newPasswordHash = _passwordHasher.HashPassword(request.NewPassword);
-                user.PasswordHash = newPasswordHash;
-                user.UpdatedByUserId = user.Id;
-                user.UpdatedAt = DateTime.UtcNow;
+                var confirmEmailToken = user.ConfirmEmailTokens.FirstOrDefault
+                     (e => e.UserId == user.Id);
+                if (confirmEmailToken is null)
+                {
+                    return Result<string>.NotFound(nameof(confirmEmailToken));
+                }
+
+                if (!user.ConfirmEmailTokens.Any(e => e.Token == request.Token
+                && (!e.IsLocked) && e.ExpiredAt > DateTime.UtcNow)) 
+                {
+                    return Result<string>.Failure("Invalid Token", ErrorType.BadRequest);
+                }
+                user.ConfirmEmail();
                 _userRepository.Update(user);
+
+                confirmEmailToken.LockToken();
+                _confirmEmailRepository.Update(confirmEmailToken);
+
                 await _uow.SaveChangesAsync(cancellationToken);
-                return Result<string>.Success("Password changed successfully");
+                return Result<string>.Success("Email confirmed Successfully");
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                // to do log error
-                return Result<string>.Failure($"Error while changing the password: {ex.Message}"
+                // log error
+                return Result<string>.Failure($"Error:{ex.Message}"
                     , ErrorType.InternalServerError);
             }
+            
         }
+       
+        public async Task<Result<string>> SendConfirmEmailAsync(
+               SendConfirmEmailRequest request
+             , CancellationToken cancellationToken)
+        {
+            try
+            {
+                var user = await _userRepository.FindAsync(u => u.Email == request.Email
+                ,cancellationToken);
+                if (user is null)
+                {
+                    return Result<string>.NotFound(nameof(user));
+                }
+                if (user.EmailConfirmed)
+                {
+                    return Result<string>.Failure("User already has confirmed email"
+                        , ErrorType.BadRequest);
+                }
+                var token = Utility.GenerateGuid();
+                var confirmEmailToken = new ConfirmEmailToken()
+                {
+                    UserId = user.Id,
+                    Token = token,
+                    CreatedAt = DateTime.UtcNow,
+                    ExpiredAt = DateTime.UtcNow.AddDays(1),
+                    IsLocked = false,
+                };
+                _confirmEmailRepository.Add(confirmEmailToken);
+                await _uow.SaveChangesAsync(cancellationToken);
+                var link = Utility.GenerateResponseLink(request.Email, token
+                    , request.ClientUri);
 
+                var body = $@"
+                            <p>Click here to confirm your email:</p>
+                            <a href=""{link}"">confirm email</a>";
 
+                var message = new SendEmailRequest(user.Email, "Confirm Email", body);
+                await _emailService.SendEmailAsync(message, cancellationToken);
+                return Result<string>.Success("Check your email");
+            }
+            catch(Exception ex)
+            {
+                // log error 
+                return Result<string>.Failure($"Error:{ex.Message}"
+                    , ErrorType.InternalServerError);
+            }
+
+            
+        }
     }
 }
