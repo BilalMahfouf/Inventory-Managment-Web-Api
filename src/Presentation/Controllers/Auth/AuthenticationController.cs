@@ -68,6 +68,15 @@ namespace Presentation.Controllers.Auth
             var response=await _service.ConfirmEmailAsync(request, cancellationToken);
             return response.HandleResult();
         }
-        
+
+        [HttpPost("send-confirm-email")]
+        public async Task<ActionResult<string>> SendConfirmEmailAsync(
+            SendConfirmEmailRequest request,CancellationToken cancellationToken)
+        {
+            var response = await _service.SendConfirmEmailAsync(request
+                , cancellationToken);
+            return response.HandleResult();
+        }
+
     }
 }

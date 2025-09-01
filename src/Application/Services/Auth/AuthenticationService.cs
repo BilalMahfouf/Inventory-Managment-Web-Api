@@ -11,6 +11,7 @@ using Application.DTOs.Authentication.Login;
 using Application.DTOs.Authentication.Password;
 using Application.DTOs.Email;
 using Application.Helpers.Auth;
+using Application.Helpers.Util;
 using Application.Results;
 using Domain.Entities;
 using Domain.Enums;
@@ -218,12 +219,8 @@ namespace Application.Services.Auth
                 };
                 _userSessionRepository.Add(userSession);
                 await _uow.SaveChangesAsync(cancellationToken);
-                var param = new Dictionary<string, string>
-                {
-                    {"token",token},
-                    {"email",user.Email}
-                };
-                string link = $"{request.ClientUri}?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(request.Email)}";
+                var link = Utility.GenerateResponseLink(request.Email, token
+                    , request.ClientUri);
                 var body = $@"
                             <p>Click here to reset your password:</p>
                             <a href=""{link}"">Reset Password</a>";
@@ -286,40 +283,53 @@ namespace Application.Services.Auth
             
         }
        
-       
-        private async Task<Result<string>> ChangePasswordAsync(ChangePasswordRequest request
-            , CancellationToken cancellationToken)
+        public async Task<Result<string>> SendConfirmEmailAsync(
+               SendConfirmEmailRequest request
+             , CancellationToken cancellationToken)
         {
             try
             {
-                // to do validate Email is confirmed
-                var user = await _userRepository
-                    .FindAsync(u => u.Id == _currentUserService.UserId
-                    , cancellationToken);
+                var user = await _userRepository.FindAsync(u => u.Email == request.Email
+                ,cancellationToken);
                 if (user is null)
                 {
                     return Result<string>.NotFound(nameof(user));
                 }
-                if (!_passwordHasher.VerifyPassword(user.PasswordHash, request.OldPassword))
+                if (user.EmailConfirmed)
                 {
-                    return Result<string>.Failure("Wrong old password", ErrorType.BadRequest);
+                    return Result<string>.Failure("User already has confirmed email"
+                        , ErrorType.BadRequest);
                 }
-                var newPasswordHash = _passwordHasher.HashPassword(request.NewPassword);
-                user.PasswordHash = newPasswordHash;
-                user.UpdatedByUserId = user.Id;
-                user.UpdatedAt = DateTime.UtcNow;
-                _userRepository.Update(user);
+                var token = Utility.GenerateGuid();
+                var confirmEmailToken = new ConfirmEmailToken()
+                {
+                    UserId = user.Id,
+                    Token = token,
+                    CreatedAt = DateTime.UtcNow,
+                    ExpiredAt = DateTime.UtcNow.AddDays(1),
+                    IsLocked = false,
+                };
+                _confirmEmailRepository.Add(confirmEmailToken);
                 await _uow.SaveChangesAsync(cancellationToken);
-                return Result<string>.Success("Password changed successfully");
+                var link = Utility.GenerateResponseLink(request.Email, token
+                    , request.ClientUri);
+
+                var body = $@"
+                            <p>Click here to confirm your email:</p>
+                            <a href=""{link}"">confirm email</a>";
+
+                var message = new SendEmailRequest(user.Email, "Confirm Email", body);
+                await _emailService.SendEmailAsync(message, cancellationToken);
+                return Result<string>.Success("Check your email");
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                // to do log error
-                return Result<string>.Failure($"Error while changing the password: {ex.Message}"
+                // log error 
+                return Result<string>.Failure($"Error:{ex.Message}"
                     , ErrorType.InternalServerError);
             }
+
+            
         }
-
-
     }
 }

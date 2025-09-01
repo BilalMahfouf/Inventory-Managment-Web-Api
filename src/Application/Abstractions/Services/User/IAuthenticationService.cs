@@ -27,5 +27,8 @@ namespace Application.Abstractions.Services.User
 
         Task<Result<string>> ConfirmEmailAsync(ConfirmEmailRequest request
             , CancellationToken cancellationToken = default);
+
+        Task<Result<string>> SendConfirmEmailAsync(SendConfirmEmailRequest request
+            , CancellationToken cancellationToken = default);
     }
 }
