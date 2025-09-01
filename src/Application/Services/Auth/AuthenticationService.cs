@@ -37,6 +37,7 @@ namespace Application.Services.Auth
         private readonly IUnitOfWork _uow;
         private readonly ICurrentUserService _currentUserService;
         private readonly IEmailService _emailService;
+        private readonly IBaseRepository<ConfirmEmailToken> _confirmEmailRepository;
 
         public AuthenticationService(IBaseRepository<User> userRepository
             , IPasswordHasher passwordHasher
@@ -44,7 +45,8 @@ namespace Application.Services.Auth
             , IUserSessionRepository userSessionRepository
             , IUnitOfWork uow
             , ICurrentUserService currentUserService
-            , IEmailService emailService)
+            , IEmailService emailService
+            , IBaseRepository<ConfirmEmailToken> confirmEmailRepository)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
@@ -53,6 +55,7 @@ namespace Application.Services.Auth
             _uow = uow;
             _currentUserService = currentUserService;
             _emailService = emailService;
+            _confirmEmailRepository = confirmEmailRepository;
         }
         private async Task<Result<string>> CreateRefreshToken(int userId
             ,CancellationToken cancellationToken)
@@ -237,13 +240,53 @@ namespace Application.Services.Auth
 
         }
 
-        public Task<Result<string>> ConfirmEmailAsync(ConfirmEmailRequest request
+        public async Task<Result<string>> ConfirmEmailAsync(ConfirmEmailRequest request
             , CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _userRepository.FindAsync(u => u.Email == request.Email
+               , cancellationToken, "ConfirmEmailTokens");
+                if (user is null)
+                {
+                    return Result<string>.NotFound(nameof(user));
+                }
+                if (user.EmailConfirmed)
+                {
+                    return Result<string>.Failure("Email Already Confirmed"
+                        , ErrorType.BadRequest);
+                }
+                var confirmEmailToken = user.ConfirmEmailTokens.FirstOrDefault
+                     (e => e.UserId == user.Id);
+                if (confirmEmailToken is null)
+                {
+                    return Result<string>.NotFound(nameof(confirmEmailToken));
+                }
+
+                if (!user.ConfirmEmailTokens.Any(e => e.Token == request.Token
+                && (!e.IsLocked) && e.ExpiredAt > DateTime.UtcNow)) 
+                {
+                    return Result<string>.Failure("Invalid Token", ErrorType.BadRequest);
+                }
+                user.ConfirmEmail();
+                _userRepository.Update(user);
+
+                confirmEmailToken.LockToken();
+                _confirmEmailRepository.Update(confirmEmailToken);
+
+                await _uow.SaveChangesAsync(cancellationToken);
+                return Result<string>.Success("Email confirmed Successfully");
+            }
+            catch(Exception ex)
+            {
+                // log error
+                return Result<string>.Failure($"Error:{ex.Message}"
+                    , ErrorType.InternalServerError);
+            }
+            
         }
        
-
+       
         private async Task<Result<string>> ChangePasswordAsync(ChangePasswordRequest request
             , CancellationToken cancellationToken)
         {

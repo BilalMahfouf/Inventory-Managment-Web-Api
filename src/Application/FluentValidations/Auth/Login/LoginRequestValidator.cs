@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.FluentValidations.Auth
+namespace Application.FluentValidations.Auth.Login
 {
     internal class LoginRequestValidator
     {

@@ -43,5 +43,10 @@ public partial class User : IEntity
     public virtual UserRole Role { get; set; } = null!;
     public virtual User? UpdatedByUser { get; set; }
     public virtual ICollection<UserSession> UserSessions { get; set; } = new List<UserSession>();
-
+    public virtual ICollection<ConfirmEmailToken> ConfirmEmailTokens { get; set; } = new List<ConfirmEmailToken>();
+    public void ConfirmEmail()
+    {
+        EmailConfirmed = true;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }
