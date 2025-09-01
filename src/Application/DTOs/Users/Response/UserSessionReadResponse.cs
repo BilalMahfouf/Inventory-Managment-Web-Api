@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTOs.User.Response
+namespace Application.DTOs.Users.Response
 {
     public sealed record UserSessionReadResponse
     {

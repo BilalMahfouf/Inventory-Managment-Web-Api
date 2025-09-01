@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTOs.User.Request
+namespace Application.DTOs.Users.Request
 {
     public sealed record UserUpdateRequest
     {

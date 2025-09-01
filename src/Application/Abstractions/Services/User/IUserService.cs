@@ -1,6 +1,5 @@
-﻿using Application.DTOs.Authentication;
-using Application.DTOs.User.Request;
-using Application.DTOs.User.Response;
+﻿using Application.DTOs.Users.Request;
+using Application.DTOs.Users.Response;
 using Application.Results;
 using System;
 using System.Collections.Generic;

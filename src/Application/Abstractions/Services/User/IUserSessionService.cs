@@ -1,4 +1,5 @@
-﻿using Application.Results;
+﻿using Application.DTOs.Users.Response;
+using Application.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
