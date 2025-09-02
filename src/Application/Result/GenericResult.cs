@@ -26,6 +26,10 @@ namespace Application.Results
             string errorMessage = $"{entity} nor found";
             return Failure(errorMessage, ErrorType.NotFound);
         }
+        public static new Result<T> InvalidId()
+        {
+            return Failure("Invalid Id",ErrorType.BadRequest);
+        }
 
     }
 }

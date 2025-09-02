@@ -62,7 +62,7 @@ namespace Infrastructure.Repositories.Base
                 query = query.Include(includeProperty);
             }
 
-            return await query.ToListAsync(cancellationToken);
+            return await query.AsNoTracking().ToListAsync(cancellationToken);
         }
 
         public void Update(TEntity entity)
