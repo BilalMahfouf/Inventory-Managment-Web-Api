@@ -20,9 +20,16 @@ namespace Application.DTOs.Users.Response
         public DateTime CreatedAt { get; init; }
         public DateTime? UpdatedAt { get; init; }
         public DateTime? DeletedAt { get; init; }
+
         public int? CreatedByUserId { get; init; }
+        public string? CreatedByUserName { get; init; }
+
         public int? UpdatedByUserId { get;init; }
+        public string? UpdatedByUserName { get; init; }
+
         public int? DeletedByUserId { get;init;}
+        public string? DeletedByUserName { get; init; }
+
 
     }
 }

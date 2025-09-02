@@ -1,6 +1,8 @@
 ﻿using Domain.Entities;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,5 +26,7 @@ namespace Application.Helpers.Util
             string link = $"{uri}?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(email)}";
             return link;
         }
+    
+       
     }
 }

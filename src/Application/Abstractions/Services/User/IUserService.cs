@@ -16,7 +16,7 @@ namespace Application.Abstractions.Services.User
         Task<Result<IEnumerable<UserReadResponse>>> GetAllAsync(
             CancellationToken cancellationToken);
 
-        Task<Result> UpdateAsync(UserUpdateRequest request
+        Task<Result> UpdateAsync(int id,UserUpdateRequest request
             , CancellationToken cancellationToken);
         Task<Result<UserReadResponse>> AddAsync(UserCreateRequest request,
             CancellationToken cancellationToken);
@@ -24,7 +24,7 @@ namespace Application.Abstractions.Services.User
         Task<Result> ActivateAsync(int id , CancellationToken cancellationToken);
         Task<Result> DesActivateAsync(int id, CancellationToken cancellationToken);
 
-        Task<Result> ChangePasswordAsync(ChangePasswordRequest request,
+        Task<Result> ChangePasswordAsync(int id,ChangePasswordRequest request,
             CancellationToken cancellationToken);
        
     }

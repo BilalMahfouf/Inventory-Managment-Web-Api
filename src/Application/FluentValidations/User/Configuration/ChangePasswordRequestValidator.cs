@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.FluentValidations.User
+namespace Application.FluentValidations.User.Configuration
 {
     public class ChangePasswordRequestValidator : AbstractValidator<ChangePasswordRequest>
     {

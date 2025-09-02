@@ -1,6 +1,7 @@
 ﻿using Application.Results;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 
 namespace Presentation.Extensions
 {
@@ -26,24 +27,17 @@ namespace Presentation.Extensions
         /// <exception cref="ArgumentNullException">
         /// Thrown if createdActionName is provided but routeValues is null.
         /// </exception>
-        public static ActionResult<T> HandleResult<T>(this Result<T> result,
-            string? actionName = null, object? routeValues = null) where T : class
+        public static ActionResult<T> HandleResult<T>(
+            this Result<T> result,
+            string? routeName = null,
+            object? routeValues = null) where T : class
         {
             if (!result.IsSuccess)
-            {
                 return HandleError(result);
-            }
 
-            return string.IsNullOrEmpty(actionName)
+            return string.IsNullOrEmpty(routeName)
                 ? new OkObjectResult(result.Value)
-                : new CreatedAtActionResult
-                (
-                    actionName: actionName,
-                    controllerName: null,
-                    routeValues: routeValues,
-                    value: result.Value
-                );
-
+                : new CreatedAtRouteResult(routeName, routeValues, result.Value);
         }
 
         /// <summary>

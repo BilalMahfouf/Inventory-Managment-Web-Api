@@ -9,7 +9,6 @@ namespace Application.DTOs.Users.Request
     public sealed record UserUpdateRequest
     {
         public string UserName { get; init; } = string.Empty;
-        public string Email { get; init; } = string.Empty;
         public string FirstName { get; init; } = string.Empty;
         public string LastName { get; init; } = string.Empty;
         public int RoleId { get; init; }

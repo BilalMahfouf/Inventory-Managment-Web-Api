@@ -49,4 +49,14 @@ public partial class User : IEntity
         EmailConfirmed = true;
         UpdatedAt = DateTime.UtcNow;
     }
+    public void Activate()
+    {
+        IsActive= true;
+        UpdatedAt= DateTime.UtcNow;
+    }
+    public void DesActivate()
+    {
+        IsActive = false;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }

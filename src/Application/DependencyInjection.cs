@@ -1,11 +1,15 @@
 ﻿using Application.Abstractions.Services.User;
+using Application.FluentValidations.User;
+using Application.FluentValidations.User.Configuration;
 using Application.Helpers.Auth;
 using Application.Services.Auth;
+using Application.Services.Users;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,7 +20,12 @@ namespace Application
         public static IServiceCollection AddApplicationServices(
             this IServiceCollection services)
         {
+            // fluent validation DI
+            services.AddValidatorsFromAssembly(typeof(UserCreateRequestValidator).Assembly);
+            services.AddScoped<UserRequestValidatorContainer>();
+
             services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IUserService, UserService>();
 
             return services;
         }
