@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Domain.Entities;
 
-public partial class UnitOfMeasure : IEntity
+public partial class UnitOfMeasure : ISoftDeletable
 {
     public int Id { get; set; }
 
