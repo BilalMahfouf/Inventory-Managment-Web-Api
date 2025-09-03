@@ -27,6 +27,9 @@ namespace Application
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IUserService, UserService>();
 
+            services.AddScoped<UserRoleService>();
+            
+
             return services;
         }
     }
