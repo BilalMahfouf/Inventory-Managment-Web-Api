@@ -1361,7 +1361,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("UnitOfMeasures");
                 });
 
-            modelBuilder.Entity("Domain.Entities.User", b =>
+            modelBuilder.Entity("Domain.Entities.Users", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1548,7 +1548,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.AlertType", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
@@ -1559,13 +1559,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.AuditLog", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
                         .HasConstraintName("FK_AuditLogs_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.User", "User")
+                    b.HasOne("Domain.Entities.Users", "Users")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .IsRequired()
@@ -1573,29 +1573,29 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("CreatedByUser");
 
-                    b.Navigation("User");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Domain.Entities.ConfirmEmailToken", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "User")
+                    b.HasOne("Domain.Entities.Users", "Users")
                         .WithMany("ConfirmEmailTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Domain.Entities.Customer", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
                         .HasConstraintName("FK_Customers_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Users", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_Customers_DeletedByUser");
@@ -1607,13 +1607,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.CustomerCategory", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
                         .HasConstraintName("FK_CustomerCategories_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Users", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_CustomerCategories_DeletedByUser");
@@ -1625,7 +1625,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.CustomerContact", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
@@ -1637,7 +1637,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_CustomerContact_Customers");
 
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Users", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_CustomerContact_DeletedByUser");
@@ -1651,7 +1651,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Inventory", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
@@ -1669,7 +1669,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Inventory_Products");
 
-                    b.HasOne("Domain.Entities.User", "UpdatedByUser")
+                    b.HasOne("Domain.Entities.Users", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
                         .HasConstraintName("FK_Inventory_UpdatedByUser");
@@ -1685,13 +1685,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Location", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
                         .HasConstraintName("FK_Locations_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Users", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_Locations_DeletedByUser");
@@ -1711,13 +1711,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.LocationType", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
                         .HasConstraintName("FK_LocationTypes_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Users", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_LocationTypes_DeletedByUser");
@@ -1735,13 +1735,13 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Products_Categories");
 
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
                         .HasConstraintName("FK_Products_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Users", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_Products_DeletedByUser");
@@ -1752,7 +1752,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Products_UnitOfMeasures");
 
-                    b.HasOne("Domain.Entities.User", "UpdatedByUser")
+                    b.HasOne("Domain.Entities.Users", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
                         .HasConstraintName("FK_Products_UpdatedByUser");
@@ -1770,13 +1770,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.ProductCategory", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
                         .HasConstraintName("FK_ProductCategories_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Users", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_ProductCategories_DeletedByUser");
@@ -1795,13 +1795,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.ProductImage", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
                         .HasConstraintName("FK_ProductImages_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Users", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_ProductImages_DeletedByUser");
@@ -1821,13 +1821,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.ProductSupplier", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
                         .HasConstraintName("FK_ProductSuppliers_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Users", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_ProductSuppliers_DeletedByUser");
@@ -1855,7 +1855,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.PurchaseOrder", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
@@ -1874,7 +1874,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.PurchaseOrderItem", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
@@ -1901,7 +1901,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.SalesOrder", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
@@ -1920,7 +1920,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.SalesOrderItem", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
@@ -1947,7 +1947,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.StockMovement", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
@@ -1982,13 +1982,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.StockMovementType", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
                         .HasConstraintName("FK_StockMovementTypes_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Users", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_StockMovementTypes_DeletedByUser");
@@ -2000,7 +2000,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.StockTransfer", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
@@ -2035,13 +2035,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Supplier", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
                         .HasConstraintName("FK_Suppliers_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Users", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_Suppliers_DeletedByUser");
@@ -2052,7 +2052,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Suppliers_SupplierTypes");
 
-                    b.HasOne("Domain.Entities.User", "UpdatedByUser")
+                    b.HasOne("Domain.Entities.Users", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
                         .HasConstraintName("FK_Suppliers_UpdatedByUser");
@@ -2068,13 +2068,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.SupplierContact", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
                         .HasConstraintName("FK_SupplierContacts_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Users", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_SupplierContacts_DeletedByUser");
@@ -2094,13 +2094,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.SupplierType", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
                         .HasConstraintName("FK_SupplierTypes_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Users", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_SupplierTypes_DeletedByUser");
@@ -2112,13 +2112,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.UnitOfMeasure", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
                         .HasConstraintName("FK_UnitOfMeasures_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Users", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_UnitOfMeasures_DeletedByUser");
@@ -2128,14 +2128,14 @@ namespace Infrastructure.Migrations
                     b.Navigation("DeletedByUser");
                 });
 
-            modelBuilder.Entity("Domain.Entities.User", b =>
+            modelBuilder.Entity("Domain.Entities.Users", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                    b.HasOne("Domain.Entities.Users", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .HasConstraintName("FK_Users_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Users", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_Users_DeletedByUser");
@@ -2146,7 +2146,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Users_UserRoles");
 
-                    b.HasOne("Domain.Entities.User", "UpdatedByUser")
+                    b.HasOne("Domain.Entities.Users", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
                         .HasConstraintName("FK_Users_UpdatedByUser");
@@ -2162,7 +2162,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.UserRole", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Users", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_UserRoles_DeletedByUser");
@@ -2172,16 +2172,16 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.UserSession", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "User")
+                    b.HasOne("Domain.Entities.Users", "Users")
                         .WithMany("UserSessions")
                         .HasForeignKey("UserId")
                         .IsRequired()
                         .HasConstraintName("FK_UserSessions_Users");
 
-                    b.Navigation("User");
+                    b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("Domain.Entities.User", b =>
+            modelBuilder.Entity("Domain.Entities.Users", b =>
                 {
                     b.Navigation("ConfirmEmailTokens");
 

@@ -34,11 +34,11 @@ namespace Infrastructure.Infrastructure.Persistence.Configurations
 
             builder.Property(e => e.IsLocked).HasDefaultValue(false).IsRequired();
 
-            // 1-to-many (User can have multiple tokens)
+            // 1-to-many (Users can have multiple tokens)
             builder.HasOne(e => e.User)
-                .WithMany(u => u.ConfirmEmailTokens) // Add this collection in User entity
+                .WithMany(u => u.ConfirmEmailTokens) // Add this collection in Users entity
                 .HasForeignKey(e => e.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasIndex(e => e.UserId)
                 .HasDatabaseName("IX_ConfirmEmailTokens_UserId");
