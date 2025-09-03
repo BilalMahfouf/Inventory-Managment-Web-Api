@@ -1,0 +1,215 @@
+[33mcommit 0bfd67c01037ef1156177286c7d3c30530191324[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Merge: 03e1e52 85a7af4
+Author: BilalMahfouf <billelmh501@gmail.com>
+Date:   Tue Sep 2 10:34:34 2025 +0100
+
+    Merge pull request #4 from BilalMahfouf/User
+    
+    User
+
+[33mcommit 85a7af4bd39d52fbbde715455a737349cd4fb0dd[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Tue Sep 2 10:32:38 2025 +0100
+
+    feat(create the base users enpoints)
+
+[33mcommit 4ec5fed8d08b385173266a08a4b887f6db6f118e[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Tue Sep 2 08:13:52 2025 +0100
+
+    Add AsNoTraking() to the GetAllAsync mothod in the base repo
+
+[33mcommit 96bc62c6052196694e4301da53de690dafcc12e7[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Mon Sep 1 17:46:08 2025 +0100
+
+    delete git file
+
+[33mcommit df78ae091708159a10955b62d9a27ba37d607cd9[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Mon Sep 1 17:45:05 2025 +0100
+
+    feat(add the config for UserRequest Validatore
+
+[33mcommit 5609b3bd6ff508ec31ec69874d2d41845e2f6bdd[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Mon Sep 1 17:26:35 2025 +0100
+
+    feat(Create Dtos and Interface for the User enpoints)
+
+[33mcommit 03e1e52354beb4e562ac8b11afc9edf6499cee80[m
+Merge: 39a8959 8bae2af
+Author: BilalMahfouf <billelmh501@gmail.com>
+Date:   Mon Sep 1 15:27:31 2025 +0100
+
+    Merge pull request #3 from BilalMahfouf/ConfirmEmailFeat
+    
+    Confirm email feat
+
+[33mcommit 8bae2af747340548a6b5bee753b178ff8c1705e5[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Mon Sep 1 15:25:51 2025 +0100
+
+    feat(implement confirm email feature)
+
+[33mcommit 2d9c7eb803706374a335b04cf70cccdc0c4ecfb6[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Mon Sep 1 15:24:46 2025 +0100
+
+    ignore Tests folder
+
+[33mcommit c84715facccdf70f9f2893778ad6d572ab8dc322[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Mon Sep 1 01:36:47 2025 +0100
+
+    feat(Create confirmEmailToken entity and config and implement ConfirmEmailAsync mothod)
+
+[33mcommit e3efdf5eae0d978d04804735b829611c1fe67870[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Sun Aug 31 22:55:33 2025 +0100
+
+    feat(working on the confirm email feature)
+
+[33mcommit 39a8959f65ae0515f1d4680750a048c317c6a261[m
+Merge: 0e400fb 5d8cce1
+Author: BilalMahfouf <billelmh501@gmail.com>
+Date:   Sat Aug 30 23:21:44 2025 +0100
+
+    Merge pull request #2 from BilalMahfouf/ForgetPasswordFeature
+    
+    Forget password feature
+
+[33mcommit 5d8cce119567c6a9c2377eea027ec7aed2406c13[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Sat Aug 30 23:13:28 2025 +0100
+
+    feat(implement the forget and reset password features)
+
+[33mcommit fb4721727846f2754dbd176560496596b2467eb9[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Sat Aug 30 17:23:59 2025 +0100
+
+    Implement the Email Service using gmail smtp
+
+[33mcommit 0e400fbf403ba309a5023a951444142e61410562[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Sat Aug 30 15:40:59 2025 +0100
+
+    add FluentValidation Library and add validations for the LoginRequest
+
+[33mcommit 3d9a61583234ab2ac693e97b7cc8526871f2664c[m
+Merge: ccaf33f ec2a530
+Author: BilalMahfouf <billelmh501@gmail.com>
+Date:   Sat Aug 30 12:45:19 2025 +0100
+
+    Merge pull request #1 from BilalMahfouf/resetPasswordFeat Implemented
+    
+    Reset password feat
+
+[33mcommit ec2a530751875685caaa9f456abcb23761383689[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Sat Aug 30 12:43:10 2025 +0100
+
+    feat(implement the reset-password endpoint
+
+[33mcommit f35f86881a7b2b3f9b07e256c32263a9269d3a96[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Sat Aug 30 12:02:52 2025 +0100
+
+    implement and register ICurrentUserService
+
+[33mcommit ccaf33f4817462e453b81ac3b65d3a419fd0dd88[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Fri Aug 29 22:26:17 2025 +0100
+
+    feat(finish Login and Referesh Token Features
+
+[33mcommit 5554a8b4a2c7d80f26c81870ecf05c58b565ecf0[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Fri Aug 29 20:32:29 2025 +0100
+
+    create the Unit of Work and register it in DI
+
+[33mcommit c3e1fac34ee45c08d47b68a19cd1b3d3e2449e7f[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Fri Aug 29 14:46:22 2025 +0100
+
+    added Dependency Injection conifg for Appication and Infrastructure Layres
+
+[33mcommit 553ff8d4e991e5d743935f0b5aed43f82ed3562c[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Fri Aug 29 14:28:38 2025 +0100
+
+    feat(add the login feature
+
+[33mcommit bb1cfebec1ca8606da0e504201b00ddaed59b454[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Fri Aug 29 14:23:37 2025 +0100
+
+    change some names
+
+[33mcommit 2572c047187bbb0844c159552ba944ea8bdf6c28[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Thu Aug 28 22:52:01 2025 +0100
+
+    feat(Implement the base repo Authentication Service and the JwtProvider
+
+[33mcommit 15be018f4bab5d3c1a3877b3459a21f1a2fc1f77[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Thu Aug 28 22:47:50 2025 +0100
+
+    added the ResultPattern
+
+[33mcommit 030593dc4f0b739dcef8c384098abeaf046acf98[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Thu Aug 28 22:47:00 2025 +0100
+
+    Add UserName colum to the user entity and Implement IEntity by all the entities
+
+[33mcommit 5c17302c71deb9f073afafaa74cc117da0fc9088[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Wed Aug 27 22:47:34 2025 +0100
+
+    setup EfCore Configurations
+
+[33mcommit e956ec82518ef67180e61f5b64844d6d606e32ab[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Wed Aug 27 22:46:43 2025 +0100
+
+    setup Domain Entities
+
+[33mcommit b4b7aa3aaa2183a7f47f6b328b037d25d514edbe[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Wed Aug 27 22:44:31 2025 +0100
+
+    setup inv
+
+[33mcommit e27f6d8cf4f289487bd8fd77e585bf1c73d98720[m
+Author: BilalMahfouf <billelmh501@gmail.com>
+Date:   Wed Aug 27 22:41:19 2025 +0100
+
+    Delete src directory
+
+[33mcommit f459c8668db11e1f13fd9acbd8f0bf27272cb140[m
+Author: BilalMahfouf <billelmh501@gmail.com>
+Date:   Wed Aug 27 22:41:05 2025 +0100
+
+    Delete InventoryManagementSystem.sln
+
+[33mcommit b7942779e6702ea1f89209d75c2bf94a1726eb27[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Wed Aug 27 14:11:26 2025 +0100
+
+    setup inv
+
+[33mcommit 041e9b8ce5f5e6c9147d246d2540bfc1b03549e8[m
+Author: Bilal <billelmh501@gmail.com>
+Date:   Wed Aug 27 14:06:52 2025 +0100
+
+    setup inv
+
+[33mcommit 637aa25508a056c07f215adb1cc98770ba884510[m
+Author: BilalMahfouf <billelmh501@gmail.com>
+Date:   Wed Aug 27 13:29:00 2025 +0100
+
+    Initial commit
