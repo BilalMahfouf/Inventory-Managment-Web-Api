@@ -18,6 +18,7 @@ namespace Infrastructure.Persistence.Configurations
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
             entity.Property(e => e.DeletedAt).HasColumnType("datetime");
             entity.Property(e => e.Description).HasMaxLength(255);
             entity.Property(e => e.Name).HasMaxLength(50);
@@ -26,6 +27,10 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(d => d.CreatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UnitOfMeasures_CreatedByUser");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany()
+               .HasForeignKey(d => d.UpdatedByUserId).OnDelete(DeleteBehavior.Restrict);
+
 
             entity.HasOne(d => d.DeletedByUser).WithMany()
                 .HasForeignKey(d => d.DeletedByUserId)
