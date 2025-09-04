@@ -69,5 +69,16 @@ namespace Infrastructure.Repositories.Base
         {
             _dbSet.Update(entity);
         }
+
+        public async Task<bool> IsExistAsync(Expression<Func<TEntity, bool>> predicate
+            , CancellationToken cancellationToken)
+        {
+
+            if (predicate != null)
+            {
+                return await _dbSet.AnyAsync(predicate, cancellationToken);
+            }
+            return false;
+        }
     }
 }

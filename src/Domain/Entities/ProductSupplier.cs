@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Domain.Entities;
 
-public partial class ProductSupplier : IEntity
+public partial class ProductSupplier : ISoftDeletable
 {
     public int Id { get; set; }
 

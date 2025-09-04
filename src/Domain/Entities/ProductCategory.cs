@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Domain.Entities;
 
-public partial class ProductCategory : IEntity
+public partial class ProductCategory : ISoftDeletable
 {
     public int Id { get; set; }
 
@@ -21,11 +21,15 @@ public partial class ProductCategory : IEntity
 
     public bool IsDeleted { get; set; }
 
+    public DateTime? UpdateAt { get; set; }
+    public int? UpdatedByUserId { get; set; }
     public DateTime? DeletedAt { get; set; }
 
     public int? DeletedByUserId { get; set; }
 
     public virtual User CreatedByUser { get; set; } = null!;
+
+    public virtual User? UpdatedByUser { get; set; }
 
     public virtual User? DeletedByUser { get; set; }
     public virtual ProductCategory? Parent { get; set; }

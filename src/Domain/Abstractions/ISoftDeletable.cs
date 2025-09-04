@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Abstractions
 {
-    public interface ISoftDeletable
+    public interface ISoftDeletable : IEntity
     {
         bool IsDeleted { get; set; }
         DateTime? DeletedAt { get; set; }
