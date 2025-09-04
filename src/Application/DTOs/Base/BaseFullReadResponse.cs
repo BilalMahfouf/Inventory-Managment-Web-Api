@@ -9,15 +9,15 @@ namespace Application.DTOs.Base
     public abstract record BaseFullReadResponse : BaseDeletableReadResponse
     {
         
-        public DateTime UpdatedAt { get; init; }
+        public DateTime? UpdatedAt { get; init; }
    
 
        
-        public int UpdatedByUserId { get; init; }
+        public int? UpdatedByUserId { get; init; }
      
 
        
-        public string UpdatedByUserName { get; init; } = string.Empty;
+        public string? UpdatedByUserName { get; init; } = string.Empty;
        
     }
 }

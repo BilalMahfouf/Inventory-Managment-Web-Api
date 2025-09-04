@@ -1,9 +1,13 @@
-﻿using Application.Abstractions.Services.User;
+﻿using Application.Abstractions.Services.Products;
+using Application.Abstractions.Services.User;
 using Application.FluentValidations.User;
 using Application.FluentValidations.User.Configuration;
 using Application.Helpers.Auth;
 using Application.Services.Auth;
+using Application.Services.Products;
+using Application.Services.Shared;
 using Application.Services.Users;
+using Domain.Abstractions;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -26,8 +30,8 @@ namespace Application
 
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IUserService, UserService>();
-
             services.AddScoped<UserRoleService>();
+            services.AddScoped<IProductCategoryService, ProductCategoryService>();
             
 
             return services;
