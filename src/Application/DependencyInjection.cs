@@ -6,6 +6,7 @@ using Application.Helpers.Auth;
 using Application.Services.Auth;
 using Application.Services.Products;
 using Application.Services.Shared;
+using Application.Services.UnitOfMeasures;
 using Application.Services.Users;
 using Domain.Abstractions;
 using FluentValidation;
@@ -32,6 +33,7 @@ namespace Application
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<UserRoleService>();
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
+            services.AddScoped<UnitOfMeasureService>();
             
 
             return services;

@@ -17,6 +17,9 @@ public partial class UnitOfMeasure : ISoftDeletable
 
     public int CreatedByUserId { get; set; }
 
+    public DateTime? UpdatedAt { get; set; }
+    public int? UpdatedByUserId { get; set; }
+
     public bool IsDeleted { get; set; }
 
     public DateTime? DeletedAt { get; set; }
@@ -24,7 +27,7 @@ public partial class UnitOfMeasure : ISoftDeletable
     public int? DeletedByUserId { get; set; }
 
     public virtual User CreatedByUser { get; set; } = null!;
-
+    public virtual User? UpdatedByUser { get; set; }
     public virtual User? DeletedByUser { get; set; }
 
 }
