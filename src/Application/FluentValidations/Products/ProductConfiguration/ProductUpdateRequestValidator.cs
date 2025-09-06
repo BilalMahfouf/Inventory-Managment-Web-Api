@@ -6,17 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.FluentValidations.Product
+namespace Application.FluentValidations.Products.Configuration
 {
-    public class ProductCreateRequestValidator : AbstractValidator<ProductCreateRequest>
+    public class ProductUpdateRequestValidator : AbstractValidator<ProductUpdateRequest>
     {
-        public ProductCreateRequestValidator()
+        public ProductUpdateRequestValidator()
         {
-            RuleFor(p => p.SKU)
-                .NotEmpty().WithMessage("Product SKU is required.")
-                .MaximumLength(50).WithMessage("Product SKU must not exceed 50 characters.");
-            RuleFor(p => p.UnitOfMeasureId)
-                .GreaterThan(0).WithMessage("Unit of Measure ID must be a positive integer.");
             RuleFor(p => p.Name)
                 .NotEmpty().WithMessage("Product name is required.")
                 .MaximumLength(100).WithMessage("Product name must not exceed 100 characters.");
@@ -29,7 +24,6 @@ namespace Application.FluentValidations.Product
             RuleFor(p => p.CostPrice)
                 .GreaterThanOrEqualTo(0).WithMessage("Cost price must be a non-negative value.")
                 .LessThanOrEqualTo(p => p.UnitPrice).WithMessage("Cost price must not exceed unit price.");
-
         }
     }
 }

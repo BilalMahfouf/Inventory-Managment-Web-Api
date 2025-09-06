@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Services.Products;
 using Application.Abstractions.Services.User;
+using Application.FluentValidations.Products;
 using Application.FluentValidations.User;
 using Application.FluentValidations.User.Configuration;
 using Application.Helpers.Auth;
@@ -28,6 +29,7 @@ namespace Application
             // fluent validation DI
             services.AddValidatorsFromAssembly(typeof(UserCreateRequestValidator).Assembly);
             services.AddScoped<UserRequestValidatorContainer>();
+            services.AddScoped<ProductValidatorContainer>();
 
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IUserService, UserService>();
