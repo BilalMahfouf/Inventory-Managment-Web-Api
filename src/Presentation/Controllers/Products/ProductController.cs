@@ -112,7 +112,8 @@ namespace Presentation.Controllers.Products
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
         [Authorize]
-        public async Task<ActionResult<ProductReadResponse>> CreateProductAsync([FromBody] ProductCreateRequest request
+        public async Task<ActionResult<ProductReadResponse>> CreateProductAsync(
+            [FromBody] ProductCreateRequest request
             , CancellationToken cancellationToken = default)
         {
             var response = await _service.CreateAsync(request, cancellationToken);

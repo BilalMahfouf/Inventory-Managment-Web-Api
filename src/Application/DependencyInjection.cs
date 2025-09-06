@@ -36,6 +36,7 @@ namespace Application
             services.AddScoped<UserRoleService>();
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
             services.AddScoped<UnitOfMeasureService>();
+            services.AddScoped<IProductService, ProductService>();
             
 
             return services;

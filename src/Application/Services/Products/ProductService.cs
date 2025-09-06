@@ -1,0 +1,247 @@
+﻿using Application.Abstractions.Repositories.Base;
+using Application.Abstractions.Repositories.Products;
+using Application.Abstractions.Services.Products;
+using Application.Abstractions.Services.User;
+using Application.Abstractions.UnitOfWork;
+using Application.DTOs.Products.Request.Products;
+using Application.DTOs.Products.Response.Products;
+using Application.FluentValidations.Products;
+using Application.Results;
+using Application.Services.Shared;
+using Domain.Entities;
+using Domain.Enums;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Application.Services.Products
+{
+    public class ProductService : DeleteService<Product>, IProductService
+    {
+
+        private readonly ProductValidatorContainer _validatorContainer;
+        private readonly IProductRepository _productRepository;
+
+        // flaws of inheriting from DeleteService
+        public ProductService(IProductRepository repository
+            , ICurrentUserService currentUserService
+            , IUnitOfWork uow
+            , ProductValidatorContainer validatorContainer)
+            : base(repository, currentUserService, uow)
+        {
+            _validatorContainer = validatorContainer;
+            _productRepository = repository;
+
+        }
+
+        private ProductReadResponse MapToReadResponse(Product product)
+        {
+            return new ProductReadResponse
+            {
+                Id = product.Id,
+                SKU = product.Sku,
+                Name = product.Name,
+                Description = product.Description,
+                CategoryId = product.CategoryId,
+                UnitOfMeasureId = product.UnitOfMeasureId,
+                CostPrice = product.Cost,
+                UnitPrice = product.UnitPrice,
+                IsActive = product.IsActive,
+
+                CreatedAt = product.CreatedAt,
+                CreatedByUserId = product.CreatedByUserId,
+                CreatedByUserName = product.CreatedByUser?.UserName,
+
+                UpdatedAt = product.UpdatedAt,
+                UpdatedByUserId = product.UpdatedByUserId,
+                UpdatedByUserName = product.UpdatedByUser?.UserName,
+
+                IsDeleted = product.IsDeleted,
+                DeleteAt = product.DeletedAt,
+                DeletedByUserId = product.DeletedByUserId,
+                DeletedByUserName = product.DeletedByUser?.UserName,
+            };
+        }
+
+        private async Task<Result> _UpdateProductStatus(int id
+            , bool isActive, CancellationToken cancellationToken)
+        {
+            if (id <= 0)
+            {
+                return Result.InvalidId();
+            }
+            try
+            {
+                var product = await _productRepository.FindAsync(e => e.Id == id
+                 , cancellationToken);
+                if (product is null)
+                {
+                    return Result.NotFound("Product");
+                }
+                if (product.IsActive == isActive)
+                {
+                    string status = isActive ? "active" : "inactive";
+                    return Result.Failure($"Product is already {status}"
+                        , ErrorType.Conflict);
+                }
+                product.IsActive = isActive;
+                product.UpdatedAt = DateTime.UtcNow;
+                product.UpdatedByUserId = _currentUserService.UserId;
+                _productRepository.Update(product);
+                await _uow.SaveChangesAsync(cancellationToken);
+                return Result.Success;
+
+            }
+            catch (Exception ex)
+            {
+                return Result.Exception(nameof(_UpdateProductStatus), ex);
+            }
+        }
+        public async Task<Result> ActivateAsync(int id
+            , CancellationToken cancellationToken = default)
+        {
+            return await _UpdateProductStatus(id, true, cancellationToken);
+        }
+
+        public async Task<Result<ProductReadResponse>> CreateAsync(ProductCreateRequest request, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var result = _validatorContainer.CreateValidator.Validate(request);
+                if (!result.IsValid)
+                {
+                    var errorMessage = string.Join(";"
+                        , result.Errors.Select(e => e.ErrorMessage));
+                    return Result<ProductReadResponse>.Failure(errorMessage
+                        , ErrorType.BadRequest);
+                }
+                var existingProduct = await _productRepository.IsExistAsync
+                    (p => p.Sku == request.SKU, cancellationToken);
+                if (existingProduct)
+                {
+                    return Result<ProductReadResponse>.Failure("SKU already exists"
+                        , ErrorType.Conflict);
+                }
+                var product = new Product()
+                {
+                    Sku = request.SKU,
+                    Name = request.Name,
+                    Description = request.Description,
+                    CategoryId = request.CategoryId,
+                    UnitOfMeasureId = request.UnitOfMeasureId,
+                    Cost = request.CostPrice,
+                    UnitPrice = request.UnitPrice,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedByUserId = _currentUserService.UserId,
+                    IsActive = true,
+                };
+                _productRepository.Add(product);
+                await _uow.SaveChangesAsync(cancellationToken);
+                return await FindAsync(product.Id, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return Result<ProductReadResponse>.Exception(nameof(CreateAsync), ex);
+
+            }
+        }
+
+        public Task<Result> DeactivateAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return _UpdateProductStatus(id, false, cancellationToken);
+        }
+
+        public async Task<Result> DeleteAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return await SoftDeleteAsync(id, cancellationToken);
+        }
+        public async Task<Result<ProductReadResponse>> FindAsync(int id
+            , CancellationToken cancellationToken = default)
+        {
+            if (id <= 0)
+            {
+                return Result<ProductReadResponse>.InvalidId();
+            }
+            try
+            {
+                var product = await _productRepository.FindAsync(p => p.Id == id
+            , cancellationToken, "CreatedByUser,UpdatedByUser,DeletedByUser");
+                if (product is null)
+                {
+                    return Result<ProductReadResponse>.NotFound("Product");
+                }
+                var response = MapToReadResponse(product);
+                return Result<ProductReadResponse>.Success(response);
+            }
+            catch (Exception ex)
+            {
+                return Result<ProductReadResponse>.Exception(nameof(FindAsync), ex);
+            }
+        }
+
+        public async Task<Result<IReadOnlyCollection<ProductReadResponse>>> GetAllAsync(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var products = await _productRepository.GetAllAsync(null!, cancellationToken
+                    , "CreatedByUser,UpdatedByUser,DeletedByUser");
+
+                var response = products
+                    .Select(p => MapToReadResponse(p)).ToList().AsReadOnly();
+
+                return Result<IReadOnlyCollection<ProductReadResponse>>
+                    .Success(response);
+            }
+            catch (Exception ex)
+            {
+                return Result<IReadOnlyCollection<ProductReadResponse>>
+                    .Exception(nameof(GetAllAsync), ex);
+            }
+        }
+
+        public async Task<Result<ProductReadResponse>> UpdateAsync(int id, ProductUpdateRequest request, CancellationToken cancellationToken = default)
+        {
+            if (id <= 0)
+            {
+                return Result<ProductReadResponse>.InvalidId();
+            }
+            try
+            {
+                var result = _validatorContainer.UpdateValidator.Validate(request);
+                if (!result.IsValid)
+                {
+                    var errorMessage = string.Join(";"
+                        , result.Errors.Select(e => e.ErrorMessage));
+
+                    return Result<ProductReadResponse>.Failure(errorMessage
+                        , ErrorType.BadRequest);
+                }
+                var product = await _productRepository.FindAsync(p => p.Id == id
+                && (!p.IsDeleted), cancellationToken);
+                if (product is null)
+                {
+                    return Result<ProductReadResponse>.NotFound("Product");
+                }
+                product.Name = request.Name;
+                product.Description = request.Description;
+                product.CategoryId = request.CategoryId;
+                product.Cost = request.CostPrice;
+                product.UnitPrice = request.UnitPrice;
+                product.UpdatedAt = DateTime.UtcNow;
+                product.UpdatedByUserId = _currentUserService.UserId;
+
+                _productRepository.Update(product);
+                await _uow.SaveChangesAsync(cancellationToken);
+                return await FindAsync(id, cancellationToken);
+
+            }
+            catch (Exception ex)
+            {
+                return Result<ProductReadResponse>.Exception(nameof(UpdateAsync), ex);
+            }
+        }
+    }
+}
