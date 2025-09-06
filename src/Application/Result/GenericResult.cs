@@ -31,5 +31,11 @@ namespace Application.Results
             return Failure("Invalid Id",ErrorType.BadRequest);
         }
 
+        public static new Result<T> Exception(string methodName, Exception ex)
+        {
+            string errorMessage = $"Exception in {methodName}: {ex.Message}";
+            return Failure(errorMessage, ErrorType.InternalServerError);
+        }
+
     }
 }
