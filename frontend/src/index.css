@@ -1,8 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+@import "tailwindcss";
 /* Custom global styles */
 body {
-  @apply bg-gray-100 text-gray-800;
+  @apply bg-zinc-100 text-zinc-800;
 }
