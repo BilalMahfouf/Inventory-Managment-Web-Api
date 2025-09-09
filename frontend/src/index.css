@@ -1,5 +1,15 @@
 @import "tailwindcss";
 /* Custom global styles */
+:root {
+  --primary-blue: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #dbeafe;
+
+  --secondary-success: #059669;
+  --secondary-warning: #d97706;
+  --secondary-error: #dc2626;
+  --secondary-info: #7c3aed;
+}
 body {
-  @apply bg-zinc-100 text-zinc-800;
+  background-color: #f3f4f6;
 }
