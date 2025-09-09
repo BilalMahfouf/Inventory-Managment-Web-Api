@@ -135,7 +135,7 @@ namespace Presentation.Controllers.Products
             GetProductSuppliersAsync(int id
             , CancellationToken cancellationToken = default)
         {
-            var response = await _service.FindProductSuppliers(id, cancellationToken);
+            var response = await _service.FindProductSuppliersAsync(id, cancellationToken);
             return response.HandleResult();
         }
 
@@ -148,7 +148,7 @@ namespace Presentation.Controllers.Products
         public async Task<ActionResult<IReadOnlyCollection<ProductsLowStockReadResponse>>>
            GetProductsWithLowStockAsync( CancellationToken cancellationToken = default)
         {
-            var response = await _service.GetProductsWithLowStock(cancellationToken);
+            var response = await _service.GetProductsWithLowStockAsync(cancellationToken);
             return response.HandleResult();
         }
 

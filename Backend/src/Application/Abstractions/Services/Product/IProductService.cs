@@ -27,9 +27,9 @@ namespace Application.Abstractions.Services.Products
         Task<Result> DeactivateAsync(int id
             , CancellationToken cancellationToken = default);
 
-        Task<Result<IReadOnlyCollection<ProductSuppliersReadResponse>>> FindProductSuppliers
+        Task<Result<IReadOnlyCollection<ProductSuppliersReadResponse>>> FindProductSuppliersAsync
             (int productId, CancellationToken cancellationToken = default);
         Task<Result<IReadOnlyCollection<ProductsLowStockReadResponse>>>
-            GetProductsWithLowStock(CancellationToken cancellationToken = default);
+            GetProductsWithLowStockAsync(CancellationToken cancellationToken = default);
     }
 }

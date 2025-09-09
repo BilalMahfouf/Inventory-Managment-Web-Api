@@ -245,7 +245,7 @@ namespace Application.Services.Products
         }
 
         public async Task<Result<IReadOnlyCollection<ProductSuppliersReadResponse>>> 
-            FindProductSuppliers(int productId, CancellationToken cancellationToken)
+            FindProductSuppliersAsync(int productId, CancellationToken cancellationToken)
         {
             if(productId <= 0)
             {
@@ -280,12 +280,12 @@ namespace Application.Services.Products
             catch(Exception ex)
             {
                 return Result<IReadOnlyCollection<ProductSuppliersReadResponse>>
-                    .Exception(nameof(FindProductSuppliers), ex);
+                    .Exception(nameof(FindProductSuppliersAsync), ex);
             }
         }
 
         public async Task<Result<IReadOnlyCollection<ProductsLowStockReadResponse>>> 
-            GetProductsWithLowStock(CancellationToken cancellationToken)
+            GetProductsWithLowStockAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -313,7 +313,7 @@ namespace Application.Services.Products
             catch (Exception ex)
             {
                 return Result<IReadOnlyCollection<ProductsLowStockReadResponse>>
-                    .Exception(nameof(GetProductsWithLowStock), ex);
+                    .Exception(nameof(GetProductsWithLowStockAsync), ex);
             }
         }
     }
