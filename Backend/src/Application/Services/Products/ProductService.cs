@@ -34,7 +34,7 @@ namespace Application.Services.Products
         {
             _validatorContainer = validatorContainer;
             _productRepository = repository;
-
+           
         }
 
         private ProductReadResponse MapToReadResponse(Product product)
@@ -241,6 +241,79 @@ namespace Application.Services.Products
             catch (Exception ex)
             {
                 return Result<ProductReadResponse>.Exception(nameof(UpdateAsync), ex);
+            }
+        }
+
+        public async Task<Result<IReadOnlyCollection<ProductSuppliersReadResponse>>> 
+            FindProductSuppliers(int productId, CancellationToken cancellationToken)
+        {
+            if(productId <= 0)
+            {
+                return Result<IReadOnlyCollection<ProductSuppliersReadResponse>>
+                    .InvalidId();
+            }
+            try
+            {
+                var productSuppliers = await _uow.ProductSuppliers.
+                GetAllAsync(e => e.ProductId == productId, cancellationToken
+                , "Product,Supplier");
+                if (productSuppliers is null || !productSuppliers.Any())
+                {
+                    return Result<IReadOnlyCollection<ProductSuppliersReadResponse>>
+                        .NotFound("Product Suppliers");
+                }
+                var response = productSuppliers.Select(
+                    ps => new ProductSuppliersReadResponse
+                {
+                    Id = ps.Id,
+                    ProductId = ps.ProductId,
+                    ProductName = ps.Product.Name,
+                    SupplierId = ps.SupplierId,
+                    SupplierName = ps.Supplier.Name,
+                    SupplierProductCode = ps.SupplierProductCode,
+                    LeadTimeDay = ps.LeadTimeDays,
+                    MinOrderQuantity = ps.MinOrderQuantity
+                }).ToList().AsReadOnly();
+                return Result<IReadOnlyCollection<ProductSuppliersReadResponse>>
+                    .Success(response);
+            }
+            catch(Exception ex)
+            {
+                return Result<IReadOnlyCollection<ProductSuppliersReadResponse>>
+                    .Exception(nameof(FindProductSuppliers), ex);
+            }
+        }
+
+        public async Task<Result<IReadOnlyCollection<ProductsLowStockReadResponse>>> 
+            GetProductsWithLowStock(CancellationToken cancellationToken)
+        {
+            try
+            {
+                
+                var productsWithLowStock = await _uow.Inventories.GetAllAsync(
+                    e => e.QuantityOnHand <= e.ReorderLevel, cancellationToken
+                    , "Product,Location");
+                if(productsWithLowStock is null || !productsWithLowStock.Any())
+                {
+                    return Result<IReadOnlyCollection<ProductsLowStockReadResponse>>
+                        .NotFound("Products with low stock");
+                }
+                var response = productsWithLowStock.Select(p => new ProductsLowStockReadResponse
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.Product.Name,
+                    LocationId = p.LocationId,
+                    LocationName = p.Location.Name,
+                    QuantityOnHand = p.QuantityOnHand,
+                    ReorderLevel = p.ReorderLevel,
+                }).ToList().AsReadOnly();
+                return Result<IReadOnlyCollection<ProductsLowStockReadResponse>>
+                    .Success(response);
+            }
+            catch (Exception ex)
+            {
+                return Result<IReadOnlyCollection<ProductsLowStockReadResponse>>
+                    .Exception(nameof(GetProductsWithLowStock), ex);
             }
         }
     }
