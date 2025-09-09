@@ -26,5 +26,10 @@ namespace Application.Abstractions.Services.Products
             , CancellationToken cancellationToken = default);
         Task<Result> DeactivateAsync(int id
             , CancellationToken cancellationToken = default);
+
+        Task<Result<IReadOnlyCollection<ProductSuppliersReadResponse>>> FindProductSuppliers
+            (int productId, CancellationToken cancellationToken = default);
+        Task<Result<IReadOnlyCollection<ProductsLowStockReadResponse>>>
+            GetProductsWithLowStock(CancellationToken cancellationToken = default);
     }
 }

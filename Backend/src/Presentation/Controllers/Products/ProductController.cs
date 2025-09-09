@@ -122,8 +122,35 @@ namespace Presentation.Controllers.Products
                 id = response.Value?.Id
             });
         }
-        
 
+
+        [HttpGet("{id:int}/suppliers")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        [Authorize]
+        public async Task<ActionResult<IReadOnlyCollection<ProductSuppliersReadResponse>>>
+            GetProductSuppliersAsync(int id
+            , CancellationToken cancellationToken = default)
+        {
+            var response = await _service.FindProductSuppliers(id, cancellationToken);
+            return response.HandleResult();
+        }
+
+        [HttpGet("low-stock")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        [Authorize]
+        public async Task<ActionResult<IReadOnlyCollection<ProductsLowStockReadResponse>>>
+           GetProductsWithLowStockAsync( CancellationToken cancellationToken = default)
+        {
+            var response = await _service.GetProductsWithLowStock(cancellationToken);
+            return response.HandleResult();
+        }
 
 
     }
