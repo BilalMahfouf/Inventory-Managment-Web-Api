@@ -3,6 +3,7 @@ using Application.Abstractions.Repositories.Products;
 using Application.Abstractions.Services.Products;
 using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
+using Application.DTOs.Inventories;
 using Application.DTOs.Products.Request.Products;
 using Application.DTOs.Products.Response.Products;
 using Application.FluentValidations.Products;
@@ -34,7 +35,7 @@ namespace Application.Services.Products
         {
             _validatorContainer = validatorContainer;
             _productRepository = repository;
-           
+
         }
 
         private ProductReadResponse MapToReadResponse(Product product)
@@ -244,10 +245,10 @@ namespace Application.Services.Products
             }
         }
 
-        public async Task<Result<IReadOnlyCollection<ProductSuppliersReadResponse>>> 
+        public async Task<Result<IReadOnlyCollection<ProductSuppliersReadResponse>>>
             FindProductSuppliersAsync(int productId, CancellationToken cancellationToken)
         {
-            if(productId <= 0)
+            if (productId <= 0)
             {
                 return Result<IReadOnlyCollection<ProductSuppliersReadResponse>>
                     .InvalidId();
@@ -264,36 +265,36 @@ namespace Application.Services.Products
                 }
                 var response = productSuppliers.Select(
                     ps => new ProductSuppliersReadResponse
-                {
-                    Id = ps.Id,
-                    ProductId = ps.ProductId,
-                    ProductName = ps.Product.Name,
-                    SupplierId = ps.SupplierId,
-                    SupplierName = ps.Supplier.Name,
-                    SupplierProductCode = ps.SupplierProductCode,
-                    LeadTimeDay = ps.LeadTimeDays,
-                    MinOrderQuantity = ps.MinOrderQuantity
-                }).ToList().AsReadOnly();
+                    {
+                        Id = ps.Id,
+                        ProductId = ps.ProductId,
+                        ProductName = ps.Product.Name,
+                        SupplierId = ps.SupplierId,
+                        SupplierName = ps.Supplier.Name,
+                        SupplierProductCode = ps.SupplierProductCode,
+                        LeadTimeDay = ps.LeadTimeDays,
+                        MinOrderQuantity = ps.MinOrderQuantity
+                    }).ToList().AsReadOnly();
                 return Result<IReadOnlyCollection<ProductSuppliersReadResponse>>
                     .Success(response);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Result<IReadOnlyCollection<ProductSuppliersReadResponse>>
                     .Exception(nameof(FindProductSuppliersAsync), ex);
             }
         }
 
-        public async Task<Result<IReadOnlyCollection<ProductsLowStockReadResponse>>> 
+        public async Task<Result<IReadOnlyCollection<ProductsLowStockReadResponse>>>
             GetProductsWithLowStockAsync(CancellationToken cancellationToken)
         {
             try
             {
-                
+
                 var productsWithLowStock = await _uow.Inventories.GetAllAsync(
                     e => e.QuantityOnHand <= e.ReorderLevel, cancellationToken
                     , "Product,Location");
-                if(productsWithLowStock is null || !productsWithLowStock.Any())
+                if (productsWithLowStock is null || !productsWithLowStock.Any())
                 {
                     return Result<IReadOnlyCollection<ProductsLowStockReadResponse>>
                         .NotFound("Products with low stock");
@@ -314,6 +315,46 @@ namespace Application.Services.Products
             {
                 return Result<IReadOnlyCollection<ProductsLowStockReadResponse>>
                     .Exception(nameof(GetProductsWithLowStockAsync), ex);
+            }
+        }
+
+        public async Task<Result<IReadOnlyCollection<InventoryBaseReadResponse>>>
+            FindProductInInventoryAsync(
+            int id, CancellationToken cancellationToken = default)
+        {
+            if (id <= 0)
+            {
+                return Result<IReadOnlyCollection<InventoryBaseReadResponse>>
+                    .InvalidId();
+            }
+            try
+            {
+                var inventories = await _uow.Inventories.GetAllAsync(
+                    e => e.ProductId == id, cancellationToken
+                    , "Product,Location");
+                if (inventories is null || !inventories.Any())
+                {
+                    return Result<IReadOnlyCollection<InventoryBaseReadResponse>>
+                        .NotFound("Inventories for the product");
+                }
+                var response = inventories.Select(i => new InventoryBaseReadResponse
+                {
+                    Id = i.Id,
+                    ProductId = i.ProductId,
+                    ProductName = i.Product.Name,
+                    LocationId = i.LocationId,
+                    LocationName = i.Location.Name,
+                    QuantityOnHand = i.QuantityOnHand,
+                    ReorderLevel = i.ReorderLevel,
+                    MaxLevel = i.MaxLevel
+                }).ToList().AsReadOnly();
+                return Result<IReadOnlyCollection<InventoryBaseReadResponse>>
+                    .Success(response);
+            }
+            catch (Exception ex)
+            {
+                return Result<IReadOnlyCollection<InventoryBaseReadResponse>>
+                    .Exception(nameof(FindProductInInventoryAsync), ex);
             }
         }
     }

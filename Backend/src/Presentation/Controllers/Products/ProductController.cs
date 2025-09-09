@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Services.Products;
+using Application.DTOs.Inventories;
 using Application.DTOs.Products.Request.Products;
 using Application.DTOs.Products.Response.Products;
 using Microsoft.AspNetCore.Authorization;
@@ -149,6 +150,22 @@ namespace Presentation.Controllers.Products
            GetProductsWithLowStockAsync( CancellationToken cancellationToken = default)
         {
             var response = await _service.GetProductsWithLowStockAsync(cancellationToken);
+            return response.HandleResult();
+        }
+
+        [HttpGet("{id:int}/inventory")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        [Authorize]
+        public async Task<ActionResult<IReadOnlyCollection<InventoryBaseReadResponse>>>
+            GetProductAcrossLocations(int id
+            , CancellationToken cancellationToken = default)
+        {
+            var response = await _service.FindProductInInventoryAsync(id
+                , cancellationToken);
             return response.HandleResult();
         }
 
