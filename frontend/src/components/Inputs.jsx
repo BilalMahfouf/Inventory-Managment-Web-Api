@@ -34,7 +34,7 @@ function InputLabel({
         type={type}
         placeholder={placeholder}
         className={`
-          w-full h-11 px-4 rounded-lg text-base bg-gray-100
+          w-full h-11 px-4 rounded-lg text-base bg-gray-50
           border ${error ? "border-red-500 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"}
           focus:outline-none focus:ring-2
           transition-colors  ${LeftIcon ? "pl-10" : ""}  
@@ -44,7 +44,7 @@ function InputLabel({
       
         {/* Right Icon */}
         {RightIcon && (
-          <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 
+          <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-tertiary 
           cursor-pointer z-10 hover:text-gray-900" onClick={setIsHidden(!isHidden)} >
             <RightIcon className="h-5 w-5" />
           </button>
