@@ -7,6 +7,9 @@ module.exports = {
     ],
     theme: {
         extend: {
+            fontFamily: {
+                sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            },
             colors: {
                 primary: {
                     blue: "rgb(var(--primary-blue) / <alpha-value>)",
@@ -19,6 +22,8 @@ module.exports = {
                     error: "rgb(var(--secondary-error) / <alpha-value>)",
                     info: "rgb(var(--secondary-info) / <alpha-value>)",
                 },
+                background: "var(--color-background)",
+                textTertiary: "var(--color-text-tertiary)"
             }
 
 

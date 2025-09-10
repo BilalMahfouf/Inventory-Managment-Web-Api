@@ -9,7 +9,9 @@
   --color-secondary-warning: #d97706;
   --color-secondary-error: #dc2626;
   --color-secondary-info: #7c3aed;
+  --color-background: HSL(0, 0%, 98%);
+  --color-text-tertiary: #6b7280;
 }
 body {
-  background-color: rgb(252, 252, 252);
+  background-color: bg-gradient-to-br;
 }
