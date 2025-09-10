@@ -22,8 +22,8 @@ export default function Button({
     <button
       className={` 
         inline-flex items-center justify-center
-        px-6 py-3 rounded-lg font-semibold h-11 w-[400px]
-        transition-colors duration-200 
+         py-3 rounded-lg font-semibold h-11 w-[400px]
+        transition-colors duration-200 cursor-pointer
         ${isDisabled ? VARIANTS.disabled : VARIANTS[variant]}
       `}
       disabled={isDisabled}
