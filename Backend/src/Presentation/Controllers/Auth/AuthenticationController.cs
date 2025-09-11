@@ -14,7 +14,7 @@ using System.Security.Claims;
 
 namespace Presentation.Controllers.Auth
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
@@ -28,9 +28,9 @@ namespace Presentation.Controllers.Auth
         [HttpPost("login")]
         [AllowAnonymous]
         public async Task<ActionResult<LoginResponse>> LoginAsync([FromBody]
-            LoginRequest loginRequest,CancellationToken cancellationToken)
+            LoginRequest loginRequest, CancellationToken cancellationToken)
         {
-            var response= await _service.LoginAsync(loginRequest,cancellationToken);
+            var response = await _service.LoginAsync(loginRequest, cancellationToken);
             return response.HandleResult();
         }
 
@@ -47,15 +47,15 @@ namespace Presentation.Controllers.Auth
 
         public async Task<ActionResult<string>> ResetPasswordAsync(
             ResetPasswordRequest request
-            ,CancellationToken cancellationToken)
+            , CancellationToken cancellationToken)
         {
-            var response =await _service.ResetPasswordAsync(request, cancellationToken);
+            var response = await _service.ResetPasswordAsync(request, cancellationToken);
             return response.HandleResult();
         }
 
         [HttpPost("forget-password")]
         public async Task<ActionResult<string>> ForgetPasswordAsync(
-            ForgetPasswordRequest request,CancellationToken cancellationToken)
+            ForgetPasswordRequest request, CancellationToken cancellationToken)
         {
             var response = await _service.ForgetPasswordAsync(request, cancellationToken);
             return response.HandleResult();
@@ -63,15 +63,15 @@ namespace Presentation.Controllers.Auth
 
         [HttpPost("confirm-email")]
         public async Task<ActionResult<string>> ConfirmEmailAsync(ConfirmEmailRequest request
-            ,CancellationToken cancellationToken)
+            , CancellationToken cancellationToken)
         {
-            var response=await _service.ConfirmEmailAsync(request, cancellationToken);
+            var response = await _service.ConfirmEmailAsync(request, cancellationToken);
             return response.HandleResult();
         }
 
         [HttpPost("send-confirm-email")]
         public async Task<ActionResult<string>> SendConfirmEmailAsync(
-            SendConfirmEmailRequest request,CancellationToken cancellationToken)
+            SendConfirmEmailRequest request, CancellationToken cancellationToken)
         {
             var response = await _service.SendConfirmEmailAsync(request
                 , cancellationToken);
