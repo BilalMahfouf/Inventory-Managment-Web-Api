@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(InventoryManagmentDBContext))]
-    partial class InventoryManagmentDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250911214514_AddImagesTable1")]
+    partial class AddImagesTable1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,7 +63,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "ProductId" }, "IX_AlertRules_ProductId");
 
-                    b.ToTable("AlertRules", (string)null);
+                    b.ToTable("AlertRules");
                 });
 
             modelBuilder.Entity("Domain.Entities.AlertType", b =>
@@ -97,7 +100,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CreatedByUserId");
 
-                    b.ToTable("AlertTypes", (string)null);
+                    b.ToTable("AlertTypes");
                 });
 
             modelBuilder.Entity("Domain.Entities.AuditLog", b =>
@@ -147,7 +150,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "UserId" }, "IX_AuditLogs_UserId");
 
-                    b.ToTable("AuditLogs", (string)null);
+                    b.ToTable("AuditLogs");
                 });
 
             modelBuilder.Entity("Domain.Entities.ConfirmEmailToken", b =>
@@ -178,7 +181,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ConfirmEmailTokens", (string)null);
+                    b.ToTable("ConfirmEmailTokens");
                 });
 
             modelBuilder.Entity("Domain.Entities.Customer", b =>
@@ -258,7 +261,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "Name" }, "IX_Customers_Name");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("Domain.Entities.CustomerCategory", b =>
@@ -317,7 +320,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex(new[] { "Name" }, "UQ_CustomerCategories_Name")
                         .IsUnique();
 
-                    b.ToTable("CustomerCategories", (string)null);
+                    b.ToTable("CustomerCategories");
                 });
 
             modelBuilder.Entity("Domain.Entities.CustomerContact", b =>
@@ -444,7 +447,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UpdatedByUserId");
 
-                    b.ToTable("Image", (string)null);
+                    b.ToTable("Image");
                 });
 
             modelBuilder.Entity("Domain.Entities.Inventory", b =>
@@ -558,7 +561,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "Name" }, "IX_Locations_Name");
 
-                    b.ToTable("Locations", (string)null);
+                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("Domain.Entities.LocationType", b =>
@@ -604,7 +607,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex(new[] { "Name" }, "UQ_LocationTypes_Name")
                         .IsUnique();
 
-                    b.ToTable("LocationTypes", (string)null);
+                    b.ToTable("LocationTypes");
                 });
 
             modelBuilder.Entity("Domain.Entities.Product", b =>
@@ -690,7 +693,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex(new[] { "Sku" }, "UQ_Products_SKU")
                         .IsUnique();
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Domain.Entities.ProductCategory", b =>
@@ -745,7 +748,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "ParentId" }, "IX_ProductCategories_ParentId");
 
-                    b.ToTable("ProductCategories", (string)null);
+                    b.ToTable("ProductCategories");
                 });
 
             modelBuilder.Entity("Domain.Entities.ProductImage", b =>
@@ -800,7 +803,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "ProductId" }, "IX_ProductImages_ProductId");
 
-                    b.ToTable("ProductImages", (string)null);
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("Domain.Entities.ProductSupplier", b =>
@@ -857,7 +860,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "SupplierId" }, "IX_ProductSuppliers_SupplierId");
 
-                    b.ToTable("ProductSuppliers", (string)null);
+                    b.ToTable("ProductSuppliers");
                 });
 
             modelBuilder.Entity("Domain.Entities.PurchaseOrder", b =>
@@ -899,7 +902,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "SupplierId" }, "IX_PurchaseOrders_SupplierId");
 
-                    b.ToTable("PurchaseOrders", (string)null);
+                    b.ToTable("PurchaseOrders");
                 });
 
             modelBuilder.Entity("Domain.Entities.PurchaseOrderItem", b =>
@@ -946,7 +949,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "PurchaseOrderId" }, "IX_PurchaseOrderItems_PurchaseOrderId");
 
-                    b.ToTable("PurchaseOrderItems", (string)null);
+                    b.ToTable("PurchaseOrderItems");
                 });
 
             modelBuilder.Entity("Domain.Entities.SalesOrder", b =>
@@ -988,7 +991,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "CustomerId" }, "IX_SalesOrders_CustomerId");
 
-                    b.ToTable("SalesOrders", (string)null);
+                    b.ToTable("SalesOrders");
                 });
 
             modelBuilder.Entity("Domain.Entities.SalesOrderItem", b =>
@@ -1035,7 +1038,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "SalesOrderId" }, "IX_SalesOrderItems_SalesOrderId");
 
-                    b.ToTable("SalesOrderItems", (string)null);
+                    b.ToTable("SalesOrderItems");
                 });
 
             modelBuilder.Entity("Domain.Entities.StockMovement", b =>
@@ -1087,7 +1090,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "ProductId", "CreatedAt" }, "IX_StockMovements_Product_Date");
 
-                    b.ToTable("StockMovements", (string)null);
+                    b.ToTable("StockMovements");
                 });
 
             modelBuilder.Entity("Domain.Entities.StockMovementType", b =>
@@ -1137,7 +1140,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex(new[] { "Name" }, "UQ_StockMovementTypes_Name")
                         .IsUnique();
 
-                    b.ToTable("StockMovementTypes", (string)null);
+                    b.ToTable("StockMovementTypes");
                 });
 
             modelBuilder.Entity("Domain.Entities.StockTransfer", b =>
@@ -1183,7 +1186,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "ToLocationId" }, "IX_StockTransfers_ToLocationId");
 
-                    b.ToTable("StockTransfers", (string)null);
+                    b.ToTable("StockTransfers");
                 });
 
             modelBuilder.Entity("Domain.Entities.Supplier", b =>
@@ -1262,7 +1265,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "SupplierTypeId" }, "IX_Suppliers_SupplierTypeId");
 
-                    b.ToTable("Suppliers", (string)null);
+                    b.ToTable("Suppliers");
                 });
 
             modelBuilder.Entity("Domain.Entities.SupplierContact", b =>
@@ -1334,7 +1337,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "SupplierId" }, "IX_SupplierContacts_SupplierId");
 
-                    b.ToTable("SupplierContacts", (string)null);
+                    b.ToTable("SupplierContacts");
                 });
 
             modelBuilder.Entity("Domain.Entities.SupplierType", b =>
@@ -1383,7 +1386,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex(new[] { "Name" }, "UQ_SupplierTypes_Name")
                         .IsUnique();
 
-                    b.ToTable("SupplierTypes", (string)null);
+                    b.ToTable("SupplierTypes");
                 });
 
             modelBuilder.Entity("Domain.Entities.UnitOfMeasure", b =>
@@ -1437,7 +1440,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex(new[] { "Name" }, "UQ_UnitOfMeasures_Name")
                         .IsUnique();
 
-                    b.ToTable("UnitOfMeasures", (string)null);
+                    b.ToTable("UnitOfMeasures");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -1524,7 +1527,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex(new[] { "Email" }, "UQ_Users_Email")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserRole", b =>
@@ -1577,7 +1580,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex(new[] { "Name" }, "UQ_UserRoles_Name")
                         .IsUnique();
 
-                    b.ToTable("UserRoles", (string)null);
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserSession", b =>
@@ -1613,7 +1616,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "UserId" }, "IX_UserSessions_UserId");
 
-                    b.ToTable("UserSessions", (string)null);
+                    b.ToTable("UserSessions");
                 });
 
             modelBuilder.Entity("Domain.Entities.AlertRule", b =>

@@ -19,7 +19,6 @@ namespace Infrastructure.Persistence.Configurations
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.DeletedAt).HasColumnType("datetime");
-            entity.Property(e => e.ImageUrl).HasMaxLength(500);
 
             entity.HasOne(d => d.CreatedByUser).WithMany()
                 .HasForeignKey(d => d.CreatedByUserId)
@@ -34,6 +33,16 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ProductImages_Products");
+
+            entity.HasOne(e => e.UpdatedByUser).WithMany()
+                .HasForeignKey(e => e.UpdatedByUserId).OnDelete(
+                DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Image).WithMany()
+                .HasForeignKey(e => e.ImageId).OnDelete(
+                DeleteBehavior.Restrict);
+
+            entity.HasIndex(i=>i.ImageId);
 
             OnConfigurePartial(entity);
         }
