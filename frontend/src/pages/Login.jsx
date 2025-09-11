@@ -1,7 +1,8 @@
-import Cart from "@components/Cart/Cart";
+import Cart from "@components/Carts/Cart";
 import "../index.css";
 import Link from "@components/Link";
 import { Lock } from "lucide-react";
+
 
 export  function Login(){
     
@@ -17,11 +18,11 @@ export  function Login(){
 
             </div>
             
-        <Cart />
+        <Cart  />
         <footer className="mt-6">
-             <p className="text-sm text-text-tertiary">By signing in, you agree to our 
-                <Link to="" content="Terms" /> of Service and 
-          <Link to="" content=" Privacy Policy" /></p>
+             <div className="text-sm text-text-tertiary">By signing in, you agree to our 
+                <Link to="" content=" Terms" /> of Service and 
+          <Link to="" content=" Privacy Policy" /></div>
         </footer>
        
         </div>

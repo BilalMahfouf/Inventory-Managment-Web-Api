@@ -14,12 +14,16 @@ export default function Button({
   variant = "primary",
   disabled = false,
   loading = false,
+  onClickHandler=()=>{},
   ...props
 }) {
   const isDisabled = disabled || loading;
 
   return (
-    <button
+    <button onClick={e=>{
+        onClickHandler(e);
+        console.log("button is clicked");
+    }}
       className={` 
         inline-flex items-center justify-center
          py-3 rounded-lg font-semibold h-11 w-[400px]

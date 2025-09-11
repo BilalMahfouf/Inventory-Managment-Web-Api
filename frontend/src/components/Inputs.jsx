@@ -9,6 +9,7 @@ function InputLabel({
   rightIcon:RightIcon,
   error,
   label,
+  onChange,
   ...props
 }) {
     const [isHidden,setIsHidden] = useState(true);
@@ -33,6 +34,7 @@ function InputLabel({
       <input
         type={type}
         placeholder={placeholder}
+        onChange={onChange}
         className={`
           w-full h-11 px-4 rounded-lg text-base bg-gray-50
           border ${error ? "border-red-500 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"}

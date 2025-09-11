@@ -8,6 +8,7 @@ export default  function PasswordInputLabel({
   rightIconReplacment:RightIconReplacment,
   error,
   label,
+  onChange,
   ...props
 }) {
     const [isHidden,setIsHidden] = useState(true);
@@ -33,7 +34,7 @@ export default  function PasswordInputLabel({
         )}
 
       <input
-        type={isHidden?"password":"text"}
+        type={isHidden?"password":"text"} onChange={onChange}
         placeholder={placeholder}
         className={`
           w-full h-11 px-4 rounded-lg text-base bg-gray-50
