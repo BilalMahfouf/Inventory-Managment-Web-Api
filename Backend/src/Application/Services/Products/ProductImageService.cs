@@ -17,13 +17,13 @@ using System.Threading.Tasks;
 
 namespace Application.Services.Products
 {
-    public class ProcutImageService : IProductImageService
+    public class ProductImageService : IProductImageService
     {
         private readonly IUnitOfWork _uow;
         private readonly IValidator<ProductImageUploadRequest> _validator;
         private readonly ImageService _imageService;
         private readonly ICurrentUserService _currentUserService;
-        public ProcutImageService(IUnitOfWork uow
+        public ProductImageService(IUnitOfWork uow
             , IValidator<ProductImageUploadRequest> validator
             , ImageService imageService
             , ICurrentUserService currentUserService)
