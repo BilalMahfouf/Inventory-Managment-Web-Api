@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.Products.Request.ProductImages;
 using Application.DTOs.Products.Response.ProductImages;
+using Application.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,17 +11,16 @@ namespace Application.Abstractions.Services.Product
 {
     public interface IProductImageService
     {
-        Task<IReadOnlyCollection<ProductImageReadResponse>> GetProductImages(
+        Task<Result<IReadOnlyCollection<ProductImageReadResponse>>> GetProductImages(
             int productId,
             CancellationToken cancellationToken = default);
-        Task<ProductImageReadResponse> AddProductImageAsync(int productId,
+        Task<Result<ProductImageReadResponse>> AddProductImageAsync(
             ProductImageUploadRequest request,
             CancellationToken cancellationToken = default);
-        Task DeleteProductImageAsync(int productId,int productImageId,
+        Task<Result> DeleteProductImageAsync(int id,
             CancellationToken cancellationToken = default);
-        Task<ProductImageReadResponse> UpdateProductImageAsync(int productId
-            , int ProductImageId, CancellationToken cancellationToken = default);
-        Task SetProductImagePrimaryAsync(int productId
-            , int productImageId, CancellationToken cancellationToken = default);
+       
+        Task<Result> SetProductImagePrimaryAsync(int id,
+            CancellationToken cancellationToken = default);
     }
 }

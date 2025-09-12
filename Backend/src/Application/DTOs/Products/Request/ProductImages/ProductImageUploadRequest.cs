@@ -8,9 +8,12 @@ namespace Application.DTOs.Products.Request.ProductImages
 {
     public sealed record ProductImageUploadRequest
     {
-        public Stream FileStream { get; set; } = null!;
-        public string FileName { get; set; } = null!;
-        public string? Alt { get; set; }
-        public bool IsPrimary { get; set; }
+        public int ProductId { get; init; }
+        public Stream FileStream { get; init; } = null!;
+        public string FileName { get; init; } = null!;
+        public string MimeType { get; init; } = null!;
+        public long FileSize { get; init; }
+        public string? Alt { get; init; }
+        public bool IsPrimary { get; init; }
     }
 }
