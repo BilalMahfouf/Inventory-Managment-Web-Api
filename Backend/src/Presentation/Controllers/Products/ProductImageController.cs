@@ -25,7 +25,7 @@ namespace Presentation.Controllers.Products
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-
+        [Authorize]
         public async Task<ActionResult<ProductImageReadResponse>>
             UploadProductImageAsync(
             [FromRoute] int productId, [FromForm] bool isPrimary
