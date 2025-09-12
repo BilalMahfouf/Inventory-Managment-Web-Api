@@ -17,12 +17,7 @@ public partial class ProductImage : IEntity
     public DateTime CreatedAt { get; set; }
     public int CreatedByUserId { get; set; }
 
-   
-   
-    public virtual User CreatedByUser { get; set; } = null!;
-   
-
     public virtual Image Image { get; set; } = null!;
-
+    public virtual User CreatedByUser { get; set; } = null!;
     public virtual Product Product { get; set; } = null!;
 }

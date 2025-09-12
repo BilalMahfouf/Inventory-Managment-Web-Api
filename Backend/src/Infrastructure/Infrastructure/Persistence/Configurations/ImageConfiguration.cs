@@ -34,8 +34,7 @@ namespace Infrastructure.Infrastructure.Persistence.Configurations
             builder.Property(i => i.CreatedAt)
                 .IsRequired();
 
-            builder.Property(i => i.IsDeleted)
-                .HasDefaultValue(false);
+           
 
             // Relationships (Audit trail)
             builder.HasOne(i => i.CreatedByUser)
@@ -43,21 +42,11 @@ namespace Infrastructure.Infrastructure.Persistence.Configurations
                 .HasForeignKey(i => i.CreatedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(i => i.UpdatedByUser)
-                .WithMany()
-                .HasForeignKey(i => i.UpdatedByUserId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-            builder.HasOne(i => i.DeletedByUser)
-                .WithMany()
-                .HasForeignKey(i => i.DeletedByUserId)
-                .OnDelete(DeleteBehavior.NoAction);
 
             // Indexes
             builder.HasIndex(i => i.FileName);
             builder.HasIndex(i => i.StoragePath).IsUnique();
             builder.HasIndex(i => i.MimeType);
-            builder.HasIndex(i => i.IsDeleted);
             builder.HasIndex(i => i.CreatedByUserId);
         }
     }
