@@ -18,29 +18,22 @@ namespace Infrastructure.Persistence.Configurations
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+           
 
             entity.HasOne(d => d.CreatedByUser).WithMany()
                 .HasForeignKey(d => d.CreatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ProductImages_CreatedByUser");
 
-            entity.HasOne(d => d.DeletedByUser).WithMany()
-                .HasForeignKey(d => d.DeletedByUserId)
-                .HasConstraintName("FK_ProductImages_DeletedByUser");
-
+            
             entity.HasOne(d => d.Product).WithMany()
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ProductImages_Products");
 
-            entity.HasOne(e => e.UpdatedByUser).WithMany()
-                .HasForeignKey(e => e.UpdatedByUserId).OnDelete(
-                DeleteBehavior.Restrict);
-
             entity.HasOne(e => e.Image).WithMany()
                 .HasForeignKey(e => e.ImageId).OnDelete(
-                DeleteBehavior.Restrict);
+                DeleteBehavior.NoAction);
 
             entity.HasIndex(i=>i.ImageId);
 
