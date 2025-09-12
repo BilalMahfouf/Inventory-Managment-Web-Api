@@ -1,10 +1,13 @@
-﻿using Application.Abstractions.Services.Products;
+﻿using Application.Abstractions.Services.Images;
+using Application.Abstractions.Services.Product;
+using Application.Abstractions.Services.Products;
 using Application.Abstractions.Services.User;
 using Application.FluentValidations.Products;
 using Application.FluentValidations.User;
 using Application.FluentValidations.User.Configuration;
 using Application.Helpers.Auth;
 using Application.Services.Auth;
+using Application.Services.Images;
 using Application.Services.Products;
 using Application.Services.Shared;
 using Application.Services.UnitOfMeasures;
@@ -37,7 +40,10 @@ namespace Application
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
             services.AddScoped<UnitOfMeasureService>();
             services.AddScoped<IProductService, ProductService>();
-            
+            services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<ImageService>();
+            services.AddScoped<IProductImageService, ProductImageService>();
+
 
             return services;
         }
