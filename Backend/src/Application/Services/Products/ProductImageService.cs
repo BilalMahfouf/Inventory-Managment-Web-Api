@@ -4,6 +4,7 @@ using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
 using Application.DTOs.Products.Request.ProductImages;
 using Application.DTOs.Products.Response.ProductImages;
+using Application.DTOs.Images;
 using Application.Results;
 using Application.Services.Images;
 using Domain.Entities;
@@ -48,7 +49,7 @@ namespace Application.Services.Products
                     return Result<ProductImageReadResponse>.Failure(errorMessage
                         , ErrorType.BadRequest);
                 }
-                var imageRequest = new ImageUploadRequest()
+                var imageRequest = new Application.DTOs.Images.ImageUploadRequest()
                 {
                     FileName = request.FileName,
                     FileStream = request.FileStream,

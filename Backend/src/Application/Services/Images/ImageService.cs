@@ -34,7 +34,7 @@ namespace Application.Services.Images
             _uow = uow;
         }
 
-        public async Task<Result<Image>> AddImageAsync(ImageUploadRequest request
+        public async Task<Result<Image>> AddImageAsync(Application.DTOs.Images.ImageUploadRequest request
             , CancellationToken cancellationToken = default)
         {
             try
@@ -125,16 +125,5 @@ namespace Application.Services.Images
             }
         }
 
-    }
-
-    public sealed record ImageUploadRequest
-    {
-        public Stream FileStream { get; init; } = null!;
-        public string FileName { get; init; } = string.Empty;
-        public string MimeType { get; init; } = string.Empty;
-        public long SizeInBytes { get; init; }
-        public string? Alt { get; init; }
-
-    
     }
 }
