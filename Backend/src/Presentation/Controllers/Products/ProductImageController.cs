@@ -20,12 +20,13 @@ namespace Presentation.Controllers.Products
         }
 
         [HttpPost]
+        [Consumes("multipart/form-data")] // 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        [Authorize]
+       [Authorize]
         public async Task<ActionResult<ProductImageReadResponse>>
             UploadProductImageAsync(
             [FromRoute] int productId, [FromForm] bool isPrimary
@@ -58,7 +59,7 @@ namespace Presentation.Controllers.Products
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        [Authorize]
+       [Authorize]
         public async Task<ActionResult<IReadOnlyCollection<ProductImageReadResponse>>>
             GetProductImagesAsync([FromRoute] int productId
             , CancellationToken cancellationToken = default)

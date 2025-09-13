@@ -34,7 +34,8 @@ namespace Presentation.Controllers.Misc
 
             if(response.Value !=null && response.IsSuccess)
             {
-                return File(response.Value.ImageStream, response.Value.MimeType);
+                return File(response.Value.ImageStream, response.Value.MimeType
+                    ,response.Value.FileName);
             }
             return response.ErrorType switch
             {
