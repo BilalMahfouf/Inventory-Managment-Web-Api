@@ -27,6 +27,7 @@ namespace Infrastructure.UOW
         public IBaseRepository<Customer> Customers { get; }
         public IBaseRepository<CustomerCategory> CustomerCategories { get; }
         public IBaseRepository<CustomerContact> CustomerContacts { get; }
+        public IBaseRepository<Image> Images { get; }
         public IBaseRepository<Inventory> Inventories { get; }
         public IBaseRepository<Location> Locations { get; }
         public IBaseRepository<LocationType> LocationTypes { get; }
@@ -60,6 +61,7 @@ namespace Infrastructure.UOW
             Customers = new BaseRepository<Customer>(_context);
             CustomerCategories = new BaseRepository<CustomerCategory>(_context);
             CustomerContacts = new BaseRepository<CustomerContact>(_context);
+            Images = new BaseRepository<Image>(_context);
             Inventories = new BaseRepository<Inventory>(_context);
             Locations = new BaseRepository<Location>(_context);
             LocationTypes = new BaseRepository<LocationType>(_context);
