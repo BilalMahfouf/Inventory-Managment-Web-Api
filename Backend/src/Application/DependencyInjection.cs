@@ -45,6 +45,7 @@ namespace Application
             services.AddScoped<ImageService>();
             services.AddScoped<IProductImageService, ProductImageService>();
             services.AddScoped<LocationTypeService>();
+            services.AddScoped<LocationService>();
 
 
             return services;
