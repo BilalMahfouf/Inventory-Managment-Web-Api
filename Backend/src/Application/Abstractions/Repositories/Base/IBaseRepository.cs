@@ -21,5 +21,7 @@ namespace Application.Abstractions.Repositories.Base
 
         Task<bool> IsExistAsync(Expression<Func<TEntity, bool>> predicate
             ,CancellationToken cancellationToken = default);
+
+        IQueryable<TEntity> AsQueryable();
     }
 }

@@ -30,7 +30,7 @@ namespace Presentation.Extensions
         public static ActionResult<T> HandleResult<T>(
             this Result<T> result,
             string? routeName = null,
-            object? routeValues = null) where T : class
+            object? routeValues = null) 
         {
             if (!result.IsSuccess)
                 return HandleError(result);

@@ -85,5 +85,10 @@ namespace Infrastructure.Repositories.Base
             }
             return false;
         }
+
+        public IQueryable<TEntity> AsQueryable()
+        {
+            return _dbSet.AsQueryable();
+        }
     }
 }

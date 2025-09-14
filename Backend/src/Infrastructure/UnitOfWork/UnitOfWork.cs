@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Repositories;
 using Application.Abstractions.Repositories.Base;
+using Application.Abstractions.Repositories.Inventories;
 using Application.Abstractions.Repositories.Products;
 using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
@@ -9,6 +10,7 @@ using Domain.Entities;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Configurations;
 using Infrastructure.Repositories.Base;
+using Infrastructure.Repositories.Inventories;
 using Infrastructure.Repositories.Products;
 using Infrastructure.Repositories.User;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +34,7 @@ namespace Infrastructure.UOW
         public IBaseRepository<CustomerCategory> CustomerCategories { get; }
         public IBaseRepository<CustomerContact> CustomerContacts { get; }
         public IBaseRepository<Image> Images { get; }
-        public IBaseRepository<Inventory> Inventories { get; }
+        public IInventoryRepository Inventories { get; }
         public IBaseRepository<Location> Locations { get; }
         public IBaseRepository<LocationType> LocationTypes { get; }
         public IProductRepository Products { get; }
@@ -67,7 +69,7 @@ namespace Infrastructure.UOW
             CustomerCategories = new BaseRepository<CustomerCategory>(_context);
             CustomerContacts = new BaseRepository<CustomerContact>(_context);
             Images = new BaseRepository<Image>(_context);
-            Inventories = new BaseRepository<Inventory>(_context);
+            Inventories = new InventoryRepository(_context);
             Locations = new BaseRepository<Location>(_context);
             LocationTypes = new BaseRepository<LocationType>(_context);
             Products = new ProductRepository(_context);

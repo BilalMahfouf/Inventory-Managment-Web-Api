@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Application.Results
 {
     public class Result<T> :
-        Result where T : class
+        Result
     {
         public T? Value { get; }
 

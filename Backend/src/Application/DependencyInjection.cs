@@ -8,6 +8,7 @@ using Application.FluentValidations.User.Configuration;
 using Application.Helpers.Auth;
 using Application.Services.Auth;
 using Application.Services.Images;
+using Application.Services.Inventories;
 using Application.Services.Locations;
 using Application.Services.Products;
 using Application.Services.Shared;
@@ -46,6 +47,7 @@ namespace Application
             services.AddScoped<IProductImageService, ProductImageService>();
             services.AddScoped<LocationTypeService>();
             services.AddScoped<LocationService>();
+            services.AddScoped<InventoryService>();
 
 
             return services;
