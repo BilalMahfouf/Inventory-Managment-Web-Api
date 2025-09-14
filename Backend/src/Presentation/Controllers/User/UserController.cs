@@ -25,7 +25,7 @@ namespace Presentation.Controllers.User
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
 
-        [Authorize]
+       
         public async Task<ActionResult<IEnumerable<UserReadResponse>>> GetAllUsersAsync(
             CancellationToken cancellationToken)
         {

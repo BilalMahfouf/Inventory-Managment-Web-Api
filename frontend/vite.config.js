@@ -5,6 +5,16 @@ import path from "path";
 // https://vite.dev/config/
 export default defineConfig({
     plugins: [react()],
+    server: {
+        proxy: {
+            '/api': {
+                target: 'http://localhost:5055/', //  ASP.NET backend
+                changeOrigin: true,
+                secure: false
+            }
+        },
+
+    },
     resolve: {
         alias: {
             "@": path.resolve(__dirname, "./src"),
@@ -14,3 +24,4 @@ export default defineConfig({
         },
     },
 })
+

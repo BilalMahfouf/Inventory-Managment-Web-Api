@@ -8,6 +8,7 @@ export default  function PasswordInputLabel({
   rightIconReplacment:RightIconReplacment,
   error,
   label,
+  onChange,
   ...props
 }) {
     const [isHidden,setIsHidden] = useState(true);
@@ -33,10 +34,10 @@ export default  function PasswordInputLabel({
         )}
 
       <input
-        type={isHidden?"password":"text"}
+        type={isHidden?"password":"text"} onChange={onChange}
         placeholder={placeholder}
         className={`
-          w-full h-11 px-4 rounded-lg text-base
+          w-full h-11 px-4 rounded-lg text-base bg-gray-50
           border ${error ? "border-red-500 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"}
           focus:outline-none focus:ring-2
           transition-colors  ${LeftIcon ? "pl-10" : ""}  
