@@ -70,6 +70,11 @@ namespace Infrastructure.Repositories.Base
             _dbSet.Update(entity);
         }
 
+        public void Delete (TEntity entity)
+        {
+            _dbSet.Remove(entity);
+        }
+
         public async Task<bool> IsExistAsync(Expression<Func<TEntity, bool>> predicate
             , CancellationToken cancellationToken)
         {

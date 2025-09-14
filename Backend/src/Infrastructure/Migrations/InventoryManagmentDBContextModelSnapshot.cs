@@ -392,6 +392,42 @@ namespace Infrastructure.Migrations
                     b.ToTable("CustomerContact", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.Image", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MimeType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("SizeInBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StoragePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.ToTable("Image");
+                });
+
             modelBuilder.Entity("Domain.Entities.Inventory", b =>
                 {
                     b.Property<int>("Id")
@@ -709,19 +745,8 @@ namespace Infrastructure.Migrations
                     b.Property<int>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
-
-                    b.Property<int?>("DeletedByUserId")
+                    b.Property<int?>("ImageId")
                         .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsPrimary")
                         .HasColumnType("bit");
@@ -733,7 +758,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CreatedByUserId");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("ImageId");
 
                     b.HasIndex(new[] { "ProductId" }, "IX_ProductImages_ProductId");
 
@@ -1683,6 +1708,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("DeletedByUser");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Image", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedByUser");
+                });
+
             modelBuilder.Entity("Domain.Entities.Inventory", b =>
                 {
                     b.HasOne("Domain.Entities.User", "CreatedByUser")
@@ -1842,10 +1878,10 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_ProductImages_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                    b.HasOne("Domain.Entities.Image", "Image")
                         .WithMany()
-                        .HasForeignKey("DeletedByUserId")
-                        .HasConstraintName("FK_ProductImages_DeletedByUser");
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Domain.Entities.Product", "Product")
                         .WithMany()
@@ -1855,7 +1891,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("CreatedByUser");
 
-                    b.Navigation("DeletedByUser");
+                    b.Navigation("Image");
 
                     b.Navigation("Product");
                 });

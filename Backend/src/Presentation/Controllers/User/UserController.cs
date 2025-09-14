@@ -62,7 +62,7 @@ namespace Presentation.Controllers.User
             var response = await _userService.AddAsync(request, cancellationToken);
             return response.HandleResult(nameof(GetUserByIdAsync), new
             {
-                id = response.Value.Id
+                id = response.Value?.Id
             });
         }
 

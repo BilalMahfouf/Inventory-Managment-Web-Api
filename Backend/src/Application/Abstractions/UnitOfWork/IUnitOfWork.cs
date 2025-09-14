@@ -19,6 +19,7 @@ namespace Application.Abstractions.UnitOfWork
         public IBaseRepository<Customer> Customers { get; }
         public IBaseRepository<CustomerCategory> CustomerCategories { get; }
         public IBaseRepository<CustomerContact> CustomerContacts { get; }
+        public IBaseRepository<Image> Images { get; }
         public IBaseRepository<Inventory> Inventories { get; }
         public IBaseRepository<Location> Locations { get; }
         public IBaseRepository<LocationType> LocationTypes { get; }

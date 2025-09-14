@@ -3,6 +3,7 @@ using Application.Abstractions.Repositories;
 using Application.Abstractions.Repositories.Base;
 using Application.Abstractions.Repositories.Products;
 using Application.Abstractions.Services.Email;
+using Application.Abstractions.Services.Storage;
 using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
 using Application.Common.Abstractions;
@@ -14,6 +15,7 @@ using Infrastructure.Repositories.Products;
 using Infrastructure.Repositories.User;
 using Infrastructure.Services;
 using Infrastructure.Services.Email;
+using Infrastructure.Services.ImageStorage;
 using Infrastructure.UOW;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -78,6 +80,7 @@ namespace Infrastructure
             services.AddSingleton<IEmailService, EmailService>();
             services.AddScoped<IUserSessionRepository, UserSessionRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddSingleton<IImageStorageService, FileSystemImageStorageService>();
 
             // Email Options config 
             services.Configure<EmailOptions>(options =>

@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Products.Request.Products;
+﻿using Application.DTOs.Inventories;
+using Application.DTOs.Products.Request.Products;
 using Application.DTOs.Products.Response.Products;
 using Application.Results;
 using System;
@@ -26,5 +27,14 @@ namespace Application.Abstractions.Services.Products
             , CancellationToken cancellationToken = default);
         Task<Result> DeactivateAsync(int id
             , CancellationToken cancellationToken = default);
+
+        Task<Result<IReadOnlyCollection<ProductSuppliersReadResponse>>> FindProductSuppliersAsync
+            (int productId, CancellationToken cancellationToken = default);
+        Task<Result<IReadOnlyCollection<ProductsLowStockReadResponse>>>
+            GetProductsWithLowStockAsync(CancellationToken cancellationToken = default);
+        Task<Result<IReadOnlyCollection<InventoryBaseReadResponse>>>
+            FindProductInInventoryAsync(int id
+            , CancellationToken cancellationToken = default);
+
     }
 }

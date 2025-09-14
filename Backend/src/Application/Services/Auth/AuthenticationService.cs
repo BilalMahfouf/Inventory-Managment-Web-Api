@@ -102,7 +102,7 @@ namespace Application.Services.Auth
                     return Result<LoginResponse>.Failure(result.ErrorMessage!
                         , result.ErrorType);
                 }
-                var user = result.Value;
+                var user = result.Value!;
                 var token = _jwtProvider.GenerateToken(user);
                 var refreshToken = await CreateRefreshToken(user.Id,cancellationToken);
                 if(!refreshToken.IsSuccess)

@@ -3,6 +3,12 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+# image folder 
+# Ignore uploaded files
+/Backend/src/Presentation/AppData
+# But keep the folder itself
+
+
 # dotenv files
 .env
 

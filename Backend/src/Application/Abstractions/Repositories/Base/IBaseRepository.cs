@@ -17,6 +17,7 @@ namespace Application.Abstractions.Repositories.Base
            , CancellationToken cancellationToken = default, string includeProperties = "");
         void Add(TEntity entity);
         void Update(TEntity entity);
+        void Delete(TEntity entity);
 
         Task<bool> IsExistAsync(Expression<Func<TEntity, bool>> predicate
             ,CancellationToken cancellationToken = default);
