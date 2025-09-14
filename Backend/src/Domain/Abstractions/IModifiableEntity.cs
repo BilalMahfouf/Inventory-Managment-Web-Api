@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Domain.Abstractions
 {
-    public interface IBaseEntity:IEntity
+    public interface IModifiableEntity
     {
-        DateTime CreatedAt { get; set; }
-        int CreatedByUserId { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public int? UpdatedByUserId { get; set; }
     }
 }

@@ -1,14 +1,17 @@
 ﻿using Application.Abstractions.Repositories;
 using Application.Abstractions.Repositories.Base;
 using Application.Abstractions.Repositories.Products;
+using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
 using Application.DTOs.Users.Response;
+using Domain.Abstractions;
 using Domain.Entities;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Configurations;
 using Infrastructure.Repositories.Base;
 using Infrastructure.Repositories.Products;
 using Infrastructure.Repositories.User;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +23,7 @@ namespace Infrastructure.UOW
     internal class UnitOfWork : IUnitOfWork
     {
         private readonly InventoryManagmentDBContext _context;
+        private readonly ICurrentUserService _currentUserService;
 
         public IBaseRepository<AlertRule> AlertRules { get; }
         public IBaseRepository<AlertType> AlertTypes { get; }
@@ -51,7 +55,8 @@ namespace Infrastructure.UOW
         public IUserSessionRepository UserSessions { get; }
         public IBaseRepository<ConfirmEmailToken> ConfirmEmailTokens { get; }
 
-        public UnitOfWork(InventoryManagmentDBContext context)
+        public UnitOfWork(InventoryManagmentDBContext context
+            , ICurrentUserService currentUserService)
         {
             _context = context;
 
@@ -84,9 +89,10 @@ namespace Infrastructure.UOW
             UserRoles = new BaseRepository<UserRole>(_context);
             UserSessions = new UserSessionRepository(_context);
             ConfirmEmailTokens = new BaseRepository<ConfirmEmailToken>(_context);
+            _currentUserService = currentUserService;
         }
 
-        
+
 
         public ValueTask DisposeAsync()
         {
@@ -95,7 +101,37 @@ namespace Infrastructure.UOW
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
+            _setModifiableEntities();
+            _setAuditAbleEntities();
             return await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        private void _setModifiableEntities()
+        {
+            var modifiedEntities = _context.ChangeTracker
+            .Entries()
+            .Where(e => e.Entity is IModifiableEntity && e.State == EntityState.Modified)
+            .Select(e => e.Entity as IModifiableEntity);
+
+            
+
+            foreach (var entity in modifiedEntities)
+            {
+                entity.UpdatedAt = DateTime.UtcNow;
+                entity.UpdatedByUserId = _currentUserService.UserId;
+            }
+        }
+        private void _setAuditAbleEntities()
+        {
+            var addedEntities = _context.ChangeTracker
+            .Entries()
+            .Where(e => e.Entity is IBaseEntity && e.State == EntityState.Added)
+            .Select(e => e.Entity as IBaseEntity);
+            foreach (var entity in addedEntities)
+            {
+                entity.CreatedAt = DateTime.UtcNow;
+                entity.CreatedByUserId= _currentUserService.UserId;
+            }
         }
     }
 }

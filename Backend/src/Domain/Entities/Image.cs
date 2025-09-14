@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Domain.Entities
 {
 
-    public class Image : IEntity
+    public class Image : IBaseEntity, IEntity
     {
         public int Id { get; set; }
         public string FileName { get; set; } = null!;

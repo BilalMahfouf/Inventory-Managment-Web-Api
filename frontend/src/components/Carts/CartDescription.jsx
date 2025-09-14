@@ -27,7 +27,7 @@ async function onSubmitHandler(e)
     }
     setError("");
         navigate("/dashboard");
-        console.log(`access token ${response.data.token}, refresh token: ${response.data.refreshToken}`);
+      //  console.log(`access token ${response.data.token}, refresh token: ${response.data.refreshToken}`);
 }
 
     return (

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Domain.Entities;
 
-public partial class StockTransfer : IEntity
+public partial class StockTransfer : IBaseEntity, IEntity
 {
     public int Id { get; set; }
 

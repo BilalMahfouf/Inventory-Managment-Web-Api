@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Domain.Entities;
 
-public partial class SupplierContact : ISoftDeletable
+public partial class SupplierContact : IBaseEntity, ISoftDeletable
 {
     public int Id { get; set; }
 

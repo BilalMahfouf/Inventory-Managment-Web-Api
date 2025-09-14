@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Domain.Entities;
 
-public partial class Inventory : IEntity
+public partial class Inventory : IBaseEntity, IModifiableEntity
 {
     public int Id { get; set; }
 

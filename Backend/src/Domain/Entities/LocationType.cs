@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Domain.Entities;
 
-public partial class LocationType : ISoftDeletable
+public partial class LocationType : IBaseEntity, ISoftDeletable
 {
     public int Id { get; set; }
 

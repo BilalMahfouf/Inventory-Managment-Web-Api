@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Domain.Entities;
 
-public partial class StockMovementType : ISoftDeletable
+public partial class StockMovementType : IBaseEntity, ISoftDeletable
 {
     public int Id { get; set; }
 

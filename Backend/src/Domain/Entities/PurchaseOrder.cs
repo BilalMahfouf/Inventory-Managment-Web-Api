@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Domain.Entities;
 
-public partial class PurchaseOrder : IEntity
+public partial class PurchaseOrder : IBaseEntity
 {
     public int Id { get; set; }
 
