@@ -8,7 +8,7 @@ export default defineConfig({
     server: {
         proxy: {
             '/api': {
-                target: 'https://localhost:7230/', //  ASP.NET backend
+                target: 'http://localhost:5055/', //  ASP.NET backend
                 changeOrigin: true,
                 secure: false
             }
