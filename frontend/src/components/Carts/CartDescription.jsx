@@ -1,7 +1,7 @@
 import {InputLabel} from "@components/Inputs";
 import { Eye,EyeOff, Mail,Lock } from "lucide-react";
 import PasswordInputLabel from "@components/PasswordInputLabel";
-import Button from "@components/Button";
+import Button from "@components/Buttons/Button";
 import Link from "@components/Link";
 import {useState} from "react"; 
 import { useNavigate } from "react-router-dom";

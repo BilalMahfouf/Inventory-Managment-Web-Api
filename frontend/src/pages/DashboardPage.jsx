@@ -1,4 +1,5 @@
-
+import { StrictMode } from "react"
+import SideBar from "@components/ui/SideBar/Sidebar"
 
 
 
@@ -9,8 +10,9 @@
 
 export default function DashboardPage () {
     return (
-        <div className="text-center">
-            Dashboard page will be here 
-        </div>
+        <StrictMode>
+             
+        </StrictMode>
+       
     )
 }
