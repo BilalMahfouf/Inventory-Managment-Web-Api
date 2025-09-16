@@ -48,6 +48,7 @@ namespace Application
             services.AddScoped<LocationTypeService>();
             services.AddScoped<LocationService>();
             services.AddScoped<InventoryService>();
+            services.AddScoped<DashboardService>();
 
 
             return services;

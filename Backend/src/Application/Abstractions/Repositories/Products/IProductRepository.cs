@@ -10,5 +10,8 @@ namespace Application.Abstractions.Repositories.Products
 {
     public interface IProductRepository : IBaseRepository<Product>
     {
+        //Task<int> GetAllProductsAsync(CancellationToken cancellationToken = default);
+        //Task<int> GetActiveProductsAsync(CancellationToken cancellationToken = default);
+
     }
 }
