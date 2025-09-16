@@ -1,29 +1,17 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import "./index.css";
 import { Login } from "@/pages/Login";
 import NotFoundPage from "./pages/NotFoundPage";
 import DashboardPage from "./pages/DashboardPage";
-import Sidebar from "@components/ui/sideBar/Sidebar";
 import ProductsPage from "./pages/ProductsPage";
 import InventoryPage from "./pages/InventoryPage";
 import SalesPage from "./pages/SalesPage";
 import CustomersPage from "./pages/CustomersPage";
 import SettingsPage from "./pages/SettingsPage";
-
-// Layout with sidebar
-function MainLayout() {
-  return (
-    <div className="flex">
-      <Sidebar />
-      <main className="flex-1 p-4">
-        <Outlet /> {/* This is where child routes render */}
-      </main>
-    </div>
-  );
-}
+import MainLayout from "./layout/MainLayout";
 
 const router = createBrowserRouter([
   
@@ -62,7 +50,7 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+  
     <RouterProvider router={router} />
-  </StrictMode>
+ 
 );

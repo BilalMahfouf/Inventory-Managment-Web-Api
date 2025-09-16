@@ -14,26 +14,40 @@ export default function Button({
   variant = "primary",
   disabled = false,
   loading = false,
-  onClickHandler=()=>{},
+  onClick = () => {},
+  className = "",
+  LeftIcon,
   ...props
 }) {
   const isDisabled = disabled || loading;
 
   return (
-    <button onClick={e=>{
-        onClickHandler(e);
-        console.log("button is clicked");
-    }}
-      className={` 
-        inline-flex items-center justify-center
-         py-3 rounded-lg font-semibold h-11 w-[400px]
-        transition-colors duration-200 cursor-pointer
+    <button 
+      onClick={(e) => {
+        if (!isDisabled) {
+          onClick(e);
+          console.log("button is clicked");
+        }
+      }}
+      className={`
+        relative inline-flex items-center justify-center
+        px-4 py-2 rounded-lg font-semibold min-h-10 min-w-6
+        transition-colors duration-200
         ${isDisabled ? VARIANTS.disabled : VARIANTS[variant]}
+        ${className}
       `}
       disabled={isDisabled}
       {...props}
     >
+      {/* Left Icon */}
+      {LeftIcon && !loading && (
+        <LeftIcon className="h-5 w-5 mr-2" />
+      )}
+      
+      {/* Loading Spinner */}
       {loading && <Loader2 className="animate-spin mr-2 h-5 w-5" />}
+      
+      {/* Button Content */}
       {children}
     </button>
   );
