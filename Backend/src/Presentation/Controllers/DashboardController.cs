@@ -22,5 +22,20 @@ namespace Presentation.Controllers
             var result = await _dashboardService.GetDashboardSummaryAsync(cancellationToken);
             return result.HandleResult();
         }
+
+        [HttpGet("inventory-alerts")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<ActionResult<IEnumerable<object>>> GetInventoryAlertsAsync(
+            CancellationToken cancellationToken = default)
+        {
+            var result = await _dashboardService.GetInventoryAlertsAsync
+                (cancellationToken);
+            return result.HandleResult();
+        }
+
     }
 }

@@ -29,8 +29,7 @@ namespace Application.Services.Shared
                     (i => i.QuantityOnHand <= i.ReorderLevel, cancellationToken);
                 var ActiveCustomers = await _uow.Customers.GetCountAsync(
                     c => c.IsActive && !c.IsDeleted, cancellationToken);
-                var TotalSalesOrders = await _uow.SalesOrders.GetCountAsync(
-                    e => e.CreatedAt >= DateTime.UtcNow.AddMonths(-1)
+                var TotalSalesOrders = await _uow.SalesOrders.GetCountAsync(null
                     , cancellationToken);
                 var result = new
                 {
@@ -45,6 +44,38 @@ namespace Application.Services.Shared
             {
                 return Result<object>.Exception(nameof(GetDashboardSummaryAsync), ex);
             }
+        }
+
+
+        // to do make it real time with SignalR
+        public async Task<Result<IEnumerable<object>>> GetInventoryAlertsAsync(
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var lowStockProducts = await _uow.Inventories.GetAllAsync(
+                    i => i.QuantityOnHand <= i.ReorderLevel,
+                    includeProperties: "Product",
+                    cancellationToken: cancellationToken);
+                if(lowStockProducts == null || !lowStockProducts.Any())
+                {
+                    return Result<IEnumerable<object>>.NotFound(nameof(lowStockProducts));
+                }
+                var alerts = lowStockProducts.Select(i => new
+                {
+                    ProductName = i.Product.Name,
+                    Description = i.QuantityOnHand == 0 ?
+                        "Out of stock" : $"Only {(int)i.QuantityOnHand} units left",
+                    Status = i.QuantityOnHand == 0 ? "critical" : "high"
+                }).ToList();
+                return Result<IEnumerable<object>>.Success(alerts);
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<object>>
+                    .Exception(nameof(GetInventoryAlertsAsync), ex);
+            }
+
         }
     }
 }
