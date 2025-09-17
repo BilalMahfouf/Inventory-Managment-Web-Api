@@ -13,6 +13,7 @@ import {
   TriangleAlert,
   Users2,
   Zap,
+  Flame,
 } from 'lucide-react';
 import PageHeader from '../components/ui/PageHeader';
 import Button from '@components/Buttons/Button';
@@ -170,13 +171,13 @@ export default function DashboardPage() {
       <div className='mt-6  flex flex-col lg:flex lg:flex-row gap-6'>
         <div className='p-4 bg-white rounded-lg border-white  shadow-sm flex-1 h-150'>
           <div className='mb-6 flex items-center gap-2'>
-            <Clock3 className='w-6 h-6 text-black' />
+            <Flame className='w-6 h-6 text-black' />
             <h3 className='text-gray-900 font-semibold text-2xl'>
               {' '}
-              Recent Activities
+              Top Selling Products
             </h3>
           </div>
-          <QuickActions className='' />
+          this feature is not implement yet
         </div>
 
         <div className='p-4 bg-white rounded-lg border-white  shadow-sm flex-1'>
