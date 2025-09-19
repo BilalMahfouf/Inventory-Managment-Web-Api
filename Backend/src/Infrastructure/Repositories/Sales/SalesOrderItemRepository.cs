@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Repositories.Sales;
 using Application.Results;
 using Domain.Entities;
+using Domain.Enums;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
@@ -20,12 +21,14 @@ namespace Infrastructure.Repositories.Sales
         }
 
         public async Task<IEnumerable<object>> GetTopSellingProductsAsync(
-            int numberOfProducts
+            int? numberOfProducts
             , CancellationToken cancellationToken = default)
         {
             var innerQuery =
               from s in _context.SalesOrderItems
               join p in _context.Products on s.ProductId equals p.Id
+              join so in _context.SalesOrders on s.SalesOrderId equals so.Id
+              where so.SalesStatus == (byte)SalesOrderStatus.Completed
               group new { s, p } by new { p.Name, s.OrderedQuantity } into g
               select new
               {
@@ -44,9 +47,24 @@ namespace Infrastructure.Repositories.Sales
                      Name = g.Key,
                      TotalSoldUnits = g.Sum(x => x.OrderedQuantity),
                      TotalRevenue = g.Sum(x => x.TotalRevenue)
-                 })
-                .Take(numberOfProducts);// ✅ only top N   
+                 });
+            result = numberOfProducts is null ? result :
+                result.Take(numberOfProducts.Value);
+
             return await result.ToListAsync(cancellationToken);
+        }
+        public async Task<decimal> GetTotalRevenuesAsync(
+            CancellationToken cancellationToken = default)
+        {
+            var totalRevenues = await (from s in _context.SalesOrderItems
+                                       join so in _context.SalesOrders on s.SalesOrderId equals so.Id
+                                       join p in _context.Products on s.ProductId equals p.Id
+                                       where so.SalesStatus == (byte)SalesOrderStatus.Completed
+                                       select new
+                                       {
+                                           Revenue = s.LineAmount - (p.Cost * s.OrderedQuantity)
+                                       }).SumAsync(x => x.Revenue, cancellationToken);
+            return totalRevenues;
         }
     }
 }

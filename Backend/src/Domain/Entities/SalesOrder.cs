@@ -12,7 +12,9 @@ public partial class SalesOrder : IBaseEntity
     public int CustomerId { get; set; }
 
     public DateTime OrderDate { get; set; }
-
+    /// <summary>
+    /// 1=Pending, 2=Completed, 3=Canceled
+    /// </summary>
     public byte SalesStatus { get; set; }
 
     public decimal TotalAmount { get; set; }

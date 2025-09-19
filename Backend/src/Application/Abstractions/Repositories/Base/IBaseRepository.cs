@@ -27,5 +27,10 @@ namespace Application.Abstractions.Repositories.Base
         Task<int> GetCountAsync(
            Expression<Func<TEntity, bool>>? filter = null
            , CancellationToken cancellationToken = default);
+        Task<decimal> SumAsync(
+           Expression<Func<TEntity, decimal>> selector
+           , Expression<Func<TEntity, bool>>? filter = null
+           , CancellationToken cancellationToken = default);
+
     }
 }

@@ -11,7 +11,10 @@ namespace Application.Abstractions.Repositories.Sales
 {
     public interface ISalesOrderItemRepository : IBaseRepository<SalesOrderItem>
     {
-        Task<IEnumerable<object>> GetTopSellingProductsAsync(int numberOfProducts
+        Task<IEnumerable<object>> GetTopSellingProductsAsync(int? numberOfProducts
             , CancellationToken cancellationToken = default);
+
+        Task<decimal> GetTotalRevenuesAsync(
+            CancellationToken cancellationToken = default);
     }
 }

@@ -24,7 +24,7 @@ namespace Application.Services.Shared
         {
             try
             {
-                var ActiveProducts = await _uow.Products.GetCountAsync
+                var TotalProducts = await _uow.Products.GetCountAsync
                     (p => !p.IsDeleted, cancellationToken);
                 var LowStockProducts = await _uow.Inventories.GetCountAsync
                     (i => i.QuantityOnHand <= i.ReorderLevel, cancellationToken);
@@ -32,12 +32,30 @@ namespace Application.Services.Shared
                     c => c.IsActive && !c.IsDeleted, cancellationToken);
                 var TotalSalesOrders = await _uow.SalesOrders.GetCountAsync(null
                     , cancellationToken);
+                var TotalRevenues = await _uow.SalesOrderItems
+                    .GetTotalRevenuesAsync(cancellationToken);
+
+                var PendingSalesOrders = await _uow.SalesOrders.GetCountAsync(
+                    e => e.SalesStatus == (byte)SalesOrderStatus.Pending
+                    , cancellationToken);
+
+                var CompletedSalesOrders = await _uow.SalesOrders.GetCountAsync(
+                    e => e.SalesStatus == (byte)SalesOrderStatus.Completed
+                    , cancellationToken);
+
+                var ActiveSuppliers = await _uow.Suppliers.GetCountAsync(
+                    s => s.IsActive && !s.IsDeleted, cancellationToken);
+
                 var result = new
                 {
-                    ActiveProducts,
+                    TotalProducts,
                     LowStockProducts,
                     ActiveCustomers,
-                    TotalSalesOrders
+                    TotalSalesOrders,
+                    TotalRevenues,
+                    PendingSalesOrders,
+                    ActiveSuppliers,
+                    CompletedSalesOrders
                 };
                 return Result<object>.Success(result);
             }

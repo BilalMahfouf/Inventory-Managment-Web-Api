@@ -100,6 +100,18 @@ namespace Infrastructure.Repositories.Base
                 return await _dbSet.CountAsync(filter, cancellationToken);
             }
             return await _dbSet.CountAsync(cancellationToken);
+            
+        }
+        public async Task<decimal> SumAsync(
+           Expression<Func<TEntity, decimal>> selector
+           , Expression<Func<TEntity, bool>>? filter = null
+           , CancellationToken cancellationToken = default)
+        {
+            if (filter != null)
+            {
+                return await _dbSet.Where(filter).SumAsync(selector, cancellationToken);
+            }
+            return await _dbSet.SumAsync(selector, cancellationToken);
         }
     }
 }
