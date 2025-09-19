@@ -20,6 +20,7 @@ import Button from '@components/Buttons/Button';
 import { fetchWithAuth } from '../services/auth/authService';
 import QuickActions from '@components/ui/quickAction/QuickActions';
 import Alerts from '../components/ui/alerts/Alerts';
+import TopSellingProducts from '../components/ui/TopSellingProducts';
 
 export default function DashboardPage() {
   const [activeProducts, setActiveProducts] = useState(0);
@@ -177,7 +178,7 @@ export default function DashboardPage() {
               Top Selling Products
             </h3>
           </div>
-          this feature is not implement yet
+          <TopSellingProducts />
         </div>
 
         <div className='p-4 bg-white rounded-lg border-white  shadow-sm flex-1'>

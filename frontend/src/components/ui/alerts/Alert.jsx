@@ -1,9 +1,8 @@
 export default function Alert({ productName, description, time, status }) {
   return (
     <div
-      className='bg-white rounded-xl shadow-sm border border-gray-100 p-4
-         hover:shadow-md hover:bg-gray-50 hover:border-gray-200 transition-all 
-         duration-300 hover:-translate-y-0.5'
+      className='bg-white rounded-xl   p-4
+          hover:bg-gray-50 border border-gray-200 transition-colors '
     >
       <div className='flex items-center justify-between'>
         <div className='flex-1'>
