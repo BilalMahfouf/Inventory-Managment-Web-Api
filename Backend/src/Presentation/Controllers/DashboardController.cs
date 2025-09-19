@@ -37,5 +37,22 @@ namespace Presentation.Controllers
             return result.HandleResult();
         }
 
+        [HttpGet("top-selling-products")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<ActionResult<IEnumerable<object>>> GetTopSellingProductsAsync(
+           [FromQuery] int numberOfProducts = 5,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await _dashboardService.GetTopSellingProductsAsync(
+                numberOfProducts, cancellationToken);
+            return result.HandleResult();
+        }
+
+
+
     }
 }

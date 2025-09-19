@@ -2,6 +2,7 @@
 using Application.Abstractions.Repositories.Base;
 using Application.Abstractions.Repositories.Inventories;
 using Application.Abstractions.Repositories.Products;
+using Application.Abstractions.Repositories.Sales;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace Application.Abstractions.UnitOfWork
         public IBaseRepository<PurchaseOrder> PurchaseOrders { get; }
         public IBaseRepository<PurchaseOrderItem> PurchaseOrderItems { get; }
         public IBaseRepository<SalesOrder> SalesOrders { get; }
-        public IBaseRepository<SalesOrderItem> SalesOrderItems { get; }
+        public ISalesOrderItemRepository SalesOrderItems{ get; }
         public IBaseRepository<StockMovement> StockMovements { get; }
         public IBaseRepository<StockMovementType> StockMovementTypes { get; }
         public IBaseRepository<StockTransfer> StockTransfers { get; }

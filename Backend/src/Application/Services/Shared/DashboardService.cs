@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.UnitOfWork;
 using Application.Results;
+using Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,5 +78,33 @@ namespace Application.Services.Shared
             }
 
         }
+    
+        public async Task<Result<IEnumerable<object>>> GetTopSellingProductsAsync(
+            int numberOfProducts = 5
+            , CancellationToken cancellationToken = default)
+        {
+            if (numberOfProducts <= 0)
+            {
+                return Result<IEnumerable<object>>.Failure("invalid number of products"
+                    , ErrorType.BadRequest);
+            }
+            try
+            {
+                var topProducts = await _uow.SalesOrderItems
+                    .GetTopSellingProductsAsync(numberOfProducts, cancellationToken);
+                if (topProducts == null || !topProducts.Any())
+                {
+                    return Result<IEnumerable<object>>
+                        .NotFound(nameof(topProducts));
+                }
+                return Result<IEnumerable<object>>.Success(topProducts);
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<object>>
+                    .Exception(nameof(GetTopSellingProductsAsync), ex);
+            }
+        }
+    
     }
 }

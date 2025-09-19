@@ -2,6 +2,7 @@
 using Application.Abstractions.Repositories.Base;
 using Application.Abstractions.Repositories.Inventories;
 using Application.Abstractions.Repositories.Products;
+using Application.Abstractions.Repositories.Sales;
 using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
 using Application.DTOs.Users.Response;
@@ -12,6 +13,7 @@ using Infrastructure.Persistence.Configurations;
 using Infrastructure.Repositories.Base;
 using Infrastructure.Repositories.Inventories;
 using Infrastructure.Repositories.Products;
+using Infrastructure.Repositories.Sales;
 using Infrastructure.Repositories.User;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -44,7 +46,7 @@ namespace Infrastructure.UOW
         public IBaseRepository<PurchaseOrder> PurchaseOrders { get; }
         public IBaseRepository<PurchaseOrderItem> PurchaseOrderItems { get; }
         public IBaseRepository<SalesOrder> SalesOrders { get; }
-        public IBaseRepository<SalesOrderItem> SalesOrderItems { get; }
+        public ISalesOrderItemRepository SalesOrderItems { get; }
         public IBaseRepository<StockMovement> StockMovements { get; }
         public IBaseRepository<StockMovementType> StockMovementTypes { get; }
         public IBaseRepository<StockTransfer> StockTransfers { get; }
@@ -79,7 +81,7 @@ namespace Infrastructure.UOW
             PurchaseOrders = new BaseRepository<PurchaseOrder>(_context);
             PurchaseOrderItems = new BaseRepository<PurchaseOrderItem>(_context);
             SalesOrders = new BaseRepository<SalesOrder>(_context);
-            SalesOrderItems = new BaseRepository<SalesOrderItem>(_context);
+            SalesOrderItems = new SalesOrderItemRepository(_context);
             StockMovements = new BaseRepository<StockMovement>(_context);
             StockMovementTypes = new BaseRepository<StockMovementType>(_context);
             StockTransfers = new BaseRepository<StockTransfer>(_context);
