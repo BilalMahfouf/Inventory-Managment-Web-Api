@@ -20,7 +20,13 @@ const TopSellingProducts = ({ className = '' }) => {
     };
     fetchTopProducts();
   }, []);
-
+  if (isLoading) {
+    return (
+      <div className={`p-4 border border-gray-200 rounded-lg ${className}`}>
+        Loading...
+      </div>
+    );
+  }
   return (
     <div className={`space-y-2 ${className}`}>
       {products.map((product, index) => (

@@ -19,7 +19,7 @@ export default function Alerts() {
   }, []);
   return (
     <div>
-      <div className='flex flex-col gap-4'>
+      <div className='flex flex-col gap-3'>
         {alerts.slice(0, 5).map((alert, index) => {
           return (
             <Alert

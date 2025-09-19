@@ -14,6 +14,8 @@ import {
   Users2,
   Zap,
   Flame,
+  Truck,
+  BadgeCheck,
 } from 'lucide-react';
 import PageHeader from '../components/ui/PageHeader';
 import Button from '@components/Buttons/Button';
@@ -27,6 +29,11 @@ export default function DashboardPage() {
   const [activeCustomers, setActiveCustomers] = useState(0);
   const [lowStockProducts, setLowStockProducts] = useState(0);
   const [totalSalesOrders, setTotalSalesOrders] = useState(0);
+  const [totalRevenues, setTotalRevenues] = useState(0);
+  const [pendingSalesOrders, setPendingSalesOrders] = useState(0);
+  const [activeSuppliers, setActiveSuppliers] = useState(0);
+  const [completedSalesOrders, setCompletedSalesOrders] = useState(0);
+
   //const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -45,16 +52,24 @@ export default function DashboardPage() {
         console.log(result);
 
         const {
-          activeProducts,
+          totalProducts,
           lowStockProducts,
           activeCustomers,
           totalSalesOrders,
+          totalRevenues,
+          pendingSalesOrders,
+          activeSuppliers,
+          completedSalesOrders,
         } = await result.response.json();
         setLoading(false);
-        setActiveProducts(activeProducts);
+        setActiveProducts(totalProducts);
         setActiveCustomers(activeCustomers);
         setLowStockProducts(lowStockProducts);
         setTotalSalesOrders(totalSalesOrders);
+        setTotalRevenues(totalRevenues);
+        setPendingSalesOrders(pendingSalesOrders);
+        setActiveSuppliers(activeSuppliers);
+        setCompletedSalesOrders(completedSalesOrders);
       } catch (error) {
         console.error(
           'An error occurred while fetching dashboard data:',
@@ -126,7 +141,7 @@ export default function DashboardPage() {
         <InfoCard
           className='flex-1'
           title='Total Revenues'
-          number={loading ? '?' : totalSalesOrders}
+          number={loading ? '?' : `$${totalRevenues}`}
           description='total revenue of the bussiness'
           status={true}
           statusLabel='+8%'
@@ -137,40 +152,37 @@ export default function DashboardPage() {
         <InfoCard
           className='flex-1'
           title='Pending Orders'
-          number={loading ? '?' : totalSalesOrders}
+          number={loading ? '?' : pendingSalesOrders}
           description='total revenue of the bussiness'
           status={true}
           statusLabel='+8%'
-          iconComponent={DollarSign}
-          iconClassName='text-green-500'
-          numberClassName='text-green-700'
+          iconComponent={Clock3}
+          iconClassName='text-orange-500'
+          numberClassName='text-orange-500'
         />
         <InfoCard
           className='flex-1'
           title='Fulfilled Orders'
-          number={loading ? '?' : totalSalesOrders}
+          number={loading ? '?' : completedSalesOrders}
           description='total revenue of the bussiness'
           status={true}
           statusLabel='+8%'
-          iconComponent={DollarSign}
+          iconComponent={BadgeCheck}
           iconClassName='text-green-500'
-          numberClassName='text-green-700'
         />
         <InfoCard
           className='flex-1'
           title='Active Suppliers'
-          number={loading ? '?' : totalSalesOrders}
+          number={loading ? '?' : activeSuppliers}
           description='total revenue of the bussiness'
           status={true}
           statusLabel='+8%'
-          iconComponent={DollarSign}
-          iconClassName='text-green-500'
-          numberClassName='text-green-700'
+          iconComponent={Truck}
         />
       </div>
 
       <div className='mt-6  flex flex-col lg:flex lg:flex-row gap-6'>
-        <div className='p-4 bg-white rounded-lg border-white  shadow-sm flex-1 h-150'>
+        <div className='p-4 bg-white rounded-lg border-white  shadow-sm flex-1 '>
           <div className='mb-6 flex items-center gap-2'>
             <Flame className='w-6 h-6 text-black' />
             <h3 className='text-gray-900 font-semibold text-2xl'>
