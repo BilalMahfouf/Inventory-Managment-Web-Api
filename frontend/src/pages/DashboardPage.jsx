@@ -23,6 +23,7 @@ import { fetchWithAuth } from '../services/auth/authService';
 import QuickActions from '@components/ui/quickAction/QuickActions';
 import Alerts from '../components/ui/alerts/Alerts';
 import TopSellingProducts from '../components/ui/TopSellingProducts';
+import TodaysPerformanceContainer from '../components/ui/TodaysPerformanceContainer';
 
 export default function DashboardPage() {
   const [activeProducts, setActiveProducts] = useState(0);
@@ -180,73 +181,38 @@ export default function DashboardPage() {
           iconComponent={Truck}
         />
       </div>
+      <TodaysPerformanceContainer className='mt-6' />
 
-      <div className='mt-6  flex flex-col lg:flex lg:flex-row gap-6'>
-        <div className='p-4 bg-white rounded-lg border-white  shadow-sm flex-1 '>
+      <div className='mt-6 flex flex-col   lg:grid lg:grid-cols-3 xl:grid-cols-3 gap-6'>
+        <div className='p-4 bg-white rounded-lg border-white shadow-sm flex-1'>
           <div className='mb-6 flex items-center gap-2'>
             <Flame className='w-6 h-6 text-black' />
             <h3 className='text-gray-900 font-semibold text-2xl'>
-              {' '}
               Top Selling Products
             </h3>
           </div>
           <TopSellingProducts />
         </div>
 
-        <div className='p-4 bg-white rounded-lg border-white  shadow-sm flex-1'>
+        <div className='p-4 bg-white rounded-lg border-white shadow-sm flex-1'>
           <div className='mb-6 flex items-center gap-2'>
             <Zap className='w-6 h-6 text-black' />
             <h3 className='text-gray-900 font-semibold text-2xl'>
-              {' '}
               Quick Actions
             </h3>
           </div>
           <QuickActions className='' />
         </div>
 
-        <div className='p-4 bg-white rounded-lg border-white  shadow-sm flex-1'>
+        <div className='p-4 bg-white rounded-lg border-white shadow-sm flex-1'>
           <div className='mb-6 flex items-center gap-2'>
             <TriangleAlert className='w-6 h-6 text-black' />
             <h3 className='text-gray-900 font-semibold text-2xl'>
-              {' '}
               Inventory Alerts
             </h3>
           </div>
           <Alerts />
         </div>
-      </div>
-
-      <div className='flex flex-col md:flex-row lg:flex-row gap-6 mt-6'>
-        <InfoCard
-          className='flex-1'
-          title="Today's Sales"
-          iconComponent={TrendingUp}
-          titleClassName='text-gray-900'
-          number='$14,579'
-          description='sales today'
-          iconClassName='text-green'
-          numberClassName='text-green'
-        />
-        <InfoCard
-          className='flex-1'
-          title='Orders Today'
-          iconComponent={ShoppingCart}
-          titleClassName='text-gray-900'
-          number='$14,579'
-          description='orders today'
-          iconClassName='text-green'
-          numberClassName='text-green'
-        />
-        <InfoCard
-          className='flex-1'
-          title='Avg Order Value'
-          iconComponent={TrendingDown}
-          titleClassName='text-gray-900'
-          number='$14,579'
-          description='sales today'
-          iconClassName='text-green'
-          numberClassName='text-green'
-        />
       </div>
     </div>
   );

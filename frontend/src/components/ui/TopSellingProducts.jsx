@@ -17,7 +17,7 @@ const TopSellingProducts = ({ className = '' }) => {
         return;
       }
       setProducts([]);
-    };
+    }
     fetchTopProducts();
   }, []);
   if (isLoading) {

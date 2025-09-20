@@ -18,7 +18,7 @@ namespace Application.Services.Shared
             _uow = uow;
         }
 
-
+        
         public async Task<Result<object>> GetDashboardSummaryAsync(
             CancellationToken cancellationToken = default)
         {
