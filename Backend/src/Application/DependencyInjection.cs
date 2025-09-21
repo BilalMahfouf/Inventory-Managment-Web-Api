@@ -12,6 +12,7 @@ using Application.Services.Inventories;
 using Application.Services.Locations;
 using Application.Services.Products;
 using Application.Services.Shared;
+using Application.Services.StockMovements;
 using Application.Services.UnitOfMeasures;
 using Application.Services.Users;
 using Domain.Abstractions;
@@ -49,6 +50,7 @@ namespace Application
             services.AddScoped<LocationService>();
             services.AddScoped<InventoryService>();
             services.AddScoped<DashboardService>();
+            services.AddScoped<StockMovementTypeService>();
 
 
             return services;
