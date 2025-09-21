@@ -17,6 +17,7 @@ async function _login(request) {
 
         const data = await response.json();
         authService.setTokens(data.token, data.refreshToken);
+        //  console.log(`access token set: ${data.token}, refresh token set: ${data.refreshToken}`);
         return { success: true, data };
     } catch (e) {
         return { success: false, error: e.message };
@@ -36,12 +37,16 @@ async function _refreshToken() {
             body: JSON.stringify({ refreshToken }),
         });
 
+
         if (!response.ok) {
             const errorMessage = await response.text();
             return { success: false, error: errorMessage || "failed to refresh token" };
         }
 
-        const { accessToken: newAccessToken, newRefreshToken } = await response.json();
+
+        const { token: newAccessToken, refreshToken: newRefreshToken } = await response.json();
+        // console.log(`new access token ${newAccessToken}`);
+        //console.log(`new refresh token ${newRefreshToken}`);
         authService.setTokens(newAccessToken, newRefreshToken);
 
         return { success: true, data: newAccessToken };
@@ -72,10 +77,10 @@ const authService = {
 
     refreshToken: async () => await _refreshToken(),
 };
-
+const refresh = authService.getRefreshToken();
 // ========= FETCH WITH AUTH =========
 async function fetchWithAuth(url, options = {}) {
-    if (!accessToken) {
+    if (!accessToken && !refresh) {
         return { success: false, error: "no access token available" };
     }
 
@@ -90,18 +95,26 @@ async function fetchWithAuth(url, options = {}) {
 
         // handle 401 -> refresh & retry
         if (response.status === 401) {
+            // console.log("Access token expired, attempting to refresh...");
+            // console.log("Refresh Token:", refresh);
+            // console.log("attemting to refresh token ...");
             const refreshResult = await authService.refreshToken();
             if (!refreshResult.success) {
+                console.log("Token refresh failed:", refreshResult.error);
                 return { success: false, error: refreshResult.error };
             }
-
+            // console.log("Token refreshed successfully. Retrying original request...");
+            // console.log(`new access token ${refreshResult.data}`);
+            // console.log("access Token:", authService.getAccessToken());
             response = await fetch(url, {
                 ...options,
                 headers: {
                     ...options.headers,
+                    "Content-Type": "application/json",
                     Authorization: `Bearer ${refreshResult.data}`, // new token
                 },
             });
+            console.log("Retried request response status:", response.status);
         }
 
         if (!response.ok) {

@@ -1,4 +1,5 @@
 using Application.Abstractions.Repositories.Base;
+using Application.Abstractions.Repositories.Inventories;
 using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
 using Application.DTOs.Inventories;
@@ -28,7 +29,7 @@ namespace Application.Tests.LocationTests
         {
             // Setup the UnitOfWork to return our mocked repository
             _uowMock.SetupGet(u => u.Locations).Returns(_repositoryMock.Object);
-            _uowMock.SetupGet(u => u.Inventories).Returns(new Mock<IBaseRepository<Inventory>>().Object);
+            _uowMock.SetupGet(u => u.Inventories).Returns(new Mock<IInventoryRepository>().Object);
 
             return new LocationService(
                 _uowMock.Object,
@@ -1064,7 +1065,7 @@ namespace Application.Tests.LocationTests
                 }
             };
 
-            var inventoryRepositoryMock = new Mock<IBaseRepository<Inventory>>();
+            var inventoryRepositoryMock = new Mock<IInventoryRepository>();
             inventoryRepositoryMock.Setup(r => r.GetAllAsync(
                 It.IsAny<Expression<Func<Inventory, bool>>>(),
                 It.IsAny<CancellationToken>(),
@@ -1131,7 +1132,7 @@ namespace Application.Tests.LocationTests
             var locationId = 1;
             var inventories = new List<Inventory>();
 
-            var inventoryRepositoryMock = new Mock<IBaseRepository<Inventory>>();
+            var inventoryRepositoryMock = new Mock<IInventoryRepository>();
             inventoryRepositoryMock.Setup(r => r.GetAllAsync(
                 It.IsAny<Expression<Func<Inventory, bool>>>(),
                 It.IsAny<CancellationToken>(),
@@ -1157,7 +1158,7 @@ namespace Application.Tests.LocationTests
             // Arrange
             var locationId = 1;
 
-            var inventoryRepositoryMock = new Mock<IBaseRepository<Inventory>>();
+            var inventoryRepositoryMock = new Mock<IInventoryRepository>();
             inventoryRepositoryMock.Setup(r => r.GetAllAsync(
                 It.IsAny<Expression<Func<Inventory, bool>>>(),
                 It.IsAny<CancellationToken>(),
@@ -1183,7 +1184,7 @@ namespace Application.Tests.LocationTests
             // Arrange
             var locationId = 1;
 
-            var inventoryRepositoryMock = new Mock<IBaseRepository<Inventory>>();
+            var inventoryRepositoryMock = new Mock<IInventoryRepository>();
             inventoryRepositoryMock.Setup(r => r.GetAllAsync(
                 It.IsAny<Expression<Func<Inventory, bool>>>(),
                 It.IsAny<CancellationToken>(),
@@ -1224,7 +1225,7 @@ namespace Application.Tests.LocationTests
                 }
             };
 
-            var inventoryRepositoryMock = new Mock<IBaseRepository<Inventory>>();
+            var inventoryRepositoryMock = new Mock<IInventoryRepository>();
             inventoryRepositoryMock.Setup(r => r.GetAllAsync(
                 It.IsAny<Expression<Func<Inventory, bool>>>(),
                 It.IsAny<CancellationToken>(),
@@ -1530,7 +1531,7 @@ namespace Application.Tests.LocationTests
             // Arrange
             var locationId = 5;
 
-            var inventoryRepositoryMock = new Mock<IBaseRepository<Inventory>>();
+            var inventoryRepositoryMock = new Mock<IInventoryRepository>();
             inventoryRepositoryMock.Setup(r => r.GetAllAsync(
                 It.IsAny<Expression<Func<Inventory, bool>>>(),
                 It.IsAny<CancellationToken>(),

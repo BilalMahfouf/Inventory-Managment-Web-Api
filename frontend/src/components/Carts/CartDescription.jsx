@@ -1,7 +1,7 @@
 import {InputLabel} from "@components/Inputs";
 import { Eye,EyeOff, Mail,Lock } from "lucide-react";
 import PasswordInputLabel from "@components/PasswordInputLabel";
-import Button from "@components/Button";
+import Button from "@components/Buttons/Button";
 import Link from "@components/Link";
 import {useState} from "react"; 
 import { useNavigate } from "react-router-dom";
@@ -41,8 +41,8 @@ async function onSubmitHandler(e)
 
             <Link content="forget password" to="https://preview--swift-inventory-canvas.lovable.app/forgot-password#" />           
 
-            <Button children="Login" type="submit" />
-            <Button children="Contact Support" variant="secondary" />
+            <Button children="Login" type="submit" className="w-[400px]" />
+            <Button children="Contact Support" variant="secondary" className="w-[400px]" />
             </form>
             </div>
     )

@@ -23,5 +23,14 @@ namespace Application.Abstractions.Repositories.Base
             ,CancellationToken cancellationToken = default);
 
         IQueryable<TEntity> AsQueryable();
+
+        Task<int> GetCountAsync(
+           Expression<Func<TEntity, bool>>? filter = null
+           , CancellationToken cancellationToken = default);
+        Task<decimal> SumAsync(
+           Expression<Func<TEntity, decimal>> selector
+           , Expression<Func<TEntity, bool>>? filter = null
+           , CancellationToken cancellationToken = default);
+
     }
 }

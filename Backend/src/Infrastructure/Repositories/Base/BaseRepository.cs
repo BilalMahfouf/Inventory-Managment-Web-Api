@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Repositories.Base;
 using Domain.Abstractions;
+using Domain.Entities;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -89,6 +90,28 @@ namespace Infrastructure.Repositories.Base
         public IQueryable<TEntity> AsQueryable()
         {
             return _dbSet.AsQueryable();
+        }
+        public async Task<int> GetCountAsync(
+           Expression<Func<TEntity, bool>>? filter = null
+           , CancellationToken cancellationToken = default)
+        {
+            if (filter != null)
+            {
+                return await _dbSet.CountAsync(filter, cancellationToken);
+            }
+            return await _dbSet.CountAsync(cancellationToken);
+            
+        }
+        public async Task<decimal> SumAsync(
+           Expression<Func<TEntity, decimal>> selector
+           , Expression<Func<TEntity, bool>>? filter = null
+           , CancellationToken cancellationToken = default)
+        {
+            if (filter != null)
+            {
+                return await _dbSet.Where(filter).SumAsync(selector, cancellationToken);
+            }
+            return await _dbSet.SumAsync(selector, cancellationToken);
         }
     }
 }
