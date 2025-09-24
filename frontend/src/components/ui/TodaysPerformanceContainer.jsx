@@ -23,7 +23,7 @@ const TodaysPerformanceContainer = ({ className = '' }) => {
         setError(null);
 
         // Replace with your actual API endpoint
-        const result = await fetchWithAuth('api/dashboard/todays-performance');
+        const result = await fetchWithAuth('api/dashboard/today-performance');
 
         if (!result.success) {
           throw new Error(
@@ -36,13 +36,13 @@ const TodaysPerformanceContainer = ({ className = '' }) => {
         // Map the API response to component props
         // Adjust these field names based on your actual API response structure
         setPerformanceData({
-          todaysSales: data.todaysSales || '$0',
+          todaysSales: data.todayRevenues || '$0',
           salesChange: data.salesChange || '+0%',
-          newOrders: data.newOrders?.toString() || '0',
+          newOrders: data.todayNewOrders?.toString() || '0',
           ordersChange: data.ordersChange || '+0%',
-          newCustomers: data.newCustomers?.toString() || '0',
+          newCustomers: data.todayNewCustomers?.toString() || '0',
           customersChange: data.customersChange || '+0%',
-          productsSold: data.productsSold?.toString() || '0',
+          productsSold: data.todaySoldProducts?.toString() || '0',
           productsSoldChange: data.productsSoldChange || '+0%',
         });
       } catch (err) {
