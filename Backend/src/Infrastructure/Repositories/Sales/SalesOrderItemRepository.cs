@@ -66,5 +66,24 @@ namespace Infrastructure.Repositories.Sales
                                        }).SumAsync(x => x.Revenue, cancellationToken);
             return totalRevenues;
         }
+
+        public async Task<decimal> GetTodayRevenuesAsync(
+             CancellationToken cancellationToken = default)
+        {
+            var today = DateTime.UtcNow.Date;
+            var totalRevenues = await (from s in _context.SalesOrderItems
+                                       join so in _context.SalesOrders on s.SalesOrderId equals so.Id
+                                       join p in _context.Products on s.ProductId equals p.Id
+                                       where so.SalesStatus == (byte)SalesOrderStatus.Completed
+                                       && so.OrderDate.Date == today
+                                       select new
+                                       {
+                                           Revenue = s.LineAmount - (p.Cost * s.OrderedQuantity)
+                                       }).SumAsync(x => x.Revenue, cancellationToken);
+            return totalRevenues;
+        }
+
+
+
     }
 }

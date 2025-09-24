@@ -16,5 +16,6 @@ namespace Application.Abstractions.Repositories.Sales
 
         Task<decimal> GetTotalRevenuesAsync(
             CancellationToken cancellationToken = default);
+        
     }
 }
