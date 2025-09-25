@@ -88,6 +88,7 @@ namespace Infrastructure
             services.AddSingleton<IImageStorageService, FileSystemImageStorageService>();
             services.AddScoped<IInventoryRepository, InventoryRepository>();
             services.AddScoped<IDashboardQueries, DashboardQueries>();
+            services.AddScoped<IProductQueries, ProductQueries>();
 
             // Email Options config 
             services.Configure<EmailOptions>(options =>

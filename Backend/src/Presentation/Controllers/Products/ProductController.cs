@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Services.Products;
+﻿using Application.Abstractions.Queries;
+using Application.Abstractions.Services.Products;
 using Application.DTOs.Inventories;
 using Application.DTOs.Products.Request.Products;
 using Application.DTOs.Products.Response.Products;
@@ -10,13 +11,17 @@ namespace Presentation.Controllers.Products
 {
     [ApiController]
     [Route("api/products")]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly IProductService _service;
+        private readonly IProductQueries _query;
 
-        public ProductController(IProductService service)
+
+        public ProductController(IProductService service, IProductQueries query)
         {
             _service = service;
+            _query = query;
         }
 
         [HttpGet]
@@ -169,6 +174,18 @@ namespace Presentation.Controllers.Products
             return response.HandleResult();
         }
 
+
+        [HttpGet("summary")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<ActionResult<object>> GetProductDashboardSummaryAsync
+            (CancellationToken cancellationToken = default)
+        {
+            var response = await _query.GetProductDashboardSummaryAsync(cancellationToken);
+            return response.HandleResult();
+        }
 
     }
 }
