@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.UnitOfWork;
+﻿using Application.Abstractions.Queries;
+using Application.Abstractions.UnitOfWork;
 using Application.Results;
 using Domain.Enums;
 using System;
@@ -12,13 +13,15 @@ namespace Application.Services.Shared
     public class DashboardService
     {
         private readonly IUnitOfWork _uow;
+        private readonly IDashboardQueries _dashboardQueries;
 
-        public DashboardService(IUnitOfWork uow)
+        public DashboardService(IUnitOfWork uow, IDashboardQueries dashboardQueries)
         {
             _uow = uow;
+            _dashboardQueries = dashboardQueries;
         }
 
-        
+
         public async Task<Result<object>> GetDashboardSummaryAsync(
             CancellationToken cancellationToken = default)
         {
@@ -76,7 +79,7 @@ namespace Application.Services.Shared
                     i => i.QuantityOnHand <= i.ReorderLevel,
                     includeProperties: "Product",
                     cancellationToken: cancellationToken);
-                if(lowStockProducts == null || !lowStockProducts.Any())
+                if (lowStockProducts == null || !lowStockProducts.Any())
                 {
                     return Result<IEnumerable<object>>.NotFound(nameof(lowStockProducts));
                 }
@@ -96,7 +99,7 @@ namespace Application.Services.Shared
             }
 
         }
-    
+
         public async Task<Result<IEnumerable<object>>> GetTopSellingProductsAsync(
             int numberOfProducts = 5
             , CancellationToken cancellationToken = default)
@@ -123,6 +126,28 @@ namespace Application.Services.Shared
                     .Exception(nameof(GetTopSellingProductsAsync), ex);
             }
         }
-    
+
+        public async Task<Result<object>> GetTodayPerformanceAsync(
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var result = await _dashboardQueries
+                    .GetTodayPerformanceAsync(cancellationToken);
+                if (result is null)
+                {
+                    return Result<object>.NotFound("today performance data ");
+                }
+                return Result<object>.Success(result);
+
+
+            }
+            catch (Exception ex)
+            {
+                return Result<object>.Exception(nameof(GetTodayPerformanceAsync), ex);
+
+            }
+
+        }
     }
 }

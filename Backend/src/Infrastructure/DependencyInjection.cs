@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Auth;
+using Application.Abstractions.Queries;
 using Application.Abstractions.Repositories;
 using Application.Abstractions.Repositories.Base;
 using Application.Abstractions.Repositories.Inventories;
@@ -8,9 +9,11 @@ using Application.Abstractions.Services.Storage;
 using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
 using Application.Common.Abstractions;
+using Application.Services.Shared;
 using Infrastructure.Authentication;
 using Infrastructure.Common;
 using Infrastructure.Persistence;
+using Infrastructure.Queries;
 using Infrastructure.Repositories.Base;
 using Infrastructure.Repositories.Inventories;
 using Infrastructure.Repositories.Products;
@@ -84,6 +87,7 @@ namespace Infrastructure
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddSingleton<IImageStorageService, FileSystemImageStorageService>();
             services.AddScoped<IInventoryRepository, InventoryRepository>();
+            services.AddScoped<IDashboardQueries, DashboardQueries>();
 
             // Email Options config 
             services.Configure<EmailOptions>(options =>

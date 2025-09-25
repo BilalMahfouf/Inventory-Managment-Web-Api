@@ -16,6 +16,7 @@ public partial class SalesOrder : IBaseEntity
     /// 1=Pending, 2=Completed, 3=Canceled
     /// </summary>
     public byte SalesStatus { get; set; }
+    public DateTime? SalesStatusUpdatedAt { get; set; }
 
     public decimal TotalAmount { get; set; }
 
