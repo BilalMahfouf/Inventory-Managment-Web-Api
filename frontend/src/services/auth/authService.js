@@ -126,10 +126,11 @@ async function fetchWithAuth(url, options = {}) {
     }
 
     if (!response.ok) {
+      console.log('Request failed with status:', response.status);
       const text = await response.text();
       return { success: false, error: text || 'Request failed' };
     }
-
+    console.log('Request succeeded with status:', response.status);
     return { success: true, response };
   } catch (e) {
     return { success: false, error: e.message };
