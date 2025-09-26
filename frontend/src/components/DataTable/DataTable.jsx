@@ -118,7 +118,7 @@ const DataTable = ({
       {enablePagination && (
         <div className='flex items-center justify-between mt-4'>
           <div className='flex items-center gap-2'>
-            <span className='text-sm text-gray-700'>
+            {/* <span className='text-sm text-gray-700'>
               Showing{' '}
               {table.getState().pagination.pageIndex *
                 table.getState().pagination.pageSize +
@@ -130,7 +130,7 @@ const DataTable = ({
                 table.getFilteredRowModel().rows.length
               )}{' '}
               of {table.getFilteredRowModel().rows.length} entries
-            </span>
+            </span> */}
           </div>
 
           <div className='flex items-center gap-2'>
@@ -171,20 +171,6 @@ const DataTable = ({
             >
               {'>>'}
             </button>
-
-            <select
-              value={table.getState().pagination.pageSize}
-              onChange={e => {
-                table.setPageSize(Number(e.target.value));
-              }}
-              className='px-2 py-1 text-sm border border-gray-300 rounded'
-            >
-              {[10, 20, 30, 40, 50].map(pageSize => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
       )}

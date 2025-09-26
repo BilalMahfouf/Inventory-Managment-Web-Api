@@ -11,6 +11,10 @@ import {
 } from 'lucide-react';
 import Button from '@components/Buttons/Button';
 import { getSummary } from '@services/products/productService';
+import DataTable from '@components/DataTable/DataTable';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import ExampleUsage from '../components/DataTable/ExampleUsage';
+import { divStyles } from '../util/uiVariables';
 export default function ProductsPage() {
   const [totalProductsCount, setTotalProductsCount] = useState(0);
   const [inventoryValue, setInventoryValue] = useState(0);
@@ -73,6 +77,17 @@ export default function ProductsPage() {
           iconComponent={TrendingUp}
           className='flex-1'
         />
+      </div>
+      <div className={`${divStyles} mt-6`}>
+        <Tabs>
+          <TabList className='flex border-b border-gray-200 mb-4'>
+            <Tab className='mr-4 pb-2 cursor-pointer'>Products</Tab>
+            <Tab className='mr-4 pb-2 cursor-pointer'>Stock Movements</Tab>
+          </TabList>
+          <TabPanel>
+            <ExampleUsage />
+          </TabPanel>
+        </Tabs>
       </div>
     </div>
   );
