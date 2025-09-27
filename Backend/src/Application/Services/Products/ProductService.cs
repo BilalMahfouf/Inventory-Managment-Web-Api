@@ -47,7 +47,9 @@ namespace Application.Services.Products
                 Name = product.Name,
                 Description = product.Description,
                 CategoryId = product.CategoryId,
+                CategoryName = product.Category.Name,
                 UnitOfMeasureId = product.UnitOfMeasureId,
+                UnitOfMeasureName = product.UnitOfMeasure.Name,
                 CostPrice = product.Cost,
                 UnitPrice = product.UnitPrice,
                 IsActive = product.IsActive,
@@ -188,7 +190,7 @@ namespace Application.Services.Products
             try
             {
                 var products = await _productRepository.GetAllAsync(null!, cancellationToken
-                    , "CreatedByUser,UpdatedByUser,DeletedByUser");
+                    , "Category,UnitOfMeasure,CreatedByUser,UpdatedByUser,DeletedByUser");
 
                 var response = products
                     .Select(p => MapToReadResponse(p)).ToList().AsReadOnly();
