@@ -1,4 +1,5 @@
-﻿using Domain.Abstractions;
+﻿using Application.PagedLists;
+using Domain.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,10 @@ namespace Application.Abstractions.Repositories.Base
            Expression<Func<TEntity, decimal>> selector
            , Expression<Func<TEntity, bool>>? filter = null
            , CancellationToken cancellationToken = default);
-
+        Task<IEnumerable<TEntity>> GetAllWithPaginationAsync(
+            int page=1,
+            int pageSize=10,
+            CancellationToken cancellationToken = default,
+            string includeProperties = ""); 
     }
 }

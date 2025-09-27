@@ -46,7 +46,7 @@ public partial class Product : ISoftDeletable, IModifiableEntity, IBaseEntity
 
     public virtual User? DeletedByUser { get; set; }
 
-    public virtual UnitOfMeasure UnitOfMeasure { get; set; } = null!;
+    public virtual UnitOfMeasure  UnitOfMeasure{ get; set; } = null!;
 
     public virtual User? UpdatedByUser { get; set; }
 }

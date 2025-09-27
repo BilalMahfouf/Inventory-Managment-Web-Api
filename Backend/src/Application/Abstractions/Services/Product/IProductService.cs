@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.Inventories;
 using Application.DTOs.Products.Request.Products;
 using Application.DTOs.Products.Response.Products;
+using Application.PagedLists;
 using Application.Results;
 using System;
 using System.Collections.Generic;
@@ -14,8 +15,10 @@ namespace Application.Abstractions.Services.Products
     {
         Task<Result<ProductReadResponse>> FindAsync(int id
             ,CancellationToken cancellationToken=default);
-        Task<Result<IReadOnlyCollection<ProductReadResponse>>> GetAllAsync
-            (CancellationToken cancellationToken = default);
+        Task<Result<PagedList<ProductReadResponse>>> GetAllAsync
+            (int page,
+             int pageSize,
+             CancellationToken cancellationToken = default);
 
         Task<Result<ProductReadResponse>> CreateAsync(ProductCreateRequest request
             , CancellationToken cancellationToken = default);

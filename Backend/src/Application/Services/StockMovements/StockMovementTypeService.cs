@@ -28,7 +28,7 @@ namespace Application.Services.StockMovements
             _validator = validator;
         }
 
-        private StockMovementTypeReadResponse Map(StockMovementType stockMovementType)
+        public  StockMovementTypeReadResponse Map(StockMovementType stockMovementType)
         {
             return new StockMovementTypeReadResponse()
             {

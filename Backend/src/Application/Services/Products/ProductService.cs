@@ -7,6 +7,7 @@ using Application.DTOs.Inventories;
 using Application.DTOs.Products.Request.Products;
 using Application.DTOs.Products.Response.Products;
 using Application.FluentValidations.Products;
+using Application.PagedLists;
 using Application.Results;
 using Application.Services.Shared;
 using Domain.Entities;
@@ -17,6 +18,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace Application.Services.Products
 {
@@ -185,22 +187,38 @@ namespace Application.Services.Products
             }
         }
 
-        public async Task<Result<IReadOnlyCollection<ProductReadResponse>>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<Result<PagedList<ProductReadResponse>>> GetAllAsync(
+              int page,
+              int pageSize,
+              CancellationToken cancellationToken = default)
         {
             try
             {
-                var products = await _productRepository.GetAllAsync(null!, cancellationToken
-                    , "Category,UnitOfMeasure,CreatedByUser,UpdatedByUser,DeletedByUser");
-
+                var products = await _productRepository.GetAllWithPaginationAsync(
+                    page: page,
+                    pageSize: pageSize,
+                    cancellationToken: cancellationToken,
+                    includeProperties: @"Category,UnitOfMeasure,CreatedByUser,UpdatedByUser,DeletedByUser"
+                );
                 var response = products
                     .Select(p => MapToReadResponse(p)).ToList().AsReadOnly();
 
-                return Result<IReadOnlyCollection<ProductReadResponse>>
-                    .Success(response);
+                var totalCount = await _productRepository.GetCountAsync(
+                    filter: p => !p.IsDeleted, cancellationToken: cancellationToken);
+                var result = new PagedList<ProductReadResponse>()
+                {
+                    Item = response,
+                    TotalCount = totalCount,
+                    Page = page,
+                    PageSize = pageSize
+                };
+
+                return Result<PagedList<ProductReadResponse>>
+                    .Success(result);
             }
             catch (Exception ex)
             {
-                return Result<IReadOnlyCollection<ProductReadResponse>>
+                return Result<PagedList<ProductReadResponse>>
                     .Exception(nameof(GetAllAsync), ex);
             }
         }

@@ -3,8 +3,10 @@ using Application.Abstractions.Services.Products;
 using Application.DTOs.Inventories;
 using Application.DTOs.Products.Request.Products;
 using Application.DTOs.Products.Response.Products;
+using Application.PagedLists;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MimeKit.Tnef;
 using Presentation.Extensions;
 
 namespace Presentation.Controllers.Products
@@ -30,10 +32,13 @@ namespace Presentation.Controllers.Products
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
         [Authorize]
-        public async Task<ActionResult<IReadOnlyCollection<ProductReadResponse>>>
-            GetAllProductAsync(CancellationToken cancellationToken = default)
+        public async Task<ActionResult<PagedList<ProductReadResponse>>>
+            GetAllProductAsync(
+                        [FromQuery]int page=1,
+                        [FromQuery]int pageSize=10,
+                        CancellationToken cancellationToken = default)
         {
-            var response = await _service.GetAllAsync(cancellationToken);
+            var response = await _service.GetAllAsync(page,pageSize,cancellationToken);
             return response.HandleResult();
         }
 
