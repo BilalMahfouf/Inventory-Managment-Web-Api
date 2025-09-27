@@ -16,4 +16,22 @@ async function getSummary() {
   }
 }
 
-export { getSummary };
+async function getAllProducts() {
+  try {
+    const response = await fetchWithAuth(`${BASE_URL}`);
+    if (!response.success) {
+      console.log('Failed to fetch products:', response.error);
+      throw new Error('Failed to fetch products');
+    }
+    const data = await response.response.json();
+    if (data === null || data === undefined) {
+      return [];
+    }
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export { getSummary, getAllProducts };
