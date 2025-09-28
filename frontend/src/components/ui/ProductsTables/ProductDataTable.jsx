@@ -1,31 +1,27 @@
 import DataTable from '@components/DataTable/DataTable';
-import { useState, useEffect } from 'react';
 import { getAllProducts } from '@services/products/productService';
-
+import useServerSideDataTable from '../../../hooks/useServerSideDataTable';
 export default function ProductDataTable() {
-  const [products, setProducts] = useState([]);
-  const [columns, setColumns] = useState(defaultColumns);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      const data = await getAllProducts();
-      if (data && data.length > 0) {
-        setProducts(data);
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, []);
+  const fetchProducts = async ({ page, pageSize }) => {
+    const response = await getAllProducts({ page: page, pageSize: pageSize });
+    return response;
+  };
+
+  const tableProps = useServerSideDataTable(fetchProducts);
 
   return (
-    <>
-      {loading ? (
-        <div>Loading products...</div>
-      ) : (
-        <DataTable data={products} columns={columns} />
-      )}
-    </>
+    <DataTable
+      data={tableProps.data}
+      columns={defaultColumns}
+      totalRows={tableProps.totalRows}
+      pageIndex={tableProps.pageIndex}
+      pageSize={tableProps.pageSize}
+      onPageChange={tableProps.onPageChange}
+      onPageSizeChange={tableProps.onPageSizeChange}
+      //   onSortingChange={tableProps.onSortingChange}
+      //   onFilterChange={tableProps.onFilterChange}
+      loading={tableProps.loading}
+    />
   );
 }
 

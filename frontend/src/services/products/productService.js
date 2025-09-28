@@ -16,9 +16,11 @@ async function getSummary() {
   }
 }
 
-async function getAllProducts() {
+async function getAllProducts({ page = 1, pageSize = 10 }) {
   try {
-    const response = await fetchWithAuth(`${BASE_URL}`);
+    const response = await fetchWithAuth(
+      `${BASE_URL}?page=${page}&pageSize=${pageSize}`
+    );
     if (!response.success) {
       console.log('Failed to fetch products:', response.error);
       throw new Error('Failed to fetch products');

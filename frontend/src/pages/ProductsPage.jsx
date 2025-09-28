@@ -13,7 +13,6 @@ import Button from '@components/Buttons/Button';
 import { getSummary } from '@services/products/productService';
 import DataTable from '@components/DataTable/DataTable';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import ExampleUsage from '../components/DataTable/ExampleUsage';
 import { divStyles } from '../util/uiVariables';
 import ProductDataTable from '../components/ui/ProductsTables/ProductDataTable';
 export default function ProductsPage() {
