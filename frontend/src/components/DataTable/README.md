@@ -221,49 +221,6 @@ const columns = [
 ];
 ```
 
-## 📝 C# Backend Example
-
-```csharp
-[HttpGet]
-public async Task<IActionResult> GetProducts(
-    [FromQuery] int page = 0,
-    [FromQuery] int pageSize = 10,
-    [FromQuery] string search = "",
-    [FromQuery] string sortBy = "",
-    [FromQuery] string sortOrder = "asc")
-{
-    var query = _context.Products.AsQueryable();
-
-    // Apply search
-    if (!string.IsNullOrEmpty(search))
-    {
-        query = query.Where(p => p.Name.Contains(search) || p.Sku.Contains(search));
-    }
-
-    // Apply sorting
-    if (!string.IsNullOrEmpty(sortBy))
-    {
-        query = sortOrder.ToLower() == "desc"
-            ? query.OrderByDescending(GetPropertyExpression<Product>(sortBy))
-            : query.OrderBy(GetPropertyExpression<Product>(sortBy));
-    }
-
-    var totalRows = await query.CountAsync();
-    var data = await query
-        .Skip(page * pageSize)
-        .Take(pageSize)
-        .ToListAsync();
-
-    return Ok(new
-    {
-        data,
-        totalRows,
-        page,
-        pageSize
-    });
-}
-```
-
 ## 🎯 Best Practices
 
 1. **Always reset page to 0** when changing filters or sorting

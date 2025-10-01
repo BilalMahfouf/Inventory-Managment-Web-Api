@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
-  getSortedRowModel,
-  getFilteredRowModel,
   flexRender,
 } from '@tanstack/react-table';
 
@@ -34,15 +32,16 @@ const DataTable = ({
   const [globalFilter, setGlobalFilter] = useState('');
   const [searchTimeout, setSearchTimeout] = useState(null);
 
-  // Handle sorting changes
+  // Handle sorting changes - reset page to initial value when sorting
   const handleSortingChange = updater => {
     const newSorting =
       typeof updater === 'function' ? updater(sorting) : updater;
     setSorting(newSorting);
+    // Call the parent's sorting handler which should reset the page
     onSortingChange(newSorting);
   };
 
-  // Handle search with debouncing
+  // Handle search with debouncing - reset page to initial value when filtering
   const handleFilterChange = value => {
     setGlobalFilter(value);
 
@@ -53,6 +52,7 @@ const DataTable = ({
 
     // Set new timeout for debounced search
     const timeout = setTimeout(() => {
+      // Call the parent's filter handler which should reset the page
       onFilterChange(value);
     }, searchDebounceMs);
 
@@ -89,8 +89,9 @@ const DataTable = ({
     onSortingChange: handleSortingChange,
     onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: enableSorting ? getSortedRowModel() : undefined,
-    getFilteredRowModel: enableFiltering ? getFilteredRowModel() : undefined,
+    // Don't use client-side sorting/filtering since we're doing server-side
+    getSortedRowModel: undefined,
+    getFilteredRowModel: undefined,
   });
 
   return (

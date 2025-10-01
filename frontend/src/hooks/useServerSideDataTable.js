@@ -24,39 +24,44 @@ const useServerSideDataTable = (
   const [error, setError] = useState(null);
 
   // Fetch function
-  const fetchData = useCallback(
-    async (page, size, sort = null, search = null) => {
-      setLoading(true);
-      setError(null);
-      const fetchFunctionParam = {
-        page,
-        pageSize: size,
-        // sorting: sort,
-        // search,
-      };
-      try {
-        console.log('Fetching data with params:', fetchFunctionParam);
-        const result = await fetchFunction(fetchFunctionParam);
-        console.log('Fetch result:', result);
+  const fetchData = async (page, size, sortingArray = [], search = null) => {
+    setLoading(true);
+    setError(null);
 
-        setData(result.item || []);
-        setTotalRows(result.totalCount || 0);
-      } catch (err) {
-        setError(err);
-        onError(err);
-        setData([]);
-        setTotalRows(0);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [fetchFunction, onError]
-  );
+    // Extract sorting information from TanStack Table format
+    const sortColumn = sortingArray.length > 0 ? sortingArray[0].id : null;
+    const sortOrder =
+      sortingArray.length > 0 ? (sortingArray[0].desc ? 'desc' : 'asc') : null;
+
+    const fetchFunctionParam = {
+      Page: page,
+      PageSize: size,
+      SortColumn: sortColumn,
+      SortOrder: sortOrder,
+      search: search,
+    };
+
+    try {
+      console.log('Fetching data with params:', fetchFunctionParam);
+      const result = await fetchFunction(fetchFunctionParam);
+      console.log('Fetch result:', result);
+
+      setData(result.item || []);
+      setTotalRows(result.totalCount || 0);
+    } catch (err) {
+      setError(err);
+      onError(err);
+      setData([]);
+      setTotalRows(0);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Fetch data when dependencies change
   useEffect(() => {
     fetchData(pageIndex + 1, pageSize, sorting, globalFilter);
-  }, [pageIndex, pageSize]);
+  }, [pageIndex, pageSize, sorting, globalFilter]);
   // Handlers
   const handlePageChange = useCallback(newPageIndex => {
     setPageIndex(newPageIndex);
@@ -67,19 +72,19 @@ const useServerSideDataTable = (
     setPageIndex(0); // Reset to first page
   }, []);
 
-  //   const handleSortingChange = useCallback(newSorting => {
-  //     setSorting(newSorting);
-  //     setPageIndex(0); // Reset to first page
-  //   }, []);
+  const handleSortingChange = useCallback(newSorting => {
+    setSorting(newSorting);
+    // setPageIndex(0); // Reset to first page when sorting changes
+  }, []);
 
-  //   const handleFilterChange = useCallback(newFilter => {
-  //     setGlobalFilter(newFilter);
-  //     setPageIndex(0); // Reset to first page
-  //   }, []);
+  const handleFilterChange = useCallback(newFilter => {
+    setGlobalFilter(newFilter);
+    setPageIndex(0); // Reset to first page when filtering changes
+  }, []);
 
   const refresh = useCallback(() => {
-    fetchData(pageIndex, pageSize, sorting, globalFilter);
-  }, [pageIndex, pageSize, sorting, globalFilter, fetchData]);
+    fetchData(pageIndex + 1, pageSize, sorting, globalFilter);
+  }, [pageIndex, pageSize, sorting, globalFilter]);
 
   return {
     // State
@@ -95,8 +100,8 @@ const useServerSideDataTable = (
     // Handlers
     onPageChange: handlePageChange,
     onPageSizeChange: handlePageSizeChange,
-    // onSortingChange: handleSortingChange,
-    // onFilterChange: handleFilterChange,
+    onSortingChange: handleSortingChange,
+    onFilterChange: handleFilterChange,
 
     // Actions
     refresh,
