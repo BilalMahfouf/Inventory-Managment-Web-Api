@@ -63,30 +63,37 @@ namespace Infrastructure.Queries
         public async Task<Result<PagedList<ProductTableResponse>>> GetAllAsync(
             TableRequest request, CancellationToken cancellationToken = default)
         {
+             
             try
             {
-
-                var query = from p in _context.Products
-                            join i in _context.Inventories on p.Id equals i.ProductId
-                            join pc in _context.ProductCategories on p.CategoryId equals pc.Id
-                            select new ProductTableResponse
-                            {
-                                Id = p.Id,
-                                SKU = p.Sku,
-                                Product = p.Name,
-                                Stock = i.QuantityOnHand,
-                                CategoryId = p.CategoryId,
-                                Category = pc.Name,
-                                Price = p.UnitPrice,
-                                Cost = p.Cost,
-                                IsActive = p.IsActive,
-                                CreatedAt = p.CreatedAt
-                            };
+                var productsQuery = _context.Products.AsQueryable();
+                
                 if (!string.IsNullOrWhiteSpace(request.search))
                 {
-                    query = query.Where(e => e.SKU.ToLower().Contains(request.search)
-                    || e.Product.ToLower().Contains(request.search));
+                    // use this for performance 
+                    productsQuery = productsQuery.Where(p =>
+                        EF.Functions.Like(p.Sku, $"%{request.search}%") ||
+                        EF.Functions.Like(p.Name, $"%{request.search}%"));
                 }
+
+                var query = (from p in productsQuery
+                             join i in _context.Inventories on p.Id equals i.ProductId
+                             join pc in _context.ProductCategories on p.CategoryId equals pc.Id
+                             group new { p, i, pc } by p.Id into g
+                             select new ProductTableResponse
+                             {
+                                 Id = g.Key,
+                                 SKU = g.Min(x => x.p.Sku) ?? string.Empty,
+                                 Product = g.Min(x => x.p.Name) ?? string.Empty,
+                                 Stock = g.Sum(x => x.i.QuantityOnHand),
+                                 CategoryId = g.Min(x => x.p.CategoryId),
+                                 Category = g.Min(x => x.pc.Name) ?? string.Empty,
+                                 Price = g.Min(x => x.p.UnitPrice),
+                                 Cost = g.Min(x => x.p.Cost),
+                                 IsActive = g.Select(e=>e.p.IsActive).FirstOrDefault(),
+                                 CreatedAt = g.Min(x => x.p.CreatedAt)
+                             });
+
                 Expression<Func<ProductTableResponse, object>> orderSelector =
                    request.SortColumn?.ToLower() switch
                    {
