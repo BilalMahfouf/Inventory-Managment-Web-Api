@@ -190,6 +190,7 @@ namespace Application.Services.Products
         public async Task<Result<PagedList<ProductReadResponse>>> GetAllAsync(
               int page,
               int pageSize,
+              string? search,
               CancellationToken cancellationToken = default)
         {
             try

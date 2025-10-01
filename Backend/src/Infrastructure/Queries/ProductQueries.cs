@@ -1,7 +1,12 @@
 ﻿using Application.Abstractions.Queries;
+using Application.DTOs.Products.Response.Products;
+using Application.PagedLists;
 using Application.Results;
 using Infrastructure.Persistence;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Asn1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,6 +56,51 @@ namespace Infrastructure.Queries
             catch(Exception ex)
             {
                 return Result<object>.Exception(nameof(GetProductDashboardSummaryAsync), ex) ;
+            }
+        }
+        public async Task<Result<PagedList<ProductReadResponse>>> GetAllAsync(
+            TableRequest request, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var query = _context.Products.AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(request.search))
+                {
+                    query = query.Where(e => e.Sku.ToLower().Contains(request.search)
+                    || e.Name.ToLower().Contains(request.search));
+                }
+                query = query.Skip((request.Page - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .OrderBy(e=>e.Id)
+                    .Include(e => e.CreatedByUser)
+                    .Include(e => e.UpdatedByUser)
+                    .Include(e => e.DeletedByUser)
+                    .Include(e => e.UnitOfMeasure)
+                    .Include(e => e.Category);
+                var item = await query.Select(e => 
+                Application.Helpers.Util.Utility.MapToReadResponse(e))
+                    .ToListAsync(cancellationToken);
+                if (item is null || !item.Any())
+                {
+                    return Result<PagedList<ProductReadResponse>>.NotFound("Products");
+                }
+
+                var count = await _context.Products.CountAsync(cancellationToken);
+
+                var result = new PagedList<ProductReadResponse>
+                {
+                    Item = item,
+                    Page = request.Page,
+                    PageSize = item.Count,
+                    TotalCount = count
+                };
+                return Result<PagedList<ProductReadResponse>>.Success(result);
+            }
+            catch (Exception ex)
+            {
+                return Result<PagedList<ProductReadResponse>>.Exception(
+                    nameof(GetAllAsync), ex);
             }
         }
     }

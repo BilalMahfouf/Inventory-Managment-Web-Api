@@ -18,6 +18,7 @@ namespace Application.Abstractions.Services.Products
         Task<Result<PagedList<ProductReadResponse>>> GetAllAsync
             (int page,
              int pageSize,
+             string? search,
              CancellationToken cancellationToken = default);
 
         Task<Result<ProductReadResponse>> CreateAsync(ProductCreateRequest request

@@ -36,9 +36,16 @@ namespace Presentation.Controllers.Products
             GetAllProductAsync(
                         [FromQuery]int page=1,
                         [FromQuery]int pageSize=10,
+                        [FromQuery]string? search=null,
                         CancellationToken cancellationToken = default)
         {
-            var response = await _service.GetAllAsync(page,pageSize,cancellationToken);
+            var request = new TableRequest
+            {
+                Page = page,
+                PageSize = pageSize,
+                search = string.IsNullOrWhiteSpace(search) ? search : search.ToLower()
+            };
+            var response = await _query.GetAllAsync(request, cancellationToken);    
             return response.HandleResult();
         }
 

@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.Inventories;
+using Application.DTOs.Products.Response.Products;
 using Domain.Entities;
 using FluentValidation;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Application.Helpers.Util
 {
-    internal static class Utility
+    public  static class Utility
     {
         internal static string GenerateGuid()
         {
@@ -43,6 +44,35 @@ namespace Application.Helpers.Util
             };
         }
 
+        public static ProductReadResponse MapToReadResponse(Product product)
+        {
+            return new ProductReadResponse
+            {
+                Id = product.Id,
+                SKU = product.Sku,
+                Name = product.Name,
+                Description = product.Description,
+                CategoryId = product.CategoryId,
+                CategoryName = product.Category.Name,
+                UnitOfMeasureId = product.UnitOfMeasureId,
+                UnitOfMeasureName = product.UnitOfMeasure.Name,
+                CostPrice = product.Cost,
+                UnitPrice = product.UnitPrice,
+                IsActive = product.IsActive,
 
+                CreatedAt = product.CreatedAt,
+                CreatedByUserId = product.CreatedByUserId,
+                CreatedByUserName = product.CreatedByUser?.UserName,
+
+                UpdatedAt = product.UpdatedAt,
+                UpdatedByUserId = product.UpdatedByUserId,
+                UpdatedByUserName = product.UpdatedByUser?.UserName,
+
+                IsDeleted = product.IsDeleted,
+                DeleteAt = product.DeletedAt,
+                DeletedByUserId = product.DeletedByUserId,
+                DeletedByUserName = product.DeletedByUser?.UserName,
+            };
+        }
     }
 }
