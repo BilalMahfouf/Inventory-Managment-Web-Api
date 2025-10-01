@@ -2,6 +2,7 @@
 using Application.DTOs.Products.Response.Products;
 using Application.PagedLists;
 using Application.Results;
+using Domain.Entities;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using Org.BouncyCastle.Asn1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -58,48 +60,75 @@ namespace Infrastructure.Queries
                 return Result<object>.Exception(nameof(GetProductDashboardSummaryAsync), ex) ;
             }
         }
-        public async Task<Result<PagedList<ProductReadResponse>>> GetAllAsync(
+        public async Task<Result<PagedList<ProductTableResponse>>> GetAllAsync(
             TableRequest request, CancellationToken cancellationToken = default)
         {
             try
             {
-                var query = _context.Products.AsQueryable();
 
+                var query = from p in _context.Products
+                            join i in _context.Inventories on p.Id equals i.ProductId
+                            join pc in _context.ProductCategories on p.CategoryId equals pc.Id
+                            select new ProductTableResponse
+                            {
+                                Id = p.Id,
+                                SKU = p.Sku,
+                                Product = p.Name,
+                                Stock = i.QuantityOnHand,
+                                CategoryId = p.CategoryId,
+                                Category = pc.Name,
+                                Price = p.UnitPrice,
+                                Cost = p.Cost,
+                                IsActive = p.IsActive,
+                                CreatedAt = p.CreatedAt
+                            };
                 if (!string.IsNullOrWhiteSpace(request.search))
                 {
-                    query = query.Where(e => e.Sku.ToLower().Contains(request.search)
-                    || e.Name.ToLower().Contains(request.search));
+                    query = query.Where(e => e.SKU.ToLower().Contains(request.search)
+                    || e.Product.ToLower().Contains(request.search));
                 }
-                query = query.Skip((request.Page - 1) * request.PageSize)
-                    .Take(request.PageSize)
-                    .OrderBy(e=>e.Id)
-                    .Include(e => e.CreatedByUser)
-                    .Include(e => e.UpdatedByUser)
-                    .Include(e => e.DeletedByUser)
-                    .Include(e => e.UnitOfMeasure)
-                    .Include(e => e.Category);
-                var item = await query.Select(e => 
-                Application.Helpers.Util.Utility.MapToReadResponse(e))
-                    .ToListAsync(cancellationToken);
-                if (item is null || !item.Any())
+                Expression<Func<ProductTableResponse, object>> orderSelector =
+                   request.SortColumn?.ToLower() switch
+                   {
+                       "sku" => p => p.SKU,
+                       "product" => p => p.Product,
+                       "price" => p => p.Price,
+                       "stock" => p => p.Stock,
+                       "createdAt" => p => p.CreatedAt,
+                       _ => p => p.Id
+                   };
+                if(request.SortOrder?.ToLower()=="desc")
                 {
-                    return Result<PagedList<ProductReadResponse>>.NotFound("Products");
+                    query = query.OrderByDescending(orderSelector);
+                }
+                else
+                {
+                    query = query.OrderBy(orderSelector);
+                }
+
+                    query = query.Skip((request.Page - 1) * request.PageSize)
+                        .Take(request.PageSize);
+
+                var item = await  query.ToListAsync(cancellationToken);
+                    if (item is null || !item.Any())
+                {
+                    return Result<PagedList<ProductTableResponse>>.NotFound("Products");
                 }
 
                 var count = await _context.Products.CountAsync(cancellationToken);
 
-                var result = new PagedList<ProductReadResponse>
+                var result = new PagedList<ProductTableResponse>
                 {
                     Item = item,
                     Page = request.Page,
                     PageSize = item.Count,
                     TotalCount = count
                 };
-                return Result<PagedList<ProductReadResponse>>.Success(result);
+                return Result<PagedList<ProductTableResponse>>.Success(result);
             }
             catch (Exception ex)
             {
-                return Result<PagedList<ProductReadResponse>>.Exception(
+                return Result<PagedList<ProductTableResponse>>.Exception(
                     nameof(GetAllAsync), ex);
             }
         }

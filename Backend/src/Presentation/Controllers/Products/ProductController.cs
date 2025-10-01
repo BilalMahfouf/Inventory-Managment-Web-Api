@@ -32,18 +32,22 @@ namespace Presentation.Controllers.Products
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
         [Authorize]
-        public async Task<ActionResult<PagedList<ProductReadResponse>>>
+        public async Task<ActionResult<PagedList<ProductTableResponse>>>
             GetAllProductAsync(
-                        [FromQuery]int page=1,
-                        [FromQuery]int pageSize=10,
-                        [FromQuery]string? search=null,
+                        [FromQuery] int page = 1,
+                        [FromQuery] int pageSize = 10,
+                        [FromQuery] string? search = null,
+                        [FromQuery] string? sortColumn = null,
+                        [FromQuery] string? sortOrder = null,
                         CancellationToken cancellationToken = default)
         {
             var request = new TableRequest
             {
                 Page = page,
                 PageSize = pageSize,
-                search = string.IsNullOrWhiteSpace(search) ? search : search.ToLower()
+                search = string.IsNullOrWhiteSpace(search) ? search : search.ToLower(),
+                SortOrder = sortOrder,
+                SortColumn = sortColumn
             };
             var response = await _query.GetAllAsync(request, cancellationToken);    
             return response.HandleResult();

@@ -13,7 +13,7 @@ namespace Application.Abstractions.Queries
     {
         Task<Result<object>> GetProductDashboardSummaryAsync(
             CancellationToken cancellationToken = default);
-        Task<Result<PagedList<ProductReadResponse>>> GetAllAsync(TableRequest request,
+        Task<Result<PagedList<ProductTableResponse>>> GetAllAsync(TableRequest request,
             CancellationToken cancellationToken = default);
     }
 }
