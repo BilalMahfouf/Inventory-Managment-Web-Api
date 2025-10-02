@@ -34,10 +34,10 @@ const useServerSideDataTable = (
       sortingArray.length > 0 ? (sortingArray[0].desc ? 'desc' : 'asc') : null;
 
     const fetchFunctionParam = {
-      Page: page,
-      PageSize: size,
-      SortColumn: sortColumn,
-      SortOrder: sortOrder,
+      page: page,
+      pageSize: size,
+      sortColumn: sortColumn,
+      sortOrder: sortOrder,
       search: search,
     };
 

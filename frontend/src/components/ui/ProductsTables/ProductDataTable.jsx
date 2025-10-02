@@ -3,17 +3,17 @@ import { getAllProducts } from '@services/products/productService';
 import useServerSideDataTable from '../../../hooks/useServerSideDataTable';
 export default function ProductDataTable() {
   const fetchProducts = async ({
-    Page,
-    PageSize,
-    SortColumn,
-    SortOrder,
+    page,
+    pageSize,
+    sortColumn,
+    sortOrder,
     search,
   }) => {
     const response = await getAllProducts({
-      Page: Page,
-      PageSize: PageSize,
-      SortColumn: SortColumn,
-      SortOrder: SortOrder,
+      page: page,
+      pageSize: pageSize,
+      sortColumn: sortColumn,
+      sortOrder: sortOrder,
       search: search,
     });
     return response;

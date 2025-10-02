@@ -17,8 +17,8 @@ async function getSummary() {
 }
 
 async function getAllProducts({
-  page = 1,
-  pageSize = 10,
+  page,
+  pageSize,
   sortColumn,
   sortOrder,
   search,
@@ -26,8 +26,8 @@ async function getAllProducts({
   try {
     // Build query parameters, only include non-null values
     const params = new URLSearchParams();
-    params.append('page', page);
-    params.append('pageSize', pageSize);
+    params.append('page', page ? page : 1);
+    params.append('pageSize', pageSize ? pageSize : 10);
 
     if (sortColumn) params.append('sortColumn', sortColumn);
     if (sortOrder) params.append('sortOrder', sortOrder);
