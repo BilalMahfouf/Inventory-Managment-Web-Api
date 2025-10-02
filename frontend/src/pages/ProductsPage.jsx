@@ -86,20 +86,36 @@ export default function ProductsPage() {
           className='flex-1'
         />
       </div>
-      <div className={`${divStyles} mt-6`}>
-        <Tabs>
-          <TabList className='flex border-b border-gray-200 mb-4'>
-            <Tab className='mr-4 pb-2 cursor-pointer'>Products</Tab>
-            <Tab className='mr-4 pb-2 cursor-pointer'>Stock Movements</Tab>
-          </TabList>
+
+      <Tabs>
+        <TabList className='flex bg-blue-50 rounded-lg p-1 mb-4 mt-6 gap-1 max-w-fit border-0'>
+          <Tab
+            className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
+            selectedClassName='!bg-white !text-gray-900 shadow-sm'
+          >
+            Products
+          </Tab>
+          <Tab
+            className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
+            selectedClassName='!bg-white !text-gray-900 shadow-sm'
+          >
+            Stock Movements
+          </Tab>
+        </TabList>
+        <div className={divStyles + 'mt-6'}>
+          <div className='mb-9 flex items-center justify-between'>
+            <h3 className='text-2xl font-semibold leading-none tracking-tight'>
+              Product Catalog
+            </h3>
+          </div>
           <TabPanel>
             <ProductDataTable />
           </TabPanel>
           <TabPanel>
             <div className={divStyles}>Stock Movements Coming Soon...</div>
           </TabPanel>
-        </Tabs>
-      </div>
+        </div>
+      </Tabs>
     </div>
   );
 }
