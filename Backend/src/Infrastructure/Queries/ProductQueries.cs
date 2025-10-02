@@ -66,6 +66,17 @@ namespace Infrastructure.Queries
              
             try
             {
+                var count = await
+                            _context.Products
+                            .Where(p => _context.Inventories.Any(i => i.ProductId == p.Id))
+                            .Select(p => p.Id)
+                            .Distinct()
+                            .CountAsync();
+                if(count==0)
+                {
+                    return Result<PagedList<ProductTableResponse>>.NotFound("Products");
+                }
+
                 var productsQuery = _context.Products.AsQueryable();
                 
                 if (!string.IsNullOrWhiteSpace(request.search))
@@ -93,6 +104,7 @@ namespace Infrastructure.Queries
                                  IsActive = g.Select(e=>e.p.IsActive).FirstOrDefault(),
                                  CreatedAt = g.Min(x => x.p.CreatedAt)
                              });
+
 
                 Expression<Func<ProductTableResponse, object>> orderSelector =
                    request.SortColumn?.ToLower() switch
@@ -122,14 +134,13 @@ namespace Infrastructure.Queries
                     return Result<PagedList<ProductTableResponse>>.NotFound("Products");
                 }
 
-                var count = await _context.Products.CountAsync(cancellationToken);
 
                 var result = new PagedList<ProductTableResponse>
                 {
                     Item = item,
                     Page = request.Page,
                     PageSize = item.Count,
-                    TotalCount = count
+                    TotalCount = count // to do make this a background job for performance 
                 };
                 return Result<PagedList<ProductTableResponse>>.Success(result);
             }
