@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using Domain.Abstractions;
+using Domain.Enums;
 using System;
 using System.Collections.Generic;
 
@@ -14,7 +15,7 @@ public partial class StockMovementType : IBaseEntity, ISoftDeletable
     /// <summary>
     ///   1 is IN ,2 is OUT, 3 is ADJUST
     /// </summary>
-    public byte Direction { get; set; }
+    public StockMovementDirection Direction { get; set; }
 
     public string? Description { get; set; }
 
