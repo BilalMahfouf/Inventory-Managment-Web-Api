@@ -142,7 +142,8 @@ public class ProductQueries : IProductQueries
         }
     }
 
-    public async Task<Result<PagedList<object>>> GetStockMovementsHistoryAsync(
+    public async Task<Result<PagedList<StockMovementsHistoryTableResponse>>>
+        GetStockMovementsHistoryAsync(
         TableRequest request,
         CancellationToken cancellationToken = default)
     {
@@ -151,52 +152,64 @@ public class ProductQueries : IProductQueries
             var count = await _context.StockMovements.CountAsync(cancellationToken);
             if (count is 0)
             {
-                return Result<PagedList<object>>.NotFound("Stock Movements");
+                return Result<PagedList<StockMovementsHistoryTableResponse>>.NotFound("Stock Movements");
             }
 
 
             var query = _context.StockMovements
-                        .Include(e => e.Product)
-                        .Include(e => e.MovementType)
-                        .Include(e => e.CreatedByUser)
-                        .Select(e => new
+                        .Select(e => new StockMovementsHistoryTableResponse
                         {
 
                             Id = e.Id,
                             Product = e.Product.Name,
+                            Sku = e.Product.Sku,
                             Type = e.MovementType.Direction.ToString(),
-                            Queries = e.Quantity,
+                            Quantity = e.Quantity,
                             Reason = e.MovementType.Name,
                             CreatedAt = e.CreatedAt,
                             CreatedByUser = e.CreatedByUser.UserName,
                         });
+            Expression<Func<StockMovementsHistoryTableResponse, object>> orderSelector =
+               request.SortColumn?.ToLower() switch
+               {
+                   "product" => p => p.Product,
+                   "quantity" => p => p.Quantity,
+                   "date" => p => p.CreatedAt,
+                   _ => p => p.Id
+               };
+            if (request.SortOrder?.ToLower() == "desc")
+            {
+                query = query.OrderByDescending(orderSelector);
+            }
+            else
+            {
+                query = query.OrderBy(orderSelector);
+            }
+
             query = query.Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize);
             var item = await query.AsNoTracking().ToListAsync(cancellationToken);
             if (item is null || !item.Any())
             {
-                return Result<PagedList<object>>.NotFound("Stock Movements");
+                return Result<PagedList<StockMovementsHistoryTableResponse>>.NotFound("Stock Movements");
             }
-            var result = new PagedList<object>
+            var result = new PagedList<StockMovementsHistoryTableResponse>
             {
                 Item = item,
                 Page = request.Page,
                 PageSize = item.Count,
                 TotalCount = count
             };
-            return Result<PagedList<object>>.Success(result);
+            return Result<PagedList<StockMovementsHistoryTableResponse>>.Success(result);
 
 
         }
         catch (Exception ex)
         {
-            return Result<PagedList<object>>
+            return Result<PagedList<StockMovementsHistoryTableResponse>>
                 .Exception(nameof(GetStockMovementsHistoryAsync), ex);
         }
     }
-
-
-
 
 
 }

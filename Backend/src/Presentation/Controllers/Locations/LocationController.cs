@@ -129,7 +129,7 @@ namespace Presentation.Controllers.Locations
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        // [Authorize]
+        [Authorize]
         public async Task<ActionResult<IReadOnlyCollection<InventoryBaseReadResponse>>>
             GetLocationInventoriesByIdAsync(int id
             , CancellationToken cancellationToken = default)
@@ -138,7 +138,18 @@ namespace Presentation.Controllers.Locations
             return response.HandleResult();
         }
 
+        [HttpGet("names")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<object>>> GetLocationsNamesAsync
+            (CancellationToken cancellationToken = default)
+        {
+            var response = await _service.GetLocationsNamesAsync(cancellationToken);
+            return response.HandleResult();
+        }
 
     }
 }

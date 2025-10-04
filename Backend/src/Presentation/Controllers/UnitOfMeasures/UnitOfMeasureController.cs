@@ -92,6 +92,22 @@ namespace Presentation.Controllers.UnitOfMeasures
             return response.HandleResult();
         }
 
+        [HttpGet("names")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<object>>>
+            GetUnitOfMeasureNamesAsync(CancellationToken cancellationToken)
+        {
+            var response = await _service.GetUnitsNamesAsync(cancellationToken);
+            return response.HandleResult();
+        }
+
+
+
+
 
 
     }

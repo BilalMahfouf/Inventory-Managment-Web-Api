@@ -9,6 +9,7 @@ namespace Presentation.Controllers.Products
 {
     [ApiController]
     [Route("api/product-categories")]
+    [Authorize]
     public class ProductCategoryController:ControllerBase
     {
         private readonly IProductCategoryService _service;
@@ -23,7 +24,6 @@ namespace Presentation.Controllers.Products
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet]
 
-        [Authorize]
         public async Task<ActionResult<IReadOnlyCollection<ProductCategoryReadResponse>>>
             GetAllProductCategoriesAsync(CancellationToken cancellationToken)
         {
@@ -37,7 +37,6 @@ namespace Presentation.Controllers.Products
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet("{id}/children")]
 
-        [Authorize]
         public async Task<ActionResult<IReadOnlyCollection
             <ProductCategoryChildrenReadResponse>>>
             GetAllProductCategoriesChildrenAsync(int id
@@ -52,7 +51,6 @@ namespace Presentation.Controllers.Products
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet("tree")]
 
-        [Authorize]
         public async Task<ActionResult<IReadOnlyCollection<
             ProductCategoryTreeReadResponse>>>
             GetAllProductCategoriesTreeAsync(CancellationToken cancellationToken)
@@ -66,7 +64,6 @@ namespace Presentation.Controllers.Products
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet("{id}", Name = "GetProductCategoryByIdAsync")]
 
-        [Authorize]
         public async Task<ActionResult<ProductCategoryReadResponse>>
             GetProductCategoryByIdAsync(int id, CancellationToken cancellationToken)
         {
@@ -80,7 +77,6 @@ namespace Presentation.Controllers.Products
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPut("{id}")]
 
-        [Authorize]
         public async Task<IActionResult> UpdateProductCategoryAsync(int id,
             ProductCategoryRequest request, CancellationToken cancellationToken)
         {
@@ -93,7 +89,6 @@ namespace Presentation.Controllers.Products
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost]
 
-        [Authorize]
         public async Task<ActionResult<ProductCategoryReadResponse>>
             CreateProductCategoryAsync(ProductCategoryRequest request
             , CancellationToken cancellationToken)
@@ -109,12 +104,26 @@ namespace Presentation.Controllers.Products
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpDelete("{id}")]
 
-        [Authorize]
         public async Task<IActionResult> DeleteProductCategoryAsync(int id
             ,CancellationToken cancellationToken)
         {
             var response = await _service.DeleteAsync(id, cancellationToken);
             return response.HandleResult();
+        }
+
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet("names")]
+
+        public async Task<ActionResult<IEnumerable<object>>> 
+            GetProductCategoriesNamesAsync(
+            CancellationToken cancellationToken)
+        {
+            var response = await _service.GetCategoriesNamesAsync(cancellationToken);
+            return response.HandleResult();
+            
         }
 
 

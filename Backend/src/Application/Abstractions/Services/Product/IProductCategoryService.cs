@@ -26,5 +26,8 @@ namespace Application.Abstractions.Services.Products
         Task<Result> UpdateAsync(int id, ProductCategoryRequest request
             , CancellationToken cancellationToken);
         Task<Result> DeleteAsync(int id, CancellationToken cancellationToken);
+
+        Task<Result<IEnumerable<object>>> GetCategoriesNamesAsync(
+            CancellationToken cancellationToken = default);
     }
 }

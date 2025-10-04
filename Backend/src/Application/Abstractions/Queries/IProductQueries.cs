@@ -15,7 +15,7 @@ namespace Application.Abstractions.Queries
             CancellationToken cancellationToken = default);
         Task<Result<PagedList<ProductTableResponse>>> GetAllAsync(TableRequest request,
             CancellationToken cancellationToken = default);
-        Task<Result<PagedList<object>>> GetStockMovementsHistoryAsync(
+        Task<Result<PagedList<StockMovementsHistoryTableResponse>>> GetStockMovementsHistoryAsync(
             TableRequest request,
             CancellationToken cancellationToken = default);
     }

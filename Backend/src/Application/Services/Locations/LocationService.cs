@@ -248,6 +248,31 @@ namespace Application.Services.Locations
             }
         }
 
+        public async Task<Result<IEnumerable<object>>> GetLocationsNamesAsync(
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var locations = await _repository.GetAllAsync(
+                    e => !e.IsDeleted
+                    , cancellationToken: cancellationToken);
+                if (locations is null || !locations.Any())
+                {
+                    return Result<IEnumerable<object>>.NotFound(nameof(locations));
+                }
+                var response = locations.Select(l => new
+                {
+                    l.Id,
+                    l.Name
+                }).ToList().AsReadOnly();
+                return Result<IEnumerable<object>>.Success(response);
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<object>>
+                    .Exception(nameof(GetLocationsNamesAsync), ex);
+            }
+        }
 
     }
 }

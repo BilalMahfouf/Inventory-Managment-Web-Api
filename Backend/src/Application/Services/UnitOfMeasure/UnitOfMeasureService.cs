@@ -59,13 +59,13 @@ namespace Application.Services.UnitOfMeasures
             {
                 var unitOfMeasures = await _repository.GetAllAsync(null!, cancellationToken
                     , "CreatedByUser,UpdatedByUser,DeletedByUser");
-                if(unitOfMeasures is null || !unitOfMeasures.Any())
+                if (unitOfMeasures is null || !unitOfMeasures.Any())
                 {
                     return Result<IReadOnlyCollection<UnitOfMeasureReadResponse>>
                         .NotFound(nameof(unitOfMeasures));
                 }
                 var result = new List<UnitOfMeasureReadResponse>();
-                foreach(var u in unitOfMeasures)
+                foreach (var u in unitOfMeasures)
                 {
                     var uResponse = Map(u);
                     result.Add(uResponse);
@@ -73,7 +73,7 @@ namespace Application.Services.UnitOfMeasures
                 return Result<IReadOnlyCollection<UnitOfMeasureReadResponse>>
                     .Success(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Result<IReadOnlyCollection<UnitOfMeasureReadResponse>>
                     .Failure($"Error:{ex.Message}"
@@ -82,9 +82,9 @@ namespace Application.Services.UnitOfMeasures
         }
 
         public async Task<Result<UnitOfMeasureReadResponse>> FindAsync(int id
-            ,CancellationToken cancellationToken)
+            , CancellationToken cancellationToken)
         {
-            if(id <= 0)
+            if (id <= 0)
             {
                 return Result<UnitOfMeasureReadResponse>.InvalidId();
             }
@@ -92,7 +92,7 @@ namespace Application.Services.UnitOfMeasures
             {
                 var unitOfMeasure = await _repository.FindAsync(u => u.Id == id
                 , cancellationToken, "CreatedByUser,UpdatedByUser,DeletedByUser");
-                if(unitOfMeasure is null)
+                if (unitOfMeasure is null)
                 {
                     return Result<UnitOfMeasureReadResponse>
                         .NotFound(nameof(unitOfMeasure));
@@ -100,7 +100,7 @@ namespace Application.Services.UnitOfMeasures
                 var result = Map(unitOfMeasure);
                 return Result<UnitOfMeasureReadResponse>.Success(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Result<UnitOfMeasureReadResponse>
                     .Failure($"Error:{ex.Message}"
@@ -110,10 +110,10 @@ namespace Application.Services.UnitOfMeasures
 
         public async Task<Result<UnitOfMeasureReadResponse>> AddAsync(
             UnitOfMeasureRequest request
-            ,CancellationToken cancellationToken)
+            , CancellationToken cancellationToken)
         {
             var validationResult = _validator.Validate(request);
-            if(!validationResult.IsValid)
+            if (!validationResult.IsValid)
             {
                 var errors = string.Join("; "
                     , validationResult.Errors.Select(e => e.ErrorMessage));
@@ -124,7 +124,7 @@ namespace Application.Services.UnitOfMeasures
             {
                 var isExist = await _repository.IsExistAsync(u => u.Name == request.Name
                 , cancellationToken);
-                if(isExist)
+                if (isExist)
                 {
                     string errorMessage = $"{nameof(UnitOfMeasure)} with name {request.Name} already exists";
                     return Result<UnitOfMeasureReadResponse>
@@ -142,7 +142,7 @@ namespace Application.Services.UnitOfMeasures
                 await _uow.SaveChangesAsync(cancellationToken);
                 return await FindAsync(entity.Id, cancellationToken);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Result<UnitOfMeasureReadResponse>
                     .Failure($"Error:{ex.Message}"
@@ -154,12 +154,12 @@ namespace Application.Services.UnitOfMeasures
             , UnitOfMeasureRequest request
             , CancellationToken cancellationToken)
         {
-            if(id <= 0)
+            if (id <= 0)
             {
                 return Result<UnitOfMeasureReadResponse>.InvalidId();
             }
             var validationResult = _validator.Validate(request);
-            if(!validationResult.IsValid)
+            if (!validationResult.IsValid)
             {
                 var errors = string.Join("; "
                     , validationResult.Errors.Select(e => e.ErrorMessage));
@@ -170,12 +170,12 @@ namespace Application.Services.UnitOfMeasures
             {
                 var entity = await _repository.FindAsync(u => u.Id == id
                 , cancellationToken);
-                if(entity is null)
+                if (entity is null)
                 {
                     return Result<UnitOfMeasureReadResponse>
                         .NotFound(nameof(entity));
                 }
-                if(entity.IsDeleted)
+                if (entity.IsDeleted)
                 {
                     string errorMessage = $"{nameof(UnitOfMeasure)} is deleted";
                     return Result<UnitOfMeasureReadResponse>
@@ -184,7 +184,7 @@ namespace Application.Services.UnitOfMeasures
                 // check if another entity with the same name exists
                 var isExist = await _repository.IsExistAsync(u => u.Name == request.Name
                 && u.Id != id, cancellationToken);
-                if(isExist)
+                if (isExist)
                 {
                     string errorMessage = $"{nameof(UnitOfMeasure)} with name {request.Name} already exists";
                     return Result<UnitOfMeasureReadResponse>
@@ -199,12 +199,44 @@ namespace Application.Services.UnitOfMeasures
                 await _uow.SaveChangesAsync(cancellationToken);
                 return await FindAsync(entity.Id, cancellationToken);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Result<UnitOfMeasureReadResponse>
                     .Failure($"Error:{ex.Message}"
                     , ErrorType.InternalServerError);
             }
+        }
+
+        public async Task<Result<IEnumerable<object>>>
+            GetUnitsNamesAsync(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var unitsNames = await _repository.GetAllAsync(
+                    e => !e.IsDeleted, cancellationToken: cancellationToken);
+                if (unitsNames is null || !unitsNames.Any())
+                {
+                    return Result<IEnumerable<object>>.NotFound("Units of Measure");
+                }
+                var result = unitsNames.Select(e=> new
+                {
+                    e.Id,
+                    e.Name
+                });
+                if( result is null || !result.Any())
+
+                {
+                    return Result<IEnumerable<object>>.NotFound("Units of Measure names");
+                }
+                return Result<IEnumerable<object>>.Success(result);
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<object>>.Exception(nameof(GetUnitsNamesAsync), ex);
+            }
+
+
+
         }
     }
 }

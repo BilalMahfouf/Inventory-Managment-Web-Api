@@ -208,7 +208,7 @@ namespace Presentation.Controllers.Products
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<ActionResult<PagedList<object>>>
+        public async Task<ActionResult<PagedList<StockMovementsHistoryTableResponse>>>
             GetAllStockMovementsHistoryAsync(
                         [FromQuery] int page = 1,
                         [FromQuery] int pageSize = 10,
