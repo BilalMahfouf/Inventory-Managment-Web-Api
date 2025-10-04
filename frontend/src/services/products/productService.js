@@ -49,4 +49,33 @@ async function getAllProducts({
   }
 }
 
-export { getSummary, getAllProducts };
+async function getStockMovementsHistory({
+  page,
+  pageSize,
+  sortColumn,
+  sortOrder,
+  search,
+}) {
+  try {
+    let params = new URLSearchParams();
+    params.append('page', page ? page : 1);
+    params.append('pageSize', pageSize ? pageSize : 10);
+    if (sortColumn) params.append('sortColumn', sortColumn);
+    if (sortOrder) params.append('sortOrder', sortOrder);
+    if (search) params.append('search', search);
+    console.log('Fetching stock movements with params:', params.toString());
+    const response = await fetchWithAuth(
+      `${BASE_URL}/stock-movements-history?${params.toString()}`
+    );
+    if (!response.success) {
+      console.log('Failed to fetch stock movements history:', response.error);
+      throw new Error('Failed to fetch stock movements history');
+    }
+    return await response.response.json();
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export { getSummary, getAllProducts, getStockMovementsHistory };

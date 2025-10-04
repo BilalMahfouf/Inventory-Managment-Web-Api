@@ -15,12 +15,42 @@ import DataTable from '@components/DataTable/DataTable';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { divStyles } from '../util/uiVariables';
 import ProductDataTable from '../components/ui/ProductsTables/ProductDataTable';
+import StockMovementHistoryTable from '../components/ui/ProductsTables/StockMovementHistoryTable';
+import { AddProduct } from '@components/products';
 export default function ProductsPage() {
   const [totalProductsCount, setTotalProductsCount] = useState(0);
   const [inventoryValue, setInventoryValue] = useState(0);
   const [lowStockCount, setLowStockCount] = useState(1);
   const [profitPotential, setProfitPotential] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleAddProduct = async productData => {
+    setIsSubmitting(true);
+    try {
+      // TODO: Replace with your actual API call
+      console.log('Product data to submit:', productData);
+
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Close modal and refresh data
+      setIsAddModalOpen(false);
+
+      // You might want to refresh the summary data here
+      // const summary = await getSummary();
+      // setTotalProductsCount(summary.totalProducts);
+      // ... update other summary data
+
+      console.log('Product created successfully!');
+    } catch (error) {
+      console.error('Error creating product:', error);
+      // You can add toast notifications or error handling here
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,7 +72,10 @@ export default function ProductsPage() {
           title='Product Management'
           description='Manage your product catalog and inventory.'
         />
-        <Button LeftIcon={Plus} children='Add Product' />
+
+        <Button LeftIcon={Plus} onClick={() => setIsAddModalOpen(true)}>
+          Add Product
+        </Button>
       </div>
       <div className='flex flex-col md:flex-row gap-6'>
         <InfoCard
@@ -103,19 +136,31 @@ export default function ProductsPage() {
           </Tab>
         </TabList>
         <div className={divStyles + 'mt-6'}>
-          <div className='mb-9 flex items-center justify-between'>
-            <h3 className='text-2xl font-semibold leading-none tracking-tight'>
-              Product Catalog
-            </h3>
-          </div>
           <TabPanel>
+            <div className='mb-9 flex items-center justify-between'>
+              <h3 className='text-2xl font-semibold leading-none tracking-tight'>
+                Product Catalog
+              </h3>
+            </div>
             <ProductDataTable />
           </TabPanel>
           <TabPanel>
-            <div className={divStyles}>Stock Movements Coming Soon...</div>
+            <div className='mb-9 flex items-center justify-between'>
+              <h3 className='text-2xl font-semibold leading-none tracking-tight'>
+                Stock Movement History
+              </h3>
+            </div>
+            <StockMovementHistoryTable />
           </TabPanel>
         </div>
       </Tabs>
+
+      <AddProduct
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSubmit={handleAddProduct}
+        isLoading={isSubmitting}
+      />
     </div>
   );
 }
