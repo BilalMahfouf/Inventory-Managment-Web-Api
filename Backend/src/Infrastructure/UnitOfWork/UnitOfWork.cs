@@ -8,6 +8,7 @@ using Application.Abstractions.UnitOfWork;
 using Application.DTOs.Users.Response;
 using Domain.Abstractions;
 using Domain.Entities;
+using Domain.Entities.Products;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Configurations;
 using Infrastructure.Repositories.Base;

@@ -11,6 +11,7 @@ using Application.PagedLists;
 using Application.Results;
 using Application.Services.Shared;
 using Domain.Entities;
+using Domain.Entities.Products;
 using Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -111,7 +112,9 @@ namespace Application.Services.Products
             return await _UpdateProductStatus(id, true, cancellationToken);
         }
 
-        public async Task<Result<ProductReadResponse>> CreateAsync(ProductCreateRequest request, CancellationToken cancellationToken = default)
+        public async Task<Result<ProductReadResponse>> CreateAsync(
+            ProductCreateRequest request, 
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -123,6 +126,7 @@ namespace Application.Services.Products
                     return Result<ProductReadResponse>.Failure(errorMessage
                         , ErrorType.BadRequest);
                 }
+                // this is business rules 
                 var existingProduct = await _productRepository.IsExistAsync
                     (p => p.Sku == request.SKU, cancellationToken);
                 if (existingProduct)
@@ -130,22 +134,38 @@ namespace Application.Services.Products
                     return Result<ProductReadResponse>.Failure("SKU already exists"
                         , ErrorType.Conflict);
                 }
-                var product = new Product()
+                var productResult = Product.Create(
+                    sku: request.SKU,
+                    name: request.Name,
+                    description: request.Description,
+                    categoryId: request.CategoryId,
+                    unitOfMeasureId: request.UnitOfMeasureId,
+                    unitPrice: request.UnitPrice,
+                    cost: request.CostPrice
+                    );
+                if (!productResult.IsSuccess)
                 {
-                    Sku = request.SKU,
-                    Name = request.Name,
-                    Description = request.Description,
-                    CategoryId = request.CategoryId,
-                    UnitOfMeasureId = request.UnitOfMeasureId,
-                    Cost = request.CostPrice,
-                    UnitPrice = request.UnitPrice,
-                    CreatedAt = DateTime.UtcNow,
-                    CreatedByUserId = _currentUserService.UserId,
-                    IsActive = true,
-                };
-                _productRepository.Add(product);
+                    return Result<ProductReadResponse>
+                        .Failure(productResult.ErrorMessage!
+                        , productResult.ErrorType);
+                }
+                var inventoryResult = Inventory.Create(
+                    product: productResult.Value!,
+                    locationId: request.LocationId,
+                    quantityOnHand: request.QuantityOnHand,
+                    reorderLevel: request.ReorderLevel,
+                    maxLevel: request.MaxLevel
+                    );
+                    
+                if(!inventoryResult.IsSuccess)
+                {
+                    return Result<ProductReadResponse>.Failure(inventoryResult.ErrorMessage!
+                        , inventoryResult.ErrorType);
+                } 
+                _uow.Products.Add(productResult.Value!);
+                _uow.Inventories.Add(inventoryResult.Value!);
                 await _uow.SaveChangesAsync(cancellationToken);
-                return await FindAsync(product.Id, cancellationToken);
+                return await FindAsync(productResult.Value.Id, cancellationToken);   
             }
             catch (Exception ex)
             {
@@ -173,7 +193,7 @@ namespace Application.Services.Products
             try
             {
                 var product = await _productRepository.FindAsync(p => p.Id == id
-            , cancellationToken, "CreatedByUser,UpdatedByUser,DeletedByUser");
+            , cancellationToken, "CreatedByUser,UpdatedByUser,DeletedByUser,Category,UnitOfMeasure");
                 if (product is null)
                 {
                     return Result<ProductReadResponse>.NotFound("Product");

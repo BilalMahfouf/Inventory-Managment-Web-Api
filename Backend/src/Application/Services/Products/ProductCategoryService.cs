@@ -7,7 +7,7 @@ using Application.DTOs.Products.Response.Categories;
 using Application.FluentValidations.Product;
 using Application.Results;
 using Application.Services.Shared;
-using Domain.Entities;
+using Domain.Entities.Products;
 using Domain.Enums;
 using FluentValidation;
 using System;

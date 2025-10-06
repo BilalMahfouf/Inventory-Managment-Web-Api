@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using Domain.Abstractions;
+using Domain.Entities.Products;
 using System;
 using System.Collections.Generic;
 

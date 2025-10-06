@@ -1,9 +1,10 @@
 ﻿#nullable enable
+using Domain;
 using Domain.Abstractions;
 using System;
 using System.Collections.Generic;
 
-namespace Domain.Entities;
+namespace Domain.Entities.Products;
 
 public partial class ProductCategory : IBaseEntity, ISoftDeletable
 {

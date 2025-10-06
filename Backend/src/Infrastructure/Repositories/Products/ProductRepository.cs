@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Repositories.Base;
 using Application.Abstractions.Repositories.Products;
-using Domain.Entities;
+using Domain.Entities.Products;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Base;
 using Microsoft.EntityFrameworkCore;

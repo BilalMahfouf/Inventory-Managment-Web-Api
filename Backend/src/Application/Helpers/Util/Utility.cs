@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.Inventories;
 using Application.DTOs.Products.Response.Products;
 using Domain.Entities;
+using Domain.Entities.Products;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
