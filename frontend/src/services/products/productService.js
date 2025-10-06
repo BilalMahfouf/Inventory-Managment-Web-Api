@@ -78,4 +78,49 @@ async function getStockMovementsHistory({
   }
 }
 
-export { getSummary, getAllProducts, getStockMovementsHistory };
+async function createProduct({
+  name,
+  sku,
+  description,
+  categoryId,
+  unitOfMeasureId,
+  unitPrice,
+  costPrice,
+  locationId,
+  quantityOnHand,
+  reorderLevel,
+  maxLevel,
+}) {
+  try {
+    const response = await fetchWithAuth(`${BASE_URL}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        sku,
+        description,
+        categoryId,
+        unitOfMeasureId,
+        unitPrice,
+        costPrice,
+        locationId,
+        quantityOnHand,
+        reorderLevel,
+        maxLevel,
+      }),
+    });
+    if (!response.success) {
+      const errorMessage = await response.response.text();
+      console.error('Failed to create product:', errorMessage);
+      throw new Error(errorMessage || 'Failed to create product');
+    }
+    return await response.response.json();
+  } catch (error) {
+    console.error('Failed to create product:', error);
+    throw error;
+  }
+}
+
+export { getSummary, getAllProducts, getStockMovementsHistory, createProduct };

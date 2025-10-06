@@ -159,7 +159,7 @@ export default function ProductsPage() {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSubmit={handleAddProduct}
-        isLoading={isSubmitting}
+        isLoading={true}
       />
     </div>
   );

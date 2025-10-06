@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { getProductCategories } from '@/services/products/productCategoryService';
 import { GetUnitsNames } from '@/services/products/UnitOfMeasureService';
 import { getLocationsNames } from '@/services/products/locationService';
-
+import { createProduct } from '@/services/products/productService';
 /**
  * AddProduct Component
  *
@@ -25,7 +25,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
     // Basic Info
     productName: '',
     sku: '',
-    category: '',
+    category: 0,
     description: '',
     status: 'Active',
 
@@ -40,6 +40,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
     unitOfMeasurement: 0,
     storageLocation: 0,
   });
+  // to do make these in custom hook
   const [categories, setCategories] = useState([]);
   const [unitOfMeasurement, setUnitOfMeasurement] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -68,10 +69,67 @@ const AddProduct = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
       [field]: value,
     }));
   };
+  const AddProduct = async ({
+    sku,
+    name,
+    description,
+    categoryId,
+    unitOfMeasureId,
+    unitPrice,
+    costPrice,
+    locationId,
+    quantityOnHand,
+    reorderLevel,
+    maxLevel,
+  }) => {
+    const data = await createProduct({
+      sku,
+      name,
+      description,
+      categoryId,
+      unitOfMeasureId,
+      unitPrice,
+      costPrice,
+      locationId,
+      quantityOnHand,
+      reorderLevel,
+      maxLevel,
+    });
+    if (data) {
+      console.log('Product created successfully:', data);
+      setFormData({
+        productName: data.name,
+        sku: data.sku,
+        category: data.categoryId,
+        description: data.description,
+        status: data.isActive,
+        costPrice: data.costPrice,
+        sellingPrice: data.unitPrice,
+        currentStock: data.quantityOnHand,
+        minimumStock: data.reorderLevel,
+        maximumStock: data.maxLevel,
+        unitOfMeasurement: data.unitOfMeasureId,
+        storageLocation: 0,
+      });
+    }
+  };
 
   const handleSubmit = () => {
-    if (onSubmit) {
-      onSubmit(formData);
+    AddProduct({
+      sku: formData.sku,
+      name: formData.productName,
+      description: formData.description,
+      categoryId: formData.category,
+      unitOfMeasureId: formData.unitOfMeasurement,
+      unitPrice: formData.sellingPrice,
+      costPrice: formData.costPrice,
+      locationId: formData.storageLocation,
+      quantityOnHand: formData.currentStock,
+      reorderLevel: formData.minimumStock,
+      maxLevel: formData.maximumStock,
+    });
+    if (onClose) {
+      onClose();
     }
   };
 
@@ -79,8 +137,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
     setFormData({
       productName: '',
       sku: '',
-      category: '',
-      brand: '',
+      category: 0,
       description: '',
       status: 'Active',
       costPrice: 0,
@@ -88,8 +145,8 @@ const AddProduct = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
       currentStock: 0,
       minimumStock: 0,
       maximumStock: 0,
-      unitOfMeasurement: 'Pieces',
-      storageLocation: '',
+      unitOfMeasurement: 0,
+      storageLocation: 0,
     });
     setActiveTab(0);
     if (onClose) {
@@ -503,8 +560,14 @@ const AddProduct = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
           </Button>
           <Button
             onClick={handleSubmit}
-            loading={isLoading}
-            disabled={!formData.productName || !formData.sku}
+            // loading={isLoading}
+            disabled={
+              !formData.productName ||
+              !formData.sku ||
+              !formData.category ||
+              !formData.unitOfMeasurement ||
+              !formData.storageLocation
+            }
             className='cursor-pointer'
           >
             Create Product
