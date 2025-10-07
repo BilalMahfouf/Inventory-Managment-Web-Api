@@ -63,7 +63,7 @@ namespace Presentation.Controllers.Products
         public async Task<ActionResult<ProductReadResponse>> GetProductByIdAsync
             (int id, CancellationToken cancellationToken = default)
         {
-            var response = await _service.FindAsync(id, cancellationToken);
+            var response = await _query.GetByIdAsync(id, cancellationToken);
             return response.HandleResult();
         }
 

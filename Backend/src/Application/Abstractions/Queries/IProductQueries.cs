@@ -18,5 +18,7 @@ namespace Application.Abstractions.Queries
         Task<Result<PagedList<StockMovementsHistoryTableResponse>>> GetStockMovementsHistoryAsync(
             TableRequest request,
             CancellationToken cancellationToken = default);
+        Task<Result<ProductReadResponse>> GetByIdAsync(int id,
+            CancellationToken cancellationToken = default);
     }
 }

@@ -43,7 +43,39 @@ namespace Application.Services.Products
 
         private ProductReadResponse MapToReadResponse(Product product)
         {
+            if(product.Inventories is null || !product.Inventories.Any())
+            {
+                return new ProductReadResponse
+                {
+                    Id = product.Id,
+                    SKU = product.Sku,
+                    Name = product.Name,
+                    Description = product.Description,
+                    CategoryId = product.CategoryId,
+                    CategoryName = product.Category.Name,
+                    UnitOfMeasureId = product.UnitOfMeasureId,
+                    UnitOfMeasureName = product.UnitOfMeasure.Name,
+                    CostPrice = product.Cost,
+                    UnitPrice = product.UnitPrice,
+                    IsActive = product.IsActive,
+
+                    CreatedAt = product.CreatedAt,
+                    CreatedByUserId = product.CreatedByUserId,
+                    CreatedByUserName = product.CreatedByUser?.UserName,
+
+                    UpdatedAt = product.UpdatedAt,
+                    UpdatedByUserId = product.UpdatedByUserId,
+                    UpdatedByUserName = product.UpdatedByUser?.UserName,
+
+                    IsDeleted = product.IsDeleted,
+                    DeleteAt = product.DeletedAt,
+                    DeletedByUserId = product.DeletedByUserId,
+                    DeletedByUserName = product.DeletedByUser?.UserName,
+
+                }; 
+            }
             return new ProductReadResponse
+
             {
                 Id = product.Id,
                 SKU = product.Sku,
@@ -56,6 +88,11 @@ namespace Application.Services.Products
                 CostPrice = product.Cost,
                 UnitPrice = product.UnitPrice,
                 IsActive = product.IsActive,
+                Inventories = product.Inventories.Select(e => new
+                {
+                    LocationId = e.LocationId,
+
+                }),
 
                 CreatedAt = product.CreatedAt,
                 CreatedByUserId = product.CreatedByUserId,
@@ -69,6 +106,8 @@ namespace Application.Services.Products
                 DeleteAt = product.DeletedAt,
                 DeletedByUserId = product.DeletedByUserId,
                 DeletedByUserName = product.DeletedByUser?.UserName,
+
+
             };
         }
 
@@ -193,7 +232,7 @@ namespace Application.Services.Products
             try
             {
                 var product = await _productRepository.FindAsync(p => p.Id == id
-            , cancellationToken, "CreatedByUser,UpdatedByUser,DeletedByUser,Category,UnitOfMeasure");
+            , cancellationToken, "CreatedByUser,UpdatedByUser,DeletedByUser,Category,UnitOfMeasure,Inventories");
                 if (product is null)
                 {
                     return Result<ProductReadResponse>.NotFound("Product");

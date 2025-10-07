@@ -211,6 +211,60 @@ public class ProductQueries : IProductQueries
         }
     }
 
+    public async Task<Result<ProductReadResponse>> GetByIdAsync(int id,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var product = await _context.Products.Where(e=>e.Id==id && !e.IsDeleted)
+                .Select(product => new ProductReadResponse
+                {
+                Id = product.Id,
+                SKU = product.Sku,
+                Name = product.Name,
+                Description = product.Description,
+                CategoryId = product.CategoryId,
+                CategoryName = product.Category.Name,
+                UnitOfMeasureId = product.UnitOfMeasureId,
+                UnitOfMeasureName = product.UnitOfMeasure.Name,
+                CostPrice = product.Cost,
+                UnitPrice = product.UnitPrice,
+                IsActive = product.IsActive,
+                Inventories = product.Inventories.Select(inventory => new
+                {
+                    LocationId = inventory.LocationId,
+                    LocationName = inventory.Location.Name,
+                    QuantityOnHand = inventory.QuantityOnHand,
+                    ReorderLevel = inventory.ReorderLevel,
+                    MaxLevel = inventory.MaxLevel
+                }),
+
+                CreatedAt = product.CreatedAt,
+                CreatedByUserId = product.CreatedByUserId,
+                CreatedByUserName = product.CreatedByUser.UserName,
+
+                UpdatedAt = product.UpdatedAt,
+                UpdatedByUserId = product.UpdatedByUserId,
+                UpdatedByUserName = product.UpdatedByUser.UserName,
+
+                IsDeleted = product.IsDeleted,
+                DeleteAt = product.DeletedAt,
+                DeletedByUserId = product.DeletedByUserId,
+                DeletedByUserName = product.DeletedByUser.UserName,
+                })
+                .AsNoTracking()
+                .FirstOrDefaultAsync(cancellationToken);
+           if (product is null)
+            {
+                return Result<ProductReadResponse>.NotFound($"Product with id {id} is not found");
+            }
+            return Result<ProductReadResponse>.Success(product);  
+        }
+        catch(Exception ex)
+        {
+            return Result<ProductReadResponse>.Exception(nameof(GetByIdAsync), ex);
+        }
+    }
 
 }
 
