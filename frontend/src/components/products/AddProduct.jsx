@@ -6,7 +6,11 @@ import { cn } from '@/lib/utils';
 import { getProductCategories } from '@/services/products/productCategoryService';
 import { GetUnitsNames } from '@/services/products/UnitOfMeasureService';
 import { getLocationsNames } from '@/services/products/locationService';
-import { createProduct } from '@/services/products/productService';
+import {
+  createProduct,
+  getProductById,
+  updateProduct,
+} from '@/services/products/productService';
 /**
  * AddProduct Component
  *
@@ -19,7 +23,7 @@ import { createProduct } from '@/services/products/productService';
  * @param {function} props.onSubmit - Callback function when form is submitted with product data
  * @param {boolean} props.isLoading - Shows loading state on submit button
  */
-const AddProduct = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
+const AddProduct = ({ isOpen, onClose, productId = 0, isLoading = false }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [formData, setFormData] = useState({
     // Basic Info
@@ -40,6 +44,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
     unitOfMeasurement: 0,
     storageLocation: 0,
   });
+  const [mode, setMode] = useState('add'); // 'add' or 'update'
   // to do make these in custom hook
   const [categories, setCategories] = useState([]);
   const [unitOfMeasurement, setUnitOfMeasurement] = useState([]);
@@ -51,7 +56,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
     { id: 3, label: 'Details' },
   ];
   const statusOptions = ['Active', 'Inactive', 'Draft'];
-
+  const [id, setId] = useState(productId);
   // Calculate profit metrics
   const profitPerUnit = formData.sellingPrice - formData.costPrice;
   const profitMargin =
@@ -69,7 +74,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
       [field]: value,
     }));
   };
-  const AddProduct = async ({
+  const addNewProduct = async ({
     sku,
     name,
     description,
@@ -97,6 +102,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
     });
     if (data) {
       console.log('Product created successfully:', data);
+
       setFormData({
         productName: data.name,
         sku: data.sku,
@@ -105,32 +111,108 @@ const AddProduct = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
         status: data.isActive,
         costPrice: data.costPrice,
         sellingPrice: data.unitPrice,
-        currentStock: data.quantityOnHand,
-        minimumStock: data.reorderLevel,
-        maximumStock: data.maxLevel,
+        currentStock: data.inventories[0].quantityOnHand,
+        minimumStock: data.inventories[0].reorderLevel,
+        maximumStock: data.inventories[0].maxLevel,
         unitOfMeasurement: data.unitOfMeasureId,
-        storageLocation: 0,
+        storageLocation: data.inventories[0].locationId,
       });
+      const locations = data.inventories.map(i => {
+        return { id: i.locationId, name: i.locationName };
+      });
+      setLocations(locations);
+      setMode('update');
     }
   };
-
-  const handleSubmit = () => {
-    AddProduct({
-      sku: formData.sku,
-      name: formData.productName,
-      description: formData.description,
-      categoryId: formData.category,
-      unitOfMeasureId: formData.unitOfMeasurement,
-      unitPrice: formData.sellingPrice,
-      costPrice: formData.costPrice,
-      locationId: formData.storageLocation,
-      quantityOnHand: formData.currentStock,
-      reorderLevel: formData.minimumStock,
-      maxLevel: formData.maximumStock,
+  const editProduct = async ({
+    id,
+    sku,
+    name,
+    description,
+    categoryId,
+    unitOfMeasureId,
+    unitPrice,
+    costPrice,
+    locationId,
+    quantityOnHand,
+    reorderLevel,
+    maxLevel,
+  }) => {
+    const data = await updateProduct(id, {
+      sku,
+      name,
+      description,
+      categoryId,
+      unitOfMeasureId,
+      unitPrice,
+      costPrice,
+      locationId,
+      quantityOnHand,
+      reorderLevel,
+      maxLevel,
     });
-    if (onClose) {
-      onClose();
+    if (data) {
+      console.log('Product updated successfully:', data);
+      setFormData({
+        productName: data.name,
+        sku: data.sku,
+        category: data.categoryId,
+        description: data.description,
+        status: data.isActive,
+        costPrice: data.costPrice,
+        sellingPrice: data.unitPrice,
+        currentStock: data.inventories[0].quantityOnHand,
+        minimumStock: data.inventories[0].reorderLevel,
+        maximumStock: data.inventories[0].maxLevel,
+        unitOfMeasurement: data.unitOfMeasureId,
+        storageLocation: data.inventories[0].locationId,
+      });
+      const locations = data.inventories.map(i => {
+        return { id: i.locationId, name: i.locationName };
+      });
+      setLocations(locations);
+      setMode('update');
+      console.log('Product updated successfully:', data);
     }
+  };
+  const saveProduct = () => {
+    if (mode === 'add') {
+      addNewProduct({
+        sku: formData.sku,
+        name: formData.productName,
+        description: formData.description,
+        categoryId: formData.category,
+        unitOfMeasureId: formData.unitOfMeasurement,
+        unitPrice: formData.sellingPrice,
+        costPrice: formData.costPrice,
+        locationId: formData.storageLocation,
+        quantityOnHand: formData.currentStock,
+        reorderLevel: formData.minimumStock,
+        maxLevel: formData.maximumStock,
+      });
+    }
+    if (mode === 'update') {
+      console.log('data: ', formData);
+      console.log('sku:', formData.sku);
+      editProduct({
+        id: id,
+        sku: formData.sku,
+        name: formData.productName,
+        description: formData.description,
+        categoryId: formData.category,
+        unitOfMeasureId: formData.unitOfMeasurement,
+        unitPrice: formData.sellingPrice,
+        costPrice: formData.costPrice,
+        locationId: formData.storageLocation,
+        quantityOnHand: formData.currentStock,
+        reorderLevel: formData.minimumStock,
+        maxLevel: formData.maximumStock,
+      });
+    }
+    setMode('update');
+  };
+  const handleSubmit = () => {
+    saveProduct();
   };
 
   const handleCancel = () => {
@@ -168,17 +250,52 @@ const AddProduct = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
         setUnitOfMeasurement(data);
       }
     };
-    const fetchLocations = async () => {
-      const data = await getLocationsNames();
-      if (data) {
-        console.log(data);
-        setLocations(data);
-      }
-    };
+
     fetchUnitOfMeasures();
     fetchCategories();
-    fetchLocations();
-  }, []);
+    if (id > 0) {
+      const fetchProduct = async id => {
+        const data = await getProductById(id);
+        if (data) {
+          setFormData({
+            productName: data.name,
+            sku: data.sku,
+            category: data.categoryId,
+            description: data.description,
+            status: data.isActive,
+            costPrice: data.costPrice,
+            sellingPrice: data.unitPrice,
+
+            unitOfMeasurement: data.unitOfMeasureId,
+            currentStock: data.inventories[0].quantityOnHand,
+            minimumStock: data.inventories[0].reorderLevel,
+            maximumStock: data.inventories[0].maxLevel,
+            storageLocation: data.inventories[0].locationId,
+          });
+          const locations = data.inventories.map(i => {
+            return { id: i.locationId, name: i.locationName };
+          });
+          console.log(locations);
+          setLocations(locations);
+          setMode('update');
+        }
+      };
+
+      fetchProduct(id);
+    }
+    if (mode === 'add') {
+      const fetchLocations = async () => {
+        const data = await getLocationsNames();
+        if (data) {
+          console.log(data);
+          setLocations(data);
+        }
+      };
+      fetchLocations();
+    }
+
+    console.log('mode is : ', mode);
+  }, [mode, id]);
 
   if (!isOpen) return null;
 
@@ -189,7 +306,9 @@ const AddProduct = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
         <div className='flex items-center justify-between p-6 border-b'>
           <div className='flex items-center gap-3'>
             <Package className='h-6 w-6 text-gray-600' />
-            <h2 className='text-xl font-semibold'>Add New Product</h2>
+            <h2 className='text-xl font-semibold'>
+              {mode === 'add' ? 'Add New Product' : 'Edit Product'}
+            </h2>
           </div>
           <button
             onClick={handleCancel}
@@ -570,12 +689,11 @@ const AddProduct = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
             }
             className='cursor-pointer'
           >
-            Create Product
+            {mode === 'add' ? 'Add Product' : 'Save Changes'}
           </Button>
         </div>
       </div>
     </div>
   );
 };
-
 export default AddProduct;

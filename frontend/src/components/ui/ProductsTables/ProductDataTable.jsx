@@ -1,7 +1,12 @@
+import { useState } from 'react';
 import DataTable from '@components/DataTable/DataTable';
 import { getAllProducts } from '@services/products/productService';
 import useServerSideDataTable from '../../../hooks/useServerSideDataTable';
+import ProductViewDialog from './ProductViewDialog';
+
 export default function ProductDataTable() {
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(0);
   const fetchProducts = async ({
     page,
     pageSize,
@@ -21,19 +26,37 @@ export default function ProductDataTable() {
 
   const tableProps = useServerSideDataTable(fetchProducts);
 
+  const handleView = row => {
+    console.log('view is clicked', row.id);
+    setSelectedProductId(row.id);
+    setViewDialogOpen(true);
+  };
+
   return (
-    <DataTable
-      data={tableProps.data}
-      columns={defaultColumns}
-      totalRows={tableProps.totalRows}
-      pageIndex={tableProps.pageIndex}
-      pageSize={tableProps.pageSize}
-      onPageChange={tableProps.onPageChange}
-      onPageSizeChange={tableProps.onPageSizeChange}
-      onSortingChange={tableProps.onSortingChange}
-      onFilterChange={tableProps.onFilterChange}
-      loading={tableProps.loading}
-    />
+    <>
+      <DataTable
+        data={tableProps.data}
+        columns={defaultColumns}
+        totalRows={tableProps.totalRows}
+        pageIndex={tableProps.pageIndex}
+        pageSize={tableProps.pageSize}
+        onPageChange={tableProps.onPageChange}
+        onPageSizeChange={tableProps.onPageSizeChange}
+        onSortingChange={tableProps.onSortingChange}
+        onFilterChange={tableProps.onFilterChange}
+        loading={tableProps.loading}
+        onView={handleView}
+        onEdit={row => console.log('Edit', row)}
+        onDelete={row => console.log('Delete', row)}
+      />
+      {viewDialogOpen && (
+        <ProductViewDialog
+          open={viewDialogOpen}
+          onOpenChange={setViewDialogOpen}
+          productId={selectedProductId}
+        />
+      )}
+    </>
   );
 }
 
@@ -80,12 +103,5 @@ const defaultColumns = [
     accessorKey: 'createdAt',
     header: 'Created At',
     cell: ({ getValue }) => new Date(getValue()).toLocaleDateString(),
-  },
-  {
-    id: 'actions',
-    header: 'Actions',
-    cell: () => (
-      <button className='text-gray-400 hover:text-gray-600'>•••</button>
-    ),
   },
 ];

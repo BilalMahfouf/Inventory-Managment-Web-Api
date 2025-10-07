@@ -154,13 +154,15 @@ export default function ProductsPage() {
           </TabPanel>
         </div>
       </Tabs>
-
-      <AddProduct
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onSubmit={handleAddProduct}
-        isLoading={true}
-      />
+      {isAddModalOpen && (
+        <AddProduct
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          onSubmit={handleAddProduct}
+          productId={0}
+          isLoading={false}
+        />
+      )}
     </div>
   );
 }

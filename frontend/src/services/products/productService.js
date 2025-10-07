@@ -112,7 +112,7 @@ async function createProduct({
       }),
     });
     if (!response.success) {
-      const errorMessage = await response.response.text();
+      const errorMessage = response.error;
       console.error('Failed to create product:', errorMessage);
       throw new Error(errorMessage || 'Failed to create product');
     }
@@ -123,4 +123,45 @@ async function createProduct({
   }
 }
 
-export { getSummary, getAllProducts, getStockMovementsHistory, createProduct };
+async function getProductById(id) {
+  try {
+    const response = await fetchWithAuth(`${BASE_URL}/${id}`);
+    if (!response.success) {
+      console.log('Failed to fetch product:', response.error);
+      throw new Error('Failed to fetch product');
+    }
+    return await response.response.json();
+  } catch (error) {
+    console.error('Failed to fetch product:', error);
+    throw error;
+  }
+}
+
+async function updateProduct(id, productData) {
+  try {
+    const response = await fetchWithAuth(`${BASE_URL}/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(productData),
+    });
+    if (!response.success) {
+      const errorMessage = await response.error;
+      console.error('Failed to update product:', errorMessage);
+      throw new Error(errorMessage || 'Failed to update product');
+    }
+  } catch (error) {
+    console.error('Failed to update product:', error);
+    throw error;
+  }
+}
+
+export {
+  getSummary,
+  getAllProducts,
+  getStockMovementsHistory,
+  createProduct,
+  getProductById,
+  updateProduct,
+};
