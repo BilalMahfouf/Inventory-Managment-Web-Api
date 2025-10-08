@@ -216,7 +216,9 @@ public class ProductQueries : IProductQueries
     {
         try
         {
-            var product = await _context.Products.Where(e=>e.Id==id && !e.IsDeleted)
+            var product = await _context.Products.Where(e => e.Id == id && !e.IsDeleted)
+                .Include(e => e.Inventories)
+                .ThenInclude(e => e.Location)
                 .Select(product => new ProductReadResponse
                 {
                 Id = product.Id,
@@ -254,6 +256,8 @@ public class ProductQueries : IProductQueries
                 })
                 .AsNoTracking()
                 .FirstOrDefaultAsync(cancellationToken);
+
+           
            if (product is null)
             {
                 return Result<ProductReadResponse>.NotFound($"Product with id {id} is not found");

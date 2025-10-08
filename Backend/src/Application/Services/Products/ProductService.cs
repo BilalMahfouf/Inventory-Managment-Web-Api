@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Repositories.Base;
+﻿using Application.Abstractions.Queries;
+using Application.Abstractions.Repositories.Base;
 using Application.Abstractions.Repositories.Products;
 using Application.Abstractions.Services.Products;
 using Application.Abstractions.Services.User;
@@ -28,17 +29,18 @@ namespace Application.Services.Products
 
         private readonly ProductValidatorContainer _validatorContainer;
         private readonly IProductRepository _productRepository;
-
+        private readonly IProductQueries _query;
         // flaws of inheriting from DeleteService
         public ProductService(IProductRepository repository
             , ICurrentUserService currentUserService
             , IUnitOfWork uow
-            , ProductValidatorContainer validatorContainer)
+            , ProductValidatorContainer validatorContainer,
+IProductQueries query)
             : base(repository, currentUserService, uow)
         {
             _validatorContainer = validatorContainer;
             _productRepository = repository;
-
+            _query = query;
         }
 
         private ProductReadResponse MapToReadResponse(Product product)
@@ -204,7 +206,9 @@ namespace Application.Services.Products
                 _uow.Products.Add(productResult.Value!);
                 _uow.Inventories.Add(inventoryResult.Value!);
                 await _uow.SaveChangesAsync(cancellationToken);
-                return await FindAsync(productResult.Value.Id, cancellationToken);   
+                return await _query.GetByIdAsync(
+                    productResult.Value!.Id,
+                    cancellationToken);
             }
             catch (Exception ex)
             {
@@ -283,6 +287,7 @@ namespace Application.Services.Products
             }
         }
 
+        // to do refactor to return from query and make update the inventory also
         public async Task<Result<ProductReadResponse>> UpdateAsync(int id, ProductUpdateRequest request, CancellationToken cancellationToken = default)
         {
             if (id <= 0)
