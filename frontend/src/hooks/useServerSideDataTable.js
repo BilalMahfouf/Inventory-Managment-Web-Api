@@ -42,9 +42,7 @@ const useServerSideDataTable = (
     };
 
     try {
-      console.log('Fetching data with params:', fetchFunctionParam);
       const result = await fetchFunction(fetchFunctionParam);
-      console.log('Fetch result:', result);
 
       setData(result.item || []);
       setTotalRows(result.totalCount || 0);

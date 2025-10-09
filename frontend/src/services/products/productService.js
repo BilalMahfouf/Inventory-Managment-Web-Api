@@ -35,7 +35,7 @@ async function getAllProducts({
 
     const response = await fetchWithAuth(`${BASE_URL}?${params.toString()}`);
     if (!response.success) {
-      console.log('Failed to fetch products:', response.error);
+      console.error('Failed to fetch products:', response.error);
       throw new Error('Failed to fetch products');
     }
     const data = await response.response.json();
@@ -63,12 +63,11 @@ async function getStockMovementsHistory({
     if (sortColumn) params.append('sortColumn', sortColumn);
     if (sortOrder) params.append('sortOrder', sortOrder);
     if (search) params.append('search', search);
-    console.log('Fetching stock movements with params:', params.toString());
     const response = await fetchWithAuth(
       `${BASE_URL}/stock-movements-history?${params.toString()}`
     );
     if (!response.success) {
-      console.log('Failed to fetch stock movements history:', response.error);
+      console.error('Failed to fetch stock movements history:', response.error);
       throw new Error('Failed to fetch stock movements history');
     }
     return await response.response.json();
@@ -151,6 +150,7 @@ async function updateProduct(id, productData) {
       console.error('Failed to update product:', errorMessage);
       throw new Error(errorMessage || 'Failed to update product');
     }
+    return await response.response.json();
   } catch (error) {
     console.error('Failed to update product:', error);
     throw error;

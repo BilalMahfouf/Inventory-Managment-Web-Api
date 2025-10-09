@@ -3,10 +3,12 @@ import DataTable from '@components/DataTable/DataTable';
 import { getAllProducts } from '@services/products/productService';
 import useServerSideDataTable from '../../../hooks/useServerSideDataTable';
 import ProductViewDialog from './ProductViewDialog';
+import { AddProduct } from '@/components/products';
 
 export default function ProductDataTable() {
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(0);
+  const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const fetchProducts = async ({
     page,
     pageSize,
@@ -31,7 +33,15 @@ export default function ProductDataTable() {
     setSelectedProductId(row.id);
     setViewDialogOpen(true);
   };
-
+  const handleEdit = row => {
+    setSelectedProductId(row.id);
+    setUpdateDialogOpen(true);
+  };
+  const handleEditClose = () => {
+    setUpdateDialogOpen(false);
+    console.log('closed');
+    tableProps.refresh();
+  };
   return (
     <>
       <DataTable
@@ -46,7 +56,7 @@ export default function ProductDataTable() {
         onFilterChange={tableProps.onFilterChange}
         loading={tableProps.loading}
         onView={handleView}
-        onEdit={row => console.log('Edit', row)}
+        onEdit={handleEdit}
         onDelete={row => console.log('Delete', row)}
       />
       {viewDialogOpen && (
@@ -54,6 +64,15 @@ export default function ProductDataTable() {
           open={viewDialogOpen}
           onOpenChange={setViewDialogOpen}
           productId={selectedProductId}
+        />
+      )}
+      {updateDialogOpen && (
+        <AddProduct
+          isOpen={updateDialogOpen}
+          onClose={handleEditClose}
+          onSubmit={console.log('sumbited ')}
+          productId={selectedProductId}
+          isLoading={true}
         />
       )}
     </>

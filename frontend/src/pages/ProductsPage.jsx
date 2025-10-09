@@ -24,33 +24,6 @@ export default function ProductsPage() {
   const [profitPotential, setProfitPotential] = useState(1);
   const [loading, setLoading] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleAddProduct = async productData => {
-    setIsSubmitting(true);
-    try {
-      // TODO: Replace with your actual API call
-      console.log('Product data to submit:', productData);
-
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Close modal and refresh data
-      setIsAddModalOpen(false);
-
-      // You might want to refresh the summary data here
-      // const summary = await getSummary();
-      // setTotalProductsCount(summary.totalProducts);
-      // ... update other summary data
-
-      console.log('Product created successfully!');
-    } catch (error) {
-      console.error('Error creating product:', error);
-      // You can add toast notifications or error handling here
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,7 +36,7 @@ export default function ProductsPage() {
     };
     fetchData();
     setLoading(false);
-  }, []);
+  }, [isAddModalOpen]);
 
   return (
     <div>
@@ -158,7 +131,6 @@ export default function ProductsPage() {
         <AddProduct
           isOpen={isAddModalOpen}
           onClose={() => setIsAddModalOpen(false)}
-          onSubmit={handleAddProduct}
           productId={0}
           isLoading={false}
         />

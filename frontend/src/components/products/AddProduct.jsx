@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Package, DollarSign, Archive } from 'lucide-react';
+import { X, Package, DollarSign, Archive, ShowerHead } from 'lucide-react';
 import Button from '@components/Buttons/Button';
 import { Input } from '@components/ui/input';
 import { cn } from '@/lib/utils';
@@ -11,6 +11,7 @@ import {
   getProductById,
   updateProduct,
 } from '@/services/products/productService';
+import { useToast } from '@/context/ToastContext';
 /**
  * AddProduct Component
  *
@@ -20,11 +21,11 @@ import {
  * @param {Object} props - Component props
  * @param {boolean} props.isOpen - Controls modal visibility
  * @param {function} props.onClose - Callback function when modal is closed
- * @param {function} props.onSubmit - Callback function when form is submitted with product data
- * @param {boolean} props.isLoading - Shows loading state on submit button
+ * @param {number} props.productId - ID of the product to edit (0 for new product)
  */
-const AddProduct = ({ isOpen, onClose, productId = 0, isLoading = false }) => {
+const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
   const [activeTab, setActiveTab] = useState(0);
+  const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState({
     // Basic Info
     productName: '',
@@ -57,6 +58,8 @@ const AddProduct = ({ isOpen, onClose, productId = 0, isLoading = false }) => {
   ];
   const statusOptions = ['Active', 'Inactive', 'Draft'];
   const [id, setId] = useState(productId);
+  const [isLoading, setIsLoading] = useState(false);
+
   // Calculate profit metrics
   const profitPerUnit = formData.sellingPrice - formData.costPrice;
   const profitMargin =
@@ -87,46 +90,45 @@ const AddProduct = ({ isOpen, onClose, productId = 0, isLoading = false }) => {
     reorderLevel,
     maxLevel,
   }) => {
-    const data = await createProduct({
-      sku,
-      name,
-      description,
-      categoryId,
-      unitOfMeasureId,
-      unitPrice,
-      costPrice,
-      locationId,
-      quantityOnHand,
-      reorderLevel,
-      maxLevel,
-    });
-    if (data) {
-      console.log('Product created successfully:', data);
+    try {
+      const data = await createProduct({
+        sku,
+        name,
+        description,
+        categoryId,
+        unitOfMeasureId,
+        unitPrice,
+        costPrice,
+        locationId,
+        quantityOnHand,
+        reorderLevel,
+        maxLevel,
+      });
 
-      setFormData({
-        productName: data.name,
-        sku: data.sku,
-        category: data.categoryId,
-        description: data.description,
-        status: data.isActive,
-        costPrice: data.costPrice,
-        sellingPrice: data.unitPrice,
-        currentStock: data.inventories[0].quantityOnHand,
-        minimumStock: data.inventories[0].reorderLevel,
-        maximumStock: data.inventories[0].maxLevel,
-        unitOfMeasurement: data.unitOfMeasureId,
-        storageLocation: data.inventories[0].locationId,
-      });
-      const locations = data.inventories.map(i => {
-        return { id: i.locationId, name: i.locationName };
-      });
-      setLocations(locations);
-      setMode('update');
+      if (data) {
+        showSuccess(
+          'Product Created Successfully',
+          `${name} has been added to your inventory.`
+        );
+        onClose();
+
+        const locations = data.inventories.map(i => {
+          return { id: i.locationId, name: i.locationName };
+        });
+        setLocations(locations);
+        setId(data.id);
+        setMode('update');
+      }
+    } catch (error) {
+      console.error('Product creation error:', error);
+      showError(
+        'Product Creation Failed',
+        error.message || "Product can't be created. Please try again."
+      );
     }
   };
   const editProduct = async ({
     id,
-    sku,
     name,
     description,
     categoryId,
@@ -138,41 +140,59 @@ const AddProduct = ({ isOpen, onClose, productId = 0, isLoading = false }) => {
     reorderLevel,
     maxLevel,
   }) => {
-    const data = await updateProduct(id, {
-      sku,
-      name,
-      description,
-      categoryId,
-      unitOfMeasureId,
-      unitPrice,
-      costPrice,
-      locationId,
-      quantityOnHand,
-      reorderLevel,
-      maxLevel,
-    });
-    if (data) {
-      console.log('Product updated successfully:', data);
-      setFormData({
-        productName: data.name,
-        sku: data.sku,
-        category: data.categoryId,
-        description: data.description,
-        status: data.isActive,
-        costPrice: data.costPrice,
-        sellingPrice: data.unitPrice,
-        currentStock: data.inventories[0].quantityOnHand,
-        minimumStock: data.inventories[0].reorderLevel,
-        maximumStock: data.inventories[0].maxLevel,
-        unitOfMeasurement: data.unitOfMeasureId,
-        storageLocation: data.inventories[0].locationId,
+    try {
+      const data = await updateProduct(id, {
+        name,
+        description,
+        categoryId,
+        unitOfMeasureId,
+        unitPrice,
+        costPrice,
+        locationId,
+        quantityOnHand,
+        reorderLevel,
+        maxLevel,
       });
-      const locations = data.inventories.map(i => {
-        return { id: i.locationId, name: i.locationName };
-      });
-      setLocations(locations);
-      setMode('update');
-      console.log('Product updated successfully:', data);
+
+      if (data) {
+        showSuccess(
+          'Product Updated Successfully',
+          `${name} has been updated.`
+        );
+        onClose();
+
+        setFormData({
+          productName: data.name,
+          sku: data.sku,
+          category: data.categoryId,
+          description: data.description,
+          status: data.isActive,
+          costPrice: data.costPrice,
+          sellingPrice: data.unitPrice,
+          currentStock: data.inventories[0].quantityOnHand,
+          minimumStock: data.inventories[0].reorderLevel,
+          maximumStock: data.inventories[0].maxLevel,
+          unitOfMeasurement: data.unitOfMeasureId,
+          storageLocation: data.inventories[0].locationId,
+        });
+
+        const locations = data.inventories.map(i => {
+          return { id: i.locationId, name: i.locationName };
+        });
+        setLocations(locations);
+        setMode('update');
+      } else {
+        showError(
+          'Product Update Failed',
+          'Product could not be updated. Please try again.'
+        );
+      }
+    } catch (error) {
+      console.error('Product update error:', error);
+      showError(
+        'Product Update Failed',
+        error.message || "Product can't be updated. Please try again."
+      );
     }
   };
   const saveProduct = () => {
@@ -196,7 +216,6 @@ const AddProduct = ({ isOpen, onClose, productId = 0, isLoading = false }) => {
       console.log('sku:', formData.sku);
       editProduct({
         id: id,
-        sku: formData.sku,
         name: formData.productName,
         description: formData.description,
         categoryId: formData.category,
@@ -237,6 +256,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0, isLoading = false }) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchCategories = async () => {
       const data = await getProductCategories();
       if (data) {
@@ -246,7 +266,6 @@ const AddProduct = ({ isOpen, onClose, productId = 0, isLoading = false }) => {
     const fetchUnitOfMeasures = async () => {
       const data = await GetUnitsNames();
       if (data) {
-        console.log(data);
         setUnitOfMeasurement(data);
       }
     };
@@ -275,7 +294,6 @@ const AddProduct = ({ isOpen, onClose, productId = 0, isLoading = false }) => {
           const locations = data.inventories.map(i => {
             return { id: i.locationId, name: i.locationName };
           });
-          console.log(locations);
           setLocations(locations);
           setMode('update');
         }
@@ -287,14 +305,12 @@ const AddProduct = ({ isOpen, onClose, productId = 0, isLoading = false }) => {
       const fetchLocations = async () => {
         const data = await getLocationsNames();
         if (data) {
-          console.log(data);
           setLocations(data);
         }
       };
       fetchLocations();
     }
-
-    console.log('mode is : ', mode);
+    setIsLoading(false);
   }, [mode, id]);
 
   if (!isOpen) return null;
@@ -374,6 +390,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0, isLoading = false }) => {
                     value={formData.sku}
                     onChange={e => handleInputChange('sku', e.target.value)}
                     className='h-12'
+                    disabled={mode === 'update'}
                   />
                 </div>
 
