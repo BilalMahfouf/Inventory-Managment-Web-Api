@@ -87,4 +87,26 @@ public partial class Inventory : IBaseEntity, IModifiableEntity
             );
         return Result<Inventory>.Success(inventory);
     }
+    // to do add StockChanged event here
+    public Result UpdateInventoryLevels(
+    decimal quantityOnHand,
+    decimal reorderLevel,
+    decimal maxLevel
+        )
+    {
+        if(maxLevel < quantityOnHand)
+        {
+            return Result.Failure("Quantity on hand cannot exceed max level"
+                , ErrorType.Conflict);
+        }
+        if (maxLevel < reorderLevel)
+        {
+            return Result.Failure("Max level cannot be less than reorder level"
+                , ErrorType.Conflict);
+        }
+        QuantityOnHand = quantityOnHand;
+        ReorderLevel = reorderLevel;
+        MaxLevel = maxLevel;
+        return Result.Success;
+    }
 }

@@ -111,6 +111,25 @@ public partial class Product : ISoftDeletable, IModifiableEntity, IBaseEntity
         return Result<Product>.Success(product);
     }
 
+    public Result Update(
+        string name,
+        string? description,
+        int categoryId,
+        decimal unitPrice,
+        decimal cost)
+    {
+        if(unitPrice < cost)
+        {
+            return Result.Failure("Unit price cannot be less than cost."
+                , ErrorType.Conflict);
+        }
+        this.Name = name;
+        this.Description= description;
+        this.CategoryId = categoryId;
+        this.UnitPrice = unitPrice;
+        this.Cost= cost;
+        return Result.Success;
+    }
 
 
 

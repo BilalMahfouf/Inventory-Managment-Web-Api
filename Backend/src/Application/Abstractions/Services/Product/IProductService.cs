@@ -13,8 +13,7 @@ namespace Application.Abstractions.Services.Products
 {
     public interface IProductService
     {
-        Task<Result<ProductReadResponse>> FindAsync(int id
-            ,CancellationToken cancellationToken=default);
+        
         Task<Result<PagedList<ProductReadResponse>>> GetAllAsync
             (int page,
              int pageSize,
