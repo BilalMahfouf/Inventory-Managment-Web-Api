@@ -20,7 +20,9 @@ namespace Infrastructure.Persistence.Configurations
                 .HasColumnType("datetime");
             entity.Property(e => e.DeletedAt).HasColumnType("datetime");
             entity.Property(e => e.Description).HasMaxLength(255);
-            entity.Property(e => e.Direction).HasComment("  1 is IN ,2 is OUT, 3 is ADJUST");
+            entity.Property(e => e.Direction)
+                .HasComment("  1 is IN ,2 is OUT, 3 is ADJUST")
+                .HasConversion<byte>();
             entity.Property(e => e.Name).HasMaxLength(100);
 
             entity.HasOne(d => d.CreatedByUser).WithMany()

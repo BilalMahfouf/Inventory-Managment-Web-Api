@@ -113,5 +113,25 @@ namespace Infrastructure.Repositories.Base
             }
             return await _dbSet.SumAsync(selector, cancellationToken);
         }
+        public async Task<IEnumerable<TEntity>> GetAllWithPaginationAsync(
+            int page = 1,
+            int pageSize = 10,
+            CancellationToken cancellationToken=default,
+            string includeProperties = "")
+        {
+            if (!string.IsNullOrWhiteSpace(includeProperties))
+            {
+                includeProperties = includeProperties.Trim();
+                
+            }
+            var query = _dbSet.AsQueryable();
+            foreach (var includeProperty in includeProperties.Split
+                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+            query = query.Skip((page - 1) * pageSize).Take(pageSize);
+            return await query.AsNoTracking().ToListAsync(cancellationToken);
+        }
     }
 }

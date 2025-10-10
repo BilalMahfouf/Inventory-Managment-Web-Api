@@ -27,8 +27,15 @@ namespace Application.FluentValidations.Product.Configuration
             RuleFor(p => p.UnitPrice)
                 .GreaterThanOrEqualTo(0).WithMessage("Unit price must be a non-negative value.");
             RuleFor(p => p.CostPrice)
-                .GreaterThanOrEqualTo(0).WithMessage("Cost price must be a non-negative value.")
-                .LessThanOrEqualTo(p => p.UnitPrice).WithMessage("Cost price must not exceed unit price.");
+                .GreaterThanOrEqualTo(0).WithMessage("Cost price must be a non-negative value.");
+            RuleFor(p=> p.LocationId)
+                .GreaterThan(0).WithMessage("Location ID must be a positive integer.");
+            RuleFor(p=> p.QuantityOnHand)
+                .GreaterThanOrEqualTo(0).WithMessage("Quantity on hand must be a non-negative value.");
+            RuleFor(p=> p.ReorderLevel)
+                .GreaterThanOrEqualTo(0).WithMessage("Reorder level must be a non-negative value.");
+            RuleFor(p => p.MaxLevel)
+                .GreaterThan(0).WithMessage("Max level must be a positive value.");
 
         }
     }

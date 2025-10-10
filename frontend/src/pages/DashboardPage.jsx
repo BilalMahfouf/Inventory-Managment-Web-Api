@@ -92,11 +92,11 @@ export default function DashboardPage() {
           containerClass='sm: mb-4 flex-1'
         />
 
-        <div className='flex-1 md:justify-end flex'>
-          <Button variant='secondary' className='  text-sm' LeftIcon={FileText}>
+        <div className='flex-1 md:justify-end flex gap-2'>
+          <Button variant='secondary' className='text-sm' LeftIcon={FileText}>
             Generate Report
           </Button>
-          <Button variant='primary' className='ml-4 text-sm w' LeftIcon={Plus}>
+          <Button variant='primary' className='text-sm w' LeftIcon={Plus}>
             Add Product
           </Button>
         </div>

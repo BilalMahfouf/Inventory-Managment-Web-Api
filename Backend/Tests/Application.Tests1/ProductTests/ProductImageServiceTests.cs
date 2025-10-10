@@ -9,6 +9,7 @@ using Application.Results;
 using Application.Services.Images;
 using Application.Services.Products;
 using Domain.Entities;
+using Domain.Entities.Products;
 using Domain.Enums;
 using FluentValidation;
 using FluentValidation.Results;

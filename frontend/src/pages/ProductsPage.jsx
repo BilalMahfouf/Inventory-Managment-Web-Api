@@ -11,12 +11,19 @@ import {
 } from 'lucide-react';
 import Button from '@components/Buttons/Button';
 import { getSummary } from '@services/products/productService';
+import DataTable from '@components/DataTable/DataTable';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { divStyles } from '../util/uiVariables';
+import ProductDataTable from '../components/ui/ProductsTables/ProductDataTable';
+import StockMovementHistoryTable from '../components/ui/ProductsTables/StockMovementHistoryTable';
+import { AddProduct } from '@components/products';
 export default function ProductsPage() {
   const [totalProductsCount, setTotalProductsCount] = useState(0);
   const [inventoryValue, setInventoryValue] = useState(0);
   const [lowStockCount, setLowStockCount] = useState(1);
   const [profitPotential, setProfitPotential] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,20 +45,27 @@ export default function ProductsPage() {
           title='Product Management'
           description='Manage your product catalog and inventory.'
         />
-        <Button LeftIcon={Plus} children='Add Product' />
+
+        <Button LeftIcon={Plus} onClick={() => setIsAddModalOpen(true)}>
+          Add Product
+        </Button>
       </div>
       <div className='flex flex-col md:flex-row gap-6'>
         <InfoCard
           title='Total Products'
           iconComponent={Package}
-          number={loading ? '...' : totalProductsCount}
+          number={loading ? '...' : totalProductsCount.toLocaleString()}
           description='Easily add new products to your catalog.'
           className='flex-1'
         />
         <InfoCard
           title='Inventory Value'
           iconComponent={DollarSign}
-          number={loading ? '...' : `$${inventoryValue}`}
+          number={
+            loading
+              ? '...'
+              : `$${inventoryValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+          }
           description='Total value of all products in inventory.'
           className='flex-1'
           numberClassName='text-green-600'
@@ -69,11 +83,58 @@ export default function ProductsPage() {
         <InfoCard
           title='Profit Potential'
           description='if all products are sold at retail price.'
-          number={loading ? '...' : `$${profitPotential}`}
+          number={
+            loading
+              ? '...'
+              : `$${profitPotential.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+          }
           iconComponent={TrendingUp}
           className='flex-1'
         />
       </div>
+
+      <Tabs>
+        <TabList className='flex bg-blue-50 rounded-lg p-1 mb-4 mt-6 gap-1 max-w-fit border-0'>
+          <Tab
+            className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
+            selectedClassName='!bg-white !text-gray-900 shadow-sm'
+          >
+            Products
+          </Tab>
+          <Tab
+            className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
+            selectedClassName='!bg-white !text-gray-900 shadow-sm'
+          >
+            Stock Movements
+          </Tab>
+        </TabList>
+        <div className={divStyles + 'mt-6'}>
+          <TabPanel>
+            <div className='mb-9 flex items-center justify-between'>
+              <h3 className='text-2xl font-semibold leading-none tracking-tight'>
+                Product Catalog
+              </h3>
+            </div>
+            <ProductDataTable />
+          </TabPanel>
+          <TabPanel>
+            <div className='mb-9 flex items-center justify-between'>
+              <h3 className='text-2xl font-semibold leading-none tracking-tight'>
+                Stock Movement History
+              </h3>
+            </div>
+            <StockMovementHistoryTable />
+          </TabPanel>
+        </div>
+      </Tabs>
+      {isAddModalOpen && (
+        <AddProduct
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          productId={0}
+          isLoading={false}
+        />
+      )}
     </div>
   );
 }

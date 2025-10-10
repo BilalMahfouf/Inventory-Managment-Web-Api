@@ -19,5 +19,6 @@ namespace Application.DTOs.Products.Response.Products
         public decimal UnitPrice { get; init; } 
         public decimal CostPrice { get; init; }
         public bool IsActive { get; init; }
+        public IEnumerable<object>? Inventories { get; init; } = null;
     }
 }

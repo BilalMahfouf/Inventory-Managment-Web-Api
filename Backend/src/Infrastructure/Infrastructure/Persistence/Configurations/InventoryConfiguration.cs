@@ -45,7 +45,7 @@ namespace Infrastructure.Persistence.Configurations
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Inventory_Locations");
 
-            entity.HasOne(d => d.Product).WithMany()
+            entity.HasOne(d => d.Product).WithMany(d=>d.Inventories)
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Inventory_Products");

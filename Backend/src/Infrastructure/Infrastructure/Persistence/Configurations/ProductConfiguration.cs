@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Domain.Entities.Products;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -60,6 +60,7 @@ namespace Infrastructure.Persistence.Configurations
             entity.HasOne(d => d.UpdatedByUser).WithMany()
                 .HasForeignKey(d => d.UpdatedByUserId)
                 .HasConstraintName("FK_Products_UpdatedByUser");
+            entity.HasIndex(e => e.IsDeleted, "IX_Products_IsDeleted");
 
             OnConfigurePartial(entity);
         }

@@ -28,15 +28,14 @@ namespace Application.Services.StockMovements
             _validator = validator;
         }
 
-        private StockMovementTypeReadResponse Map(StockMovementType stockMovementType)
+        public  StockMovementTypeReadResponse Map(StockMovementType stockMovementType)
         {
             return new StockMovementTypeReadResponse()
             {
                 Id = stockMovementType.Id,
                 Name = stockMovementType.Name,
                 Description = stockMovementType.Description,
-                Direction = stockMovementType.Direction == 1 ? "In"
-                : stockMovementType.Direction == 2 ? "Out" : "Transfer",
+                Direction = nameof(stockMovementType.Direction),
                 CreatedAt = stockMovementType.CreatedAt,
                 CreatedByUserId = stockMovementType.CreatedByUserId,
                 CreatedByUserName = stockMovementType.CreatedByUser?.UserName,
@@ -117,7 +116,7 @@ namespace Application.Services.StockMovements
                 {
                     Name = request.Name,
                     Description = request.Description,
-                    Direction = request.Direction,
+                    Direction = (StockMovementDirection)request.Direction,
                     IsDeleted = false
                 };
                 _uow.StockMovementTypes.Add(newSmt);
@@ -168,7 +167,7 @@ namespace Application.Services.StockMovements
                 }
                 existingSmt.Name = request.Name;
                 existingSmt.Description = request.Description;
-                existingSmt.Direction = request.Direction;
+                existingSmt.Direction = (StockMovementDirection) request.Direction;
 
                 _uow.StockMovementTypes.Update(existingSmt);
                 await _uow.SaveChangesAsync(cancellationToken);

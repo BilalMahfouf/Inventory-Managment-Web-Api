@@ -15,5 +15,11 @@ namespace Application.DTOs.Products.Request.Products
         public int UnitOfMeasureId { get; init; }
         public decimal UnitPrice { get; init; }
         public decimal CostPrice { get; init; }
+
+        // Inventory Details
+        public int LocationId { get; init; }
+        public decimal QuantityOnHand { get; init; }
+        public decimal ReorderLevel { get; init; }
+        public decimal MaxLevel { get; init; }
     }
 }

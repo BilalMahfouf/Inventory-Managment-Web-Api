@@ -3,8 +3,10 @@ using Application.Abstractions.Services.Products;
 using Application.DTOs.Inventories;
 using Application.DTOs.Products.Request.Products;
 using Application.DTOs.Products.Response.Products;
+using Application.PagedLists;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MimeKit.Tnef;
 using Presentation.Extensions;
 
 namespace Presentation.Controllers.Products
@@ -30,10 +32,24 @@ namespace Presentation.Controllers.Products
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
         [Authorize]
-        public async Task<ActionResult<IReadOnlyCollection<ProductReadResponse>>>
-            GetAllProductAsync(CancellationToken cancellationToken = default)
+        public async Task<ActionResult<PagedList<ProductTableResponse>>>
+            GetAllProductAsync(
+                        [FromQuery] int page = 1,
+                        [FromQuery] int pageSize = 10,
+                        [FromQuery] string? search = null,
+                        [FromQuery] string? sortColumn = null,
+                        [FromQuery] string? sortOrder = null,
+                        CancellationToken cancellationToken = default)
         {
-            var response = await _service.GetAllAsync(cancellationToken);
+            var request = new TableRequest
+            {
+                Page = page,
+                PageSize = pageSize,
+                search = string.IsNullOrWhiteSpace(search) ? search : search.ToLower(),
+                SortOrder = sortOrder,
+                SortColumn = sortColumn
+            };
+            var response = await _query.GetAllAsync(request, cancellationToken);
             return response.HandleResult();
         }
 
@@ -47,7 +63,7 @@ namespace Presentation.Controllers.Products
         public async Task<ActionResult<ProductReadResponse>> GetProductByIdAsync
             (int id, CancellationToken cancellationToken = default)
         {
-            var response = await _service.FindAsync(id, cancellationToken);
+            var response = await _query.GetByIdAsync(id, cancellationToken);
             return response.HandleResult();
         }
 
@@ -123,7 +139,7 @@ namespace Presentation.Controllers.Products
             , CancellationToken cancellationToken = default)
         {
             var response = await _service.CreateAsync(request, cancellationToken);
-            return response.HandleResult(nameof(GetProductByIdAsync),new
+            return response.HandleResult(nameof(GetProductByIdAsync), new
             {
                 id = response.Value?.Id
             });
@@ -152,7 +168,7 @@ namespace Presentation.Controllers.Products
 
         [Authorize]
         public async Task<ActionResult<IReadOnlyCollection<ProductsLowStockReadResponse>>>
-           GetProductsWithLowStockAsync( CancellationToken cancellationToken = default)
+           GetProductsWithLowStockAsync(CancellationToken cancellationToken = default)
         {
             var response = await _service.GetProductsWithLowStockAsync(cancellationToken);
             return response.HandleResult();
@@ -184,6 +200,33 @@ namespace Presentation.Controllers.Products
             (CancellationToken cancellationToken = default)
         {
             var response = await _query.GetProductDashboardSummaryAsync(cancellationToken);
+            return response.HandleResult();
+        }
+
+        [HttpGet("stock-movements-history")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<ActionResult<PagedList<StockMovementsHistoryTableResponse>>>
+            GetAllStockMovementsHistoryAsync(
+                        [FromQuery] int page = 1,
+                        [FromQuery] int pageSize = 10,
+                        [FromQuery] string? search = null,
+                        [FromQuery] string? sortColumn = null,
+                        [FromQuery] string? sortOrder = null,
+                        CancellationToken cancellationToken = default)
+        {
+            var request = new TableRequest
+            {
+                Page = page ,
+                PageSize = pageSize,
+                search = string.IsNullOrWhiteSpace(search) ? search : search.ToLower(),
+                SortOrder = sortOrder,
+                SortColumn = sortColumn
+            };
+            var response = await _query
+                .GetStockMovementsHistoryAsync(request, cancellationToken);
             return response.HandleResult();
         }
 

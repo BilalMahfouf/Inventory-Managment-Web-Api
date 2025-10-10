@@ -1,32 +1,40 @@
-import { useState } from "react";
-import TopNav from "./TopNav";
-import Sidebar from "./Sidebar";
+import { useState } from 'react';
+import TopNav from './TopNav';
+import Sidebar from './Sidebar';
+import { useToast } from '@/context/ToastContext';
+import ToastContainer from '@/components/ui/Toast/ToastContainer';
 
 export default function Layout({ children }) {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { toasts, removeToast } = useToast();
 
-    const toggleSidebar = () => {
-        setSidebarOpen(!sidebarOpen);
-    };
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
-    const closeSidebar = () => {
-        setSidebarOpen(false);
-    };
+  const closeSidebar = () => {
+    setSidebarOpen(false);
+  };
 
-    return (
-        <div className="min-h-screen bg-gray-50">
-            {/* Sidebar - responsive with state management */}
-            <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
-            
-            {/* Top Navigation - responsive */}
-            <TopNav onToggleSidebar={toggleSidebar} />
-            
-            {/* Main Content Area - responsive padding */}
-            <main className="pt-16 lg:pl-64 transition-all duration-300">
-                <div className="p-4 md:p-6">
-                    {children}
-                </div>
-            </main>
-        </div>
-    );
+  return (
+    <div className='min-h-screen bg-gray-50'>
+      {/* Sidebar - responsive with state management */}
+      <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+
+      {/* Top Navigation - responsive */}
+      <TopNav onToggleSidebar={toggleSidebar} />
+
+      {/* Main Content Area - responsive padding */}
+      <main className='pt-16 lg:pl-64 transition-all duration-300'>
+        <div className='p-4 md:p-6'>{children}</div>
+      </main>
+
+      {/* Toast Notifications Container */}
+      <ToastContainer
+        toasts={toasts}
+        removeToast={removeToast}
+        position='top-right'
+      />
+    </div>
+  );
 }

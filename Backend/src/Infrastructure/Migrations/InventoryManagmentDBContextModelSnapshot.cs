@@ -662,6 +662,8 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex(new[] { "CategoryId", "IsActive" }, "IX_Products_Category_Active");
 
+                    b.HasIndex(new[] { "IsDeleted" }, "IX_Products_IsDeleted");
+
                     b.HasIndex(new[] { "Name" }, "IX_Products_Name");
 
                     b.HasIndex(new[] { "Sku" }, "IX_Products_SKU");
@@ -940,6 +942,9 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint")
                         .HasDefaultValue((byte)1);
+
+                    b.Property<DateTime?>("SalesStatusUpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18, 2)");
