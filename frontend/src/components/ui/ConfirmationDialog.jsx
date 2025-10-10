@@ -175,7 +175,7 @@ const ConfirmationDialog = ({
           <button
             onClick={handleCancel}
             disabled={loading}
-            className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 active:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+            className='px-4 cursor-pointer py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 active:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
             type='button'
           >
             {cancelText}
@@ -185,7 +185,7 @@ const ConfirmationDialog = ({
           <button
             onClick={handleConfirm}
             disabled={loading}
-            className={`px-4 py-2 text-sm font-medium text-white ${config.confirmButtonBg} rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${type === 'delete' ? 'red' : type === 'update' ? 'blue' : 'green'}-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2`}
+            className={`px-4 py-2 text-sm cursor-pointer font-medium text-white ${config.confirmButtonBg} rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${type === 'delete' ? 'red' : type === 'update' ? 'blue' : 'green'}-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2`}
             type='button'
           >
             {loading && (
