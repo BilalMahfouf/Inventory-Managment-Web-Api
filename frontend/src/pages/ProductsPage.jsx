@@ -36,7 +36,7 @@ export default function ProductsPage() {
     };
     fetchData();
     setLoading(false);
-  }, [isAddModalOpen]);
+  }, []);
 
   return (
     <div>
