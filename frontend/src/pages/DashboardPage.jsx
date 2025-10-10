@@ -24,10 +24,8 @@ import QuickActions from '@components/ui/quickAction/QuickActions';
 import Alerts from '../components/ui/alerts/Alerts';
 import TopSellingProducts from '../components/ui/TopSellingProducts';
 import TodaysPerformanceContainer from '../components/ui/TodaysPerformanceContainer';
-import { useToast } from '@/context/ToastContext';
 
 export default function DashboardPage() {
-  const { showSuccess, showError, showWarning, showInfo } = useToast();
   const [activeProducts, setActiveProducts] = useState(0);
   const [activeCustomers, setActiveCustomers] = useState(0);
   const [lowStockProducts, setLowStockProducts] = useState(0);
@@ -95,47 +93,6 @@ export default function DashboardPage() {
         />
 
         <div className='flex-1 md:justify-end flex gap-2'>
-          {/* Toast Test Buttons - Click to see notifications! */}
-          <Button
-            variant='primary'
-            className='text-xs px-3'
-            onClick={() => {
-              console.log('Success button clicked!');
-              showSuccess('Success!', 'Product Created Successfully');
-            }}
-          >
-            ✓ Success
-          </Button>
-          <Button
-            variant='destructive'
-            className='text-xs px-3'
-            onClick={() => {
-              console.log('Error button clicked!');
-              showError('Error!', 'Product Creation Failed');
-            }}
-          >
-            ✗ Error
-          </Button>
-          <Button
-            variant='secondary'
-            className='text-xs px-3'
-            onClick={() => {
-              console.log('Warning button clicked!');
-              showWarning('Warning!', 'Low stock alert');
-            }}
-          >
-            ⚠ Warning
-          </Button>
-          <Button
-            variant='secondary'
-            className='text-xs px-3'
-            onClick={() => showInfo('Info', 'Processing your request')}
-          >
-            ℹ Info
-          </Button>
-
-          <div className='border-l border-gray-300 mx-2'></div>
-
           <Button variant='secondary' className='text-sm' LeftIcon={FileText}>
             Generate Report
           </Button>

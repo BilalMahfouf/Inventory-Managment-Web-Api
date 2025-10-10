@@ -4,11 +4,18 @@ import { getAllProducts } from '@services/products/productService';
 import useServerSideDataTable from '../../../hooks/useServerSideDataTable';
 import ProductViewDialog from './ProductViewDialog';
 import { AddProduct } from '@/components/products';
-
+import ConfirmationDialog from '../ConfirmationDialog';
+import { deleteProduct } from '@/services/products/productService';
+import useToast from '@/hooks/useToast';
+import { ShowerHead } from 'lucide-react';
 export default function ProductDataTable() {
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(0);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [currentProductId, setCurrentProductId] = useState(0);
+  const { showError, showSuccess } = useToast();
+
   const fetchProducts = async ({
     page,
     pageSize,
@@ -39,9 +46,19 @@ export default function ProductDataTable() {
   };
   const handleEditClose = () => {
     setUpdateDialogOpen(false);
-    console.log('closed');
     tableProps.refresh();
   };
+  const handleDelete = () => {
+    console.log('delete is clicked', currentProductId);
+    deleteProduct(currentProductId);
+
+    showSuccess(
+      `Product is Deleted `,
+      `Product with id ${currentProductId} is deleted successfully`
+    );
+    setDeleteDialogOpen(false);
+  };
+
   return (
     <>
       <DataTable
@@ -57,7 +74,10 @@ export default function ProductDataTable() {
         loading={tableProps.loading}
         onView={handleView}
         onEdit={handleEdit}
-        onDelete={row => console.log('Delete', row)}
+        onDelete={row => {
+          setCurrentProductId(row.id);
+          setDeleteDialogOpen(true);
+        }}
       />
       {viewDialogOpen && (
         <ProductViewDialog
@@ -73,6 +93,18 @@ export default function ProductDataTable() {
           onSubmit={console.log('sumbited ')}
           productId={selectedProductId}
           isLoading={true}
+        />
+      )}
+      {deleteDialogOpen && (
+        <ConfirmationDialog
+          isOpen={deleteDialogOpen}
+          onConfirm={handleDelete}
+          onClose={() => {
+            setDeleteDialogOpen(false);
+            showError('Delete cancelled', 'Product delete action is cancelled');
+          }}
+          title='Delete Product'
+          message='Are you sure you want to delete this product? This action cannot be undone.'
         />
       )}
     </>

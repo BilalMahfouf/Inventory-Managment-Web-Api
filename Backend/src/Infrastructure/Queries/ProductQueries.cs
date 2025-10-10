@@ -69,6 +69,7 @@ public class ProductQueries : IProductQueries
             }
 
             var productsQuery = _context.Products.AsQueryable();
+            productsQuery = productsQuery.Where(p=>!p.IsDeleted);
 
             if (!string.IsNullOrWhiteSpace(request.search))
             {

@@ -156,6 +156,20 @@ async function updateProduct(id, productData) {
     throw error;
   }
 }
+async function deleteProduct(id) {
+  try {
+    const response = await fetchWithAuth(`${BASE_URL}/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.success) {
+      const errorMessage = await response.error;
+      throw new Error(errorMessage || 'Failed to delete product');
+    }
+  } catch (error) {
+    console.error('Failed to delete product:', error);
+    throw error;
+  }
+}
 
 export {
   getSummary,
@@ -164,4 +178,5 @@ export {
   createProduct,
   getProductById,
   updateProduct,
+  deleteProduct,
 };

@@ -120,7 +120,7 @@ const Toast = ({
             className={`
               flex-shrink-0 ${currentConfig.iconColor} 
               hover:opacity-70 transition-opacity duration-150
-              focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-current rounded
+              focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-current rounded cursor-pointer
             `}
             aria-label='Close notification'
           >
