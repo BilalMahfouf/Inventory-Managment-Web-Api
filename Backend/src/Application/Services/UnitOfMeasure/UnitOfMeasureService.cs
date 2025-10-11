@@ -57,7 +57,9 @@ namespace Application.Services.UnitOfMeasures
         {
             try
             {
-                var unitOfMeasures = await _repository.GetAllAsync(null!, cancellationToken
+                var unitOfMeasures = await _repository.GetAllAsync(
+                    e => !e.IsDeleted
+                    , cancellationToken
                     , "CreatedByUser,UpdatedByUser,DeletedByUser");
                 if (unitOfMeasures is null || !unitOfMeasures.Any())
                 {
