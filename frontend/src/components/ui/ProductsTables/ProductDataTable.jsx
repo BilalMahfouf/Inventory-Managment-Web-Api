@@ -6,7 +6,7 @@ import ProductViewDialog from './ProductViewDialog';
 import { AddProduct } from '@/components/products';
 import ConfirmationDialog from '../ConfirmationDialog';
 import { deleteProduct } from '@/services/products/productService';
-import useToast from '@/hooks/useToast';
+import { useToast } from '@/context/ToastContext';
 import { ShowerHead } from 'lucide-react';
 export default function ProductDataTable() {
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
