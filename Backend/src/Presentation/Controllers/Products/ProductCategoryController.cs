@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Services.Products;
+﻿using Application.Abstractions.Queries;
+using Application.Abstractions.Services.Products;
 using Application.DTOs.Products.Request.Categories;
 using Application.DTOs.Products.Response.Categories;
 using Microsoft.AspNetCore.Authorization;
@@ -13,10 +14,11 @@ namespace Presentation.Controllers.Products
     public class ProductCategoryController:ControllerBase
     {
         private readonly IProductCategoryService _service;
-
-        public ProductCategoryController(IProductCategoryService service)
+        private readonly IProductCategoryQueries _query;
+        public ProductCategoryController(IProductCategoryService service, IProductCategoryQueries query)
         {
             _service = service;
+            _query = query;
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -64,10 +66,10 @@ namespace Presentation.Controllers.Products
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet("{id}", Name = "GetProductCategoryByIdAsync")]
 
-        public async Task<ActionResult<ProductCategoryReadResponse>>
+        public async Task<ActionResult<ProductCategoryDetailsResponse>>
             GetProductCategoryByIdAsync(int id, CancellationToken cancellationToken)
         {
-            var response = await _service.FindAsync(id, cancellationToken);
+            var response = await _query.GetCategoryByIdAsync(id, cancellationToken);
             return response.HandleResult();
         }
 
