@@ -31,6 +31,63 @@ async function GetUnitsNames() {
   }
 }
 
+async function getUnitOfMeasureById(id) {
+  try {
+    const response = await fetchWithAuth(`${BASE_URL}/${id}`);
+    if (!response.success) {
+      const errorText = await response.response.text();
+      console.error('Failed to fetch unit of measure:', errorText);
+      throw new Error('Failed to fetch unit of measure');
+    }
+    return response.response.json();
+  } catch (error) {
+    console.error('Error fetching unit of measure:', error);
+    throw error;
+  }
+}
+
+async function createUnitOfMeasure({ name, description }) {
+  try {
+    const response = await fetchWithAuth(`${BASE_URL}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, description }),
+    });
+    if (!response.success) {
+      const errorText = await response.error;
+      console.error('Failed to create unit of measure:', errorText);
+      return { success: false, message: errorText };
+    }
+    return { success: true, data: await response.response.json() };
+  } catch (error) {
+    console.error('Error creating unit of measure:', error);
+    throw error;
+  }
+}
+
+async function updateUnitOfMeasure(id, { name, description }) {
+  try {
+    const response = await fetchWithAuth(`${BASE_URL}/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, description }),
+    });
+    if (!response.success) {
+      const errorText = await response.error;
+      console.error('Failed to update unit of measure:', errorText);
+      return { success: false, message: errorText };
+    }
+    return { success: true, data: await response.response.json() };
+  } catch (error) {
+    console.error('Error updating unit of measure:', error);
+    throw error;
+  }
+}
+
 async function deleteUnitOfMeasure(id) {
   try {
     const response = await fetchWithAuth(`${BASE_URL}/${id}`, {
@@ -48,4 +105,10 @@ async function deleteUnitOfMeasure(id) {
   }
 }
 
-export { GetUnitsNames, deleteUnitOfMeasure };
+export {
+  GetUnitsNames,
+  getUnitOfMeasureById,
+  createUnitOfMeasure,
+  updateUnitOfMeasure,
+  deleteUnitOfMeasure,
+};

@@ -18,6 +18,7 @@ import ProductDataTable from '../components/ui/ProductsTables/ProductDataTable';
 import StockMovementHistoryTable from '../components/ui/ProductsTables/StockMovementHistoryTable';
 import { AddProduct } from '@components/products';
 import UnitOfMeasureTable from '@/components/unitOfMeasure/UnitOfMeasureTable';
+import AddUnitOfMeasureButton from '@/components/unitOfMeasure/AddUnitOfMeasureButton';
 export default function ProductsPage() {
   const [totalProductsCount, setTotalProductsCount] = useState(0);
   const [inventoryValue, setInventoryValue] = useState(0);
@@ -149,6 +150,7 @@ export default function ProductsPage() {
               <h3 className='text-2xl font-semibold leading-none tracking-tight'>
                 Unit Of Measure
               </h3>
+              <AddUnitOfMeasureButton />
             </div>
             <UnitOfMeasureTable />
           </TabPanel>
