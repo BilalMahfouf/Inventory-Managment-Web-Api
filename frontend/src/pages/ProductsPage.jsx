@@ -17,6 +17,8 @@ import { divStyles } from '../util/uiVariables';
 import ProductDataTable from '../components/ui/ProductsTables/ProductDataTable';
 import StockMovementHistoryTable from '../components/ui/ProductsTables/StockMovementHistoryTable';
 import { AddProduct } from '@components/products';
+import UnitOfMeasureTable from '@/components/unitOfMeasure/UnitOfMeasureTable';
+import AddUnitOfMeasureButton from '@/components/unitOfMeasure/AddUnitOfMeasureButton';
 export default function ProductsPage() {
   const [totalProductsCount, setTotalProductsCount] = useState(0);
   const [inventoryValue, setInventoryValue] = useState(0);
@@ -107,6 +109,24 @@ export default function ProductsPage() {
           >
             Stock Movements
           </Tab>
+          <Tab
+            className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
+            selectedClassName='!bg-white !text-gray-900 shadow-sm'
+          >
+            Unit Of Measure
+          </Tab>
+          <Tab
+            className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
+            selectedClassName='!bg-white !text-gray-900 shadow-sm'
+          >
+            Product Categories
+          </Tab>
+          <Tab
+            className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
+            selectedClassName='!bg-white !text-gray-900 shadow-sm'
+          >
+            Product Images
+          </Tab>
         </TabList>
         <div className={divStyles + 'mt-6'}>
           <TabPanel>
@@ -124,6 +144,31 @@ export default function ProductsPage() {
               </h3>
             </div>
             <StockMovementHistoryTable />
+          </TabPanel>
+          <TabPanel>
+            <div className='mb-9 flex items-center justify-between'>
+              <h3 className='text-2xl font-semibold leading-none tracking-tight'>
+                Unit Of Measure
+              </h3>
+              <AddUnitOfMeasureButton />
+            </div>
+            <UnitOfMeasureTable />
+          </TabPanel>
+          <TabPanel>
+            <div className='mb-9 flex items-center justify-between'>
+              <h3 className='text-2xl font-semibold leading-none tracking-tight'>
+                Product Categories
+              </h3>
+            </div>
+            <div> Product Categories Will be here !</div>
+          </TabPanel>
+          <TabPanel>
+            <div className='mb-9 flex items-center justify-between'>
+              <h3 className='text-2xl font-semibold leading-none tracking-tight'>
+                Product Images
+              </h3>
+            </div>
+            <div> Product Images Will be here !</div>
           </TabPanel>
         </div>
       </Tabs>
