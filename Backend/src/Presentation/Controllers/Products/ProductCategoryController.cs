@@ -79,7 +79,7 @@ namespace Presentation.Controllers.Products
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPut("{id}")]
 
-        public async Task<IActionResult> UpdateProductCategoryAsync(int id,
+        public async Task<ActionResult<ProductCategoryDetailsResponse>> UpdateProductCategoryAsync(int id,
             ProductCategoryRequest request, CancellationToken cancellationToken)
         {
             var response = await _service.UpdateAsync(id, request, cancellationToken);
@@ -128,6 +128,17 @@ namespace Presentation.Controllers.Products
             
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet("main-categories")]
+
+        public async Task<ActionResult<IEnumerable<object>>>
+            GetMainCategoriesAsync(CancellationToken cancellationToken)
+        {
+            var response = await _query.GetMainCategoriesAsync(cancellationToken);
+            return response.HandleResult();
+        }
 
     }
 }

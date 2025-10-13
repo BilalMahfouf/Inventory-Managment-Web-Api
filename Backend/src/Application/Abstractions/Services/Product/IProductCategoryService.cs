@@ -23,7 +23,7 @@ namespace Application.Abstractions.Services.Products
             ,CancellationToken cancellationToken = default);
         Task<Result<ProductCategoryReadResponse>> AddAsync(
             ProductCategoryRequest request, CancellationToken cancellationToken);
-        Task<Result> UpdateAsync(int id, ProductCategoryRequest request
+        Task<Result<ProductCategoryDetailsResponse>> UpdateAsync(int id, ProductCategoryRequest request
             , CancellationToken cancellationToken);
         Task<Result> DeleteAsync(int id, CancellationToken cancellationToken);
 

@@ -81,4 +81,27 @@ public class ProductCategoryQueries : IProductCategoryQueries
 
     }
 
+    public async Task<Result<IEnumerable<object>>> GetMainCategoriesAsync(
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var categories = await _context.ProductCategories
+                .Where(e => e.Type == ProductCategoryType.MainCategory && !e.IsDeleted)
+                .Select(e => new
+                {
+                    e.Id,
+                    e.Name
+                }).ToListAsync(cancellationToken);
+            if (categories is null || !categories.Any())
+            {
+                return Result<IEnumerable<object>>.NotFound(nameof(categories));
+            }
+            return Result<IEnumerable<object>>.Success(categories);
+        }
+        catch (Exception ex)
+        {
+            return Result<IEnumerable<object>>.Exception(nameof(GetMainCategoriesAsync), ex);
+        }
+    }
 }
