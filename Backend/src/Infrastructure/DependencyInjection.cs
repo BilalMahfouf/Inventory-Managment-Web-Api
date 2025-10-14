@@ -24,6 +24,7 @@ using Infrastructure.Services.ImageStorage;
 using Infrastructure.UOW;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -89,6 +90,7 @@ namespace Infrastructure
             services.AddScoped<IInventoryRepository, InventoryRepository>();
             services.AddScoped<IDashboardQueries, DashboardQueries>();
             services.AddScoped<IProductQueries, ProductQueries>();
+            services.AddScoped<IProductCategoryQueries, ProductCategoryQueries>();
 
             // Email Options config 
             services.Configure<EmailOptions>(options =>

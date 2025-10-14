@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using Domain;
 using Domain.Abstractions;
+using Domain.Enums;
 using System;
 using System.Collections.Generic;
 
@@ -12,6 +13,7 @@ public partial class ProductCategory : IBaseEntity, ISoftDeletable
 
     public string Name { get; set; } = null!;
 
+    public ProductCategoryType Type { get; set; }
     public string? Description { get; set; }
 
     public int? ParentId { get; set; }

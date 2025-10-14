@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Repositories.Base;
+﻿using Application.Abstractions.Queries;
+using Application.Abstractions.Repositories.Base;
 using Application.Abstractions.Services.Products;
 using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
@@ -25,6 +26,7 @@ public class ProductCategoryService : DeleteService<ProductCategory>
 
 
     private readonly IValidator<ProductCategoryRequest> _validator;
+    private readonly IProductCategoryQueries _query;
     private ProductCategoryReadResponse Map(ProductCategory entity)
     {
         var result = new ProductCategoryReadResponse()
@@ -54,10 +56,12 @@ public class ProductCategoryService : DeleteService<ProductCategory>
     public ProductCategoryService(IBaseRepository<ProductCategory> repo
         , IUnitOfWork uow
         , ICurrentUserService currentUserService
-        , IValidator<ProductCategoryRequest> validator)
+        , IValidator<ProductCategoryRequest> validator,
+IProductCategoryQueries query)
         : base(repo, currentUserService, uow)
     {
         _validator = validator;
+        _query = query;
     }
 
     public async Task<Result<ProductCategoryReadResponse>> AddAsync(
@@ -145,7 +149,7 @@ public class ProductCategoryService : DeleteService<ProductCategory>
     {
         try
         {
-            var categories = await _repository.GetAllAsync(null!, cancellationToken
+            var categories = await _repository.GetAllAsync(e=>!e.IsDeleted, cancellationToken
                 , "Parent,CreatedByUser,UpdatedByUser,DeletedByUser");
             if (categories is null || !categories.Any())
             {
@@ -295,27 +299,28 @@ public class ProductCategoryService : DeleteService<ProductCategory>
         return result;
     }
 
-    public async Task<Result> UpdateAsync(int id
+    public async Task<Result<ProductCategoryDetailsResponse>> UpdateAsync(int id
         , ProductCategoryRequest request, CancellationToken cancellationToken)
     {
         try
         {
             if (id <= 0)
             {
-                return Result.InvalidId();
+                return Result<ProductCategoryDetailsResponse>.InvalidId();
             }
             var result = _validator.Validate(request);
             if (!result.IsValid)
             {
                 var errorMessage = string.Join(";", result.Errors.
                     Select(e => e.ErrorMessage));
-                return Result.Failure(errorMessage, ErrorType.BadRequest);
+                return Result<ProductCategoryDetailsResponse>
+                    .Failure(errorMessage, ErrorType.BadRequest);
             }
             var category = await _repository.FindAsync(e => e.Id == id
             , cancellationToken);
             if (category is null)
             {
-                return Result.NotFound(nameof(category));
+                return Result<ProductCategoryDetailsResponse>.NotFound(nameof(category));
             }
             category.ParentId = request.ParentId;
             category.Name = request.Name;
@@ -324,12 +329,12 @@ public class ProductCategoryService : DeleteService<ProductCategory>
             category.UpdatedByUserId = _currentUserService.UserId;
             _repository.Update(category);
             await _uow.SaveChangesAsync(cancellationToken);
-            return Result.Success;
+            return await  _query.GetCategoryByIdAsync(category.Id, cancellationToken);
 
         }
         catch (Exception ex)
         {
-            return Result.Failure($"Error:{ex.Message}"
+            return Result<ProductCategoryDetailsResponse>.Failure($"Error:{ex.Message}"
                 , ErrorType.InternalServerError);
         }
     }

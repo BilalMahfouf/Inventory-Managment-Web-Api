@@ -19,6 +19,10 @@ namespace Infrastructure.Persistence.Configurations
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
 
+            entity.Property(e => e.Type)
+                .HasComment("  1 is MainCategory ,2 is SubCategory")
+                .HasConversion<byte>();
+            
             entity.Property(e => e.UpdateAt)
                 .HasColumnType("datetime");
 
