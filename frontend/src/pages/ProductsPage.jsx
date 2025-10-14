@@ -20,6 +20,7 @@ import { AddProduct } from '@components/products';
 import UnitOfMeasureTable from '@/components/unitOfMeasure/UnitOfMeasureTable';
 import AddUnitOfMeasureButton from '@/components/unitOfMeasure/AddUnitOfMeasureButton';
 import ProductCategoryDataTable from '@/components/productCategories/ProductCategoryDataTable';
+import AddProductCategoryButton from '@/components/productCategories/AddProductCategoryButton';
 export default function ProductsPage() {
   const [totalProductsCount, setTotalProductsCount] = useState(0);
   const [inventoryValue, setInventoryValue] = useState(0);
@@ -27,6 +28,7 @@ export default function ProductsPage() {
   const [profitPotential, setProfitPotential] = useState(1);
   const [loading, setLoading] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [refreshCategories, setRefreshCategories] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -160,8 +162,13 @@ export default function ProductsPage() {
               <h3 className='text-2xl font-semibold leading-none tracking-tight'>
                 Product Categories
               </h3>
+              <AddProductCategoryButton
+                onClose={() => {
+                  setRefreshCategories(!refreshCategories);
+                }}
+              />
             </div>
-            <ProductCategoryDataTable />
+            <ProductCategoryDataTable refresh={refreshCategories} />
           </TabPanel>
           <TabPanel>
             <div className='mb-9 flex items-center justify-between'>
