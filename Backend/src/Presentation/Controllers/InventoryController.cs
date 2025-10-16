@@ -2,6 +2,7 @@
 using Application.DTOs.Inventories;
 using Application.DTOs.Inventories.Request;
 using Application.PagedLists;
+using Application.Results;
 using Application.Services.Inventories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,15 +13,16 @@ namespace Presentation.Controllers
     [ApiController]
     [Route("api/inventory")]
 
-    //[Authorize]
-    public class InventoryController
+    [Authorize]
+    public class InventoryController : ControllerBase
     {
         private readonly InventoryService _service;
         private readonly IInventoryQueries _query;
 
-        public InventoryController(InventoryService service)
+        public InventoryController(InventoryService service, IInventoryQueries query)
         {
             _service = service;
+            _query = query;
         }
 
         [HttpGet("valuation")]
@@ -29,7 +31,7 @@ namespace Presentation.Controllers
 
         public async Task<ActionResult<decimal>> GetInventoryValuationAsync(CancellationToken cancellationToken)
         {
-            var response= await _service.GetInventoryValuationAsync(cancellationToken);
+            var response = await _service.GetInventoryValuationAsync(cancellationToken);
             return response.HandleResult();
         }
         [HttpGet("cost")]
@@ -61,23 +63,22 @@ namespace Presentation.Controllers
 
         public async Task<ActionResult<PagedList<InventoryTableResponse>>>
             GetAllInventoriesAsync(
-            [FromQuery]int?page,
-            [FromQuery]int?pageSize,
-            [FromQuery]string? search,
-            [FromQuery]string? sortOrder,
-            [FromQuery]string? sortColumn,
+            [FromQuery] int? page,
+            [FromQuery] int? pageSize,
+            [FromQuery] string? search,
+            [FromQuery] string? sortOrder,
+            [FromQuery] string? sortColumn,
             CancellationToken cancellationToken)
 
         {
-            var request = new TableRequest
-            {
-                Page = page ?? 1,
-                PageSize = pageSize ?? 10,
-                search = search ?? string.Empty,
-                SortColumn = sortColumn ?? string.Empty,
-                SortOrder = sortOrder ?? string.Empty
-            };
-            var response = await _query.GetInventoryTableAsync(request,cancellationToken);
+            var request = TableRequest.Create(
+                pageSize,
+                page,
+                search,
+                sortColumn,
+                sortOrder);
+
+            var response = await _query.GetInventoryTableAsync(request, cancellationToken);
             return response.HandleResult();
         }
 
@@ -93,7 +94,7 @@ namespace Presentation.Controllers
 
 
 
-        [HttpGet("{id:int}",Name = "GetInventoryByIdAsync")]
+        [HttpGet("{id:int}", Name = "GetInventoryByIdAsync")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
