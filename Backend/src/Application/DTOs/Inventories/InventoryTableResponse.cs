@@ -8,6 +8,7 @@ namespace Application.DTOs.Inventories
 {
     public class InventoryTableResponse
     {
+        public int Id { get; set; }
         public string Sku { get; set; }= string.Empty;
         public string Product { get; set; }= string.Empty;
         public string Location { get; set; }= string.Empty;

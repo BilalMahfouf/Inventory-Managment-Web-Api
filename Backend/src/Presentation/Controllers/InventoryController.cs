@@ -1,5 +1,7 @@
-﻿using Application.DTOs.Inventories;
+﻿using Application.Abstractions.Queries;
+using Application.DTOs.Inventories;
 using Application.DTOs.Inventories.Request;
+using Application.PagedLists;
 using Application.Services.Inventories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +16,7 @@ namespace Presentation.Controllers
     public class InventoryController
     {
         private readonly InventoryService _service;
+        private readonly IInventoryQueries _query;
 
         public InventoryController(InventoryService service)
         {
@@ -56,12 +59,39 @@ namespace Presentation.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<ActionResult<IReadOnlyCollection<InventoryBaseReadResponse>>>
-            GetAllInventoriesAsync(CancellationToken cancellationToken)
+        public async Task<ActionResult<PagedList<InventoryTableResponse>>>
+            GetAllInventoriesAsync(
+            [FromQuery]int?page,
+            [FromQuery]int?pageSize,
+            [FromQuery]string? search,
+            [FromQuery]string? sortOrder,
+            [FromQuery]string? sortColumn,
+            CancellationToken cancellationToken)
+
         {
-            var response = await _service.GetAllAsync(cancellationToken);
+            var request = new TableRequest
+            {
+                Page = page ?? 1,
+                PageSize = pageSize ?? 10,
+                search = search ?? string.Empty,
+                SortColumn = sortColumn ?? string.Empty,
+                SortOrder = sortOrder ?? string.Empty
+            };
+            var response = await _query.GetInventoryTableAsync(request,cancellationToken);
             return response.HandleResult();
         }
+
+        [HttpGet("summary")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<ActionResult<object>> GetInventorySummaryAsync(CancellationToken cancellationToken)
+        {
+            var response = await _query.GetInventorySummaryAsync(cancellationToken);
+            return response.HandleResult();
+        }
+
+
 
         [HttpGet("{id:int}",Name = "GetInventoryByIdAsync")]
         [ProducesResponseType(StatusCodes.Status200OK)]

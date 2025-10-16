@@ -28,12 +28,18 @@ public class InventoryQueries : IInventoryQueries
         CancellationToken cancellationToken = default)
     {
 
+        try
+        {
+
+        // to do add Count for total count
+        var count = 0;
         var query =
           from i in _context.Inventories
           join p in _context.Products on i.ProductId equals p.Id
           join l in _context.Locations on i.LocationId equals l.Id
           select new InventoryTableResponse
           {
+              Id = i.Id,
               Sku = p.Sku,
               Product = p.Name,
               Location = l.Name,
@@ -49,13 +55,13 @@ public class InventoryQueries : IInventoryQueries
               PotentialProfit = (p.UnitPrice - p.Cost) * i.QuantityOnHand
           };
 
-        // ✅ Apply search filter (index-friendly: prefix match)
         if (!string.IsNullOrWhiteSpace(request.search))
         {
-            string searchPattern = $"{request.search}%"; 
+            string searchPattern = $"{request.search}%";
             query = query.Where(x =>
                 EF.Functions.Like(x.Sku, searchPattern) ||
-                EF.Functions.Like(x.Product, searchPattern));
+                EF.Functions.Like(x.Product, searchPattern) ||
+                EF.Functions.Like(x.Location, searchPattern));
         }
 
         Func<InventoryTableResponse, object> orderBy = request.SortColumn?.ToLower() switch
@@ -71,7 +77,7 @@ public class InventoryQueries : IInventoryQueries
             "potentialprofit" => x => x.PotentialProfit,
             _ => x => x.Product // Default sorting by Product
         };
-        if(request.SortOrder?.ToLower() == "desc")
+        if (request.SortOrder?.ToLower() == "desc")
         {
             query = query.OrderByDescending(orderBy).AsQueryable();
         }
@@ -84,7 +90,50 @@ public class InventoryQueries : IInventoryQueries
             .Take(request.PageSize);
         var table = await query.ToListAsync(cancellationToken);
 
-
-
+        if(table is null || !table.Any())
+        {
+            return Result<PagedList<InventoryTableResponse>>.NotFound("Inventory Table ");
+        }
+        var result = new PagedList<InventoryTableResponse>
+        {
+            Item = table,
+            TotalCount = count,
+            PageSize = request.PageSize,
+            Page = request.Page
+        };
+        return Result<PagedList<InventoryTableResponse>>.Success(result);
+        }
+        catch(Exception ex)
+        {
+            return Result<PagedList<InventoryTableResponse>>
+                .Exception(nameof(GetInventoryTableAsync), ex);
+        }
     }
+    public async Task<Result<object>> GetInventorySummaryAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var lowStockItems = await _context.Inventories
+                .CountAsync(e => e.QuantityOnHand <= e.ReorderLevel);
+            var outOfStockItems = await _context.Inventories
+                .CountAsync(e => e.QuantityOnHand == 0);
+            var totalInventoryItems = await _context.Inventories.CountAsync(cancellationToken);
+            var totalPotentialProfit = await (from i in _context.Inventories
+                                              join p in _context.Products on i.ProductId equals p.Id
+                                              select (p.UnitPrice - p.Cost) * i.QuantityOnHand).SumAsync(cancellationToken);
+            var summary = new
+            {
+                LowStockItems=lowStockItems,
+                OutOfStockItems = outOfStockItems,
+                TotalInventoryItems = totalInventoryItems,
+                TotalPotentialProfit = totalPotentialProfit
+            };
+            return Result<object>.Success(summary);
+        }
+        catch (Exception ex)
+        {
+            return Result<object>.Exception(nameof(GetInventorySummaryAsync), ex);
+        }
+    }
+
 }

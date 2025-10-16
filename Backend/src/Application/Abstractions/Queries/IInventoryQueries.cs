@@ -12,9 +12,8 @@ namespace Application.Abstractions.Queries
     public interface  IInventoryQueries
     {
         Task<Result<PagedList<InventoryTableResponse>>> GetInventoryTableAsync(
-            int pageNumber,
-            int pageSize,
-            string? search,
+            TableRequest request,
             CancellationToken cancellationToken = default);
+        Task<Result<object>> GetInventorySummaryAsync(CancellationToken cancellationToken = default);
     }
 }
