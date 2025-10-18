@@ -7,6 +7,7 @@ import { AlertTriangle, Boxes, Package, Plus, XCircle } from 'lucide-react';
 import { divStyles } from '@/util/uiVariables';
 import { TabList, Tabs, Tab, TabPanel } from 'react-tabs';
 import InventoryDataTable from '@/components/inventory/InventoryDataTable';
+import AddUpdateInventory from '@/components/inventory/AddUpdateInventory';
 
 export default function InventoryPage() {
   const [loading, setLoading] = useState(false);
@@ -121,6 +122,12 @@ export default function InventoryPage() {
           </div>
         </Tabs>
       </div>
+      {isAddModalOpen && (
+        <AddUpdateInventory
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+        />
+      )}
     </>
   );
 }

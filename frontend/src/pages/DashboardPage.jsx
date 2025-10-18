@@ -24,6 +24,7 @@ import QuickActions from '@components/ui/quickAction/QuickActions';
 import Alerts from '../components/ui/alerts/Alerts';
 import TopSellingProducts from '../components/ui/TopSellingProducts';
 import TodaysPerformanceContainer from '../components/ui/TodaysPerformanceContainer';
+import AddProductButton from '@/components/products/AddProductButton';
 
 export default function DashboardPage() {
   const [activeProducts, setActiveProducts] = useState(0);
@@ -96,9 +97,7 @@ export default function DashboardPage() {
           <Button variant='secondary' className='text-sm' LeftIcon={FileText}>
             Generate Report
           </Button>
-          <Button variant='primary' className='text-sm w' LeftIcon={Plus}>
-            Add Product
-          </Button>
+          <AddProductButton />
         </div>
       </div>
 
