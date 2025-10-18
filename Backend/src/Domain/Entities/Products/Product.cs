@@ -3,6 +3,7 @@ using Application.Results;
 using Domain;
 using Domain.Abstractions;
 using Domain.Enums;
+using Domain.Exceptions;
 using System;
 using System.Collections.Generic;
 
@@ -49,7 +50,7 @@ public partial class Product : ISoftDeletable, IModifiableEntity, IBaseEntity
 
     public virtual User? DeletedByUser { get; set; }
 
-    public virtual UnitOfMeasure  UnitOfMeasure{ get; set; } = null!;
+    public virtual UnitOfMeasure UnitOfMeasure { get; set; } = null!;
 
     public virtual User? UpdatedByUser { get; set; }
 
@@ -58,17 +59,17 @@ public partial class Product : ISoftDeletable, IModifiableEntity, IBaseEntity
 
     public Product()
     {
-        
+
     }
-    private  Product(
+    private Product(
         string sku,
         string name,
-        string?description,
+        string? description,
         int categoryId,
         int unitOfMeasureId,
-        decimal unitPrice, 
+        decimal unitPrice,
         decimal cost
-        )  
+        )
     {
         Sku = sku;
         Name = name;
@@ -79,25 +80,26 @@ public partial class Product : ISoftDeletable, IModifiableEntity, IBaseEntity
         Cost = cost;
     }
 
-   public void AddInventory(Inventory inventory)
+    public void AddInventory(Inventory inventory)
     {
-       _inventories.Add(inventory);
+        EnsureProductIsActive();
+        _inventories.Add(inventory);
     }
-    public static Result<Product> Create( 
+    public static Result<Product> Create(
         string sku,
         string name,
-        string?description,
+        string? description,
         int categoryId,
         int unitOfMeasureId,
-        decimal unitPrice, 
+        decimal unitPrice,
         decimal cost
         )
     {
         // Here you can add any validation or business logic before creating the product
-        if(unitPrice < cost)
+        if (unitPrice < cost)
         {
             return Result<Product>.Failure("Unit price cannot be less than cost."
-                , ErrorType.Conflict); 
+                , ErrorType.Conflict);
         }
 
         var product = new Product(
@@ -118,26 +120,25 @@ public partial class Product : ISoftDeletable, IModifiableEntity, IBaseEntity
         decimal unitPrice,
         decimal cost)
     {
-        if(unitPrice < cost)
+        EnsureProductIsActive();
+        if (unitPrice < cost)
         {
             return Result.Failure("Unit price cannot be less than cost."
                 , ErrorType.Conflict);
         }
         this.Name = name;
-        this.Description= description;
+        this.Description = description;
         this.CategoryId = categoryId;
         this.UnitPrice = unitPrice;
-        this.Cost= cost;
+        this.Cost = cost;
         return Result.Success;
     }
 
-
-
-
-
-
-
-
-
-
+    public void EnsureProductIsActive()
+    {
+        if (!IsActive)
+        {
+            throw new DomainException("Product is not active.");
+        }
+    }
 }

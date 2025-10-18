@@ -78,6 +78,7 @@ public partial class Inventory : IBaseEntity, IModifiableEntity
         )
     {
         // Add any necessary validation or business logic here
+        product.EnsureProductIsActive();
         if (maxLevel < quantityOnHand)
         {
             throw new DomainException("Quantity on hand cannot exceed max level");
@@ -106,7 +107,7 @@ public partial class Inventory : IBaseEntity, IModifiableEntity
         return inventory;
     }
     // to do add StockChanged event here
-    // to do add StockMovement creation here
+    // to do add StockMovement creation here 10/18/2025
     public void UpdateInventoryLevels(
     decimal quantityOnHand,
     decimal reorderLevel,
