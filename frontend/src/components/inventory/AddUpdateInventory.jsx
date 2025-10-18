@@ -4,8 +4,12 @@ import Button from '@components/Buttons/Button';
 import { Input } from '@components/ui/input';
 import { cn } from '@/lib/utils';
 import { getProductById } from '@/services/products/productService';
-import { getLocationsNames } from '@/services/products/locationService';
+import {
+  getLocationById,
+  getLocationsNames,
+} from '@/services/products/locationService';
 import { useToast } from '@/context/ToastContext';
+import { createInventory } from '@services/inventoryService';
 
 /**
  * AddUpdateInventory Component
@@ -121,15 +125,15 @@ const AddUpdateInventory = ({
 
     try {
       // Find the location in the locations array
-      const location = locations.find(loc => loc.id === parseInt(locationId));
-      if (location) {
-        // In a real scenario, you might fetch full details from an API
-        // For now, we'll use the data we have
+      const location = await getLocationById(locationId);
+      if (!location.success) {
+        showError('Error', `Error: ${location.error}, please try again`);
+      } else {
         setSelectedLocation({
-          id: location.id,
-          name: location.name,
-          address: location.address || 'N/A',
-          type: location.typeName || location.locationTypeName || 'N/A',
+          id: location.data.id,
+          name: location.data.name,
+          address: location.data.address || 'N/A',
+          type: location.data.typeName || location.locationTypeName || 'N/A',
         });
       }
     } catch {
@@ -189,6 +193,26 @@ const AddUpdateInventory = ({
    * Handle form submission
    * Creates or updates inventory based on mode
    */
+  const addInventory = async () => {
+    const response = await createInventory({
+      productId: searchedProduct.id,
+      locationId: selectedLocation.id,
+      quantityOnHand: stockLevels.quantityOnHand,
+      reorderLevel: stockLevels.reorderLevel,
+      maxLevel: stockLevels.maxLevel,
+    });
+    if (!response.success) {
+      showError(
+        'Error',
+        `Error while creating new inventory: ${response.error}`
+      );
+      return;
+    }
+    showSuccess(
+      'Inventory Created',
+      `Successfully created inventory for ${searchedProduct.name} at ${selectedLocation.name}`
+    );
+  };
   const handleSubmit = async e => {
     e.preventDefault();
 
@@ -198,26 +222,9 @@ const AddUpdateInventory = ({
 
     setIsLoading(true);
     try {
-      if (mode === 'add') {
-        // Create new inventory
-        // TODO: Call API to create inventory
-        // const inventoryData = {
-        //   productId: searchedProduct.id,
-        //   locationId: selectedLocation.id,
-        //   quantityOnHand: stockLevels.quantityOnHand,
-        //   reorderLevel: stockLevels.reorderLevel,
-        //   maxLevel: stockLevels.maxLevel,
-        // };
-        // const response = await createInventory(inventoryData);
-
-        showSuccess(
-          'Inventory Created',
-          `Successfully created inventory for ${searchedProduct.name} at ${selectedLocation.name}`
-        );
-
-        if (onSuccess) {
-          onSuccess();
-        }
+      addInventory();
+      if (onSuccess) {
+        onSuccess();
       } else {
         // Update existing inventory
         // TODO: Call API to update inventory
@@ -604,7 +611,7 @@ const AddUpdateInventory = ({
                     </label>
                     <Input
                       type='number'
-                      step='0.01'
+                      step='1'
                       min='0'
                       placeholder='Enter quantity'
                       value={stockLevels.quantityOnHand}
@@ -625,7 +632,7 @@ const AddUpdateInventory = ({
                     </label>
                     <Input
                       type='number'
-                      step='0.01'
+                      step='1'
                       min='0'
                       placeholder='Enter reorder level'
                       value={stockLevels.reorderLevel}
@@ -646,7 +653,7 @@ const AddUpdateInventory = ({
                     </label>
                     <Input
                       type='number'
-                      step='0.01'
+                      step='1'
                       min='0'
                       placeholder='Enter maximum level'
                       value={stockLevels.maxLevel}

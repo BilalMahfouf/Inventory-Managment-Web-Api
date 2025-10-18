@@ -34,4 +34,38 @@ async function getAllInventory({
   }
 }
 
-export { getAllInventory };
+async function createInventory({
+  productId,
+  locationId,
+  quantityOnHand,
+  reorderLevel,
+  maxLevel,
+}) {
+  try {
+    const response = await fetchWithAuth(`${BASE_URL}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        productId,
+        locationId,
+        quantityOnHand,
+        reorderLevel,
+        maxLevel,
+      }),
+    });
+    if (!response.success) {
+      const errorMessage = await response.error;
+      console.error('Failed to create inventory:', errorMessage);
+      return { success: false, error: errorMessage };
+    }
+    const data = await response.response.json();
+    return { success: true, data: data };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: error.message };
+  }
+}
+
+export { getAllInventory, createInventory };
