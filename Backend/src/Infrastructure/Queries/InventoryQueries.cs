@@ -143,4 +143,7 @@ public class InventoryQueries : IInventoryQueries
         }
     }
 
+
+    
+
 }

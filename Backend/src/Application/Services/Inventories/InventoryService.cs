@@ -110,15 +110,22 @@ namespace Application.Services.Inventories
                         and LocationId already exists"
                         , ErrorType.Conflict);
                 }
-                var newInventory = new Inventory
+                var product = await _uow.Products
+                    .FindAsync(p => p.Id == request.ProductId
+                    , cancellationToken: cancellationToken);
+                if(product is null)
                 {
-                    ProductId = request.ProductId,
-                    LocationId = request.LocationId,
-                    QuantityOnHand = request.QuantityOnHand,
-                    ReorderLevel = request.ReorderLevel,
-                    MaxLevel = request.MaxLevel,
-                };
-                _uow.Inventories.Add(newInventory);
+                    return Result<InventoryBaseReadResponse>
+                        .NotFound("Product");
+                }
+                var newInventory = Inventory.Create(
+                    product,
+                    request.LocationId,
+                    request.QuantityOnHand,
+                    request.ReorderLevel,
+                    request.MaxLevel);
+
+                    _uow.Inventories.Add(newInventory);
                 await _uow.SaveChangesAsync(cancellationToken);
                 return await FindAsync(newInventory.Id, cancellationToken);
             }
