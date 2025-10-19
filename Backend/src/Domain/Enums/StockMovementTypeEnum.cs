@@ -20,5 +20,7 @@ public enum StockMovementTypeEnum
     CycleCountAdjustment = 10,
     DamageLoss = 11,
     PromotionalSample = 12,
-    InitialStock = 13
+    InitialStock = 13,
+    StockDecreaseAdjustment = 14,
+    StockIncreaseAdjustment = 15,
 }

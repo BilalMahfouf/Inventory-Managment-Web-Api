@@ -106,7 +106,73 @@ public partial class Inventory : IBaseEntity, IModifiableEntity
         inventory.AddStockMovement(initialStockMovement);
         return inventory;
     }
+
+
     // to do add StockChanged event here
+    public void UpdateStock(decimal newQuantity)
+    {
+        if (newQuantity < 0)
+        {
+            throw new DomainException("Stock quantity cannot be negative");
+        }
+        EnsureQuantityIsLessThanMaxLevel(newQuantity);
+        if (QuantityOnHand > newQuantity)
+        {
+            var stockMovement = StockMovement.Create(
+                   Product,
+                this,
+                StockMovementTypeEnum.StockDecreaseAdjustment,
+                QuantityOnHand - newQuantity,
+                "Stock decrease"
+                );
+            stockMovement.MarkAsCompleted();
+            AddStockMovement(stockMovement);
+        }
+        if (QuantityOnHand < newQuantity)
+        {
+            var stockMovement = StockMovement.Create(
+                  Product,
+               this,
+               StockMovementTypeEnum.StockIncreaseAdjustment,
+               newQuantity - QuantityOnHand,
+               "Stock increase"
+               );
+            stockMovement.MarkAsCompleted();
+            AddStockMovement(stockMovement);
+        }
+        QuantityOnHand = newQuantity;
+
+    }
+    public void UpdateStock(
+        decimal newQuantity,
+        StockMovementTypeEnum stockMovementType)
+    {
+        if (newQuantity < 0)
+        {
+            throw new Exception("Stock quantity cannot be negative");
+        }
+        EnsureQuantityIsLessThanMaxLevel(newQuantity);
+        QuantityOnHand = newQuantity;
+        var stockMovement = StockMovement.Create(
+            Product,
+            this,
+            stockMovementType,
+            newQuantity,
+            "Stock update"
+            );
+        stockMovement.MarkAsCompleted();
+        AddStockMovement(stockMovement);
+    }
+
+
+    private void EnsureQuantityIsLessThanMaxLevel(decimal quantity)
+    {
+        if (quantity > MaxLevel)
+        {
+            throw new DomainException("Quantity exceeds maximum level");
+        }
+    }
+
     // to do add StockMovement creation here 10/18/2025
     public void UpdateInventoryLevels(
     decimal quantityOnHand,
@@ -114,18 +180,15 @@ public partial class Inventory : IBaseEntity, IModifiableEntity
     decimal maxLevel
         )
     {
-        if (maxLevel < quantityOnHand)
-        {
-            throw new DomainException("Quantity on hand cannot exceed max level");
-        }
+        EnsureQuantityIsLessThanMaxLevel(quantityOnHand);
         if (maxLevel < reorderLevel)
         {
             throw new DomainException("Max level cannot be less than reorder level");
         }
-        QuantityOnHand = quantityOnHand;
+        UpdateStock(quantityOnHand);
         ReorderLevel = reorderLevel;
         MaxLevel = maxLevel;
-        
+
     }
 
 }

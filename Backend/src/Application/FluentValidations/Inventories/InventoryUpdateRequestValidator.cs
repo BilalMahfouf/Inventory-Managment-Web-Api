@@ -22,9 +22,8 @@ namespace Application.FluentValidations.Inventories
                 .WithMessage("ReorderLevel must be greater than or equal to 0.");
 
             RuleFor(x => x.MaxLevel)
-                .GreaterThan(0).WithMessage("MaxLevel must be greater than 0.")
-                .GreaterThanOrEqualTo(x => x.ReorderLevel)
-                .WithMessage("MaxLevel must be greater than or equal to ReorderLevel.");
+                .GreaterThan(0)
+                .WithMessage("MaxLevel must be greater than 0.");
 
         }
     }

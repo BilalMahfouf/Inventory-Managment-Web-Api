@@ -157,16 +157,20 @@ namespace Application.Services.Inventories
                         .Failure(errors, ErrorType.BadRequest);
                 }
                 var existingInventory = await _uow.Inventories
-                    .FindAsync(i => i.Id == id, cancellationToken: cancellationToken);
+                    .FindAsync(i => i.Id == id, 
+                    cancellationToken: cancellationToken,
+                    includeProperties:"Product");
                 if (existingInventory is null)
                 {
                     return Result<InventoryBaseReadResponse>
                         .NotFound("Inventory");
                 }
 
-                existingInventory.QuantityOnHand = request.QuantityOnHand;
-                existingInventory.ReorderLevel = request.ReorderLevel;
-                existingInventory.MaxLevel = request.MaxLevel;
+                existingInventory.UpdateInventoryLevels(
+                    request.QuantityOnHand,
+                    request.ReorderLevel,
+                    request.MaxLevel);
+
                 _uow.Inventories.Update(existingInventory);
                 await _uow.SaveChangesAsync(cancellationToken);
                 return await FindAsync(existingInventory.Id, cancellationToken);
