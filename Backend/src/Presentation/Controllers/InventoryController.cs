@@ -100,10 +100,10 @@ namespace Presentation.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<ActionResult<InventoryBaseReadResponse>> GetInventoryByIdAsync
+        public async Task<ActionResult<object>> GetInventoryByIdAsync
             (int id, CancellationToken cancellationToken)
         {
-            var response = await _service.FindAsync(id, cancellationToken);
+            var response = await _query.GetByIdAsync(id, cancellationToken);
             return response.HandleResult();
         }
 

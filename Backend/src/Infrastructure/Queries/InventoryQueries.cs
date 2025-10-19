@@ -2,6 +2,7 @@
 using Application.DTOs.Inventories;
 using Application.PagedLists;
 using Application.Results;
+using Domain.Entities;
 using Infrastructure.Persistence;
 using MailKit.Search;
 using Microsoft.EntityFrameworkCore;
@@ -143,7 +144,50 @@ public class InventoryQueries : IInventoryQueries
         }
     }
 
+    public async Task<Result<object>> GetByIdAsync(
+        int id,
+        CancellationToken cancellationToken = default)
+    {
+        if (id <= 0)
+        {
+            return Result<object>.InvalidId();
+        }
+        try
+        {
+            var inventory = await _context.Inventories
+                .Select(e => new
+                {
+                    Id = e.Id,
+                    Product = new
+                    {
+                        Id = e.ProductId,
+                        Name = e.Product.Name,
+                        CategoryName = e.Product.Category.Name,
+                        UnitOfMeasureName = e.Product.UnitOfMeasure.Name
+                    },
+                    Location = new
+                    {
+                        Id = e.LocationId,
+                        Name = e.Location.Name,
+                        Address = e.Location.Address,
+                        Type = e.Location.LocationType.Name
+                    },
+                    QuantityOnHand = e.QuantityOnHand,
+                    ReorderLevel = e.ReorderLevel,
+                    MaxLevel = e.MaxLevel,
 
+                }).FirstOrDefaultAsync(cancellationToken);
+            if(inventory is null)
+            {
+                return Result<object>.NotFound(nameof(inventory));
+            }
+            return Result<object>.Success(inventory);
+        }
+        catch (Exception ex)
+        {
+            return Result<object>.Exception(nameof(GetByIdAsync), ex);
+        } 
+    }
     
 
 }

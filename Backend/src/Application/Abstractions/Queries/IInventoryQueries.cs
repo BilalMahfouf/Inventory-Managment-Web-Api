@@ -15,5 +15,7 @@ namespace Application.Abstractions.Queries
             TableRequest request,
             CancellationToken cancellationToken = default);
         Task<Result<object>> GetInventorySummaryAsync(CancellationToken cancellationToken = default);
+        Task<Result<object>> GetByIdAsync(int id,
+            CancellationToken cancellationToken = default);
     }
 }
