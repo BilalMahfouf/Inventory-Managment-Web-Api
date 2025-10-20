@@ -51,7 +51,7 @@ const DataTable = ({
             onClick={() =>
               setOpenDropdown(openDropdown === row.id ? null : row.id)
             }
-            className='p-1 hover:bg-gray-100 rounded-md transition-colors'
+            className='p-1 hover:bg-gray-100 rounded-md transition-colors cursor-pointer'
             aria-label='Actions menu'
           >
             <MoreHorizontal className='w-5 h-5 text-gray-600' />
@@ -60,7 +60,7 @@ const DataTable = ({
           {openDropdown === row.id && (
             <>
               <div
-                className='fixed inset-0 z-10'
+                className='fixed inset-0 z-10 '
                 onClick={() => setOpenDropdown(null)}
               />
               <div className='absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg border border-gray-200 z-20'>
@@ -70,7 +70,7 @@ const DataTable = ({
                       onView(row.original);
                       setOpenDropdown(null);
                     }}
-                    className='w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors'
+                    className='w-full px-4 py-2 cursor-pointer text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors'
                   >
                     <Eye className='w-4 h-4' />
                     View
@@ -82,7 +82,7 @@ const DataTable = ({
                       onEdit(row.original);
                       setOpenDropdown(null);
                     }}
-                    className='w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors'
+                    className='w-full px-4 py-2 text-left cursor-pointer text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors'
                   >
                     <Pencil className='w-4 h-4' />
                     Edit
@@ -94,7 +94,7 @@ const DataTable = ({
                       onDelete(row.original);
                       setOpenDropdown(null);
                     }}
-                    className='w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors'
+                    className='w-full px-4 cursor-pointer py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors'
                   >
                     <Trash2 className='w-4 h-4' />
                     Delete
