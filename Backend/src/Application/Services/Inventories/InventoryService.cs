@@ -5,6 +5,7 @@ using Application.Helpers.Util;
 using Application.Results;
 using Domain.Entities;
 using Domain.Enums;
+using Domain.Exceptions;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -129,6 +130,11 @@ namespace Application.Services.Inventories
                 await _uow.SaveChangesAsync(cancellationToken);
                 return await FindAsync(newInventory.Id, cancellationToken);
             }
+            catch(DomainException ex)
+            {
+                return Result<InventoryBaseReadResponse>
+                        .Failure(ex.Message, ErrorType.Conflict);
+            }
             catch (Exception ex)
             {
                 return Result<InventoryBaseReadResponse>
@@ -174,6 +180,11 @@ namespace Application.Services.Inventories
                 _uow.Inventories.Update(existingInventory);
                 await _uow.SaveChangesAsync(cancellationToken);
                 return await FindAsync(existingInventory.Id, cancellationToken);
+            }
+            catch(DomainException ex)
+            {
+                return Result<InventoryBaseReadResponse>
+                        .Failure(ex.Message, ErrorType.Conflict);
             }
             catch (Exception ex)
             {

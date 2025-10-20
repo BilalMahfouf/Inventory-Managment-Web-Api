@@ -28,7 +28,6 @@ namespace Infrastructure.Persistence.Configurations
             entity.Property(e => e.Notes).HasMaxLength(500);
             entity.Property(e => e.Quantity).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.StockMovmentStatus)
-                .HasDefaultValue(StockMovementStatus.Pending)
                 .HasConversion<byte>();
 
             entity.HasOne(d => d.CreatedByUser).WithMany()
