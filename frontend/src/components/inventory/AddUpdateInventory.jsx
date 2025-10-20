@@ -9,7 +9,11 @@ import {
   getLocationsNames,
 } from '@/services/products/locationService';
 import { useToast } from '@/context/ToastContext';
-import { createInventory } from '@services/inventoryService';
+import {
+  createInventory,
+  updateInventory,
+  getInventoryById,
+} from '@services/inventoryService';
 
 /**
  * AddUpdateInventory Component
@@ -61,7 +65,7 @@ const AddUpdateInventory = ({
   });
 
   // Available stock (only in update mode)
-  const [availableStock] = useState(0);
+  const [availableStock, setAvailableStock] = useState(0);
 
   // Tabs configuration
   const tabs = [
@@ -213,6 +217,21 @@ const AddUpdateInventory = ({
       `Successfully created inventory for ${searchedProduct.name} at ${selectedLocation.name}`
     );
   };
+  const updateInventoryLevels = async () => {
+    const response = await updateInventory(inventoryId, {
+      quantityOnHand: stockLevels.quantityOnHand,
+      reorderLevel: stockLevels.reorderLevel,
+      maxLevel: stockLevels.maxLevel,
+    });
+    if (!response.success) {
+      showError('Error', `Error while updating inventory: ${response.error}`);
+      return;
+    }
+    showSuccess(
+      'Inventory Updated',
+      `Successfully updated inventory for ${searchedProduct.name} at ${selectedLocation.name}`
+    );
+  };
   const handleSubmit = async e => {
     e.preventDefault();
 
@@ -222,24 +241,13 @@ const AddUpdateInventory = ({
 
     setIsLoading(true);
     try {
-      addInventory();
+      if (mode === 'add') {
+        await addInventory();
+      } else {
+        await updateInventoryLevels();
+      }
       if (onSuccess) {
         onSuccess();
-      } else {
-        // Update existing inventory
-        // TODO: Call API to update inventory
-        // const updateData = {
-        //   quantityOnHand: stockLevels.quantityOnHand,
-        //   reorderLevel: stockLevels.reorderLevel,
-        //   maxLevel: stockLevels.maxLevel,
-        // };
-        // const response = await updateInventory(inventoryId, updateData);
-
-        showSuccess('Inventory Updated', 'Successfully updated stock levels');
-
-        if (onSuccess) {
-          onSuccess();
-        }
       }
 
       handleCancel();
@@ -303,43 +311,29 @@ const AddUpdateInventory = ({
         setMode('update');
         setIsLoading(true);
         try {
-          // TODO: Fetch inventory by ID
-          // const inventory = await getInventoryById(inventoryId);
+          const inventoryResult = await getInventoryById(inventoryId);
+          if (!inventoryResult.success) {
+            showError(
+              'Error',
+              `Error: ${inventoryResult.error}, please try again`
+            );
+            return;
+          }
+          const inventoryData = inventoryResult.data;
 
-          // Mock data for demonstration - commented out until API is ready
-          // When API is ready, uncomment and use actual data
-          // const mockInventory = {
-          //   id: inventoryId,
-          //   product: {
-          //     id: 1,
-          //     name: 'Sample Product',
-          //     categoryName: 'Electronics',
-          //     unitOfMeasureName: 'Piece',
-          //   },
-          //   location: {
-          //     id: 1,
-          //     name: 'Warehouse A',
-          //     address: '123 Main St',
-          //     type: 'Warehouse',
-          //   },
-          //   quantityOnHand: 100,
-          //   reorderLevel: 20,
-          //   maxLevel: 500,
-          // };
+          setSearchedProduct(inventoryData.product);
+          setSelectedLocation(inventoryData.location);
+          setStockLevels({
+            quantityOnHand: inventoryData.quantityOnHand,
+            reorderLevel: inventoryData.reorderLevel,
+            maxLevel: inventoryData.maxLevel,
+          });
+          setAvailableStock(inventoryData.quantityOnHand);
 
-          // setSearchedProduct(mockInventory.product);
-          // setSelectedLocation(mockInventory.location);
-          // setStockLevels({
-          //   quantityOnHand: mockInventory.quantityOnHand,
-          //   reorderLevel: mockInventory.reorderLevel,
-          //   maxLevel: mockInventory.maxLevel,
-          // });
-          // setAvailableStock(mockInventory.quantityOnHand);
-
-          showError(
-            'Update Mode',
-            'API integration needed. Please implement getInventoryById endpoint.'
-          );
+          //   showError(
+          //     'Update Mode',
+          //     'API integration needed. Please implement getInventoryById endpoint.'
+          //   );
         } catch {
           showError('Load Failed', 'Failed to load inventory data');
         } finally {
@@ -362,7 +356,9 @@ const AddUpdateInventory = ({
           <div className='flex items-center gap-3'>
             <Archive className='h-6 w-6 text-gray-600' />
             <h2 className='text-xl font-semibold'>
-              {mode === 'add' ? 'Add New Inventory' : 'Update Inventory'}
+              {mode === 'add'
+                ? 'Add New Inventory'
+                : `Update Inventory #${inventoryId}`}
             </h2>
           </div>
           <button
@@ -462,6 +458,14 @@ const AddUpdateInventory = ({
                         </p>
                         <p className='font-medium text-gray-900'>
                           {searchedProduct.name}
+                        </p>
+                      </div>
+                      <div>
+                        <p className='text-sm text-gray-600 mb-1'>
+                          Product SKU
+                        </p>
+                        <p className='font-medium text-gray-900'>
+                          {searchedProduct.sku}
                         </p>
                       </div>
                       <div>

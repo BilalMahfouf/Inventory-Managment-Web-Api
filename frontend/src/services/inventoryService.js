@@ -68,4 +68,49 @@ async function createInventory({
   }
 }
 
-export { getAllInventory, createInventory };
+async function updateInventory(
+  inventoryId,
+  { quantityOnHand, reorderLevel, maxLevel }
+) {
+  try {
+    const response = await fetchWithAuth(`${BASE_URL}/${inventoryId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        quantityOnHand,
+        reorderLevel,
+        maxLevel,
+      }),
+    });
+    if (!response.success) {
+      const errorMessage = await response.error;
+      console.error('Failed to update inventory:', errorMessage);
+      return { success: false, error: errorMessage };
+    }
+    const data = await response.response.json();
+    return { success: true, data: data };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: error.message };
+  }
+}
+
+async function getInventoryById(id) {
+  try {
+    const response = await fetchWithAuth(`${BASE_URL}/${id}`);
+    if (!response.success) {
+      const errorMessage = await response.error;
+      console.error('Failed to fetch inventory by ID:', errorMessage);
+      return { success: false, error: errorMessage };
+    }
+    const data = await response.response.json();
+    return { success: true, data: data };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: error.message };
+  }
+}
+
+export { getAllInventory, createInventory, updateInventory, getInventoryById };

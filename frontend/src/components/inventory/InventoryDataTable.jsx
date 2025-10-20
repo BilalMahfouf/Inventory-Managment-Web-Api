@@ -3,14 +3,22 @@ import DataTable from '../DataTable/DataTable';
 import useServerSideDataTable from '@/hooks/useServerSideDataTable';
 import { getAllInventory } from '@/services/inventoryService';
 import { CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
-
+import AddUpdateInventory from './AddUpdateInventory';
 export default function InventoryDataTable() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [currentProductId, setCurrentProductId] = useState(0);
+  const [currentInventoryId, setCurrentInventoryId] = useState(0);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
-  const handleView = () => {};
-  const handleEdit = () => {};
+  const handleView = row => {
+    console.log('view is clicked', row.id);
+  };
+  const handleEdit = row => {
+    console.log(row.product);
+    console.log(row.id);
+    setCurrentInventoryId(row.id);
+    setEditDialogOpen(true);
+  };
 
   const fetchInventories = async ({
     page,
@@ -33,24 +41,34 @@ export default function InventoryDataTable() {
   const tableProps = useServerSideDataTable(fetchInventories);
 
   return (
-    <DataTable
-      data={tableProps.data}
-      columns={defaultColumns}
-      totalRows={tableProps.totalRows}
-      pageIndex={tableProps.pageIndex}
-      pageSize={tableProps.pageSize}
-      onPageChange={tableProps.onPageChange}
-      onPageSizeChange={tableProps.onPageSizeChange}
-      onSortingChange={tableProps.onSortingChange}
-      onFilterChange={tableProps.onFilterChange}
-      loading={tableProps.loading}
-      onView={handleView}
-      onEdit={handleEdit}
-      onDelete={row => {
-        setCurrentProductId(row.id);
-        setDeleteDialogOpen(true);
-      }}
-    />
+    <>
+      <DataTable
+        data={tableProps.data}
+        columns={defaultColumns}
+        totalRows={tableProps.totalRows}
+        pageIndex={tableProps.pageIndex}
+        pageSize={tableProps.pageSize}
+        onPageChange={tableProps.onPageChange}
+        onPageSizeChange={tableProps.onPageSizeChange}
+        onSortingChange={tableProps.onSortingChange}
+        onFilterChange={tableProps.onFilterChange}
+        loading={tableProps.loading}
+        onView={handleView}
+        onEdit={handleEdit}
+        onDelete={row => {
+          setCurrentInventoryId(row.id);
+          setDeleteDialogOpen(true);
+        }}
+      />
+
+      {editDialogOpen && (
+        <AddUpdateInventory
+          isOpen={editDialogOpen}
+          onClose={() => setEditDialogOpen(false)}
+          inventoryId={currentInventoryId}
+        />
+      )}
+    </>
   );
 }
 
