@@ -9,6 +9,7 @@ import { TabList, Tabs, Tab, TabPanel } from 'react-tabs';
 import InventoryDataTable from '@/components/inventory/InventoryDataTable';
 import AddUpdateInventory from '@/components/inventory/AddUpdateInventory';
 import { getInventorySummary } from '@/services/inventoryService';
+import StockTransferDataTable from '@/components/stockTransfers/StockTransferDataTable';
 
 export default function InventoryPage() {
   const [loading, setLoading] = useState(false);
@@ -127,8 +128,8 @@ export default function InventoryPage() {
                 <h3 className='text-2xl font-semibold leading-none tracking-tight'>
                   Stock Transfers
                 </h3>
-                <div>Stock transfers will be here !</div>
               </div>
+              <StockTransferDataTable />
             </TabPanel>
             <TabPanel>
               <div className='mb-9 flex items-center justify-between'>

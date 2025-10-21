@@ -1,15 +1,19 @@
 ﻿using Application.Abstractions.Queries;
 using Application.DTOs.Inventories;
+using Application.DTOs.StockMovements.Response;
 using Application.PagedLists;
 using Application.Results;
 using Domain.Entities;
+using Domain.Enums;
 using Infrastructure.Persistence;
 using MailKit.Search;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -59,7 +63,7 @@ public class InventoryQueries : IInventoryQueries
                           ? "Low Stock"
                           : "In Stock",
                   StockPercentage = i.MaxLevel == 0 ? 0 :
-                  Math.Round((double)((i.QuantityOnHand * 100)/ i.MaxLevel), 0),
+                  Math.Round((double)((i.QuantityOnHand * 100) / i.MaxLevel), 0),
                   PotentialProfit = (p.UnitPrice - p.Cost) * i.QuantityOnHand
               };
 
@@ -192,5 +196,74 @@ public class InventoryQueries : IInventoryQueries
         }
     }
 
+    public async Task<Result<PagedList<StockTransfersReadResponse>>>
+        GetStockTransfersAsync(
+        TableRequest request,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var count = await _context.StockTransfers.CountAsync(cancellationToken);
+            if (count == 0)
+            {
+                return Result<PagedList<StockTransfersReadResponse>>
+                    .NotFound("Stock Transfers");
+            }
 
+            var query = _context.StockTransfers
+        .AsNoTracking()
+        .Select(st => new StockTransfersReadResponse
+        {
+            Id = st.Id,
+            FromLocation = st.FromLocation.Name,
+            ToLocation = st.ToLocation.Name,
+            Product = st.Product.Name,
+            Quantity = st.Quantity,
+            Status = st.TransferStatus.ToString(),
+            CreatedAt = st.CreatedAt,
+            UserName = st.CreatedByUser.UserName
+        });
+            Expression<Func<StockTransfersReadResponse, object>>
+                orderSelector = request.SortColumn switch
+                {
+                    "fromlocation" => x => x.FromLocation,
+                    "tolocation" => x => x.ToLocation,
+                    "product" => x => x.Product,
+                    "quantiry" => x => x.Quantity,
+                    "createdAt" => x => x.CreatedAt,
+                    "username" => x => x.UserName,
+                    _ => x => x.Id
+                };
+            if (request.SortOrder?.ToLower() == "desc")
+            {
+                query = query.OrderByDescending(orderSelector);
+            }
+            else
+            {
+                query = query.OrderBy(orderSelector);
+            }
+
+            query = query.Skip((request.Page - 1) * request.PageSize)
+               .Take(request.PageSize);
+            var items = await query.ToListAsync(cancellationToken);
+            if (items is null || !items.Any())
+            {
+                return Result<PagedList<StockTransfersReadResponse>>
+                    .NotFound("Stock Transfers");
+            }
+            var result = new PagedList<StockTransfersReadResponse>
+            {
+                Item = items,
+                TotalCount = count,
+                PageSize = request.PageSize,
+                Page = request.Page
+            };
+            return Result<PagedList<StockTransfersReadResponse>>.Success(result);
+        }
+        catch (Exception ex)
+        {
+            return Result<PagedList<StockTransfersReadResponse>>
+                .Exception(nameof(GetStockTransfersAsync), ex);
+        }
+    }
 }
