@@ -58,7 +58,8 @@ public class InventoryQueries : IInventoryQueries
                       : i.QuantityOnHand <= i.ReorderLevel
                           ? "Low Stock"
                           : "In Stock",
-                  StockPercentage = Math.Round((double)((i.QuantityOnHand * 100) / i.MaxLevel), 0),
+                  StockPercentage = i.MaxLevel == 0 ? 0 :
+                  Math.Round((double)((i.QuantityOnHand * 100)/ i.MaxLevel), 0),
                   PotentialProfit = (p.UnitPrice - p.Cost) * i.QuantityOnHand
               };
 
@@ -83,7 +84,7 @@ public class InventoryQueries : IInventoryQueries
                         "status" => x => x.Status,
                         "stockpercentage" => x => x.StockPercentage,
                         "potentialprofit" => x => x.PotentialProfit,
-                        _ => x => x.Product // Default sorting by Product
+                        _ => x => x.Id // Default sorting by Id
                     };
             if (request.SortOrder?.ToLower() == "desc")
             {
@@ -162,7 +163,7 @@ public class InventoryQueries : IInventoryQueries
                     Product = new
                     {
                         Id = e.ProductId,
-                        Sku=e.Product.Sku,
+                        Sku = e.Product.Sku,
                         Name = e.Product.Name,
                         CategoryName = e.Product.Category.Name,
                         UnitOfMeasureName = e.Product.UnitOfMeasure.Name

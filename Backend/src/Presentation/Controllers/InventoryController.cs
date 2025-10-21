@@ -136,7 +136,18 @@ namespace Presentation.Controllers
             return response.HandleResult();
         }
 
+        [HttpDelete("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-
-    }
+        public async Task<IActionResult> DeleteInventoryAsync
+            (int id, CancellationToken cancellationToken)
+        {
+            var response = await _service.DeleteByIdAsync(id, cancellationToken);
+            return response.HandleResult();
+        }
+     }
 }

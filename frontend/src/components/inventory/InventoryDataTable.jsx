@@ -1,14 +1,35 @@
 import { useState } from 'react';
 import DataTable from '../DataTable/DataTable';
 import useServerSideDataTable from '@/hooks/useServerSideDataTable';
-import { getAllInventory } from '@/services/inventoryService';
+import {
+  getAllInventory,
+  deleteInventoryById,
+} from '@/services/inventoryService';
 import { CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
 import AddUpdateInventory from './AddUpdateInventory';
+import ConfirmationDialog from '../ui/ConfirmationDialog';
+import { useToast } from '@/context/ToastContext';
 export default function InventoryDataTable() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [currentInventoryId, setCurrentInventoryId] = useState(0);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const { showSuccess, showError } = useToast();
+
+  const handleDelete = async () => {
+    const response = await deleteInventoryById(currentInventoryId);
+    if (response.success) {
+      setDeleteDialogOpen(false);
+      showSuccess(
+        'Success',
+        `Inventory with Id ${currentInventoryId} deleted successfully.`
+      );
+      return;
+    }
+    showError('Error', `Error: ${response.error}.`);
+    setDeleteDialogOpen(false);
+    return;
+  };
 
   const handleView = row => {
     console.log('view is clicked', row.id);
@@ -66,6 +87,16 @@ export default function InventoryDataTable() {
           isOpen={editDialogOpen}
           onClose={() => setEditDialogOpen(false)}
           inventoryId={currentInventoryId}
+        />
+      )}
+      {deleteDialogOpen && (
+        <ConfirmationDialog
+          isOpen={deleteDialogOpen}
+          onClose={() => setDeleteDialogOpen(false)}
+          title='Delete Inventory Item'
+          message='Are you sure you want to delete this inventory item? This action cannot be undone.'
+          confirmText='Delete Inventory'
+          onConfirm={handleDelete}
         />
       )}
     </>

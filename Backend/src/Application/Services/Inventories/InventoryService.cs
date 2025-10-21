@@ -297,10 +297,15 @@ namespace Application.Services.Inventories
                     return Result.NotFound("Inventory");
                 }
                 inventory.Delete();
-                return await SoftDeleteAsync(id, cancellationToken);
+                return await SoftDeleteAsync(inventory, cancellationToken);
+
 
             }
-           catch (Exception ex)
+            catch (DomainException ex)
+            {
+                return Result.Failure(ex.Message, ErrorType.Conflict);
+            }
+            catch (Exception ex)
             {
                 return Result.Exception(nameof(DeleteByIdAsync), ex);
             }

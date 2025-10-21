@@ -14,8 +14,8 @@ using System.Threading.Tasks;
 
 namespace Application.Services.Shared
 {
-    public abstract class DeleteService<TEntity> 
-        where TEntity : class,IEntity,ISoftDeletable
+    public abstract class DeleteService<TEntity>
+        where TEntity : class, IEntity, ISoftDeletable
     {
         protected readonly IBaseRepository<TEntity> _repository;
         protected readonly ICurrentUserService _currentUserService;
@@ -28,9 +28,9 @@ namespace Application.Services.Shared
         }
 
         public virtual async Task<Result> SoftDeleteAsync(int id
-            ,CancellationToken cancellationToken)
+            , CancellationToken cancellationToken)
         {
-            if(id <= 0)
+            if (id <= 0)
             {
                 return Result.InvalidId();
             }
@@ -54,30 +54,30 @@ namespace Application.Services.Shared
                 await _uow.SaveChangesAsync(cancellationToken);
                 return Result.Success;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Result.Failure($"Error:{ex.Message}"
                     , ErrorType.InternalServerError);
             }
         }
- public virtual async Task<Result> SoftDeleteAsync(TEntity entity
-            ,CancellationToken cancellationToken)
+        public virtual async Task<Result> SoftDeleteAsync(TEntity entity
+                   , CancellationToken cancellationToken)
         {
             try
             {
-               entity.IsDeleted = true;
+                entity.IsDeleted = true;
                 entity.DeletedAt = DateTime.UtcNow;
                 entity.DeletedByUserId = _currentUserService.UserId;
                 _repository.Update(entity);
                 await _uow.SaveChangesAsync(cancellationToken);
                 return Result.Success;
             }
-            catch(DomainException ex )
+            catch (DomainException ex)
             {
                 return Result.Failure($"Domain Error:{ex.Message}"
                     , ErrorType.Conflict);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Result.Failure($"Error:{ex.Message}"
                     , ErrorType.InternalServerError);

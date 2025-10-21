@@ -113,4 +113,26 @@ async function getInventoryById(id) {
   }
 }
 
-export { getAllInventory, createInventory, updateInventory, getInventoryById };
+async function deleteInventoryById(id) {
+  try {
+    const response = await fetchWithAuth(`${BASE_URL}/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.success) {
+      const errorMessage = await response.error;
+      return { success: false, error: errorMessage };
+    }
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: error.message };
+  }
+}
+
+export {
+  getAllInventory,
+  createInventory,
+  updateInventory,
+  getInventoryById,
+  deleteInventoryById,
+};
