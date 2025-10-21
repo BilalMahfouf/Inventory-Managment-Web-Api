@@ -128,6 +128,21 @@ async function deleteInventoryById(id) {
     return { success: false, error: error.message };
   }
 }
+async function getInventorySummary() {
+  try {
+    const response = await fetchWithAuth(`${BASE_URL}/summary`);
+    if (!response.success) {
+      const errorMessage = await response.error;
+      console.error('Failed to fetch inventory summary:', errorMessage);
+      return { success: false, error: errorMessage };
+    }
+    const data = await response.response.json();
+    return { success: true, data: data };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: error.message };
+  }
+}
 
 export {
   getAllInventory,
@@ -135,4 +150,5 @@ export {
   updateInventory,
   getInventoryById,
   deleteInventoryById,
+  getInventorySummary,
 };

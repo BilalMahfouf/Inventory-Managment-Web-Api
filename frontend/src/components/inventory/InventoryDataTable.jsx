@@ -7,6 +7,7 @@ import {
 } from '@/services/inventoryService';
 import { CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
 import AddUpdateInventory from './AddUpdateInventory';
+import ViewInventoryDialog from './ViewInventoryDialog';
 import ConfirmationDialog from '../ui/ConfirmationDialog';
 import { useToast } from '@/context/ToastContext';
 export default function InventoryDataTable() {
@@ -32,7 +33,8 @@ export default function InventoryDataTable() {
   };
 
   const handleView = row => {
-    console.log('view is clicked', row.id);
+    setCurrentInventoryId(row.id);
+    setViewDialogOpen(true);
   };
   const handleEdit = row => {
     console.log(row.product);
@@ -82,6 +84,13 @@ export default function InventoryDataTable() {
         }}
       />
 
+      {viewDialogOpen && (
+        <ViewInventoryDialog
+          open={viewDialogOpen}
+          onOpenChange={setViewDialogOpen}
+          inventoryId={currentInventoryId}
+        />
+      )}
       {editDialogOpen && (
         <AddUpdateInventory
           isOpen={editDialogOpen}

@@ -8,14 +8,33 @@ import { divStyles } from '@/util/uiVariables';
 import { TabList, Tabs, Tab, TabPanel } from 'react-tabs';
 import InventoryDataTable from '@/components/inventory/InventoryDataTable';
 import AddUpdateInventory from '@/components/inventory/AddUpdateInventory';
+import { getInventorySummary } from '@/services/inventoryService';
 
 export default function InventoryPage() {
   const [loading, setLoading] = useState(false);
-  const [totalProductsCount, setTotalProductsCount] = useState(0);
-  const [inventoryValue, setInventoryValue] = useState(0);
+  const [totalInventoryItems, setTotalInventoryItems] = useState(0);
+  const [totalPotentialProfit, setTotalPotentialProfit] = useState(0);
   const [lowStockCount, setLowStockCount] = useState(0);
   const [outOfStockCount, setOutOfStockCount] = useState(0);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const handleSummaryData = async () => {
+    setLoading(true);
+    const response = await getInventorySummary();
+    if (response.success) {
+      setTotalInventoryItems(response.data.totalInventoryItems);
+      setTotalPotentialProfit(response.data.totalPotentialProfit);
+      setLowStockCount(response.data.lowStockItems);
+      setOutOfStockCount(response.data.outOfStockItems);
+      setLoading(false);
+      return;
+    }
+    setLoading(false);
+  };
+  useEffect(() => {
+    handleSummaryData();
+  }, []);
+
   return (
     <>
       <div className='flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4'>
@@ -32,15 +51,15 @@ export default function InventoryPage() {
         <InfoCard
           title='Total Inventory Items'
           iconComponent={Package}
-          number={loading ? '...' : totalProductsCount.toLocaleString()}
+          number={loading ? '...' : totalInventoryItems.toLocaleString()}
           description='Easily add new products to your catalog.'
           className='flex-1'
         />
         <InfoCard
-          title='Inventory Value'
+          title='Total Potential Profit'
           iconComponent={Boxes}
-          number={loading ? '...' : inventoryValue}
-          description='Total value of all products in stock.'
+          number={loading ? '...' : `$${totalPotentialProfit.toLocaleString()}`}
+          description='Total potential profit from all products in stock.'
           className='flex-1'
         />
         <InfoCard
