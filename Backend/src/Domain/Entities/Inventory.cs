@@ -10,7 +10,7 @@ using System.ComponentModel;
 
 namespace Domain.Entities;
 
-public partial class Inventory : IBaseEntity, IModifiableEntity
+public partial class Inventory : IBaseEntity, IModifiableEntity ,ISoftDeletable
 {
     public int Id { get; set; }
 
@@ -31,6 +31,10 @@ public partial class Inventory : IBaseEntity, IModifiableEntity
     public DateTime? UpdatedAt { get; set; }
 
     public int? UpdatedByUserId { get; set; }
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedAt { get; set; }
+    public int? DeletedByUserId { get; set; }
+    public User? DeletedByUser { get; set; }
 
     public virtual User CreatedByUser { get; set; } = null!;
 
@@ -190,5 +194,15 @@ public partial class Inventory : IBaseEntity, IModifiableEntity
         MaxLevel = maxLevel;
 
     }
-
+    public void Delete()
+    {
+        if( IsDeleted )
+        {
+            throw new DomainException("Inventory is already deleted");
+        }
+        if( QuantityOnHand > 0 )
+        {
+            throw new DomainException("Cannot delete inventory with stock on hand");
+        }
+    }
 }

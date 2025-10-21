@@ -4,6 +4,7 @@ using Application.Abstractions.UnitOfWork;
 using Application.Results;
 using Domain.Abstractions;
 using Domain.Enums;
+using Domain.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,5 +60,29 @@ namespace Application.Services.Shared
                     , ErrorType.InternalServerError);
             }
         }
+ public virtual async Task<Result> SoftDeleteAsync(TEntity entity
+            ,CancellationToken cancellationToken)
+        {
+            try
+            {
+               entity.IsDeleted = true;
+                entity.DeletedAt = DateTime.UtcNow;
+                entity.DeletedByUserId = _currentUserService.UserId;
+                _repository.Update(entity);
+                await _uow.SaveChangesAsync(cancellationToken);
+                return Result.Success;
+            }
+            catch(DomainException ex )
+            {
+                return Result.Failure($"Domain Error:{ex.Message}"
+                    , ErrorType.Conflict);
+            }
+            catch(Exception ex)
+            {
+                return Result.Failure($"Error:{ex.Message}"
+                    , ErrorType.InternalServerError);
+            }
+        }
+
     }
 }

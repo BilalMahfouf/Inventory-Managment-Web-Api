@@ -1,8 +1,11 @@
-﻿using Application.Abstractions.UnitOfWork;
+﻿using Application.Abstractions.Repositories.Base;
+using Application.Abstractions.Services.User;
+using Application.Abstractions.UnitOfWork;
 using Application.DTOs.Inventories;
 using Application.DTOs.Inventories.Request;
 using Application.Helpers.Util;
 using Application.Results;
+using Application.Services.Shared;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Exceptions;
@@ -15,19 +18,22 @@ using System.Threading.Tasks;
 
 namespace Application.Services.Inventories
 {
-    public class InventoryService
+    public class InventoryService : DeleteService<Inventory>
     {
-        private readonly IUnitOfWork _uow;
         private readonly IValidator<InventoryCreateRequest> _createValidator;
         private readonly IValidator<InventoryUpdateRequest> _updateValidator;
-        public InventoryService(IUnitOfWork uow
-            , IValidator<InventoryCreateRequest> createValidator
-            , IValidator<InventoryUpdateRequest> updateValidator)
+
+        public InventoryService(IUnitOfWork uow,
+             IValidator<InventoryCreateRequest> createValidator,
+             IValidator<InventoryUpdateRequest> updateValidator,
+             ICurrentUserService currentUserService
+            )
+            : base(uow.Inventories, currentUserService, uow)
         {
-            _uow = uow;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
         }
+
 
         public async Task<Result<IReadOnlyCollection<InventoryBaseReadResponse>>>
             GetAllAsync(CancellationToken cancellationToken = default)
@@ -114,7 +120,7 @@ namespace Application.Services.Inventories
                 var product = await _uow.Products
                     .FindAsync(p => p.Id == request.ProductId
                     , cancellationToken: cancellationToken);
-                if(product is null)
+                if (product is null)
                 {
                     return Result<InventoryBaseReadResponse>
                         .NotFound("Product");
@@ -126,11 +132,11 @@ namespace Application.Services.Inventories
                     request.ReorderLevel,
                     request.MaxLevel);
 
-                    _uow.Inventories.Add(newInventory);
+                _uow.Inventories.Add(newInventory);
                 await _uow.SaveChangesAsync(cancellationToken);
                 return await FindAsync(newInventory.Id, cancellationToken);
             }
-            catch(DomainException ex)
+            catch (DomainException ex)
             {
                 return Result<InventoryBaseReadResponse>
                         .Failure(ex.Message, ErrorType.Conflict);
@@ -163,9 +169,9 @@ namespace Application.Services.Inventories
                         .Failure(errors, ErrorType.BadRequest);
                 }
                 var existingInventory = await _uow.Inventories
-                    .FindAsync(i => i.Id == id, 
+                    .FindAsync(i => i.Id == id,
                     cancellationToken: cancellationToken,
-                    includeProperties:"Product");
+                    includeProperties: "Product");
                 if (existingInventory is null)
                 {
                     return Result<InventoryBaseReadResponse>
@@ -181,7 +187,7 @@ namespace Application.Services.Inventories
                 await _uow.SaveChangesAsync(cancellationToken);
                 return await FindAsync(existingInventory.Id, cancellationToken);
             }
-            catch(DomainException ex)
+            catch (DomainException ex)
             {
                 return Result<InventoryBaseReadResponse>
                         .Failure(ex.Message, ErrorType.Conflict);
@@ -277,6 +283,29 @@ namespace Application.Services.Inventories
                         .Exception(nameof(GetInventoryValuationAsync), ex);
             }
         }
+
+        public async Task<Result> DeleteByIdAsync(int id,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                var inventory = await _uow.Inventories
+                               .FindAsync(i => i.Id == id,
+                               cancellationToken: cancellationToken);
+                if (inventory is null)
+                {
+                    return Result.NotFound("Inventory");
+                }
+                inventory.Delete();
+                return await SoftDeleteAsync(id, cancellationToken);
+
+            }
+           catch (Exception ex)
+            {
+                return Result.Exception(nameof(DeleteByIdAsync), ex);
+            }
+        }
+
     }
 }
 
