@@ -51,6 +51,7 @@ namespace Application
             services.AddScoped<InventoryService>();
             services.AddScoped<DashboardService>();
             services.AddScoped<StockMovementTypeService>();
+            services.AddScoped<StockTransferService>();
 
 
             return services;

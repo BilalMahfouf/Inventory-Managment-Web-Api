@@ -10,7 +10,7 @@ using System.ComponentModel;
 
 namespace Domain.Entities;
 
-public partial class Inventory : IBaseEntity, IModifiableEntity ,ISoftDeletable
+public partial class Inventory : IBaseEntity, IModifiableEntity, ISoftDeletable
 {
     public int Id { get; set; }
 
@@ -147,24 +147,38 @@ public partial class Inventory : IBaseEntity, IModifiableEntity ,ISoftDeletable
         QuantityOnHand = newQuantity;
 
     }
+
+
+
+
+    /// <summary>
+    /// This method updates the stock quantity and creates a stock movement record.
+    /// If you want to decrease or increase stock
+    /// , use UpdateStock(decimal newQuantity) instead.
+    /// For negative <paramref name="quantity"/> this will be decreased
+    /// ,for positive it will be increased.
+    /// Note: to use this you need to include Product navigation
+    /// property when retrieving Inventory entity.
+    /// </summary>
+    /// <param name="quantity"></param>
+    /// <param name="stockMovementType"></param>
+
     public void UpdateStock(
-        decimal newQuantity,
+        decimal quantity,
         StockMovementTypeEnum stockMovementType)
     {
-        if (newQuantity < 0)
-        {
-            throw new Exception("Stock quantity cannot be negative");
-        }
-        EnsureQuantityIsLessThanMaxLevel(newQuantity);
-        QuantityOnHand = newQuantity;
+
+        EnsureQuantityIsLessThanMaxLevel(
+            quantity < 0 ? QuantityOnHand - quantity : QuantityOnHand + quantity);
+
+        QuantityOnHand += quantity;
         var stockMovement = StockMovement.Create(
             Product,
             this,
             stockMovementType,
-            newQuantity,
+            quantity < 0 ? -quantity : quantity,
             "Stock update"
             );
-        stockMovement.MarkAsCompleted();
         AddStockMovement(stockMovement);
     }
 
@@ -196,11 +210,11 @@ public partial class Inventory : IBaseEntity, IModifiableEntity ,ISoftDeletable
     }
     public void Delete()
     {
-        if( IsDeleted )
+        if (IsDeleted)
         {
             throw new DomainException("Inventory is already deleted");
         }
-        if( QuantityOnHand > 0 )
+        if (QuantityOnHand > 0)
         {
             throw new DomainException("Cannot delete inventory with stock on hand");
         }
