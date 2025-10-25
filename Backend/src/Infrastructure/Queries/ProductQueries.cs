@@ -261,7 +261,7 @@ public class ProductQueries : IProductQueries
            
            if (product is null)
             {
-                return Result<ProductReadResponse>.NotFound($"Product with id {id} is not found");
+                return Result<ProductReadResponse>.NotFound($"Product with id {id}");
             }
             return Result<ProductReadResponse>.Success(product);  
         }

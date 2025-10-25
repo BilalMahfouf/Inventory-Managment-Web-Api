@@ -4,6 +4,7 @@ import useServerSideDataTable from '@/hooks/useServerSideDataTable';
 
 export default function StockTransferDataTable() {
   const handleView = () => {};
+
   const fetchStockTransfers = async ({
     page,
     pageSize,
@@ -23,6 +24,7 @@ export default function StockTransferDataTable() {
     }
     return { data: [], totalRows: 0 };
   };
+
   const tableProps = useServerSideDataTable(fetchStockTransfers);
 
   return (
@@ -39,9 +41,6 @@ export default function StockTransferDataTable() {
         onFilterChange={tableProps.onFilterChange}
         loading={tableProps.loading}
         onView={handleView}
-        onDelete={row => {
-          console.log(row.id);
-        }}
       />
     </>
   );

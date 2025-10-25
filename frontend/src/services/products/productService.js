@@ -127,7 +127,7 @@ async function getProductById(id) {
     const response = await fetchWithAuth(`${BASE_URL}/${id}`);
     if (!response.success) {
       console.log('Failed to fetch product:', response.error);
-      throw new Error('Failed to fetch product');
+      throw new Error(response.error || 'Failed to fetch product');
     }
     return await response.response.json();
   } catch (error) {
@@ -171,6 +171,24 @@ async function deleteProduct(id) {
   }
 }
 
+async function getInventoriesByProductId(productId) {
+  try {
+    const response = await fetchWithAuth(`${BASE_URL}/${productId}/inventory`);
+    if (!response.success) {
+      const errorMessage = await response.error;
+      return {
+        success: false,
+        error: errorMessage || 'Failed to fetch inventories for product',
+      };
+    }
+    const data = await response.response.json();
+    return { success: true, data: data };
+  } catch (error) {
+    console.error('Failed to fetch inventories for product:', error);
+    return { success: false, error: error.message };
+  }
+}
+
 export {
   getSummary,
   getAllProducts,
@@ -179,4 +197,5 @@ export {
   getProductById,
   updateProduct,
   deleteProduct,
+  getInventoriesByProductId,
 };

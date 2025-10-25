@@ -408,7 +408,8 @@ IProductQueries query)
 
     public async Task<Result<IReadOnlyCollection<InventoryBaseReadResponse>>>
         FindProductInInventoryAsync(
-        int id, CancellationToken cancellationToken = default)
+        int id,
+        CancellationToken cancellationToken = default)
     {
         if (id <= 0)
         {
