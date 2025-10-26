@@ -40,6 +40,7 @@ namespace Application.Services.Locations
                 Address = location.Address,
                 IsActive = location.IsActive,
                 LocationTypeId = location.LocationTypeId,
+                LocationTypeName = location.LocationType?.Name ?? string.Empty,
                 CreatedAt = location.CreatedAt,
                 CreatedByUserId = location.CreatedByUserId,
                 CreatedByUserName = location.CreatedByUser?.UserName,
@@ -55,8 +56,10 @@ namespace Application.Services.Locations
         {
             try
             {
-                var locations = await _repository.GetAllAsync(cancellationToken: cancellationToken
-                    , includeProperties: "CreatedByUser,DeletedByUser");
+                var locations = await _repository.GetAllAsync(
+                   e=>!e.IsDeleted ,
+                    cancellationToken: cancellationToken
+                    , includeProperties: "CreatedByUser,DeletedByUser,LocationType");
                 if(locations is null || !locations.Any())
                 {
                     return Result<IReadOnlyCollection<LocationReadResponse>>.NotFound(

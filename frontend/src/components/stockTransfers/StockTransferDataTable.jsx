@@ -1,9 +1,18 @@
+import { useState } from 'react';
 import DataTable from '../DataTable/DataTable';
 import { getAllStockTransfers } from '@services/stock/stockTransferService';
 import useServerSideDataTable from '@/hooks/useServerSideDataTable';
+import ViewStockTransfer from './view/ViewStockTransfer';
 
 export default function StockTransferDataTable() {
-  const handleView = () => {};
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [selectedTransferId, setSelectedTransferId] = useState(null);
+
+  const handleView = row => {
+    console.log('Viewing stock transfer with ID:', row.id);
+    setSelectedTransferId(row.id);
+    setViewDialogOpen(true);
+  };
 
   const fetchStockTransfers = async ({
     page,
@@ -41,6 +50,12 @@ export default function StockTransferDataTable() {
         onFilterChange={tableProps.onFilterChange}
         loading={tableProps.loading}
         onView={handleView}
+      />
+
+      <ViewStockTransfer
+        open={viewDialogOpen}
+        onOpenChange={setViewDialogOpen}
+        transferId={selectedTransferId}
       />
     </>
   );

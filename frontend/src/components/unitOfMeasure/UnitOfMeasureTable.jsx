@@ -41,7 +41,6 @@ export default function UnitOfMeasureTable() {
     try {
       const responseData = await getUnitOfMeasures();
       setData(responseData);
-      console.log('Unit of Measures data:', responseData);
     } catch (error) {
       console.error('Error fetching unit of measures:', error);
       showError('Failed to load units of measure');
@@ -51,13 +50,11 @@ export default function UnitOfMeasureTable() {
   };
 
   const handleView = row => {
-    console.log('view is clicked', row);
     setCurrentUnitOfMeasureId(row.id);
     setViewDialogOpen(true);
   };
 
   const handleEdit = row => {
-    console.log('edit is clicked', row);
     setCurrentUnitOfMeasureId(row.id);
     setAddEditDialogOpen(true);
   };

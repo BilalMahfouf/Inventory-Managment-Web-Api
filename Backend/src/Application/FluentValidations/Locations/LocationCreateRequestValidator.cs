@@ -36,7 +36,7 @@ namespace Application.FluentValidations.Locations
                 {
                     var locationType = await uow.LocationTypes.IsExistAsync(
                         e => e.Id == locationTypeId && !e.IsDeleted);
-                    return !locationType;
+                    return locationType;
                 }).WithMessage("LocationTypeId does not exist.");
 
         }

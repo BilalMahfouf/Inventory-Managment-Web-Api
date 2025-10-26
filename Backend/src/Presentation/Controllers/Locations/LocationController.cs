@@ -10,6 +10,8 @@ namespace Presentation.Controllers.Locations
 {
     [ApiController]
     [Route("api/locations")]
+
+    [Authorize]
     public class LocationController : ControllerBase
     {
         private readonly LocationService _service;

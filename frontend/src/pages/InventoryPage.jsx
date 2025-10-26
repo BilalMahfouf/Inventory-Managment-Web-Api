@@ -11,6 +11,8 @@ import AddUpdateInventory from '@/components/inventory/AddUpdateInventory';
 import { getInventorySummary } from '@/services/inventoryService';
 import StockTransferDataTable from '@/components/stockTransfers/StockTransferDataTable';
 import AddStockTransferButton from '@/components/stockTransfers/AddStockTransferButton';
+import LocationDataTable from '@/components/locations/LocationDataTable';
+import AddLocationButton from '@/components/locations/AddLocationButton';
 
 export default function InventoryPage() {
   const [loading, setLoading] = useState(false);
@@ -106,6 +108,12 @@ export default function InventoryPage() {
             >
               Stock Alerts
             </Tab>
+            <Tab
+              className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
+              selectedClassName='!bg-white !text-gray-900 shadow-sm'
+            >
+              Locations
+            </Tab>
           </TabList>
           <div className={divStyles + 'mt-6'}>
             <TabPanel>
@@ -140,6 +148,15 @@ export default function InventoryPage() {
                 </h3>
                 <div>Stock alerts will be here !</div>
               </div>
+            </TabPanel>
+            <TabPanel>
+              <div className='mb-9 flex items-center justify-between'>
+                <h3 className='text-2xl font-semibold leading-none tracking-tight'>
+                  Locations
+                </h3>
+                <AddLocationButton />
+              </div>
+              <LocationDataTable />
             </TabPanel>
           </div>
         </Tabs>

@@ -92,6 +92,7 @@ namespace Infrastructure
             services.AddScoped<IProductQueries, ProductQueries>();
             services.AddScoped<IProductCategoryQueries, ProductCategoryQueries>();
             services.AddScoped<IInventoryQueries, InventoryQueries>();
+            services.AddScoped<ITransferQueries, TransferQueries>();
 
             // Email Options config 
             services.Configure<EmailOptions>(options =>
