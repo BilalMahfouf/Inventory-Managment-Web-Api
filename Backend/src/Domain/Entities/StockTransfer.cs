@@ -67,4 +67,53 @@ public class StockTransfer : IBaseEntity, IEntity
             quantity
             );
     }
+    public void Cancel()
+    {
+        if (TransferStatus != TransferStatus.Pending)
+        {
+            throw new DomainException("Only pending transfers can be cancelled");
+        }
+        
+        TransferStatus = TransferStatus.Cancelled;
+    }
+    public void Approve()
+    {
+        if(TransferStatus != TransferStatus.Pending)
+        {
+            throw new DomainException("Only Pending transfers can be approved");
+        }
+        TransferStatus = TransferStatus.Approved;
+    }
+    public void MarkInTransit()
+    {
+        if(TransferStatus != TransferStatus.Approved)
+        {
+            throw new DomainException("Only Approved transfers can be marked In Transit");
+        }
+        TransferStatus = TransferStatus.InTransit;
+    }
+    public void Reject()
+    {
+        if(TransferStatus != TransferStatus.Pending)
+        {
+            throw new DomainException("Only Pending transfers can be rejected");
+        }
+        TransferStatus = TransferStatus.Rejected;
+    }
+    public void Fail()
+    {
+        if(TransferStatus != TransferStatus.InTransit)
+        {
+            throw new DomainException("Only In Transit transfers can be marked as Failed");
+        }
+        TransferStatus = TransferStatus.Failed;
+    }
+    public void Complete()
+    {
+        if(TransferStatus != TransferStatus.InTransit)
+        {
+            throw new DomainException("Only In Transit transfers can be completed");
+        }
+        TransferStatus = TransferStatus.Completed;
+    }
 }
