@@ -214,6 +214,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(20)")
                         .HasDefaultValue("Good");
 
+                    b.Property<int?>("CustomerCategoryId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime");
 
@@ -251,6 +254,8 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("CustomerCategoryId");
 
                     b.HasIndex("DeletedByUserId");
 
@@ -444,6 +449,17 @@ namespace Infrastructure.Migrations
                     b.Property<int>("CreatedByUserId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValueSql("((0))");
+
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
 
@@ -468,6 +484,8 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("DeletedByUserId");
 
                     b.HasIndex("UpdatedByUserId");
 
@@ -1025,7 +1043,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("LocationId")
+                    b.Property<int>("InventoryId")
                         .HasColumnType("int");
 
                     b.Property<int>("MovementTypeId")
@@ -1042,15 +1060,13 @@ namespace Infrastructure.Migrations
                         .HasColumnType("decimal(18, 2)");
 
                     b.Property<byte>("StockMovmentStatus")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint")
-                        .HasDefaultValue((byte)1);
+                        .HasColumnType("tinyint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedByUserId");
 
-                    b.HasIndex(new[] { "LocationId" }, "IX_StockMovements_LocationId");
+                    b.HasIndex(new[] { "InventoryId" }, "IX_StockMovements_InventoryId");
 
                     b.HasIndex(new[] { "MovementTypeId" }, "IX_StockMovements_MovementTypeId");
 
@@ -1663,12 +1679,18 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Customers_CreatedByUser");
 
+                    b.HasOne("Domain.Entities.CustomerCategory", "CustomerCategory")
+                        .WithMany()
+                        .HasForeignKey("CustomerCategoryId");
+
                     b.HasOne("Domain.Entities.User", "DeletedByUser")
                         .WithMany()
                         .HasForeignKey("DeletedByUserId")
                         .HasConstraintName("FK_Customers_DeletedByUser");
 
                     b.Navigation("CreatedByUser");
+
+                    b.Navigation("CustomerCategory");
 
                     b.Navigation("DeletedByUser");
                 });
@@ -1736,6 +1758,10 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Inventory_CreatedByUser");
 
+                    b.HasOne("Domain.Entities.User", "DeletedByUser")
+                        .WithMany()
+                        .HasForeignKey("DeletedByUserId");
+
                     b.HasOne("Domain.Entities.Location", "Location")
                         .WithMany()
                         .HasForeignKey("LocationId")
@@ -1754,6 +1780,8 @@ namespace Infrastructure.Migrations
                         .HasConstraintName("FK_Inventory_UpdatedByUser");
 
                     b.Navigation("CreatedByUser");
+
+                    b.Navigation("DeletedByUser");
 
                     b.Navigation("Location");
 
@@ -2039,9 +2067,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_StockMovements_CreatedByUser");
 
-                    b.HasOne("Domain.Entities.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId")
+                    b.HasOne("Domain.Entities.Inventory", "Inventory")
+                        .WithMany("StockMovements")
+                        .HasForeignKey("InventoryId")
                         .IsRequired()
                         .HasConstraintName("FK_StockMovements_Locations");
 
@@ -2059,7 +2087,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("CreatedByUser");
 
-                    b.Navigation("Location");
+                    b.Navigation("Inventory");
 
                     b.Navigation("MovementType");
 
@@ -2286,6 +2314,11 @@ namespace Infrastructure.Migrations
                         .HasConstraintName("FK_UserSessions_Users");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Inventory", b =>
+                {
+                    b.Navigation("StockMovements");
                 });
 
             modelBuilder.Entity("Domain.Entities.Products.Product", b =>

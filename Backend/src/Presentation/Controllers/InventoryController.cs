@@ -1,5 +1,8 @@
-﻿using Application.DTOs.Inventories;
+﻿using Application.Abstractions.Queries;
+using Application.DTOs.Inventories;
 using Application.DTOs.Inventories.Request;
+using Application.PagedLists;
+using Application.Results;
 using Application.Services.Inventories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,14 +13,16 @@ namespace Presentation.Controllers
     [ApiController]
     [Route("api/inventory")]
 
-    //[Authorize]
-    public class InventoryController
+    [Authorize]
+    public class InventoryController : ControllerBase
     {
         private readonly InventoryService _service;
+        private readonly IInventoryQueries _query;
 
-        public InventoryController(InventoryService service)
+        public InventoryController(InventoryService service, IInventoryQueries query)
         {
             _service = service;
+            _query = query;
         }
 
         [HttpGet("valuation")]
@@ -26,7 +31,7 @@ namespace Presentation.Controllers
 
         public async Task<ActionResult<decimal>> GetInventoryValuationAsync(CancellationToken cancellationToken)
         {
-            var response= await _service.GetInventoryValuationAsync(cancellationToken);
+            var response = await _service.GetInventoryValuationAsync(cancellationToken);
             return response.HandleResult();
         }
         [HttpGet("cost")]
@@ -56,23 +61,49 @@ namespace Presentation.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<ActionResult<IReadOnlyCollection<InventoryBaseReadResponse>>>
-            GetAllInventoriesAsync(CancellationToken cancellationToken)
+        public async Task<ActionResult<PagedList<InventoryTableResponse>>>
+            GetAllInventoriesAsync(
+            [FromQuery] int? page,
+            [FromQuery] int? pageSize,
+            [FromQuery] string? search,
+            [FromQuery] string? sortOrder,
+            [FromQuery] string? sortColumn,
+            CancellationToken cancellationToken)
+
         {
-            var response = await _service.GetAllAsync(cancellationToken);
+            var request = TableRequest.Create(
+                pageSize,
+                page,
+                search,
+                sortColumn,
+                sortOrder);
+
+            var response = await _query.GetInventoryTableAsync(request, cancellationToken);
             return response.HandleResult();
         }
 
-        [HttpGet("{id:int}",Name = "GetInventoryByIdAsync")]
+        [HttpGet("summary")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<ActionResult<object>> GetInventorySummaryAsync(CancellationToken cancellationToken)
+        {
+            var response = await _query.GetInventorySummaryAsync(cancellationToken);
+            return response.HandleResult();
+        }
+
+
+
+        [HttpGet("{id:int}", Name = "GetInventoryByIdAsync")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<ActionResult<InventoryBaseReadResponse>> GetInventoryByIdAsync
+        public async Task<ActionResult<object>> GetInventoryByIdAsync
             (int id, CancellationToken cancellationToken)
         {
-            var response = await _service.FindAsync(id, cancellationToken);
+            var response = await _query.GetByIdAsync(id, cancellationToken);
             return response.HandleResult();
         }
 
@@ -105,7 +136,18 @@ namespace Presentation.Controllers
             return response.HandleResult();
         }
 
+        [HttpDelete("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-
-    }
+        public async Task<IActionResult> DeleteInventoryAsync
+            (int id, CancellationToken cancellationToken)
+        {
+            var response = await _service.DeleteByIdAsync(id, cancellationToken);
+            return response.HandleResult();
+        }
+     }
 }

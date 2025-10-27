@@ -14,6 +14,7 @@ using Application.Services.Shared;
 using Domain.Entities;
 using Domain.Entities.Products;
 using Domain.Enums;
+using Domain.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -190,7 +191,7 @@ IProductQueries query)
                     .Failure(productResult.ErrorMessage!
                     , productResult.ErrorType);
             }
-            var inventoryResult = Inventory.Create(
+            var inventory = Inventory.Create(
                 product: productResult.Value!,
                 locationId: request.LocationId,
                 quantityOnHand: request.QuantityOnHand,
@@ -198,17 +199,17 @@ IProductQueries query)
                 maxLevel: request.MaxLevel
                 );
 
-            if (!inventoryResult.IsSuccess)
-            {
-                return Result<ProductReadResponse>.Failure(inventoryResult.ErrorMessage!
-                    , inventoryResult.ErrorType);
-            }
-            _uow.Products.Add(productResult.Value!);
-            _uow.Inventories.Add(inventoryResult.Value!);
+           _uow.Products.Add(productResult.Value!);
+            _uow.Inventories.Add(inventory);
             await _uow.SaveChangesAsync(cancellationToken);
             return await _query.GetByIdAsync(
                 productResult.Value!.Id,
                 cancellationToken);
+        }
+        catch(DomainException dex)
+        {
+            return Result<ProductReadResponse>.Failure(dex.Message
+                , ErrorType.Conflict);
         }
         catch (Exception ex)
         {
@@ -309,15 +310,10 @@ IProductQueries query)
                 return Result<ProductReadResponse>.Failure(productResult.ErrorMessage!
                     , productResult.ErrorType);
             }
-            var inventoryResult = inventory.UpdateInventoryLevels(
+             inventory.UpdateInventoryLevels(
                  request.QuantityOnHand,
                  request.ReorderLevel,
                  request.MaxLevel);
-            if (!inventoryResult.IsSuccess)
-            {
-                return Result<ProductReadResponse>.Failure(inventoryResult.ErrorMessage!
-                    , inventoryResult.ErrorType);
-            }
 
             _productRepository.Update(product);
             _uow.Inventories.Update(inventory);
@@ -325,6 +321,11 @@ IProductQueries query)
             await _uow.SaveChangesAsync(cancellationToken);
             return await _query.GetByIdAsync(id, cancellationToken);
 
+        }
+        catch(DomainException ex)
+        {
+            return Result<ProductReadResponse>.Failure(ex.Message
+                , ErrorType.Conflict);
         }
         catch (Exception ex)
         {
@@ -407,7 +408,8 @@ IProductQueries query)
 
     public async Task<Result<IReadOnlyCollection<InventoryBaseReadResponse>>>
         FindProductInInventoryAsync(
-        int id, CancellationToken cancellationToken = default)
+        int id,
+        CancellationToken cancellationToken = default)
     {
         if (id <= 0)
         {

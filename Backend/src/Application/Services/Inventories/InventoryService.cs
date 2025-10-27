@@ -1,10 +1,14 @@
-﻿using Application.Abstractions.UnitOfWork;
+﻿using Application.Abstractions.Repositories.Base;
+using Application.Abstractions.Services.User;
+using Application.Abstractions.UnitOfWork;
 using Application.DTOs.Inventories;
 using Application.DTOs.Inventories.Request;
 using Application.Helpers.Util;
 using Application.Results;
+using Application.Services.Shared;
 using Domain.Entities;
 using Domain.Enums;
+using Domain.Exceptions;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -14,19 +18,22 @@ using System.Threading.Tasks;
 
 namespace Application.Services.Inventories
 {
-    public class InventoryService
+    public class InventoryService : DeleteService<Inventory>
     {
-        private readonly IUnitOfWork _uow;
         private readonly IValidator<InventoryCreateRequest> _createValidator;
         private readonly IValidator<InventoryUpdateRequest> _updateValidator;
-        public InventoryService(IUnitOfWork uow
-            , IValidator<InventoryCreateRequest> createValidator
-            , IValidator<InventoryUpdateRequest> updateValidator)
+
+        public InventoryService(IUnitOfWork uow,
+             IValidator<InventoryCreateRequest> createValidator,
+             IValidator<InventoryUpdateRequest> updateValidator,
+             ICurrentUserService currentUserService
+            )
+            : base(uow.Inventories, currentUserService, uow)
         {
-            _uow = uow;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
         }
+
 
         public async Task<Result<IReadOnlyCollection<InventoryBaseReadResponse>>>
             GetAllAsync(CancellationToken cancellationToken = default)
@@ -110,17 +117,29 @@ namespace Application.Services.Inventories
                         and LocationId already exists"
                         , ErrorType.Conflict);
                 }
-                var newInventory = new Inventory
+                var product = await _uow.Products
+                    .FindAsync(p => p.Id == request.ProductId
+                    , cancellationToken: cancellationToken);
+                if (product is null)
                 {
-                    ProductId = request.ProductId,
-                    LocationId = request.LocationId,
-                    QuantityOnHand = request.QuantityOnHand,
-                    ReorderLevel = request.ReorderLevel,
-                    MaxLevel = request.MaxLevel,
-                };
+                    return Result<InventoryBaseReadResponse>
+                        .NotFound("Product");
+                }
+                var newInventory = Inventory.Create(
+                    product,
+                    request.LocationId,
+                    request.QuantityOnHand,
+                    request.ReorderLevel,
+                    request.MaxLevel);
+
                 _uow.Inventories.Add(newInventory);
                 await _uow.SaveChangesAsync(cancellationToken);
                 return await FindAsync(newInventory.Id, cancellationToken);
+            }
+            catch (DomainException ex)
+            {
+                return Result<InventoryBaseReadResponse>
+                        .Failure(ex.Message, ErrorType.Conflict);
             }
             catch (Exception ex)
             {
@@ -150,19 +169,28 @@ namespace Application.Services.Inventories
                         .Failure(errors, ErrorType.BadRequest);
                 }
                 var existingInventory = await _uow.Inventories
-                    .FindAsync(i => i.Id == id, cancellationToken: cancellationToken);
+                    .FindAsync(i => i.Id == id,
+                    cancellationToken: cancellationToken,
+                    includeProperties: "Product");
                 if (existingInventory is null)
                 {
                     return Result<InventoryBaseReadResponse>
                         .NotFound("Inventory");
                 }
 
-                existingInventory.QuantityOnHand = request.QuantityOnHand;
-                existingInventory.ReorderLevel = request.ReorderLevel;
-                existingInventory.MaxLevel = request.MaxLevel;
+                existingInventory.UpdateInventoryLevels(
+                    request.QuantityOnHand,
+                    request.ReorderLevel,
+                    request.MaxLevel);
+
                 _uow.Inventories.Update(existingInventory);
                 await _uow.SaveChangesAsync(cancellationToken);
                 return await FindAsync(existingInventory.Id, cancellationToken);
+            }
+            catch (DomainException ex)
+            {
+                return Result<InventoryBaseReadResponse>
+                        .Failure(ex.Message, ErrorType.Conflict);
             }
             catch (Exception ex)
             {
@@ -255,6 +283,34 @@ namespace Application.Services.Inventories
                         .Exception(nameof(GetInventoryValuationAsync), ex);
             }
         }
+
+        public async Task<Result> DeleteByIdAsync(int id,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                var inventory = await _uow.Inventories
+                               .FindAsync(i => i.Id == id,
+                               cancellationToken: cancellationToken);
+                if (inventory is null)
+                {
+                    return Result.NotFound("Inventory");
+                }
+                inventory.Delete();
+                return await SoftDeleteAsync(inventory, cancellationToken);
+
+
+            }
+            catch (DomainException ex)
+            {
+                return Result.Failure(ex.Message, ErrorType.Conflict);
+            }
+            catch (Exception ex)
+            {
+                return Result.Exception(nameof(DeleteByIdAsync), ex);
+            }
+        }
+
     }
 }
 

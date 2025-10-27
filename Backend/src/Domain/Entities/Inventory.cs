@@ -3,12 +3,14 @@ using Application.Results;
 using Domain.Abstractions;
 using Domain.Entities.Products;
 using Domain.Enums;
+using Domain.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Domain.Entities;
 
-public partial class Inventory : IBaseEntity, IModifiableEntity
+public partial class Inventory : IBaseEntity, IModifiableEntity, ISoftDeletable
 {
     public int Id { get; set; }
 
@@ -29,6 +31,10 @@ public partial class Inventory : IBaseEntity, IModifiableEntity
     public DateTime? UpdatedAt { get; set; }
 
     public int? UpdatedByUserId { get; set; }
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedAt { get; set; }
+    public int? DeletedByUserId { get; set; }
+    public User? DeletedByUser { get; set; }
 
     public virtual User CreatedByUser { get; set; } = null!;
 
@@ -38,11 +44,14 @@ public partial class Inventory : IBaseEntity, IModifiableEntity
 
     public virtual User? UpdatedByUser { get; set; }
 
+    private List<StockMovement> stockMovements = new();
+    public IReadOnlyCollection<StockMovement> StockMovements => stockMovements.AsReadOnly();
+
 
 
     public Inventory()
     {
-        
+
     }
     private Inventory(
         Product product,
@@ -59,8 +68,13 @@ public partial class Inventory : IBaseEntity, IModifiableEntity
         ReorderLevel = reorderLevel;
         MaxLevel = maxLevel;
     }
-    public static Result<Inventory> Create(
-        Product product, 
+    private void AddStockMovement(StockMovement stockMovement
+        )
+    {
+        stockMovements.Add(stockMovement);
+    }
+    public static Inventory Create(
+        Product product,
         int locationId,
         decimal quantityOnHand,
         decimal reorderLevel,
@@ -68,15 +82,14 @@ public partial class Inventory : IBaseEntity, IModifiableEntity
         )
     {
         // Add any necessary validation or business logic here
-        if ( maxLevel <quantityOnHand) 
+        product.EnsureProductIsActive();
+        if (maxLevel < quantityOnHand)
         {
-            return Result<Inventory>.Failure("Quantity on hand cannot exceed max level"
-                , ErrorType.BadRequest);
+            throw new DomainException("Quantity on hand cannot exceed max level");
         }
-        if(maxLevel < reorderLevel)
+        if (maxLevel < reorderLevel)
         {
-            return Result<Inventory>.Failure("Max level cannot be less than reorder level"
-                , ErrorType.BadRequest);
+            throw new DomainException("Max level cannot be less than reorder level");
         }
         var inventory = new Inventory(
             product,
@@ -85,28 +98,126 @@ public partial class Inventory : IBaseEntity, IModifiableEntity
             reorderLevel,
             maxLevel
             );
-        return Result<Inventory>.Success(inventory);
+        var initialStockMovement = StockMovement.Create(
+            product,
+            inventory,
+            StockMovementTypeEnum.InitialStock,
+            quantityOnHand,
+            "Initial stock entry"
+            );
+        initialStockMovement.MarkAsCompleted();
+
+        inventory.AddStockMovement(initialStockMovement);
+        return inventory;
     }
+
+
     // to do add StockChanged event here
-    public Result UpdateInventoryLevels(
+    public void UpdateStock(decimal newQuantity)
+    {
+        if (newQuantity < 0)
+        {
+            throw new DomainException("Stock quantity cannot be negative");
+        }
+        EnsureQuantityIsLessThanMaxLevel(newQuantity);
+        if (QuantityOnHand > newQuantity)
+        {
+            var stockMovement = StockMovement.Create(
+                   Product,
+                this,
+                StockMovementTypeEnum.StockDecreaseAdjustment,
+                QuantityOnHand - newQuantity,
+                "Stock decrease"
+                );
+            stockMovement.MarkAsCompleted();
+            AddStockMovement(stockMovement);
+        }
+        if (QuantityOnHand < newQuantity)
+        {
+            var stockMovement = StockMovement.Create(
+                  Product,
+               this,
+               StockMovementTypeEnum.StockIncreaseAdjustment,
+               newQuantity - QuantityOnHand,
+               "Stock increase"
+               );
+            stockMovement.MarkAsCompleted();
+            AddStockMovement(stockMovement);
+        }
+        QuantityOnHand = newQuantity;
+
+    }
+
+
+
+
+    /// <summary>
+    /// This method updates the stock quantity and creates a stock movement record.
+    /// If you want to decrease or increase stock
+    /// ,use <see cref="UpdateStock(decimal)"/>  instead.
+    /// For negative <paramref name="quantity"/> this will be decreased
+    /// ,for positive it will be increased.
+    /// Note: to use this you need to include <see cref="Product"/> navigation
+    /// property when retrieving Inventory entity.
+    /// </summary>
+    /// <param name="quantity"></param>
+    /// <param name="stockMovementType"></param>
+
+    public void UpdateStock(
+        decimal quantity,
+        StockMovementTypeEnum stockMovementType)
+    {
+
+        EnsureQuantityIsLessThanMaxLevel(
+            quantity < 0 ? QuantityOnHand - quantity : QuantityOnHand + quantity);
+
+        QuantityOnHand += quantity;
+        var stockMovement = StockMovement.Create(
+            Product,
+            this,
+            stockMovementType,
+            quantity < 0 ? -quantity : quantity,
+            "Stock update"
+            );
+        AddStockMovement(stockMovement);
+    }
+
+
+    private void EnsureQuantityIsLessThanMaxLevel(decimal quantity)
+    {
+        if (quantity > MaxLevel)
+        {
+            throw new DomainException("Quantity exceeds maximum level");
+        }
+    }
+
+    // to do add StockMovement creation here 10/18/2025
+    public void UpdateInventoryLevels(
     decimal quantityOnHand,
     decimal reorderLevel,
     decimal maxLevel
         )
     {
-        if(maxLevel < quantityOnHand)
-        {
-            return Result.Failure("Quantity on hand cannot exceed max level"
-                , ErrorType.Conflict);
-        }
+        EnsureQuantityIsLessThanMaxLevel(quantityOnHand);
         if (maxLevel < reorderLevel)
         {
-            return Result.Failure("Max level cannot be less than reorder level"
-                , ErrorType.Conflict);
+            throw new DomainException("Max level cannot be less than reorder level");
         }
-        QuantityOnHand = quantityOnHand;
+        UpdateStock(quantityOnHand);
         ReorderLevel = reorderLevel;
         MaxLevel = maxLevel;
-        return Result.Success;
+
+    }
+    public void Delete()
+    {
+        if (IsDeleted)
+        {
+            throw new DomainException("Inventory is already deleted");
+        }
+        if (QuantityOnHand > 0)
+        {
+            throw new DomainException("Cannot delete inventory with stock on hand");
+        }
+        IsDeleted= true;
     }
 }

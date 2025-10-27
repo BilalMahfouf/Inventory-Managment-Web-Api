@@ -34,6 +34,10 @@ namespace Infrastructure.Persistence.Configurations
             entity.Property(e => e.PaymentTerms).HasDefaultValue("Net 30");
             entity.Property(e => e.Phone).HasMaxLength(20);
 
+            entity.HasOne(d => d.CustomerCategory).WithMany()
+                .HasForeignKey(d => d.CustomerCategoryId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
             entity.HasOne(d => d.CreatedByUser).WithMany()
                 .HasForeignKey(d => d.CreatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

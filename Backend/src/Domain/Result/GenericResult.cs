@@ -23,7 +23,7 @@ namespace Application.Results
             => new Result<T>(false, default!, error, errorType);
         public static new Result<T> NotFound(string entity)
         {
-            string errorMessage = $"{entity} nor found";
+            string errorMessage = $"{entity} not found";
             return Failure(errorMessage, ErrorType.NotFound);
         }
         public static new Result<T> InvalidId()

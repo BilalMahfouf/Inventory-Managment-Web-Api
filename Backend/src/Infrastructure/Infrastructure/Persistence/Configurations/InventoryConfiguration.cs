@@ -34,6 +34,8 @@ namespace Infrastructure.Persistence.Configurations
             entity.Property(e => e.QuantityOnHand).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.ReorderLevel).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("((0))");
+            entity.Property(e => e.DeletedAt).HasColumnType("datetime");
 
             entity.HasOne(d => d.CreatedByUser).WithMany()
                 .HasForeignKey(d => d.CreatedByUserId)
@@ -53,6 +55,10 @@ namespace Infrastructure.Persistence.Configurations
             entity.HasOne(d => d.UpdatedByUser).WithMany()
                 .HasForeignKey(d => d.UpdatedByUserId)
                 .HasConstraintName("FK_Inventory_UpdatedByUser");
+
+            entity.HasOne(d => d.DeletedByUser).WithMany()
+                .HasForeignKey(d => d.DeletedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             OnConfigurePartial(entity);
         }

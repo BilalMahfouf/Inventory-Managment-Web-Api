@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enums;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -23,7 +24,9 @@ namespace Infrastructure.Persistence.Configurations
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.Quantity).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.TransferStatus).HasDefaultValue((byte)1);
+            entity.Property(e => e.TransferStatus)
+                .HasDefaultValue(TransferStatus.Pending)
+                .HasConversion<byte>();
 
             entity.HasOne(d => d.CreatedByUser).WithMany()
                 .HasForeignKey(d => d.CreatedByUserId)
