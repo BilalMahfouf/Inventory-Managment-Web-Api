@@ -154,10 +154,10 @@ public partial class Inventory : IBaseEntity, IModifiableEntity, ISoftDeletable
     /// <summary>
     /// This method updates the stock quantity and creates a stock movement record.
     /// If you want to decrease or increase stock
-    /// , use UpdateStock(decimal newQuantity) instead.
+    /// ,use <see cref="UpdateStock(decimal)"/>  instead.
     /// For negative <paramref name="quantity"/> this will be decreased
     /// ,for positive it will be increased.
-    /// Note: to use this you need to include Product navigation
+    /// Note: to use this you need to include <see cref="Product"/> navigation
     /// property when retrieving Inventory entity.
     /// </summary>
     /// <param name="quantity"></param>
@@ -218,5 +218,6 @@ public partial class Inventory : IBaseEntity, IModifiableEntity, ISoftDeletable
         {
             throw new DomainException("Cannot delete inventory with stock on hand");
         }
+        IsDeleted= true;
     }
 }
