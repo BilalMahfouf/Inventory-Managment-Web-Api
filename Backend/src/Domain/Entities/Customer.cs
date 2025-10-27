@@ -10,6 +10,7 @@ public partial class Customer : IBaseEntity, ISoftDeletable
     public int Id { get; set; }
 
     public string Name { get; set; } = null!;
+    public int? CustomerCategoryId { get; set; }
 
     public string Email { get; set; } = null!;
 
@@ -39,5 +40,6 @@ public partial class Customer : IBaseEntity, ISoftDeletable
 
 
     public virtual User? DeletedByUser { get; set; }
+    public CustomerCategory? CustomerCategory { get; set; } = null!;
 
 }
