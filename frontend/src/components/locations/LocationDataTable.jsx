@@ -26,6 +26,7 @@ export default function LocationDataTable() {
         setData(null);
         return;
       }
+      console.log('Locations data:', response.data);
       setData(response.data);
     } catch (error) {
       console.error('Error fetching locations:', error);
@@ -88,7 +89,6 @@ export default function LocationDataTable() {
         columns={defaultColumns}
         loading={isLoading}
         enableActions={true}
-        enablePagination={true}
         onView={handleView}
         onEdit={handleEdit}
         onDelete={row => {

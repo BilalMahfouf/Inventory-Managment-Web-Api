@@ -16,6 +16,7 @@ export default function AddLocationButton({ onSuccess }) {
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         onSuccess={onSuccess}
+        locationId={0}
       />
     </>
   );

@@ -98,6 +98,7 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
       if (onSuccess) {
         onSuccess();
       }
+      resetForm();
       onClose();
     } else {
       showError(
@@ -165,9 +166,10 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
   const handleSubmit = e => {
     e.preventDefault();
     saveLocation();
+    resetForm();
   };
 
-  const handleCancel = () => {
+  const resetForm = () => {
     setFormData({
       name: '',
       address: '',
@@ -177,6 +179,10 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
     setErrors({});
     setMode('add');
     setId(0);
+    console.log('Form reset');
+  };
+  const handleCancel = () => {
+    resetForm();
     if (onClose) {
       onClose();
     }
