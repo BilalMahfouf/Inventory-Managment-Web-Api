@@ -42,7 +42,7 @@ namespace Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(
             this IServiceCollection services
-            ,IConfiguration configuration)
+            , IConfiguration configuration)
         {
             services.Configure<JwtOptions>(options =>
             {
@@ -63,7 +63,7 @@ namespace Infrastructure
             }).AddJwtBearer(options =>
             {
                 options.SaveToken = true;
-               
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -93,13 +93,14 @@ namespace Infrastructure
             services.AddScoped<IProductCategoryQueries, ProductCategoryQueries>();
             services.AddScoped<IInventoryQueries, InventoryQueries>();
             services.AddScoped<ITransferQueries, TransferQueries>();
+            services.AddScoped<ICustomerQueries, CustomerQueries>();
 
             // Email Options config 
             services.Configure<EmailOptions>(options =>
             {
                 options.Port = configuration.GetValue<int>("EMAIL_CONFIGURATIONS:PORT");
                 options.Host = configuration.GetValue<string>("EMAIL_CONFIGURATIONS:HOST") ?? throw new InvalidOperationException("EMAIL_CONFIGURATIONS_HOST is not set");
-                options.Password= Environment.GetEnvironmentVariable("EMAIL_CONFIGURATIONS_PASSWORD") ?? throw new InvalidOperationException("EMAIL_CONFIGURATIONS_PASSWORD environment variable is not set");
+                options.Password = Environment.GetEnvironmentVariable("EMAIL_CONFIGURATIONS_PASSWORD") ?? throw new InvalidOperationException("EMAIL_CONFIGURATIONS_PASSWORD environment variable is not set");
                 options.Email = Environment.GetEnvironmentVariable("EMAIL_CONFIGURATIONS_EMAIL") ?? throw new InvalidOperationException("EMAIL_CONFIGURATIONS_EMAIL environment variable is not set");
             });
             return services;

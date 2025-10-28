@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Services.Images;
+﻿using Application.Abstractions.Queries;
+using Application.Abstractions.Services.Images;
 using Application.Abstractions.Services.Product;
 using Application.Abstractions.Services.Products;
 using Application.Abstractions.Services.User;
