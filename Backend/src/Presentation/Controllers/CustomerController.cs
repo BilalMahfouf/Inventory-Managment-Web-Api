@@ -1,20 +1,27 @@
 ﻿using Application.Abstractions.Queries;
 using Application.DTOs.Customers;
 using Application.PagedLists;
+using Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using Presentation.Extensions;
 
 namespace Presentation.Controllers;
 
 [ApiController]
 [Route("api/customers")]
+
+[Authorize]
 public class CustomerController : ControllerBase
 {
     private readonly ICustomerQueries _query;
+    private readonly CustomerService _service;
 
-    public CustomerController(ICustomerQueries query)
+    public CustomerController(ICustomerQueries query, CustomerService service)
     {
         _query = query;
+        _service = service;
     }
 
 
@@ -43,9 +50,8 @@ public class CustomerController : ControllerBase
         return response.HandleResult();
     }
 
-    [HttpGet("{id:int}")]
-
-    public async Task<ActionResult<object>> GetCustomerByIdAsync(
+    [HttpGet("{id:int}",Name = nameof(GetCustomerByIdAsync))]
+    public async Task<ActionResult<CustomerReadResponse>> GetCustomerByIdAsync(
         int id,
         CancellationToken cancellationToken = default)
     {
@@ -53,4 +59,16 @@ public class CustomerController : ControllerBase
         return response.HandleResult();
     }
 
+    [HttpPost]
+
+    public async Task<ActionResult<CustomerReadResponse>> AddCustomerAsync(
+        [FromBody] CustomerCreateRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await _service.AddAsync(request, cancellationToken);
+        return response.HandleResult(nameof(GetCustomerByIdAsync), new
+        {
+            id = response.Value is null ? 0 : response.Value.Id
+        });
+    }
 }

@@ -12,7 +12,7 @@ namespace Application.Abstractions.Queries;
 public interface ICustomerQueries
 {
     Task<Result<object>> GetCustomerSummary(CancellationToken cancellationToken = default);
-    Task<Result<object>> GetByIdAsync(
+    Task<Result<CustomerReadResponse>> GetByIdAsync(
         int id,
         CancellationToken cancellationToken = default);
     Task<Result<PagedList<CustomerTableReadResponse>>> GetAllAsync(

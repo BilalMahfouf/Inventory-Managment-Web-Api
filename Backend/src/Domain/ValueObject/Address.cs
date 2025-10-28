@@ -26,7 +26,7 @@ public sealed class Address
         State = state;
         ZipCode = zipCode;
     }
-    internal static Address Create(
+    public static Address Create(
         string street,
         string city,
         string state,

@@ -126,9 +126,36 @@ internal class CustomerQueries : ICustomerQueries
 
     }
 
-    public Task<Result<object>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<Result<CustomerReadResponse>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        if(id <=0)
+        {
+            return Result<CustomerReadResponse>.InvalidId()   ;
+        }
+        try
+        {
+
+        var customer = await _context.Customers
+            .Select(e => new CustomerReadResponse
+            {
+                Id = e.Id,
+                Name = e.Name,
+
+
+            }).FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+        if(customer is null )
+        {
+            return Result<CustomerReadResponse>.NotFound($"Customer with Id {id}");
+        }
+        return Result<CustomerReadResponse>.Success(customer);
+        }
+        catch(Exception ex)
+        {
+            return Result<CustomerReadResponse>.Exception(
+                nameof(GetByIdAsync),
+                nameof(CustomerQueries),
+                ex);
+        }
     }
 
     public async Task<Result<object>> GetCustomerSummary(CancellationToken cancellationToken = default)

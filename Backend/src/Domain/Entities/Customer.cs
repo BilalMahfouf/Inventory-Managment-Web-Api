@@ -50,7 +50,6 @@ public partial class Customer : IBaseEntity, ISoftDeletable
     {
     }
     private Customer(
-        int id,
         string name,
         int? customerCategoryId,
         string email,
@@ -60,7 +59,6 @@ public partial class Customer : IBaseEntity, ISoftDeletable
         string? paymentTerms
         )
     {
-        Id = id;
         Name = name;
         CustomerCategoryId = customerCategoryId;
         Email = email;
@@ -72,7 +70,6 @@ public partial class Customer : IBaseEntity, ISoftDeletable
         CreditStatus = CustomerCreditStatus.Active;
     }
     public static Customer Create(
-        int id,
         string name,
         int? customerCategoryId,
         string email,
@@ -86,7 +83,6 @@ public partial class Customer : IBaseEntity, ISoftDeletable
             throw new DomainException("Credit limit can't be negative ");
         }
         return new Customer(
-            id,
             name,
             customerCategoryId,
             email,
