@@ -24,6 +24,7 @@
 ## Tab 1: Basic Info
 
 ### Add Mode & Update Mode
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Personal Details                                             │
@@ -58,6 +59,7 @@
 ## Tab 2: Business
 
 ### Add Mode & Update Mode
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Business Details                                             │
@@ -83,6 +85,7 @@
 ## Tab 3: Summary (Update Mode Only)
 
 ### Read-Only View
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  ┌─────────────────────────────────────────────────────┐    │
@@ -133,10 +136,12 @@
 ## Button States
 
 ### Add Mode
+
 - **Tab 1 (Basic Info)**: [Cancel] [Next]
 - **Tab 2 (Business)**: [Previous] [Cancel] [Save Customer]
 
 ### Update Mode
+
 - **Tab 1 (Basic Info)**: [Cancel] [Next]
 - **Tab 2 (Business)**: [Previous] [Cancel] [Save Changes] [Next]
 - **Tab 3 (Summary)**: [Previous] [Cancel] [Close]
@@ -164,12 +169,14 @@ The Customer Type dropdown is populated from the backend:
 ## Color Scheme
 
 ### Status Badges
+
 - **Active**: Green background, green text
 - **Inactive**: Red background, red text
 - **On Hold**: Yellow background, yellow text
 - **Suspended**: Red background, red text
 
 ### Form Elements
+
 - Primary Button: Blue (#2563eb)
 - Secondary Button: White with gray border
 - Error: Red (#dc2626)
@@ -178,50 +185,57 @@ The Customer Type dropdown is populated from the backend:
 ## Responsive Behavior
 
 ### Desktop (> 768px)
+
 - Two-column layout for form fields
 - Full-width dialogs with max-width
 
 ### Mobile (< 768px)
+
 - Single-column layout
 - Stacked form fields
 - Touch-friendly controls
 
 ## Icons Used
 
-| Icon | Component | Purpose |
-|------|-----------|---------|
-| 👤 User | Basic Info Tab | Personal details indicator |
-| 🏢 Building2 | Business Tab | Business info indicator |
-| 📄 FileText | Summary Tab | Summary view indicator |
-| ✉ Mail | Email field | Visual indicator |
-| ☎ Phone | Phone field | Visual indicator |
-| 📍 MapPin | Address field | Visual indicator |
-| 💳 CreditCard | Credit info | Visual indicator |
-| 💲 DollarSign | Currency | Visual indicator |
-| 📅 Calendar | Date field | Visual indicator |
-| ✖ X | Close button | Exit dialog |
+| Icon          | Component      | Purpose                    |
+| ------------- | -------------- | -------------------------- |
+| 👤 User       | Basic Info Tab | Personal details indicator |
+| 🏢 Building2  | Business Tab   | Business info indicator    |
+| 📄 FileText   | Summary Tab    | Summary view indicator     |
+| ✉ Mail       | Email field    | Visual indicator           |
+| ☎ Phone      | Phone field    | Visual indicator           |
+| 📍 MapPin     | Address field  | Visual indicator           |
+| 💳 CreditCard | Credit info    | Visual indicator           |
+| 💲 DollarSign | Currency       | Visual indicator           |
+| 📅 Calendar   | Date field     | Visual indicator           |
+| ✖ X          | Close button   | Exit dialog                |
 
 ## Validation Examples
 
 ### Valid Email
+
 ✓ john@example.com
 ✓ jane.doe@company.co.uk
 
 ### Invalid Email
+
 ✗ johnexample.com
 ✗ @example.com
 ✗ john@
 
 ### Valid Phone
+
 ✓ (123) 456-7890
 ✓ 123-456-7890
 ✓ +1 123 456 7890
 
 ### Valid Credit Limit
+
 ✓ 5000.00
 ✓ 10000
 ✓ 0
 
 ### Invalid Credit Limit
+
 ✗ -1000 (cannot be negative)
 ✗ abc (must be numeric)

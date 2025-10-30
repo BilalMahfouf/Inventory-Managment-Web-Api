@@ -7,6 +7,7 @@ import { divStyles } from '@/util/uiVariables';
 import { DollarSign, Plus, User2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
+import { AddCustomerButton } from '@/components/customers';
 
 export default function CustomersPage() {
   const [loading, setLoading] = useState(false);
@@ -14,7 +15,6 @@ export default function CustomersPage() {
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [newCustomersLastMonth, setNewCustomersLastMonth] = useState(0);
   const [activeCustomers, setActiveCustomers] = useState(0);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchCustomerSummary = async () => {
@@ -36,13 +36,10 @@ export default function CustomersPage() {
     <>
       <div className='flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4'>
         <PageHeader
-          title='Inventory Management'
-          description='Manage your product catalog and inventory.'
+          title='Customer Management'
+          description='Manage your customer data and interactions.'
         />
-
-        <Button LeftIcon={Plus} onClick={() => setIsAddModalOpen(true)}>
-          Add Inventory
-        </Button>
+        <AddCustomerButton />
       </div>
       <div className='flex flex-col md:flex-row gap-6'>
         <InfoCard

@@ -5,23 +5,23 @@ import AddUpdateCustomer from './AddUpdateCustomer';
 
 /**
  * AddCustomerButton Component
- * 
+ *
  * A reusable button that opens the AddUpdateCustomer dialog in "add" mode.
- * 
+ *
  * Usage Example:
  * ```jsx
  * import { AddCustomerButton } from '@/components/customers';
- * 
+ *
  * function MyPage() {
  *   const handleSuccess = () => {
  *     // Refresh your customer list or perform other actions
  *     console.log('Customer added successfully!');
  *   };
- * 
+ *
  *   return <AddCustomerButton onSuccess={handleSuccess} />;
  * }
  * ```
- * 
+ *
  * @param {Object} props - Component props
  * @param {function} props.onSuccess - Optional callback after successful customer creation
  */

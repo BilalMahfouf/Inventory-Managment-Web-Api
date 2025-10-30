@@ -57,7 +57,9 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
   const tabs = [
     { id: 'basic', label: 'Basic Info', icon: User },
     { id: 'business', label: 'Business', icon: Building2 },
-    ...(mode === 'update' ? [{ id: 'summary', label: 'Summary', icon: FileText }] : []),
+    ...(mode === 'update'
+      ? [{ id: 'summary', label: 'Summary', icon: FileText }]
+      : []),
   ];
 
   const handleInputChange = (field, value) => {
@@ -122,7 +124,10 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
     const isBusinessValid = validateBusinessInfo();
 
     if (!isBasicValid || !isBusinessValid) {
-      showError('Validation Error', 'Please fill in all required fields correctly.');
+      showError(
+        'Validation Error',
+        'Please fill in all required fields correctly.'
+      );
       setActiveTab('basic'); // Go back to first tab with errors
       return;
     }
@@ -336,7 +341,7 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
             <p className='text-sm text-gray-500 mt-1'>
               {mode === 'add'
                 ? 'Fill in the details below to add a new customer to the system.'
-                : 'Review the customer\'s information below.'}
+                : "Review the customer's information below."}
             </p>
           </div>
           <button
@@ -457,12 +462,16 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
 
                         <div>
                           <label className='block text-sm font-medium text-gray-700 mb-1.5'>
-                            Customer Type <span className='text-red-500'>*</span>
+                            Customer Type{' '}
+                            <span className='text-red-500'>*</span>
                           </label>
                           <select
                             value={formData.customerCategoryId}
                             onChange={e =>
-                              handleInputChange('customerCategoryId', e.target.value)
+                              handleInputChange(
+                                'customerCategoryId',
+                                e.target.value
+                              )
                             }
                             className={`w-full h-11 px-3 border rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 ${
                               errors.customerCategoryId
@@ -653,7 +662,10 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
 
                 {/* Summary Tab (Update mode only) */}
                 {activeTab === 'summary' && mode === 'update' && (
-                  <ViewCustomer customer={customerData} loading={isFetchingData} />
+                  <ViewCustomer
+                    customer={customerData}
+                    loading={isFetchingData}
+                  />
                 )}
               </>
             )}

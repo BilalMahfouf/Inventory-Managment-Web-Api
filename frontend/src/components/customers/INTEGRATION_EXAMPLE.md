@@ -172,7 +172,7 @@ export default function CustomersPage() {
         title='Customers'
         description='Manage your customer database'
       />
-      
+
       <CustomerDataTable />
     </div>
   );
@@ -201,7 +201,7 @@ export default function CustomerManagementPage() {
         <h1 className='text-2xl font-bold'>Customer Management</h1>
         <AddCustomerButton onSuccess={handleCustomerAdded} />
       </div>
-      
+
       {/* Your other content here */}
     </div>
   );

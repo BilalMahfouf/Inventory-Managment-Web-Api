@@ -5,9 +5,11 @@ This directory contains comprehensive components for managing customers in the I
 ## Components Overview
 
 ### 1. AddUpdateCustomer
+
 The main component for creating and editing customers. Features a multi-step tabbed interface.
 
 **Features:**
+
 - ✅ Multi-step form with 3 tabs: Basic Info, Business, Summary
 - ✅ Create new customers (Add mode)
 - ✅ Edit existing customers (Update mode)
@@ -18,23 +20,28 @@ The main component for creating and editing customers. Features a multi-step tab
 - ✅ Loading states
 
 **Tabs:**
+
 - **Basic Info**: Personal details (name, email, phone, customer type) and address
 - **Business**: Credit limit, credit status, payment terms (visible in both modes)
 - **Summary**: Read-only view of all customer data (only in Update mode)
 
 ### 2. ViewCustomer
+
 A read-only component displaying comprehensive customer information organized into sections.
 
 **Sections:**
+
 - General Information
 - Address
 - Business Information
 - System Information
 
 ### 3. CustomerDataTable
+
 The main data table for displaying and managing customers with server-side pagination.
 
 ### 4. AddCustomerButton
+
 A convenient button component that opens the AddUpdateCustomer dialog in "add" mode.
 
 ## Usage Examples
@@ -73,7 +80,7 @@ function CustomersPage() {
     setDialogOpen(true);
   };
 
-  const handleEdit = (customerId) => {
+  const handleEdit = customerId => {
     setSelectedCustomerId(customerId); // Pass customer ID for edit mode
     setDialogOpen(true);
   };
@@ -86,7 +93,7 @@ function CustomersPage() {
   return (
     <div>
       <button onClick={handleAddNew}>Add Customer</button>
-      
+
       <AddUpdateCustomer
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
@@ -110,7 +117,7 @@ function CustomersPage() {
   const [currentCustomerId, setCurrentCustomerId] = useState(0);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const handleEdit = (row) => {
+  const handleEdit = row => {
     setCurrentCustomerId(row.id);
     setEditDialogOpen(true);
   };
@@ -121,14 +128,9 @@ function CustomersPage() {
 
   return (
     <>
-      <button onClick={() => setAddDialogOpen(true)}>
-        Add New Customer
-      </button>
-      
-      <CustomerDataTable
-        onEdit={handleEdit}
-        refreshTrigger={refreshTrigger}
-      />
+      <button onClick={() => setAddDialogOpen(true)}>Add New Customer</button>
+
+      <CustomerDataTable onEdit={handleEdit} refreshTrigger={refreshTrigger} />
 
       {/* Add Dialog */}
       <AddUpdateCustomer
@@ -154,37 +156,39 @@ function CustomersPage() {
 
 ### AddUpdateCustomer Props
 
-| Prop | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| `isOpen` | boolean | Yes | - | Controls dialog visibility |
-| `onClose` | function | Yes | - | Callback when dialog is closed |
-| `customerId` | number | No | 0 | Customer ID for edit mode (0 = add mode) |
-| `onSuccess` | function | No | - | Callback after successful save |
+| Prop         | Type     | Required | Default | Description                              |
+| ------------ | -------- | -------- | ------- | ---------------------------------------- |
+| `isOpen`     | boolean  | Yes      | -       | Controls dialog visibility               |
+| `onClose`    | function | Yes      | -       | Callback when dialog is closed           |
+| `customerId` | number   | No       | 0       | Customer ID for edit mode (0 = add mode) |
+| `onSuccess`  | function | No       | -       | Callback after successful save           |
 
 ### ViewCustomer Props
 
-| Prop | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| `customer` | object | Yes | - | Customer data object |
-| `loading` | boolean | No | false | Loading state |
+| Prop       | Type    | Required | Default | Description          |
+| ---------- | ------- | -------- | ------- | -------------------- |
+| `customer` | object  | Yes      | -       | Customer data object |
+| `loading`  | boolean | No       | false   | Loading state        |
 
 ### AddCustomerButton Props
 
-| Prop | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| `onSuccess` | function | No | - | Callback after successful customer creation |
+| Prop        | Type     | Required | Default | Description                                 |
+| ----------- | -------- | -------- | ------- | ------------------------------------------- |
+| `onSuccess` | function | No       | -       | Callback after successful customer creation |
 
 ## Form Fields
 
 ### Basic Info Tab
 
 **Personal Details:**
+
 - Full name (required)
 - Email (required, validated)
 - Phone (required)
 - Customer Type (required, dropdown from backend)
 
 **Address:**
+
 - Street (required)
 - City (required)
 - State (required)
@@ -199,6 +203,7 @@ function CustomersPage() {
 ### Summary Tab (Update Mode Only)
 
 Read-only view displaying:
+
 - All personal details
 - Complete address
 - Business information
@@ -207,20 +212,25 @@ Read-only view displaying:
 ## Validation Rules
 
 ### Email
+
 - Must be a valid email format
 - Pattern: `user@domain.com`
 
 ### Phone
+
 - Required field
 - No specific format enforced (allows international formats)
 
 ### Credit Limit
+
 - Must be a positive number
 - Supports decimals (e.g., 5000.00)
 - Cannot be negative
 
 ### Required Fields
+
 All fields except:
+
 - Payment Terms (optional, has default)
 - Credit Status (has default value)
 
@@ -250,6 +260,7 @@ GET /api/customer-categories
 ### Expected Data Structure
 
 **CustomerCreateRequest:**
+
 ```json
 {
   "name": "John Doe",
@@ -260,13 +271,14 @@ GET /api/customer-categories
   "city": "Anytown",
   "state": "CA",
   "zipCode": "12345",
-  "creditLimit": 5000.00,
+  "creditLimit": 5000.0,
   "creditStatus": 0,
   "paymentTerms": "Net 30"
 }
 ```
 
 **Customer Response:**
+
 ```json
 {
   "id": 1,
@@ -281,7 +293,7 @@ GET /api/customer-categories
     "state": "CA",
     "zipCode": "12345"
   },
-  "creditLimit": 5000.00,
+  "creditLimit": 5000.0,
   "creditStatus": 0,
   "paymentTerms": "Net 30",
   "isActive": true,
@@ -293,6 +305,7 @@ GET /api/customer-categories
 ## Styling and UI
 
 The components follow the application's design system:
+
 - Uses Tailwind CSS for styling
 - Consistent with other forms in the application
 - Follows the same patterns as ProductCategory components
@@ -303,6 +316,7 @@ The components follow the application's design system:
 ## State Management
 
 The component manages several state variables:
+
 - `formData`: All form field values
 - `errors`: Validation error messages
 - `mode`: 'add' or 'update'
@@ -330,6 +344,7 @@ The component manages several state variables:
 ## Future Enhancements
 
 Potential improvements:
+
 - Add customer avatar/photo upload
 - Include order history in Summary tab
 - Add notes/comments section

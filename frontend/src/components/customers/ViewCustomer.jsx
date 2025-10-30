@@ -1,12 +1,20 @@
 import React from 'react';
-import { User, Mail, Phone, MapPin, CreditCard, Calendar, DollarSign } from 'lucide-react';
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  CreditCard,
+  Calendar,
+  DollarSign,
+} from 'lucide-react';
 
 /**
  * ViewCustomer Component
- * 
+ *
  * Displays a comprehensive read-only view of customer information organized into sections.
  * Used in the Summary tab of the AddUpdateCustomer dialog.
- * 
+ *
  * @param {Object} props - Component props
  * @param {Object} props.customer - Customer data object
  * @param {boolean} props.loading - Loading state
@@ -56,9 +64,7 @@ const ViewCustomer = ({ customer, loading }) => {
   const StatusBadge = ({ isActive }) => (
     <span
       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-        isActive
-          ? 'bg-green-100 text-green-800'
-          : 'bg-red-100 text-red-800'
+        isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
       }`}
     >
       {isActive ? '● Active' : '● Inactive'}
@@ -71,9 +77,9 @@ const ViewCustomer = ({ customer, loading }) => {
       1: { label: 'On Hold', color: 'bg-yellow-100 text-yellow-800' },
       2: { label: 'Suspended', color: 'bg-red-100 text-red-800' },
     };
-    
+
     const config = statusConfig[status] || statusConfig[0];
-    
+
     return (
       <span
         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}
@@ -88,9 +94,19 @@ const ViewCustomer = ({ customer, loading }) => {
       {/* General Information */}
       <InfoSection title='General Information'>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-          <InfoRow label='ID' value={`CUST-${String(customer.id).padStart(4, '0')}`} />
+          <InfoRow
+            label='ID'
+            value={`CUST-${String(customer.id).padStart(4, '0')}`}
+          />
           <InfoRow label='Name' value={customer.name} icon={User} />
-          <InfoRow label='Customer Category' value={customer.customerCategoryName || customer.customerCategory?.name || 'Retail'} />
+          <InfoRow
+            label='Customer Category'
+            value={
+              customer.customerCategoryName ||
+              customer.customerCategory?.name ||
+              'Retail'
+            }
+          />
           <InfoRow label='Email' value={customer.email} icon={Mail} />
           <InfoRow label='Phone' value={customer.phone} icon={Phone} />
           <div className='flex items-start gap-3'>
@@ -116,9 +132,18 @@ const ViewCustomer = ({ customer, loading }) => {
               icon={MapPin}
             />
           </div>
-          <InfoRow label='City' value={customer.address?.city || customer.city} />
-          <InfoRow label='State' value={customer.address?.state || customer.state} />
-          <InfoRow label='Zip Code' value={customer.address?.zipCode || customer.zipCode} />
+          <InfoRow
+            label='City'
+            value={customer.address?.city || customer.city}
+          />
+          <InfoRow
+            label='State'
+            value={customer.address?.state || customer.state}
+          />
+          <InfoRow
+            label='Zip Code'
+            value={customer.address?.zipCode || customer.zipCode}
+          />
         </div>
       </InfoSection>
 
@@ -164,7 +189,11 @@ const ViewCustomer = ({ customer, loading }) => {
           />
           <InfoRow
             label='Created By'
-            value={customer.createdBy || customer.createdByUser?.email || 'admin@system.com'}
+            value={
+              customer.createdBy ||
+              customer.createdByUser?.email ||
+              'admin@system.com'
+            }
           />
         </div>
       </InfoSection>

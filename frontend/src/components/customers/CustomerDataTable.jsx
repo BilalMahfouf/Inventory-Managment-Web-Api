@@ -3,10 +3,11 @@ import useServerSideDataTable from '@/hooks/useServerSideDataTable';
 import { useState } from 'react';
 import { getCustomers } from '@/services/customers/customerService';
 import DataTable from '../DataTable/DataTable';
+import AddUpdateCustomer from './AddUpdateCustomer';
 
 export default function CustomerDataTable() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [currentInventoryId, setCurrentInventoryId] = useState(0);
+  const [currentCustomerId, setCurrentCustomerId] = useState(0);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const { showSuccess, showError } = useToast();
@@ -33,7 +34,7 @@ export default function CustomerDataTable() {
     setViewDialogOpen(true);
   };
   const handleEdit = row => {
-    setCurrentInventoryId(row.id);
+    setCurrentCustomerId(row.id);
     setEditDialogOpen(true);
   };
 
@@ -55,10 +56,20 @@ export default function CustomerDataTable() {
         onView={handleView}
         onEdit={handleEdit}
         onDelete={row => {
-          setCurrentInventoryId(row.id);
+          setCurrentCustomerId(row.id);
           setDeleteDialogOpen(true);
         }}
       />
+      {editDialogOpen && (
+        <AddUpdateCustomer
+          isOpen={editDialogOpen}
+          onClose={() => setEditDialogOpen(false)}
+          onSuccess={() => {
+            tableProps.refetch();
+          }}
+          customerId={currentCustomerId}
+        />
+      )}
     </>
   );
 }

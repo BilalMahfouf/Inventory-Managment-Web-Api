@@ -3,13 +3,15 @@
 ## 🚀 Quick Start (Copy & Paste)
 
 ### Option 1: Simple Button
+
 ```jsx
 import { AddCustomerButton } from '@/components/customers';
 
-<AddCustomerButton onSuccess={() => console.log('Added!')} />
+<AddCustomerButton onSuccess={() => console.log('Added!')} />;
 ```
 
 ### Option 2: Full Control
+
 ```jsx
 import { AddUpdateCustomer } from '@/components/customers';
 const [open, setOpen] = useState(false);
@@ -20,12 +22,13 @@ const [id, setId] = useState(0);
   onClose={() => setOpen(false)}
   customerId={id}
   onSuccess={() => console.log('Success!')}
-/>
+/>;
 ```
 
 ## 📋 Props Reference
 
 ### AddUpdateCustomer
+
 ```typescript
 {
   isOpen: boolean;        // Required - Show/hide dialog
@@ -36,6 +39,7 @@ const [id, setId] = useState(0);
 ```
 
 ### AddCustomerButton
+
 ```typescript
 {
   onSuccess?: () => void; // Optional - Success callback
@@ -44,27 +48,29 @@ const [id, setId] = useState(0);
 
 ## 📐 Form Fields
 
-### Required Fields (*)
-- Full name*
-- Email*
-- Phone*
-- Customer Type*
-- Street*
-- City*
-- State*
-- Zip Code*
-- Credit Limit*
+### Required Fields (\*)
+
+- Full name\*
+- Email\*
+- Phone\*
+- Customer Type\*
+- Street\*
+- City\*
+- State\*
+- Zip Code\*
+- Credit Limit\*
 
 ### Optional Fields
+
 - Payment Terms (default: "Net 30")
 - Credit Status (default: Active)
 
 ## 🎯 Modes
 
-| Mode | customerId | Tabs | Action Button |
-|------|-----------|------|---------------|
-| Add | 0 | Basic Info → Business | Save Customer |
-| Edit | >0 | Basic Info → Business → Summary | Save Changes |
+| Mode | customerId | Tabs                            | Action Button |
+| ---- | ---------- | ------------------------------- | ------------- |
+| Add  | 0          | Basic Info → Business           | Save Customer |
+| Edit | >0         | Basic Info → Business → Summary | Save Changes  |
 
 ## 🌈 Validation
 
@@ -108,12 +114,13 @@ GET    /api/customer-categories    → Load types
 ## 🎭 Integration Examples
 
 ### With DataTable
+
 ```jsx
 const [editOpen, setEditOpen] = useState(false);
 const [customerId, setCustomerId] = useState(0);
 
 // In your edit handler
-const handleEdit = (row) => {
+const handleEdit = row => {
   setCustomerId(row.id);
   setEditOpen(true);
 };
@@ -124,10 +131,11 @@ const handleEdit = (row) => {
   onClose={() => setEditOpen(false)}
   customerId={customerId}
   onSuccess={() => refreshTable()}
-/>
+/>;
 ```
 
 ### Standalone Page
+
 ```jsx
 function CustomersPage() {
   return (
@@ -141,12 +149,12 @@ function CustomersPage() {
 
 ## 🐛 Quick Troubleshooting
 
-| Issue | Fix |
-|-------|-----|
+| Issue                  | Fix                                       |
+| ---------------------- | ----------------------------------------- |
 | Categories not loading | Check `/api/customer-categories` endpoint |
-| Data not refreshing | Call `onSuccess` callback |
-| Form not opening | Check `isOpen` prop is true |
-| Fields not pre-filled | Verify `customerId` is correct |
+| Data not refreshing    | Call `onSuccess` callback                 |
+| Form not opening       | Check `isOpen` prop is true               |
+| Fields not pre-filled  | Verify `customerId` is correct            |
 
 ## 📦 Import Paths
 
@@ -160,18 +168,20 @@ import { ViewCustomer } from '@/components/customers';
 import {
   AddUpdateCustomer,
   AddCustomerButton,
-  ViewCustomer
+  ViewCustomer,
 } from '@/components/customers';
 ```
 
 ## 🎨 UI States
 
 ### Loading
+
 ```jsx
 isLoading={true}  → Shows spinner, disables buttons
 ```
 
 ### Success
+
 ```jsx
 onSuccess={() => {
   showSuccess('Customer saved!');
@@ -180,6 +190,7 @@ onSuccess={() => {
 ```
 
 ### Error
+
 ```jsx
 // Automatic error handling with toast notifications
 // Field errors shown inline
@@ -188,6 +199,7 @@ onSuccess={() => {
 ## 💾 Data Structure
 
 ### Send to API
+
 ```json
 {
   "name": "John Doe",
@@ -198,13 +210,14 @@ onSuccess={() => {
   "city": "Anytown",
   "state": "CA",
   "zipCode": "12345",
-  "creditLimit": 5000.00,
+  "creditLimit": 5000.0,
   "creditStatus": 0,
   "paymentTerms": "Net 30"
 }
 ```
 
 ## 🔢 Credit Status Values
+
 ```
 0 = Active
 1 = On Hold
@@ -244,6 +257,7 @@ onSuccess={() => {
 ## 🎯 Best Practices
 
 ✅ DO:
+
 - Always provide `onSuccess` callback
 - Refresh data after save
 - Handle loading states
@@ -251,6 +265,7 @@ onSuccess={() => {
 - Test with real API
 
 ❌ DON'T:
+
 - Forget to set `customerId={0}` for add mode
 - Skip validation on backend
 - Mount multiple dialogs simultaneously
@@ -259,6 +274,7 @@ onSuccess={() => {
 ## 📞 Support
 
 For detailed documentation, see:
+
 - `CUSTOMER_COMPONENTS_README.md`
 - `CUSTOMER_FORM_VISUAL_GUIDE.md`
 - `INTEGRATION_EXAMPLE.md`
