@@ -7,8 +7,8 @@ using Application.FluentValidations.Products;
 using Application.FluentValidations.User;
 using Application.FluentValidations.User.Configuration;
 using Application.Helpers.Auth;
-using Application.Services;
 using Application.Services.Auth;
+using Application.Services.Customers;
 using Application.Services.Images;
 using Application.Services.Inventories;
 using Application.Services.Locations;
@@ -55,6 +55,7 @@ namespace Application
             services.AddScoped<StockMovementTypeService>();
             services.AddScoped<StockTransferService>();
             services.AddScoped<CustomerService>();
+            services.AddScoped<CustomerCategoryService>();
 
 
             return services;

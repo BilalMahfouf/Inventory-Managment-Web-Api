@@ -91,4 +91,6 @@ public partial class Customer : IBaseEntity, ISoftDeletable
             creditLimit,
             paymentTerms);
     }
+    public void Update(
+        string name)
 }

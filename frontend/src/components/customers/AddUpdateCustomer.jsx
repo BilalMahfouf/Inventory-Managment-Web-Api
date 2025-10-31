@@ -10,6 +10,7 @@ import {
   getCustomerCategories,
 } from '@/services/customers/customerService';
 import { useToast } from '@/context/ToastContext';
+import { getCustomerCategoriesNames } from '@/services/customers/customerCategoryService';
 
 /**
  * AddUpdateCustomer Component
@@ -148,50 +149,45 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
       paymentTerms: formData.paymentTerms.trim(),
     };
 
-    try {
-      let response;
-      if (mode === 'add') {
-        response = await createCustomer(customerPayload);
-        if (response.success) {
-          showSuccess(
-            'Customer Created',
-            `${formData.name} has been added successfully.`
-          );
-          setId(response.data.id);
-          setMode('update');
-          if (onSuccess) {
-            onSuccess();
-          }
-          onClose();
-        } else {
-          showError(
-            'Customer Creation Failed',
-            response.message || 'Could not create customer.'
-          );
+    let response;
+    if (mode === 'add') {
+      response = await createCustomer(customerPayload);
+      if (response.success) {
+        showSuccess(
+          'Customer Created',
+          `${formData.name} has been added successfully.`
+        );
+        setId(response.data.id);
+        setMode('update');
+        if (onSuccess) {
+          onSuccess();
         }
-      } else if (mode === 'update') {
-        response = await updateCustomer(id, customerPayload);
-        if (response.success) {
-          showSuccess(
-            'Customer Updated',
-            `${formData.name} has been updated successfully.`
-          );
-          if (onSuccess) {
-            onSuccess();
-          }
-          onClose();
-        } else {
-          showError(
-            'Customer Update Failed',
-            response.message || 'Could not update customer.'
-          );
-        }
+        onClose();
+      } else {
+        showError(
+          'Customer Creation Failed',
+          response.message || 'Could not create customer.'
+        );
       }
-    } catch (error) {
-      showError('Error', error.message || 'An unexpected error occurred.');
-    } finally {
-      setIsLoading(false);
+    } else if (mode === 'update') {
+      response = await updateCustomer(id, customerPayload);
+      if (response.success) {
+        showSuccess(
+          'Customer Updated',
+          `${formData.name} has been updated successfully.`
+        );
+        if (onSuccess) {
+          onSuccess();
+        }
+        onClose();
+      } else {
+        showError(
+          'Customer Update Failed',
+          response.message || 'Could not update customer.'
+        );
+      }
     }
+    setIsLoading(false);
   };
 
   const handleSubmit = e => {
@@ -251,8 +247,9 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await getCustomerCategories();
-        if (response.success && response.data) {
+        const response = await getCustomerCategoriesNames();
+        if (response.success) {
+          console.log('customer categories: ', response.data);
           setCustomerCategories(response.data);
         }
       } catch (error) {
@@ -270,35 +267,29 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
     const fetchCustomer = async () => {
       if (!isOpen || id <= 0) return;
 
-      try {
-        setIsFetchingData(true);
-        const response = await getCustomerById(id);
-        if (response.success && response.data) {
-          const data = response.data;
-          setFormData({
-            name: data.name || '',
-            email: data.email || '',
-            phone: data.phone || '',
-            customerCategoryId: data.customerCategoryId || '',
-            street: data.address?.street || data.street || '',
-            city: data.address?.city || data.city || '',
-            state: data.address?.state || data.state || '',
-            zipCode: data.address?.zipCode || data.zipCode || '',
-            creditLimit: data.creditLimit?.toString() || '5000.00',
-            creditStatus: data.creditStatus || 0,
-            paymentTerms: data.paymentTerms || 'Net 30',
-          });
-          setCustomerData(data);
-          setMode('update');
-        } else {
-          showError('Failed to Load', 'Could not load customer data.');
-        }
-      } catch (error) {
-        console.error('Error fetching customer:', error);
-        showError('Error', 'An error occurred while loading customer data.');
-      } finally {
-        setIsFetchingData(false);
+      setIsFetchingData(true);
+      const response = await getCustomerById(id);
+      if (response.success && response.data) {
+        const data = response.data;
+        setFormData({
+          name: data.name || '',
+          email: data.email || '',
+          phone: data.phone || '',
+          customerCategoryId: data.customerCategoryId || '',
+          street: data.address?.street || data.street || '',
+          city: data.address?.city || data.city || '',
+          state: data.address?.state || data.state || '',
+          zipCode: data.address?.zipCode || data.zipCode || '',
+          creditLimit: data.creditLimit?.toString() || '5000.00',
+          creditStatus: data.creditStatus || 0,
+          paymentTerms: data.paymentTerms || 'Net 30',
+        });
+        setCustomerData(data);
+        setMode('update');
+      } else {
+        showError('Failed to Load', 'Could not load customer data.');
       }
+      setIsFetchingData(false);
     };
 
     fetchCustomer();
@@ -327,7 +318,7 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
     }
   }, [customerId]);
 
-  if (!isOpen) return null;
+  if (!isOpen) return;
 
   return (
     <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>

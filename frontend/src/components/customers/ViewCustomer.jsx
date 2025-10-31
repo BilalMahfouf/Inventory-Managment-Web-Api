@@ -189,11 +189,7 @@ const ViewCustomer = ({ customer, loading }) => {
           />
           <InfoRow
             label='Created By'
-            value={
-              customer.createdBy ||
-              customer.createdByUser?.email ||
-              'admin@system.com'
-            }
+            value={customer.createdByUserName || 'admin@system.com'}
           />
         </div>
       </InfoSection>

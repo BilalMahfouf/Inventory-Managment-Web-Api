@@ -1,13 +1,13 @@
 ﻿using Application.Abstractions.Queries;
 using Application.DTOs.Customers;
 using Application.PagedLists;
-using Application.Services;
+using Application.Services.Customers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using Presentation.Extensions;
 
-namespace Presentation.Controllers;
+namespace Presentation.Controllers.Customers;
 
 [ApiController]
 [Route("api/customers")]

@@ -128,28 +128,43 @@ internal class CustomerQueries : ICustomerQueries
 
     public async Task<Result<CustomerReadResponse>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        if(id <=0)
+        if (id <= 0)
         {
-            return Result<CustomerReadResponse>.InvalidId()   ;
+            return Result<CustomerReadResponse>.InvalidId();
         }
         try
         {
 
-        var customer = await _context.Customers
-            .Select(e => new CustomerReadResponse
+            var customer = await _context.Customers
+                .Select(e => new CustomerReadResponse
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Email = e.Email,
+                    Phone = e.Phone,
+                    CustomerCategoryId = e.CustomerCategoryId,
+                    CustomerCategoryName = e.CustomerCategory == null ? null : e.CustomerCategory.Name,
+                    IsActive = e.IsActive,
+
+                    Street = e.Address.Street,
+                    City = e.Address.City,
+                    State = e.Address.State,
+                    ZipCode = e.Address.ZipCode,
+
+                    CreditLimit = e.CreditLimit,
+                    CreditStatus = e.CreditStatus.ToString(),
+                    PaymentTerm = e.PaymentTerms!,
+                    CreatedAt = e.CreatedAt,
+                    CreatedByUserId = e.CreatedByUserId,
+                    CreatedByUserName = e.CreatedByUser.UserName
+                }).FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+            if (customer is null)
             {
-                Id = e.Id,
-                Name = e.Name,
-
-
-            }).FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
-        if(customer is null )
-        {
-            return Result<CustomerReadResponse>.NotFound($"Customer with Id {id}");
+                return Result<CustomerReadResponse>.NotFound($"Customer with Id {id}");
+            }
+            return Result<CustomerReadResponse>.Success(customer);
         }
-        return Result<CustomerReadResponse>.Success(customer);
-        }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return Result<CustomerReadResponse>.Exception(
                 nameof(GetByIdAsync),
