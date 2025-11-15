@@ -26,11 +26,10 @@ export default function CustomerDataTable() {
       sortOrder: sortOrder,
       search: search,
     });
-
     return response.data;
   };
   const handleView = row => {
-    setCurrentInventoryId(row.id);
+    setCurrentCustomerId(row.id);
     setViewDialogOpen(true);
   };
   const handleEdit = row => {

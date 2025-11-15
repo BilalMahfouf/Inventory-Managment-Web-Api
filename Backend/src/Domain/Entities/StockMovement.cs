@@ -2,6 +2,7 @@
 using Domain.Abstractions;
 using Domain.Entities.Products;
 using Domain.Enums;
+using Domain.Inventories;
 using System;
 using System.Collections.Generic;
 

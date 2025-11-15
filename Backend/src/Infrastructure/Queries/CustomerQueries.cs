@@ -97,10 +97,10 @@ internal class CustomerQueries : ICustomerQueries
                 query = query.OrderBy(orderSelector);
             }
 
-            query = query.Skip((request.Page - 1) * request.PageSize)
+            query = query.Skip(9)
                 .Take(request.PageSize);
 
-            var item = await query.ToListAsync(cancellationToken);
+            var item = await query.AsNoTracking().ToListAsync(cancellationToken);
             if (item is null || !item.Any())
             {
                 return Result<PagedList<CustomerTableReadResponse>>

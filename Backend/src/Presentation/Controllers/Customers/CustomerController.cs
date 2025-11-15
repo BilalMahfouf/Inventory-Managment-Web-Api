@@ -71,4 +71,14 @@ public class CustomerController : ControllerBase
             id = response.Value is null ? 0 : response.Value.Id
         });
     }
+
+    //[HttpPut]
+
+    //public async Task<ActionResult<CustomerReadResponse>> UpdateCustomerAsync(
+    //    [FromBody] CustomerUpdateRequest request,
+    //    CancellationToken cancellationToken = default)
+    //{
+    //    var response = await _service.UpdateAsync(request, cancellationToken);
+    //    return response.HandleResult();
+    //}
 }

@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace Domain.Entities;
 
-public partial class Customer : IBaseEntity, ISoftDeletable
+public  class Customer : IBaseEntity, ISoftDeletable
 {
     public int Id { get; private set; }
 
@@ -91,6 +91,4 @@ public partial class Customer : IBaseEntity, ISoftDeletable
             creditLimit,
             paymentTerms);
     }
-    //public void Update(
-    //    string name)
 }

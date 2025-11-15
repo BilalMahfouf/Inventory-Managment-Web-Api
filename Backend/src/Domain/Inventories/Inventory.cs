@@ -1,6 +1,8 @@
 ﻿#nullable enable
 using Application.Results;
 using Domain.Abstractions;
+using Domain.Entities;
+using Domain.Entities.Common;
 using Domain.Entities.Products;
 using Domain.Enums;
 using Domain.Exceptions;
@@ -8,9 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace Domain.Entities;
+namespace Domain.Inventories;
 
-public partial class Inventory : IBaseEntity, IModifiableEntity, ISoftDeletable
+public class Inventory : AggregateRoot,
+    IBaseEntity, IModifiableEntity, ISoftDeletable
 {
     public int Id { get; set; }
 
@@ -112,7 +115,6 @@ public partial class Inventory : IBaseEntity, IModifiableEntity, ISoftDeletable
     }
 
 
-    // to do add StockChanged event here
     public void UpdateStock(decimal newQuantity)
     {
         if (newQuantity < 0)
@@ -145,11 +147,17 @@ public partial class Inventory : IBaseEntity, IModifiableEntity, ISoftDeletable
             AddStockMovement(stockMovement);
         }
         QuantityOnHand = newQuantity;
+        if (QuantityOnHand < ReorderLevel)
+        {
+            RaiseDomainEvent(new LowStockDomainEvent(
+                Guid.NewGuid(),
+                ProductId,
+                LocationId,
+                QuantityOnHand));
+        }
+
 
     }
-
-
-
 
     /// <summary>
     /// This method updates the stock quantity and creates a stock movement record.
@@ -172,6 +180,7 @@ public partial class Inventory : IBaseEntity, IModifiableEntity, ISoftDeletable
             quantity < 0 ? QuantityOnHand - quantity : QuantityOnHand + quantity);
 
         QuantityOnHand += quantity;
+
         var stockMovement = StockMovement.Create(
             Product,
             this,
@@ -179,7 +188,18 @@ public partial class Inventory : IBaseEntity, IModifiableEntity, ISoftDeletable
             quantity < 0 ? -quantity : quantity,
             "Stock update"
             );
+
         AddStockMovement(stockMovement);
+        if (QuantityOnHand < ReorderLevel)
+        {
+            RaiseDomainEvent(new LowStockDomainEvent(
+                Guid.NewGuid(),
+                ProductId,
+                LocationId,
+                QuantityOnHand));
+        }
+
+
     }
 
 
@@ -218,6 +238,6 @@ public partial class Inventory : IBaseEntity, IModifiableEntity, ISoftDeletable
         {
             throw new DomainException("Cannot delete inventory with stock on hand");
         }
-        IsDeleted= true;
+        IsDeleted = true;
     }
 }
