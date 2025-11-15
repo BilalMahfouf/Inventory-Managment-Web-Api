@@ -2,6 +2,8 @@
 using Domain.Entities;
 using Domain.Entities.Products;
 using Domain.Inventories;
+using Infrastructure.Infrastructure.Persistence.Configurations;
+
 
 
 //using Infrastructure.Infrastructure.Persistence.Configurations;
@@ -106,6 +108,7 @@ public partial class InventoryManagmentDBContext : DbContext
         modelBuilder.ApplyConfiguration(new Configurations.UserConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.UserRoleConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.UserSessionConfiguration());
+        modelBuilder.ApplyConfiguration(new OutboxMessagesConfiguration());
 
         OnModelCreatingPartial(modelBuilder);
     }

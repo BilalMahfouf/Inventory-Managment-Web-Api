@@ -1,7 +1,8 @@
-﻿using System;
+﻿using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Domain.Common.Events;
 
-public abstract record DomainEvent(Guid Id) : IDomainEvent;
+public abstract record DomainEvent(Guid Id) : INotification, IDomainEvent;

@@ -12,6 +12,7 @@ using Application.Common.Abstractions;
 using Application.Services.Shared;
 using Infrastructure.Authentication;
 using Infrastructure.Common;
+using Infrastructure.Interceptors;
 using Infrastructure.Persistence;
 using Infrastructure.Queries;
 using Infrastructure.Repositories.Base;
@@ -52,9 +53,11 @@ namespace Infrastructure
                 options.LifeTime = byte.Parse(Environment.GetEnvironmentVariable("JWT_ACCESS_TOKEN_LIFETIME_MINUTES") ?? "15");
             });
 
+            services.AddSingleton<InsertOutboxMessagesInterceptors>();
             var connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
-            services.AddDbContext<InventoryManagmentDBContext>(options =>
-            options.UseSqlServer(connectionString));
+            services.AddDbContext<InventoryManagmentDBContext>((sp, options) => options
+            .UseSqlServer(connectionString)
+            .AddInterceptors(sp.GetRequiredService<InsertOutboxMessagesInterceptors>()));
 
             services.AddAuthentication(options =>
             {
