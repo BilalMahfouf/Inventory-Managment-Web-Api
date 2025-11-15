@@ -7,10 +7,11 @@ using Application.FluentValidations.Products;
 using Application.FluentValidations.User;
 using Application.FluentValidations.User.Configuration;
 using Application.Helpers.Auth;
+using Application.Inventories;
+using Application.Inventories.DomainEventsHandlers;
 using Application.Services.Auth;
 using Application.Services.Customers;
 using Application.Services.Images;
-using Application.Services.Inventories;
 using Application.Services.Locations;
 using Application.Services.Products;
 using Application.Services.Shared;
@@ -56,6 +57,11 @@ namespace Application
             services.AddScoped<StockTransferService>();
             services.AddScoped<CustomerService>();
             services.AddScoped<CustomerCategoryService>();
+
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(typeof(LowStockDomainEventHandler).Assembly);
+            });
 
 
             return services;

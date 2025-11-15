@@ -25,6 +25,10 @@ public class ProcessOutboxMessagesJob : IJob
         _publisher = publisher;
         _dbContext = context;
     }
+    private static readonly JsonSerializerSettings _serializerSettings = new()
+    {
+        TypeNameHandling = TypeNameHandling.All
+    };
 
     public async Task Execute(IJobExecutionContext context)
     {
@@ -32,10 +36,16 @@ public class ProcessOutboxMessagesJob : IJob
             .Where(e => e.ProcessedOnUtc == null)
             .Take(20)
             .ToListAsync(context.CancellationToken);
+        if(outboxMessages is null || !outboxMessages.Any())
+        {
+            return;
+        }
+
         foreach (var outboxMessage in outboxMessages)
         {
+            var domainEventType = Type.GetType(outboxMessage.Name);
             var domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(
-                outboxMessage.Content);
+                outboxMessage.Content, _serializerSettings);
             if (domainEvent is null)
             {
                 continue;
@@ -43,6 +53,7 @@ public class ProcessOutboxMessagesJob : IJob
             await _publisher.Publish(domainEvent, context.CancellationToken);
             outboxMessage.ProcessedOnUtc = DateTime.UtcNow;
         }
+        await _dbContext.SaveChangesAsync(context.CancellationToken);
 
     }
 }

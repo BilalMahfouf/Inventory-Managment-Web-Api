@@ -122,10 +122,12 @@ namespace Infrastructure
                 .AddTrigger(trigger =>
                 trigger.ForJob(jobKey)
                 .WithSimpleSchedule(schedule =>
-                schedule.WithIntervalInSeconds(30)
+                schedule.WithIntervalInSeconds(10)
                 .RepeatForever()));
             });
-            services.AddQuartzHostedService();
+            services.AddQuartzHostedService(opt =>
+            opt.WaitForJobsToComplete = true
+            );
 
             return services;
 

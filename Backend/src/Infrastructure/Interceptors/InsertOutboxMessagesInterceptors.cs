@@ -26,6 +26,11 @@ public class InsertOutboxMessagesInterceptors : SaveChangesInterceptor
 
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
+    private static readonly JsonSerializerSettings _serializerSettings = new()
+    {
+        TypeNameHandling = TypeNameHandling.All
+    };
+
     private void InsertOutboxMessage(DbContext context)
     {
         var outboxMessages = context.ChangeTracker
@@ -42,11 +47,8 @@ public class InsertOutboxMessagesInterceptors : SaveChangesInterceptor
                            Id = Guid.NewGuid(),
                            Name = @event.GetType().Name,
                            Content = JsonConvert.SerializeObject(@event,
-                               new JsonSerializerSettings
-                               {
-                                   TypeNameHandling = TypeNameHandling.Auto
-                               }),
-                           CreatedOnUtc = DateTime.UtcNow
+                           _serializerSettings),
+                          CreatedOnUtc = DateTime.UtcNow
                        }).ToList();
         context.Set<OutboxMessages>().AddRange(outboxMessages);
     }

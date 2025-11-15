@@ -1,9 +1,9 @@
 ﻿using Application.Abstractions.Queries;
 using Application.DTOs.Inventories;
 using Application.DTOs.Inventories.Request;
+using Application.Inventories;
 using Application.PagedLists;
 using Application.Results;
-using Application.Services.Inventories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Extensions;

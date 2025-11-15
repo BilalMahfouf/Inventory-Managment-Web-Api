@@ -16,7 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Services.Inventories
+namespace Application.Inventories
 {
     public class InventoryService : DeleteService<Inventory>
     {
