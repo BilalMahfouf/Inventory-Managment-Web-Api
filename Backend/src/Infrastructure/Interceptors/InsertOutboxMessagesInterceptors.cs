@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using Domain.Common.Events;
 
 namespace Infrastructure.Interceptors;
 
@@ -32,21 +33,21 @@ public class InsertOutboxMessagesInterceptors : SaveChangesInterceptor
                        .Select(entry => entry.Entity)
                        .SelectMany(e =>
                        {
-                           var domainEvents = e.DomainEvents;
+                           var domainEvents = e.DomainEvents.ToList();
                            e.ClearDomainEvents();
                            return domainEvents;
                        })
-                       .Select(domainEvents => new OutboxMessages
+                       .Select(@event => new OutboxMessages
                        {
                            Id = Guid.NewGuid(),
-                           Name = domainEvents.GetType().Name,
-                           Content = JsonConvert.SerializeObject(domainEvents,
+                           Name = @event.GetType().Name,
+                           Content = JsonConvert.SerializeObject(@event,
                                new JsonSerializerSettings
                                {
-                                   TypeNameHandling = TypeNameHandling.All
+                                   TypeNameHandling = TypeNameHandling.Auto
                                }),
                            CreatedOnUtc = DateTime.UtcNow
-                       });
+                       }).ToList();
         context.Set<OutboxMessages>().AddRange(outboxMessages);
     }
 }
