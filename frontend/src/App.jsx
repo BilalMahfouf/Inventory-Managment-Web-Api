@@ -3,11 +3,11 @@ import { Login } from '@/pages/Login';
 import NotFoundPage from '@/pages/NotFoundPage';
 import DashboardPage from '@/pages/DashboardPage';
 import ProductsPage from '@/pages/ProductsPage';
-import InventoryPage from '@/pages/InventoryPage';
 import SalesPage from '@/pages/SalesPage';
 import CustomersPage from '@/pages/CustomersPage';
 import SettingsPage from '@/pages/SettingsPage';
 import MainLayout from '@/layout/MainLayout';
+import InventoryPage from './pages/InventoryPage';
 import { ToastProvider } from '@/context/ToastContext';
 
 const router = createBrowserRouter([
