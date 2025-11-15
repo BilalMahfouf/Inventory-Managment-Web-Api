@@ -11,6 +11,7 @@ using Application.Abstractions.UnitOfWork;
 using Application.Common.Abstractions;
 using Application.Services.Shared;
 using Infrastructure.Authentication;
+using Infrastructure.BackgroundJobs;
 using Infrastructure.Common;
 using Infrastructure.Interceptors;
 using Infrastructure.Persistence;
@@ -30,6 +31,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,6 +108,25 @@ namespace Infrastructure
                 options.Password = Environment.GetEnvironmentVariable("EMAIL_CONFIGURATIONS_PASSWORD") ?? throw new InvalidOperationException("EMAIL_CONFIGURATIONS_PASSWORD environment variable is not set");
                 options.Email = Environment.GetEnvironmentVariable("EMAIL_CONFIGURATIONS_EMAIL") ?? throw new InvalidOperationException("EMAIL_CONFIGURATIONS_EMAIL environment variable is not set");
             });
+
+
+            // Quartz Background jobs Configuration
+            services.AddQuartz(configure =>
+            {
+                var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
+                configure.
+                AddJob<ProcessOutboxMessagesJob>((sp, opts) =>
+                {
+                    opts.WithIdentity(jobKey);
+                })
+                .AddTrigger(trigger =>
+                trigger.ForJob(jobKey)
+                .WithSimpleSchedule(schedule =>
+                schedule.WithIntervalInSeconds(30)
+                .RepeatForever()));
+            });
+            services.AddQuartzHostedService();
+
             return services;
 
         }
