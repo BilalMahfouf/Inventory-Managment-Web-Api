@@ -64,7 +64,7 @@ export default function CustomerDataTable() {
           isOpen={editDialogOpen}
           onClose={() => setEditDialogOpen(false)}
           onSuccess={() => {
-            tableProps.refetch();
+            tableProps.refresh();
           }}
           customerId={currentCustomerId}
         />

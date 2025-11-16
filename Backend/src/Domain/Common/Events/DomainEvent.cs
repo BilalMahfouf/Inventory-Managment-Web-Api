@@ -5,4 +5,9 @@ using System.Text;
 
 namespace Domain.Common.Events;
 
-public abstract record DomainEvent(Guid Id) : INotification, IDomainEvent;
+public abstract record DomainEvent() : INotification, IDomainEvent
+{
+    public Guid Id { get; } = Guid.NewGuid();
+
+    
+}

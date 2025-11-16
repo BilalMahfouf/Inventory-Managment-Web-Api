@@ -150,7 +150,6 @@ public class Inventory : AggregateRoot,
         if (QuantityOnHand < ReorderLevel)
         {
             RaiseDomainEvent(new LowStockDomainEvent(
-                Guid.NewGuid(),
                 ProductId,
                 LocationId,
                 QuantityOnHand));
@@ -193,7 +192,6 @@ public class Inventory : AggregateRoot,
         if (QuantityOnHand < ReorderLevel)
         {
             RaiseDomainEvent(new LowStockDomainEvent(
-                Guid.NewGuid(),
                 ProductId,
                 LocationId,
                 QuantityOnHand));

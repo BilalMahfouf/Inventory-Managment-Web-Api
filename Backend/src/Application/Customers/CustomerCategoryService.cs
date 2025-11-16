@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Services.Customers;
+namespace Application.Customers;
 
 public class CustomerCategoryService
 {
@@ -28,8 +28,8 @@ public class CustomerCategoryService
             var result = categories
                 .Select(c => new
                 {
-                    Id = c.Id,
-                    Name = c.Name
+                    c.Id,
+                    c.Name
                 })
                 .ToList()
                 .AsReadOnly();

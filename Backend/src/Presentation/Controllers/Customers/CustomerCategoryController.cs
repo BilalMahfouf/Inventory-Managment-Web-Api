@@ -1,4 +1,4 @@
-﻿using Application.Services.Customers;
+﻿using Application.Customers;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Extensions;
 

@@ -102,7 +102,7 @@ const useServerSideDataTable = (
     onFilterChange: handleFilterChange,
 
     // Actions
-    refresh,
+    refresh: refresh,
   };
 };
 export default useServerSideDataTable;

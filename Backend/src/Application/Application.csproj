@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Folder Include="Abstractions\Locations\" />
+    <Folder Include="Customers\FluentValidations\" />
   </ItemGroup>
 
 </Project>

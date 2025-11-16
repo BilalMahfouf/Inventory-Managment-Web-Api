@@ -44,37 +44,48 @@ internal class CustomerQueries : ICustomerQueries
                     EF.Functions.Like(p.Email, $"%{request.search}%"));
             }
 
-            var query = (
-                     from c in customerQuery
-                     join cc in _context.CustomerCategories
-                     on c.CustomerCategoryId equals cc.Id into categoryGroup
-                     from cc in categoryGroup.DefaultIfEmpty() // LEFT JOIN
-                     join so in _context.SalesOrders
-                      on c.Id equals so.CustomerId
-                     group new { c, cc, so } by new
-                     {
-                         c.Id,
-                         c.Name,
-                         c.Email,
-                         c.Phone,
-                         c.CustomerCategoryId,
-                         CustomerCategoryName = cc.Name,
-                         c.IsActive,
-                         c.CreatedAt
-                     } into g
-                     select new CustomerTableReadResponse
-                     {
-                         Id = g.Key.Id,
-                         Name = g.Key.Name,
-                         Email = g.Key.Email,
-                         Phone = g.Key.Phone,
-                         CustomerCategoryId = g.Key.CustomerCategoryId,
-                         CustomerCategoryName = g.Key.CustomerCategoryName,
-                         TotalOrders = g.Count(),
-                         TotalSpent = g.Count(e => e.so.SalesStatus == 2),
-                         IsActive = g.Key.IsActive,
-                         CreatedAt = g.Key.CreatedAt
-                     });
+            var query =
+    from c in _context.Customers
+    join cc in _context.CustomerCategories
+        on c.CustomerCategoryId equals cc.Id into catJoin
+    from cc in catJoin.DefaultIfEmpty()   // LEFT JOIN
+
+    join so in _context.SalesOrders
+        on c.Id equals so.CustomerId into soJoin
+    from so in soJoin.DefaultIfEmpty()    // LEFT JOIN
+
+    group new { c, cc, so } by new
+    {
+        c.Id,
+        c.Name,
+        c.Email,
+        c.Phone,
+        c.CustomerCategoryId,
+        CustomerCategoryName = cc.Name,
+        c.IsActive,
+        c.CreatedAt
+    }
+    into g
+    select new CustomerTableReadResponse
+    {
+        Id = g.Key.Id,
+        Name = g.Key.Name,
+        Email = g.Key.Email,
+        Phone = g.Key.Phone,
+        CustomerCategoryId = g.Key.CustomerCategoryId,
+        CustomerCategoryName = g.Key.CustomerCategoryName,
+
+        TotalOrders = g.Count(x => x.so != null),
+
+        TotalSpent = g.Sum(x =>
+            x.so != null && x.so.SalesStatus == 2
+                ? x.so.TotalAmount
+                : 0
+        ),
+
+        IsActive = g.Key.IsActive,
+        CreatedAt = g.Key.CreatedAt
+    };
 
 
             Expression<Func<CustomerTableReadResponse, object>> orderSelector =
@@ -97,7 +108,7 @@ internal class CustomerQueries : ICustomerQueries
                 query = query.OrderBy(orderSelector);
             }
 
-            query = query.Skip(9)
+            query = query.Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize);
 
             var item = await query.AsNoTracking().ToListAsync(cancellationToken);

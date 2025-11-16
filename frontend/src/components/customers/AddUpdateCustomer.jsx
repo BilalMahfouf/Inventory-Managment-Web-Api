@@ -174,7 +174,7 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
       if (response.success) {
         showSuccess(
           'Customer Updated',
-          `${formData.name} has been updated successfully.`
+          `Customer with ID ${customerId} has been updated successfully.`
         );
         if (onSuccess) {
           onSuccess();

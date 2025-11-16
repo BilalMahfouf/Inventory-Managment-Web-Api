@@ -1,7 +1,8 @@
 ﻿using Application.Abstractions.Queries;
+using Application.Customers;
+using Application.Customers.Dtos;
 using Application.DTOs.Customers;
 using Application.PagedLists;
-using Application.Services.Customers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
@@ -72,13 +73,14 @@ public class CustomerController : ControllerBase
         });
     }
 
-    //[HttpPut]
+    [HttpPut("{id:int}")]
 
-    //public async Task<ActionResult<CustomerReadResponse>> UpdateCustomerAsync(
-    //    [FromBody] CustomerUpdateRequest request,
-    //    CancellationToken cancellationToken = default)
-    //{
-    //    var response = await _service.UpdateAsync(request, cancellationToken);
-    //    return response.HandleResult();
-    //}
+    public async Task<ActionResult<int>> UpdateCustomerAsync(
+        int id,
+        [FromBody] UpdateCustomerRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await _service.UpdateAsync(id,request, cancellationToken);
+        return response.HandleResult();
+    }
 }

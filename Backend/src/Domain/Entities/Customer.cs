@@ -91,4 +91,33 @@ public  class Customer : IBaseEntity, ISoftDeletable
             creditLimit,
             paymentTerms);
     }
+
+    public void Update(
+        string name,
+        int? customerCategoryId,
+        string email,
+        string phone,
+        Address address,
+        decimal creditLimit,
+        string? paymentTerms)
+    {
+        if (creditLimit < 0)
+        {
+            throw new DomainException("Credit limit can't be negative ");
+        }
+        Name = name;
+        CustomerCategoryId = customerCategoryId;
+        Phone = phone;
+        Address = address;
+        CreditLimit = creditLimit;
+        PaymentTerms = paymentTerms;
+        UpdateEmail(email);
+    }
+    public void UpdateEmail(string email)
+    {
+        if(Email != email)
+        {
+            // add email validation here if needed
+        }
+    }
 }

@@ -7,8 +7,7 @@ namespace Domain.Inventories;
 
 
 public sealed record LowStockDomainEvent(
-    Guid id,
     int productId,
     int locationId,
     decimal currentStock)
-    : DomainEvent(id);
+    : DomainEvent();

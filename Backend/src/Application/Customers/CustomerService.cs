@@ -2,6 +2,7 @@
 using Application.Abstractions.Repositories.Base;
 using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
+using Application.Customers.Dtos;
 using Application.DTOs.Customers;
 using Application.Results;
 using Application.Services.Shared;
@@ -16,7 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Services.Customers;
+namespace Application.Customers;
 
 public class CustomerService : DeleteService<Customer>
 {
@@ -83,6 +84,53 @@ public class CustomerService : DeleteService<Customer>
                 nameof(AddAsync),
                 ex);
 
+        }
+    }
+    public async Task<Result<int>> UpdateAsync(
+        int id,
+        UpdateCustomerRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if(id <= 0)
+        {
+            return Result<int>.InvalidId();
+        }
+        try
+        {
+            var customer = await _uow.Customers
+                .FindAsync(e => e.Id == id && !e.IsDeleted, cancellationToken);
+            if (customer is null)
+            {
+                return Result<int>.NotFound(nameof(customer)); 
+            }
+            var address = Address.Create(
+                request.Street,
+                request.City,
+                request.State,
+                request.ZipCode);
+            customer.Update(
+                request.Name,
+                request.CustomerCategoryId,
+                request.Email,
+                request.Phone,
+                address,
+                request.CreditLimit,
+                request.PaymentTerms);
+            _uow.Customers.Update(customer);
+            await _uow.SaveChangesAsync(cancellationToken);
+            return Result<int>.Success(customer.Id);
+        }
+        catch(DomainException ex)
+        {
+            return Result<int>.Failure(
+                ex.Message,
+                ErrorType.Conflict);
+        }
+        catch (Exception ex)
+        {
+            return Result<int>.Exception(
+                nameof(UpdateAsync),
+                ex);
         }
     }
 }
