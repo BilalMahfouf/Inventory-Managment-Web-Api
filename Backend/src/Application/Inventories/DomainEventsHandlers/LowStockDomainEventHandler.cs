@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Application.Abstractions;
 using Domain.Inventories;
 using MediatR;
 
@@ -10,12 +11,21 @@ public sealed class LowStockDomainEventHandler
     : INotificationHandler<LowStockDomainEvent>
 
 {
-    // implemnt real time notification here with signalR
-    public Task Handle(
+    private readonly INotificationService _notificationService;
+
+    public LowStockDomainEventHandler(INotificationService notificationService)
+    {
+        _notificationService = notificationService;
+    }
+
+    public async Task Handle(
         LowStockDomainEvent notification,
         CancellationToken cancellationToken)
     {
-        Console.WriteLine("the background job is working and the event is published ");
-        return Task.CompletedTask;
+        await _notificationService.NotifyLowStockAsync(
+            notification.productId,
+            notification.locationId,
+            notification.currentStock);
+
     }
 }

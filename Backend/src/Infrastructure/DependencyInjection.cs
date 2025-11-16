@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Auth;
+﻿using Application.Abstractions;
+using Application.Abstractions.Auth;
 using Application.Abstractions.Queries;
 using Application.Abstractions.Repositories;
 using Application.Abstractions.Repositories.Base;
@@ -13,6 +14,7 @@ using Application.Services.Shared;
 using Infrastructure.Authentication;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.Common;
+using Infrastructure.Hubs;
 using Infrastructure.Interceptors;
 using Infrastructure.Persistence;
 using Infrastructure.Queries;
@@ -23,9 +25,12 @@ using Infrastructure.Repositories.User;
 using Infrastructure.Services;
 using Infrastructure.Services.Email;
 using Infrastructure.Services.ImageStorage;
+using Infrastructure.Services.Notifications;
 using Infrastructure.UOW;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -129,8 +134,20 @@ namespace Infrastructure
             opt.WaitForJobsToComplete = true
             );
 
+            services.AddSignalR();
+            services.AddScoped<INotificationService, NotificationService>();
+
             return services;
 
+        }
+        public static IEndpointRouteBuilder MapSignalRHubs(this IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapHub<NotificationHub>("/hubs/notification");
+
+            // Add more hubs here if you have multiple:
+            // endpoints.MapHub<ChatHub>("/hubs/chat");
+
+            return endpoints;
         }
     }
 }
