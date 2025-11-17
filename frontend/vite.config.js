@@ -7,6 +7,11 @@ export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   server: {
     proxy: {
+      '/hubs': {
+        target: 'http://localhost:7230', // ASP.NET signalR hub
+        ws: true,
+        changeOrigin: true,
+      },
       '/api': {
         target: 'https://localhost:7230', //  ASP.NET backend
         changeOrigin: true,

@@ -23,7 +23,7 @@ internal class NotificationService : INotificationService
         CancellationToken cancellationToken = default)
     {
         await _hubContext.Clients.All.SendAsync("low-stock-alert",
-           new
+           new 
            {
                ProductId = productId,
                LocationId = locationId,
