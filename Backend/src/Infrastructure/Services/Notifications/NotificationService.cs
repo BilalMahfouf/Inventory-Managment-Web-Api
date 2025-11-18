@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions;
+using Application.DTOs.Notifications;
 using Infrastructure.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using System;
@@ -17,17 +18,16 @@ internal class NotificationService : INotificationService
     }
 
     public async Task NotifyLowStockAsync(
-        int productId,
-        int locationId, 
-        decimal currentStock,
+        NotificationResponse response,
         CancellationToken cancellationToken = default)
     {
+        await _hubContext.Clients.All.SendAsync("test", new
+        {
+            Message = "This is a test message"
+        }, cancellationToken);
+
         await _hubContext.Clients.All.SendAsync("low-stock-alert",
-           new 
-           {
-               ProductId = productId,
-               LocationId = locationId,
-               CurrentStock = currentStock
-           }, cancellationToken);
+           (object)response,
+           cancellationToken);
     }
 }

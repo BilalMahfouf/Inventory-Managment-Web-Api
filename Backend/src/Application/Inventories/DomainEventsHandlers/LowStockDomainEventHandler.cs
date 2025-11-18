@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Application.Abstractions;
+using Application.DTOs.Notifications;
 using Domain.Inventories;
 using MediatR;
 
@@ -22,10 +23,30 @@ public sealed class LowStockDomainEventHandler
         LowStockDomainEvent notification,
         CancellationToken cancellationToken)
     {
+        if (notification is null)
+        {
+            return;
+        }
+        var notificationResponse = new NotificationResponse
+        {
+            Id = notification.Id,
+            EventType = nameof(LowStockDomainEvent),
+            Message = $"Product {notification.productId} at location {notification.locationId} is low on stock. Current stock: {notification.currentStock}",
+            Title = "Low Stock Alert",
+            Severity = "Warning",
+            Data = new
+            {
+                notification.productId,
+                notification.locationId,
+                notification.currentStock
+            },
+            CreatedAt = DateTime.UtcNow,
+        };
         await _notificationService.NotifyLowStockAsync(
-            notification.productId,
-            notification.locationId,
-            notification.currentStock);
+            notificationResponse,
+            cancellationToken);
+        Console.WriteLine(
+            $"LowStockDomainEvent handled for ProductId: {notificationResponse.ToString()}, LocationId: {notification.locationId}, CurrentStock: {notification.currentStock}");
 
     }
 }

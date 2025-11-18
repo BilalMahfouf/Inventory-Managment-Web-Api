@@ -20,5 +20,9 @@ export default function useSignalR(methodName) {
     };
     start();
   }, [methodName]);
-  return messages;
+  return {
+    messages,
+    clear: () => setMessages([]),
+    remove: id => setMessages(prev => prev.filter(msg => msg.id !== id)),
+  };
 }

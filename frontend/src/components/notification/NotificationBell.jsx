@@ -7,26 +7,10 @@ const NotificationBell = () => {
   const [notifications, setNotifications] = useState([
     {
       id: 1,
-      type: 'warning',
+      severity: 'warning',
       title: 'Low Stock Alert',
       message: 'iPhone 15 Pro has only 5 units remaining',
-      time: '5 minutes ago',
-      isRead: false,
-    },
-    {
-      id: 2,
-      type: 'success',
-      title: 'Order Completed',
-      message: 'Purchase Order #PO-2024-001 has been delivered',
-      time: '1 hour ago',
-      isRead: false,
-    },
-    {
-      id: 3,
-      type: 'info',
-      title: 'System Update',
-      message: 'New inventory features are now available',
-      time: '2 hours ago',
+      createdAt: '5 minutes ago',
       isRead: false,
     },
   ]);
@@ -46,8 +30,8 @@ const NotificationBell = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const getIcon = type => {
-    switch (type) {
+  const getIcon = severity => {
+    switch (severity) {
       case 'warning':
         return <AlertTriangle className='w-5 h-5 text-orange-500' />;
       case 'success':
@@ -59,8 +43,8 @@ const NotificationBell = () => {
     }
   };
 
-  const getIconBg = type => {
-    switch (type) {
+  const getIconBg = severity => {
+    switch (severity) {
       case 'warning':
         return 'bg-orange-50';
       case 'success':
@@ -80,10 +64,25 @@ const NotificationBell = () => {
     setNotifications(notifications.filter(n => n.id !== id));
   };
 
-  const notificationsData = useSignalR('low-stock-alert');
-  console.log('Notifications Data from SignalR:', notificationsData);
-  if (!notificationsData || notificationsData.length === 0) {
-    console.log('No notifications received from SignalR yet.');
+  const addNotification = notification => {
+    const newNotification = {
+      id: notification.id,
+      severity: notification.severity,
+      title: notification.title,
+      message: notification.message,
+      createdAt: notification.createdAt,
+      isRead: false,
+    };
+    setNotifications(prevNotifications => [
+      newNotification,
+      ...prevNotifications,
+    ]);
+    notificationProps.remove(notification.id);
+  };
+
+  const notificationProps = useSignalR('low-stock-alert');
+  if (notificationProps.messages && notificationProps.messages.length > 0) {
+    notificationProps.messages.forEach(msg => addNotification(msg));
   }
 
   return (
