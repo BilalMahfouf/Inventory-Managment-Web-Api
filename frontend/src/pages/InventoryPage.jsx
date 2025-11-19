@@ -13,6 +13,7 @@ import StockTransferDataTable from '@/components/stockTransfers/StockTransferDat
 import AddStockTransferButton from '@/components/stockTransfers/AddStockTransferButton';
 import LocationDataTable from '@/components/locations/LocationDataTable';
 import AddLocationButton from '@/components/locations/AddLocationButton';
+import StockMovementHistoryTable from '@/components/ui/ProductsTables/StockMovementHistoryTable';
 
 export default function InventoryPage() {
   const [loading, setLoading] = useState(false);
@@ -130,7 +131,7 @@ export default function InventoryPage() {
                   Stock Movements
                 </h3>
               </div>
-              <div>Stock Movements will be here !</div>
+              <StockMovementHistoryTable />
             </TabPanel>
             <TabPanel>
               <div className='mb-9 flex items-center justify-between'>

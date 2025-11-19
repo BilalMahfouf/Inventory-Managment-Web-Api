@@ -2,18 +2,18 @@ import { useState, useRef, useEffect } from 'react';
 import { Bell, X, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 import useSignalR from '@/signalr/useSignalR';
 
+const test = {
+  //   id: 1,
+  //   severity: 'warning',
+  //   title: 'Low Stock Alert',
+  //   message: 'iPhone 15 Pro has only 5 units remaining',
+  //   createdAt: '5 minutes ago',
+  //   isRead: false,
+};
+
 const NotificationBell = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      severity: 'warning',
-      title: 'Low Stock Alert',
-      message: 'iPhone 15 Pro has only 5 units remaining',
-      createdAt: '5 minutes ago',
-      isRead: false,
-    },
-  ]);
+  const [notifications, setNotifications] = useState([]);
 
   const dropdownRef = useRef(null);
   const unreadCount = notifications.filter(n => !n.isRead).length;
@@ -109,13 +109,15 @@ const NotificationBell = () => {
             <h3 className='text-lg font-semibold text-gray-900'>
               Notifications
             </h3>
-            <button
-              onClick={markAllAsRead}
-              className='flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium'
-            >
-              <CheckCircle className='w-4 h-4' />
-              Mark all read
-            </button>
+            {notifications.length > 0 && (
+              <button
+                onClick={markAllAsRead}
+                className='flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium'
+              >
+                <CheckCircle className='w-4 h-4' />
+                Mark all read
+              </button>
+            )}
           </div>
 
           {/* Notifications List */}
