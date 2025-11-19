@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Queries;
 using Application.DTOs.Inventories;
 using Application.DTOs.StockMovements.Response;
+using Application.Inventories;
 using Application.PagedLists;
 using Application.Results;
 using Domain.Entities;
@@ -265,5 +266,37 @@ public class InventoryQueries : IInventoryQueries
             return Result<PagedList<StockTransfersReadResponse>>
                 .Exception(nameof(GetStockTransfersAsync), ex);
         }
+    }
+
+    public async Task<Result<LowStockNotificationDetails>> GetLowStockMessageDetailsAsync(
+            int productId,
+            int locationId,
+            CancellationToken cancellationToken = default)
+    {
+        if (productId <= 0 || locationId <= 0)
+        {
+            return Result<LowStockNotificationDetails>.InvalidId();
+        }
+        try
+        {
+            var inventory = await _context.Inventories
+                .Where(e => e.ProductId == productId && e.LocationId == locationId)
+                .Select(e => new LowStockNotificationDetails(
+                    e.Product.Name,
+                    e.Location.Name,
+                    e.Product.UnitOfMeasure.Name
+                ))
+                .FirstOrDefaultAsync();
+            if (inventory is null)
+            {
+                return Result<LowStockNotificationDetails>.NotFound("Inventory Item");
+            }
+            return Result<LowStockNotificationDetails>.Success(inventory);
+        }
+        catch (Exception ex)
+        {
+            return Result<LowStockNotificationDetails>.Exception(nameof(GetLowStockMessageDetailsAsync), ex);
+        }
+
     }
 }

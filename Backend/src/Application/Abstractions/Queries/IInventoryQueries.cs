@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.Inventories;
 using Application.DTOs.StockMovements.Response;
+using Application.Inventories;
 using Application.PagedLists;
 using Application.Results;
 using System;
@@ -20,5 +21,9 @@ public interface  IInventoryQueries
         CancellationToken cancellationToken = default);
     Task<Result<PagedList<StockTransfersReadResponse>>> GetStockTransfersAsync(
         TableRequest request,
+        CancellationToken cancellationToken = default);
+    Task<Result<LowStockNotificationDetails>> GetLowStockMessageDetailsAsync(
+        int productId,
+        int locationId,
         CancellationToken cancellationToken = default);
 }

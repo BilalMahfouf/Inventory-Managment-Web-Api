@@ -21,13 +21,8 @@ internal class NotificationService : INotificationService
         NotificationResponse response,
         CancellationToken cancellationToken = default)
     {
-        await _hubContext.Clients.All.SendAsync("test", new
-        {
-            Message = "This is a test message"
-        }, cancellationToken);
-
         await _hubContext.Clients.All.SendAsync("low-stock-alert",
-           (object)response,
-           cancellationToken);
+       (object)response,
+       cancellationToken);
     }
 }
