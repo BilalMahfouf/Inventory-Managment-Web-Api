@@ -113,8 +113,18 @@ public  class Customer : IBaseEntity, ISoftDeletable
         PaymentTerms = paymentTerms;
         UpdateEmail(email);
     }
+
+    private void _EnsureCustomerIsActive()
+    {
+        if (!this.IsActive)
+        {
+            throw new DomainException($"Customer must be active to do this action");
+        }
+        return;
+    }
     public void UpdateEmail(string email)
     {
+        _EnsureCustomerIsActive();
         if(Email != email)
         {
             // add email validation here if needed

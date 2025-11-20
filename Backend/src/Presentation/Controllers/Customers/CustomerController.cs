@@ -83,4 +83,14 @@ public class CustomerController : ControllerBase
         var response = await _service.UpdateAsync(id,request, cancellationToken);
         return response.HandleResult();
     }
+
+    [HttpDelete("{id:int}")]
+
+    public async Task<ActionResult> DeleteCustomerAsync(
+        int id,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await _service.SoftDeleteAsync(id, cancellationToken);
+        return response.HandleResult();
+    }
 }

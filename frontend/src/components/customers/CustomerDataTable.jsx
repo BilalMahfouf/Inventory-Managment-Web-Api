@@ -1,9 +1,13 @@
 import { useToast } from '@/context/ToastContext';
 import useServerSideDataTable from '@/hooks/useServerSideDataTable';
 import { useState } from 'react';
-import { getCustomers } from '@/services/customers/customerService';
+import {
+  deleteCustomerById,
+  getCustomers,
+} from '@/services/customers/customerService';
 import DataTable from '../DataTable/DataTable';
 import AddUpdateCustomer from './AddUpdateCustomer';
+import ConfirmationDialog from '../ui/ConfirmationDialog';
 
 export default function CustomerDataTable() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -37,6 +41,18 @@ export default function CustomerDataTable() {
     setEditDialogOpen(true);
   };
 
+  const handleDeleteConfirm = async () => {
+    const response = await deleteCustomerById(currentCustomerId);
+    if (!response.success) {
+      showError('Failed to delete customer. ' + response.error);
+      setDeleteDialogOpen(false);
+      return;
+    }
+    showSuccess('Customer deleted successfully.');
+    setDeleteDialogOpen(false);
+    tableProps.refresh();
+  };
+
   const tableProps = useServerSideDataTable(fetchCustomers);
 
   return (
@@ -67,6 +83,15 @@ export default function CustomerDataTable() {
             tableProps.refresh();
           }}
           customerId={currentCustomerId}
+        />
+      )}
+      {deleteDialogOpen && (
+        <ConfirmationDialog
+          isOpen={deleteDialogOpen}
+          title='Delete Customer'
+          message='Are you sure you want to delete this customer? This action cannot be undone.'
+          onCancel={() => setDeleteDialogOpen(false)}
+          onConfirm={handleDeleteConfirm}
         />
       )}
     </>

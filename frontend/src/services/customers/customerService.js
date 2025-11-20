@@ -129,6 +129,25 @@ async function getCustomerCategories() {
   }
 }
 
+async function deleteCustomerById(id) {
+  try {
+    const response = await fetchWithAuth(`${BASE_URL}/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.success) {
+      const errorMessage = await response.error;
+      return {
+        success: false,
+        error: errorMessage || 'Failed to delete customer',
+      };
+    }
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting customer:', error);
+    return { success: false, error };
+  }
+}
+
 export {
   getCustomerSummary,
   getCustomers,
@@ -136,4 +155,5 @@ export {
   createCustomer,
   updateCustomer,
   getCustomerCategories,
+  deleteCustomerById,
 };

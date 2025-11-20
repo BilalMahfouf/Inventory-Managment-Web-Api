@@ -45,7 +45,7 @@ public sealed class LowStockDomainEventHandler
         }
 
 
-        string message = $"Product {inventory.Value.productName} at location {inventory.Value.locationName} is low on stock. Current stock: {notification.currentStock}({inventory.Value.unitOfMeasureName})";
+        string message = $"Product {inventory.Value!.productName} at location {inventory.Value.locationName} is low on stock. Current stock: {notification.currentStock}({inventory.Value.unitOfMeasureName})";
 
         var notificationResponse = new NotificationResponse
         {
