@@ -32,12 +32,21 @@ namespace Application.Results
         }
         public static Result InvalidId()
         {
-            return Failure("Invalid Id",ErrorType.BadRequest);
+            return Failure("Invalid Id", ErrorType.BadRequest);
         }
 
-        public static Result Exception(string methodName,Exception ex)
+        public static Result Exception(string methodName, Exception ex)
         {
             string errorMessage = $"Exception in {methodName}: {ex.Message}";
+            return Failure(errorMessage, ErrorType.InternalServerError);
+        }
+
+        public static Result Exception(
+            string methodName,
+            string className,
+            Exception ex)
+        {
+            string errorMessage = $"Exception in {className} in the function {methodName}: {ex.Message}";
             return Failure(errorMessage, ErrorType.InternalServerError);
         }
     }

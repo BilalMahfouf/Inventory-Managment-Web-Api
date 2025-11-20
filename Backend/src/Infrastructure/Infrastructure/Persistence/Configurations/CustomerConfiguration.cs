@@ -16,8 +16,14 @@ namespace Infrastructure.Persistence.Configurations
             entity.HasIndex(e => e.Email, "IX_Customers_Email");
 
             entity.HasIndex(e => e.Name, "IX_Customers_Name");
+            entity.ComplexProperty(c => c.Address, cb =>
+            {
+                cb.Property(c => c.Street).HasMaxLength(255).HasColumnName("Address_Street");
+                cb.Property(c => c.City).HasMaxLength(100).HasColumnName("Address_City");
+                cb.Property(c => c.State).HasMaxLength(100).HasColumnName("Address_State");
+                cb.Property(c => c.ZipCode).HasMaxLength(20).HasColumnName("Address_PostalCode");
+            });
 
-            entity.Property(e => e.Address).HasMaxLength(500);
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
@@ -25,8 +31,8 @@ namespace Infrastructure.Persistence.Configurations
                 .HasDefaultValue(1000m)
                 .HasColumnType("decimal(12, 2)");
             entity.Property(e => e.CreditStatus)
-                .HasMaxLength(20)
-                .HasDefaultValue("Good");
+            .HasConversion<byte>();
+
             entity.Property(e => e.DeletedAt).HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(255);
             entity.Property(e => e.IsActive).HasDefaultValue(true);

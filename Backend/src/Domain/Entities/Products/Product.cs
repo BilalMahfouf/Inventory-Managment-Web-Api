@@ -4,6 +4,7 @@ using Domain;
 using Domain.Abstractions;
 using Domain.Enums;
 using Domain.Exceptions;
+using Domain.Inventories;
 using System;
 using System.Collections.Generic;
 

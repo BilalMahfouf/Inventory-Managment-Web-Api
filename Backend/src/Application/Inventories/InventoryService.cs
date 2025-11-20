@@ -6,9 +6,9 @@ using Application.DTOs.Inventories.Request;
 using Application.Helpers.Util;
 using Application.Results;
 using Application.Services.Shared;
-using Domain.Entities;
 using Domain.Enums;
 using Domain.Exceptions;
+using Domain.Inventories;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Services.Inventories
+namespace Application.Inventories
 {
     public class InventoryService : DeleteService<Inventory>
     {
