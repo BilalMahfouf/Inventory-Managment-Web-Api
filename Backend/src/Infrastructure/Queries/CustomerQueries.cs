@@ -28,13 +28,16 @@ internal class CustomerQueries : ICustomerQueries
     {
         try
         {
-            var count = await _context.Customers.CountAsync(cancellationToken);
+            var count = await _context.Customers.CountAsync(
+                e => !e.IsDeleted,
+                cancellationToken);
             if (count <= 0)
             {
                 return Result<PagedList<CustomerTableReadResponse>>
                     .NotFound("Customers");
             }
             var customerQuery = _context.Customers.AsQueryable();
+            customerQuery = customerQuery.Where(c => !c.IsDeleted);
             if (!string.IsNullOrWhiteSpace(request.search))
             {
                 // use this for performance 
@@ -45,7 +48,7 @@ internal class CustomerQueries : ICustomerQueries
             }
 
             var query =
-    from c in _context.Customers
+    from c in customerQuery
     join cc in _context.CustomerCategories
         on c.CustomerCategoryId equals cc.Id into catJoin
     from cc in catJoin.DefaultIfEmpty()   // LEFT JOIN
