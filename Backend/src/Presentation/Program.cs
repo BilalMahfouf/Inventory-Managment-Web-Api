@@ -12,6 +12,12 @@ Env.Load();
 builder.Configuration.AddEnvironmentVariables();
 // Add services to the container.
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+
+builder.WebHost.UseUrls($"https://*:{port}");
+
+builder.Services.AddHealthChecks();
+
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -42,11 +48,14 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.MapHealthChecks("/health");
 
 app.MapControllers();
 
