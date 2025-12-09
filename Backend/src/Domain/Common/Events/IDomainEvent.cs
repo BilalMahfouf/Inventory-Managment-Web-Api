@@ -1,9 +1,10 @@
-﻿using System;
+﻿using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Domain.Common.Events;
 
-public interface IDomainEvent
+public interface IDomainEvent : INotification
 {
 }
