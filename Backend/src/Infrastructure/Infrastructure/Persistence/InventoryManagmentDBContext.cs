@@ -2,6 +2,7 @@
 using Domain.Entities;
 using Domain.Entities.Products;
 using Domain.Inventories;
+using Domain.Sales;
 using Infrastructure.Infrastructure.Persistence.Configurations;
 
 

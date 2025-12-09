@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Domain.Sales;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -37,7 +37,7 @@ namespace Infrastructure.Persistence.Configurations
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SalesOrderItems_Products");
 
-            entity.HasOne(d => d.SalesOrder).WithMany()
+            entity.HasOne(d => d.SalesOrder).WithMany(d=>d.Items)
                 .HasForeignKey(d => d.SalesOrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SalesOrderItems_SalesOrders");

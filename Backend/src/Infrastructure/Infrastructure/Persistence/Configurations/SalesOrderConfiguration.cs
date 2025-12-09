@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Domain.Sales;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -31,6 +31,7 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(d => d.CustomerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SalesOrders_Customers");
+
 
             OnConfigurePartial(entity);
         }

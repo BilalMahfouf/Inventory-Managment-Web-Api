@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Enums
 {
-    public enum SalesOrderStatus
+    public enum SalesOrderStatus : byte
     {
         Pending=1,
         Completed=2,

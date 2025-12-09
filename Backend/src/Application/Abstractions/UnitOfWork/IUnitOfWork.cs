@@ -5,6 +5,7 @@ using Application.Abstractions.Repositories.Products;
 using Application.Abstractions.Repositories.Sales;
 using Domain.Entities;
 using Domain.Entities.Products;
+using Domain.Sales;
 using System;
 using System.Collections.Generic;
 using System.Linq;

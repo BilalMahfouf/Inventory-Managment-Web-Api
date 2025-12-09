@@ -1,10 +1,12 @@
 ﻿#nullable enable
+using Domain;
 using Domain.Abstractions;
+using Domain.Entities;
 using Domain.Entities.Products;
 using System;
 using System.Collections.Generic;
 
-namespace Domain.Entities;
+namespace Domain.Sales;
 
 public partial class SalesOrderItem : IBaseEntity
 {

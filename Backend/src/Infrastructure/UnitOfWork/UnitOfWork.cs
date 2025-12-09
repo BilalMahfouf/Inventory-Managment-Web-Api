@@ -9,6 +9,7 @@ using Application.DTOs.Users.Response;
 using Domain.Abstractions;
 using Domain.Entities;
 using Domain.Entities.Products;
+using Domain.Sales;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Configurations;
 using Infrastructure.Repositories.Base;

@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Repositories.Base;
 using Application.Results;
-using Domain.Entities;
+using Domain.Sales;
 using System;
 using System.Collections.Generic;
 using System.Linq;
