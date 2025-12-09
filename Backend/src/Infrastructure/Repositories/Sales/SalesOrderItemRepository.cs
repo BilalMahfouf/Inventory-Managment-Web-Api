@@ -1,7 +1,7 @@
 ﻿using Application.Abstractions.Repositories.Sales;
 using Application.Results;
-using Domain.Entities;
 using Domain.Enums;
+using Domain.Sales;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
