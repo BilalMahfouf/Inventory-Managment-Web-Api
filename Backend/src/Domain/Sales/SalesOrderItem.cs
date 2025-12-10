@@ -8,29 +8,50 @@ using System.Collections.Generic;
 
 namespace Domain.Sales;
 
-public partial class SalesOrderItem : IBaseEntity
+public class SalesOrderItem : IBaseEntity
 {
-    public int Id { get; set; }
+    public int Id { get; private set; }
 
-    public int SalesOrderId { get; set; }
+    public int SalesOrderId { get; private set; }
 
-    public int ProductId { get; set; }
+    public int ProductId { get; private set; }
 
-    public decimal OrderedQuantity { get; set; }
+    public decimal OrderedQuantity { get; private set; }
 
-    public decimal ReceivedQuantity { get; set; }
+    public decimal? ReceivedQuantity { get; private set; }
 
-    public decimal UnitCost { get; set; }
+    public decimal UnitCost { get; private set; }
 
-    public decimal LineAmount { get; set; }
+    public decimal LineAmount
+    {
+        get => OrderedQuantity * UnitCost;
+        private set { }
+    }
+
 
     public DateTime CreatedAt { get; set; }
 
     public int CreatedByUserId { get; set; }
 
-    public virtual User CreatedByUser { get; set; } = null!;
+    public User CreatedByUser { get;private set; } = null!;
 
-    public virtual Product Product { get; set; } = null!;
+    public  Product Product { get; private set; } = null!;
 
-    public virtual SalesOrder SalesOrder { get; set; } = null!;
+    public  SalesOrder SalesOrder { get; private set; } = null!;
+
+    private SalesOrderItem()
+    {
+    }
+    internal SalesOrderItem(
+        int productId,
+        decimal orderedQuantity,
+        decimal unitCost
+        )
+    {
+        ProductId = productId;
+        OrderedQuantity = orderedQuantity;
+        UnitCost = unitCost;
+    }
+
+
 }

@@ -3,6 +3,7 @@ using Domain;
 using Domain.Abstractions;
 using Domain.Entities;
 using Domain.Entities.Common;
+using Domain.Entities.Products;
 using Domain.Enums;
 using Domain.Exceptions;
 using System;
@@ -20,7 +21,11 @@ public class SalesOrder : AggregateRoot, IBaseEntity
     public SalesOrderStatus SalesStatus { get; private set; }
     public DateTime? SalesStatusUpdatedAt { get; private set; }
 
-    public decimal TotalAmount { get; private set; }
+    public decimal TotalAmount
+    {
+        get => _items.Sum(i => i.LineAmount);
+        private set { }
+    }
 
     public string? Description { get; private set; }
 
@@ -46,14 +51,24 @@ public class SalesOrder : AggregateRoot, IBaseEntity
         Description = description;
     }
 
+    /// <summary>
+    /// note: to use this method, make sure that each
+    /// <see cref="Product"/> has its <see cref="Product.Inventories"/>" lodoaded
+    /// </summary>
+    /// <param name="customerId"></param>
+    /// <param name="items"></param>
+    /// <param name="salesStatus"></param>
+    /// <param name="description"></param>
+    /// <returns></returns>
+    /// <exception cref="DomainException"></exception>
     public static SalesOrder Create(
         int customerId,
-        List<SalesOrderItem> items,
+        List<SalesOrderItemRequest> items,
         SalesOrderStatus salesStatus = SalesOrderStatus.Pending,
         string? description = null
         )
     {
-        if(salesStatus is SalesOrderStatus.Cancelled)
+        if (salesStatus is SalesOrderStatus.Cancelled)
         {
             throw new DomainException(
                 "New orders cannot be created with Cancelled status.");
@@ -64,17 +79,39 @@ public class SalesOrder : AggregateRoot, IBaseEntity
 
         order.OrderDate = DateTime.UtcNow;
         order.SalesStatus = salesStatus;
-            order.TotalAmount = items.Sum(items => items.LineAmount);
-        order._items.AddRange(items);
-            order.RaiseDomainEvent(new SalesOrderCreatedDomainEvent(
-                order.Id,
-                order.CustomerId,
-                order.SalesStatus,
-                order.OrderDate,
-                order.TotalAmount)
-                );
+        foreach (var item in items)
+        {
+            order.AddItem(new SalesOrderItem(
+                item.Product.Id,
+                item.Quantity,
+                item.Product.UnitPrice));
+        }
+        order.RaiseDomainEvent(new SalesOrderCreatedDomainEvent(
+             order.Id,
+             order.CustomerId,
+             order.SalesStatus,
+             order.OrderDate,
+             order.TotalAmount)
+             );
 
         return order;
+    }
+    private void AddItem(
+        Product product,
+        decimal quantity)
+    {
+        var quantityAvailable = product.Inventories.Sum(i => i.QuantityOnHand);
+        if (quantity > quantityAvailable)
+        {
+            throw new DomainException(
+                "We do not have enough inventory to fulfill this order." +
+                $"Only {quantityAvailable} are left");
+        }
+
+        _items.Add(new SalesOrderItem(
+            product.Id,
+            quantity,
+            product.UnitPrice));
     }
     public void AddItem(SalesOrderItem item)
     {

@@ -39,11 +39,11 @@ namespace Application.Services.Shared
                     .GetTotalRevenuesAsync(cancellationToken);
 
                 var PendingSalesOrders = await _uow.SalesOrders.GetCountAsync(
-                    e => e.SalesStatus == (byte)SalesOrderStatus.Pending
+                    e => e.SalesStatus == SalesOrderStatus.Pending
                     , cancellationToken);
 
                 var CompletedSalesOrders = await _uow.SalesOrders.GetCountAsync(
-                    e => e.SalesStatus == (byte)SalesOrderStatus.Completed
+                    e => e.SalesStatus == SalesOrderStatus.Completed
                     , cancellationToken);
 
                 var ActiveSuppliers = await _uow.Suppliers.GetCountAsync(
