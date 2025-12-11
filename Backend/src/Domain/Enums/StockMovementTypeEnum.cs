@@ -9,7 +9,7 @@ namespace Domain.Enums;
 public enum StockMovementTypeEnum
 {
     PurchaseReceipt = 1,
-    SalesShipment = 2,
+    SalesOrder = 2,
     StockAdjustment = 3,
     TransferIn = 4,
     TransferOut = 5,

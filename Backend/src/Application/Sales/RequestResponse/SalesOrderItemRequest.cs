@@ -4,7 +4,4 @@ using System.Text;
 
 namespace Application.Sales.RequestResponse;
 
-public sealed record  SalesOrderItemRequest(
-    int ProductId,
-    int Quantity
-    );
+public sealed record SalesOrderItemRequest(int ProductId,decimal Quantity);

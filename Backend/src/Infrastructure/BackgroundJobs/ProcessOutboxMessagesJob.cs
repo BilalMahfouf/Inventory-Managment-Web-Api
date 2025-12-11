@@ -33,10 +33,11 @@ public class ProcessOutboxMessagesJob : IJob
     public async Task Execute(IJobExecutionContext context)
     {
         var outboxMessages = await _dbContext.Set<OutboxMessages>()
+            .OrderBy(e => e.Id)
             .Where(e => e.ProcessedOnUtc == null)
             .Take(20)
             .ToListAsync(context.CancellationToken);
-        if(outboxMessages is null || !outboxMessages.Any())
+        if (outboxMessages is null || !outboxMessages.Any())
         {
             return;
         }

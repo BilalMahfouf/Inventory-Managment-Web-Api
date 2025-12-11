@@ -45,7 +45,11 @@ public sealed class SalesOrderService
                     return Result<int>.NotFound(nameof(product));
                 }
 
-                items.Add(new Domain.Sales.SalesOrderItemRequest(product, item.Quantity));
+                items.Add(new Domain.Sales.SalesOrderItemRequest()
+                {
+                    Product = product,
+                    Quantity = item.Quantity
+                });
             }
             if (items is null || !items.Any())
             {
@@ -63,6 +67,26 @@ public sealed class SalesOrderService
                 return Result<int>.Failure(
                     "Failed to create sales order.",
                     ErrorType.InternalServerError);
+            }
+            // to do make this in the background job
+
+            foreach (var item in items)
+            {
+                foreach (var inventory in item.Product.Inventories)
+                {
+                    if (inventory.QuantityOnHand >= item.Quantity)
+                    {
+                        inventory.UpdateStock(inventory.QuantityOnHand - item.Quantity,
+                            StockMovementTypeEnum.SalesOrder);
+                        break;
+                    }
+                    else if (inventory.QuantityOnHand <= item.Quantity &&
+                        inventory.QuantityOnHand > 0)
+                    {
+                        item.Quantity -= inventory.QuantityOnHand;
+                        inventory.UpdateStock(0, StockMovementTypeEnum.SalesOrder);
+                    }
+                }
             }
             return Result<int>.Success(order.Id);
         }

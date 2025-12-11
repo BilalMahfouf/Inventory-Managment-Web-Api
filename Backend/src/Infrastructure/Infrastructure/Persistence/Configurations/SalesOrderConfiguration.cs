@@ -1,4 +1,5 @@
-﻿using Domain.Sales;
+﻿using Domain.Enums;
+using Domain.Sales;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -19,7 +20,7 @@ namespace Infrastructure.Persistence.Configurations
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.OrderDate).HasColumnType("datetime");
-            entity.Property(e => e.SalesStatus).HasDefaultValue((byte)1);
+            entity.Property(e => e.SalesStatus).HasDefaultValue(SalesOrderStatus.Pending);
             entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.CreatedByUser).WithMany()
