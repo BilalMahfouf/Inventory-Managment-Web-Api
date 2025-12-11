@@ -2,6 +2,7 @@
 using Application.DTOs.Customers;
 using Application.PagedLists;
 using Application.Results;
+using Domain.Enums;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -81,7 +82,7 @@ internal class CustomerQueries : ICustomerQueries
         TotalOrders = g.Count(x => x.so != null),
 
         TotalSpent = g.Sum(x =>
-            x.so != null && x.so.SalesStatus == 2
+            x.so != null && x.so.SalesStatus == SalesOrderStatus.Completed
                 ? x.so.TotalAmount
                 : 0
         ),
@@ -194,7 +195,7 @@ internal class CustomerQueries : ICustomerQueries
             var totalCustomers = await _context.Customers.CountAsync();
             var activeCustomers = await _context.Customers.CountAsync(c => c.IsActive);
             var totalRevenue = await _context.SalesOrders
-                .Where(so => so.SalesStatus == 2)
+                .Where(so => so.SalesStatus == SalesOrderStatus.Completed)
                 .SumAsync(so => so.TotalAmount);
             var newCustomersLastMonth = await _context.Customers
                 .Where(c => c.CreatedAt >= DateTime.UtcNow.AddMonths(-1))

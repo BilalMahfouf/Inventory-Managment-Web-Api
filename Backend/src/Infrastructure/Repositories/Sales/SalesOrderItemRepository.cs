@@ -28,7 +28,7 @@ namespace Infrastructure.Repositories.Sales
               from s in _context.SalesOrderItems
               join p in _context.Products on s.ProductId equals p.Id
               join so in _context.SalesOrders on s.SalesOrderId equals so.Id
-              where so.SalesStatus == (byte)SalesOrderStatus.Completed
+              where so.SalesStatus == SalesOrderStatus.Completed
               group new { s, p } by new { p.Name, s.OrderedQuantity } into g
               select new
               {
@@ -59,7 +59,7 @@ namespace Infrastructure.Repositories.Sales
             var totalRevenues = await (from s in _context.SalesOrderItems
                                        join so in _context.SalesOrders on s.SalesOrderId equals so.Id
                                        join p in _context.Products on s.ProductId equals p.Id
-                                       where so.SalesStatus == (byte)SalesOrderStatus.Completed
+                                       where so.SalesStatus == SalesOrderStatus.Completed
                                        select new
                                        {
                                            Revenue = s.LineAmount - (p.Cost * s.OrderedQuantity)
@@ -74,7 +74,7 @@ namespace Infrastructure.Repositories.Sales
             var totalRevenues = await (from s in _context.SalesOrderItems
                                        join so in _context.SalesOrders on s.SalesOrderId equals so.Id
                                        join p in _context.Products on s.ProductId equals p.Id
-                                       where so.SalesStatus == (byte)SalesOrderStatus.Completed
+                                       where so.SalesStatus == SalesOrderStatus.Completed
                                        && so.OrderDate.Date == today
                                        select new
                                        {

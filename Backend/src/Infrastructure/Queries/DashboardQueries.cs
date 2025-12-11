@@ -44,7 +44,7 @@ public sealed class DashboardQueries : IDashboardQueries
             var totalRevenues = await(from s in _context.SalesOrderItems
                                  join so in _context.SalesOrders on s.SalesOrderId equals so.Id
                                  join p in _context.Products on s.ProductId equals p.Id
-                                 where so.SalesStatus == (byte)SalesOrderStatus.Completed
+                                 where so.SalesStatus == SalesOrderStatus.Completed
                                  && so.OrderDate.Date == today
                                  select new
                                  {
