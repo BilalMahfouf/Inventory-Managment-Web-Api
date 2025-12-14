@@ -12,4 +12,4 @@ public sealed record SalesOrderCreatedDomainEvent(
     SalesOrderStatus status,
     DateTime OrderDate,
     decimal TotalAmount
-    ) : IDomainEvent;
+    ) : DomainEvent;
