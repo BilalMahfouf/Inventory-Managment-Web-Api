@@ -37,7 +37,7 @@ public sealed class SalesOrderService
             foreach (var item in request.Items)
             {
                 var product = await _uow.Products
-                    .FindAsync(e => e.Id == item.ProductId,
+                    .FindAsync(e => e.Id == item.ProductId && !e.IsDeleted,
                     cancellationToken,
                     "Inventories");
                 if (product is null)
@@ -76,7 +76,7 @@ public sealed class SalesOrderService
                 {
                     if (inventory.QuantityOnHand >= item.Quantity)
                     {
-                        inventory.UpdateStock(inventory.QuantityOnHand - item.Quantity,
+                        inventory.UpdateStock(-item.Quantity,
                             StockMovementTypeEnum.SalesOrder);
                         break;
                     }
@@ -84,10 +84,13 @@ public sealed class SalesOrderService
                         inventory.QuantityOnHand > 0)
                     {
                         item.Quantity -= inventory.QuantityOnHand;
-                        inventory.UpdateStock(0, StockMovementTypeEnum.SalesOrder);
+                        inventory.UpdateStock(-inventory.QuantityOnHand, StockMovementTypeEnum.SalesOrder);
                     }
                 }
             }
+            _uow.SalesOrders.Add(order);
+            await _uow.SaveChangesAsync(cancellationToken);
+
             return Result<int>.Success(order.Id);
         }
         catch (DomainException dex)

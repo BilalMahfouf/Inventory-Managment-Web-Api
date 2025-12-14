@@ -10,6 +10,7 @@ using Application.FluentValidations.User.Configuration;
 using Application.Helpers.Auth;
 using Application.Inventories;
 using Application.Inventories.DomainEventsHandlers;
+using Application.Sales.Services1;
 using Application.Services.Auth;
 using Application.Services.Images;
 using Application.Services.Locations;
@@ -57,6 +58,7 @@ namespace Application
             services.AddScoped<StockTransferService>();
             services.AddScoped<CustomerService>();
             services.AddScoped<CustomerCategoryService>();
+            services.AddScoped<SalesOrderService>();
 
             services.AddMediatR(cfg =>
             {

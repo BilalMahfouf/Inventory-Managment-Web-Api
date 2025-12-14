@@ -81,10 +81,7 @@ public class SalesOrder : AggregateRoot, IBaseEntity
         order.SalesStatus = salesStatus;
         foreach (var item in items)
         {
-            order.AddItem(new SalesOrderItem(
-                item.Product.Id,
-                item.Quantity,
-                item.Product.UnitPrice));
+            order.AddItem(item.Product, item.Quantity);
         }
         order.RaiseDomainEvent(new SalesOrderCreatedDomainEvent(
              order.Id,
@@ -100,18 +97,25 @@ public class SalesOrder : AggregateRoot, IBaseEntity
         Product product,
         decimal quantity)
     {
+        if (this.SalesStatus is not SalesOrderStatus.Pending)
+        {
+            throw new DomainException(
+                "Items can only be added to orders in Pending status.");
+        }
         var quantityAvailable = product.Inventories.Sum(i => i.QuantityOnHand);
         if (quantity > quantityAvailable)
         {
             throw new DomainException(
                 "We do not have enough inventory to fulfill this order." +
-                $"Only {quantityAvailable} are left");
+                $"Only {quantityAvailable} are left for the Product {product.Name}");
+
         }
 
-        _items.Add(new SalesOrderItem(
+        var item = new SalesOrderItem(
             product.Id,
             quantity,
-            product.UnitPrice));
+            product.UnitPrice);
+        _items.Add(item);
     }
     public void AddItem(SalesOrderItem item)
     {
