@@ -10,6 +10,7 @@ using Application.Abstractions.Services.Storage;
 using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
 using Application.Common.Abstractions;
+using Application.Sales.Queries;
 using Application.Services.Shared;
 using Infrastructure.Authentication;
 using Infrastructure.BackgroundJobs;
@@ -104,6 +105,7 @@ namespace Infrastructure
             services.AddScoped<IInventoryQueries, InventoryQueries>();
             services.AddScoped<ITransferQueries, TransferQueries>();
             services.AddScoped<ICustomerQueries, CustomerQueries>();
+            services.AddScoped<ISalesOrderQueries, SalesOrderQueries>();
 
             // Email Options config 
             services.Configure<EmailOptions>(options =>

@@ -1,5 +1,6 @@
 ﻿using Application.PagedLists;
 using Application.Results;
+using Application.Sales.RequestResponse;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,7 +11,7 @@ public interface ISalesOrderQueries
 {
     Task<Result<object>> GetDahsboardSummaryAsync(
         CancellationToken cancellationToken = default);
-    Task<Result<PagedList<object>>> GetOrdersTableAsync(
+    Task<Result<PagedList<SalesOrderTableResponse>>> GetOrdersTableAsync(
         TableRequest request,
         CancellationToken cancellationToken = default);
 }
