@@ -87,4 +87,36 @@ internal class SalesOrderQueries : ISalesOrderQueries
         };
         return Result<PagedList<SalesOrderTableResponse>>.Success(result);
     }
+
+    public async Task<Result<SalesOrderReadResponse>> GetSalesOrderByIdAsync(
+        int id,
+        CancellationToken cancellationToken)
+    {
+        var order = await _context.SalesOrders
+            .Where(e => e.Id == id)
+            .Select(e => new SalesOrderReadResponse
+            {
+                Id = e.Id,
+                CustomerId = e.CustomerId,
+                CustomerName = e.Customer.Name,
+                CustomerEmail = e.Customer.Email,
+                OrderDate = e.OrderDate,
+                TotalAmount = e.TotalAmount,
+                SalesStatus = e.SalesStatus.ToString(),
+                Items = e.Items.Select(i => new SalesOrderItemResponse
+                {
+                    Id= i.Id,
+                    ProductId = i.ProductId,
+                    ProductName = i.Product.Name,
+                    Quantity = i.OrderedQuantity,
+                    UnitPrice = i.Product.UnitPrice,
+                    TotalPrice = i.LineAmount,
+                })
+            }).FirstOrDefaultAsync(cancellationToken);
+        if(order is null)
+        {
+            return Result<SalesOrderReadResponse>.NotFound("Sales Order");
+        }
+        return Result<SalesOrderReadResponse>.Success(order);
+    }
 }

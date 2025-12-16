@@ -14,4 +14,7 @@ public interface ISalesOrderQueries
     Task<Result<PagedList<SalesOrderTableResponse>>> GetOrdersTableAsync(
         TableRequest request,
         CancellationToken cancellationToken = default);
+    Task<Result<SalesOrderReadResponse>> GetSalesOrderByIdAsync(
+        int id,
+        CancellationToken cancellationToken = default);
 }

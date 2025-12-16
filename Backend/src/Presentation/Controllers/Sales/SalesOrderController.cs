@@ -58,5 +58,18 @@ public class SalesOrderController : ControllerBase
         return response.HandleResult();
     }
 
+    [HttpGet("{id:int}",Name =nameof(GetOrderByIdAsync))]
+
+    public async Task<ActionResult<SalesOrderReadResponse>>
+        GetOrderByIdAsync(
+        [FromRoute] int id,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await _query.GetSalesOrderByIdAsync(
+            id, cancellationToken);
+        return response.HandleResult();
+    }
+
+
 
 }
