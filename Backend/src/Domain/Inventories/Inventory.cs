@@ -22,6 +22,7 @@ public class Inventory : AggregateRoot,
     public int LocationId { get; set; }
 
     public decimal QuantityOnHand { get; set; }
+    public decimal QuantityReserved { get; private set; }
 
     public decimal ReorderLevel { get; set; }
 
