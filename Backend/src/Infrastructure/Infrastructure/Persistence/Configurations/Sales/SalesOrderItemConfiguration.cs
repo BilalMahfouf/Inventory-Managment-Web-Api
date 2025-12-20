@@ -1,5 +1,4 @@
 ﻿using Domain.Sales;
-using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -7,7 +6,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace Infrastructure.Persistence.Configurations
+namespace Infrastructure.Infrastructure.Persistence.Configurations.Sales
 {
     public partial class SalesOrderItemConfiguration : IEntityTypeConfiguration<SalesOrderItem>
     {

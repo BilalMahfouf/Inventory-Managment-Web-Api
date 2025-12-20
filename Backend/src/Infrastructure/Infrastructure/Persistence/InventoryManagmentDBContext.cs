@@ -4,6 +4,8 @@ using Domain.Entities.Products;
 using Domain.Inventories;
 using Domain.Sales;
 using Infrastructure.Infrastructure.Persistence.Configurations;
+using Infrastructure.Infrastructure.Persistence.Configurations.Sales;
+
 
 
 
@@ -97,8 +99,8 @@ public partial class InventoryManagmentDBContext : DbContext
         modelBuilder.ApplyConfiguration(new Configurations.ProductSupplierConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.PurchaseOrderConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.PurchaseOrderItemConfiguration());
-        modelBuilder.ApplyConfiguration(new Configurations.SalesOrderConfiguration());
-        modelBuilder.ApplyConfiguration(new Configurations.SalesOrderItemConfiguration());
+        modelBuilder.ApplyConfiguration(new SalesOrderConfiguration());
+        modelBuilder.ApplyConfiguration(new SalesOrderItemConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.StockMovementConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.StockMovementTypeConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.StockTransferConfiguration());
@@ -110,6 +112,7 @@ public partial class InventoryManagmentDBContext : DbContext
         modelBuilder.ApplyConfiguration(new Configurations.UserRoleConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.UserSessionConfiguration());
         modelBuilder.ApplyConfiguration(new OutboxMessagesConfiguration());
+        modelBuilder.ApplyConfiguration(new SalesOrderReservationConfiguration());
 
         OnModelCreatingPartial(modelBuilder);
     }

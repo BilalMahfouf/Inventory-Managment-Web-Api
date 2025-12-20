@@ -8,6 +8,7 @@ using Domain.Enums;
 using Domain.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Sales;
 
@@ -39,6 +40,10 @@ public class SalesOrder : AggregateRoot, IBaseEntity
 
     private List<SalesOrderItem> _items = new();
     public IReadOnlyCollection<SalesOrderItem> Items => _items.AsReadOnly();
+
+    private List<SalesOrderReservation> _reservations = new();
+    public IReadOnlyCollection<SalesOrderReservation> Reservations => _reservations.AsReadOnly();
+    
     private SalesOrder()
     {
     }
@@ -117,6 +122,26 @@ public class SalesOrder : AggregateRoot, IBaseEntity
             product.UnitPrice);
         _items.Add(item);
     }
+
+    public void AddReservation(
+        int inventoryId,
+        int productId,
+        decimal quantity)
+    {
+        if(this.SalesStatus is not SalesOrderStatus.Pending)
+        {
+            throw new DomainException(
+                "Reservations can only be added to orders in Pending status.");
+        }
+        var reservation = new SalesOrderReservation(
+            this.Id,
+            productId,
+            inventoryId,
+            SalesOrderResevationStatus.Pending,
+            quantity);
+        _reservations.Add(reservation);
+    }
+
     public void AddItem(SalesOrderItem item)
     {
         if (SalesStatus is not SalesOrderStatus.Pending)
