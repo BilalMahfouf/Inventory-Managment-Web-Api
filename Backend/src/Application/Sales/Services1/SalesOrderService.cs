@@ -78,13 +78,25 @@ public sealed class SalesOrderService
                     {
                         inventory.UpdateStock(-item.Quantity,
                             StockMovementTypeEnum.SalesOrder);
+                        order.AddReservation(
+                            inventory.Id,
+                            item.Product.Id,
+                            item.Quantity);
                         break;
                     }
                     else if (inventory.QuantityOnHand <= item.Quantity &&
                         inventory.QuantityOnHand > 0)
                     {
                         item.Quantity -= inventory.QuantityOnHand;
-                        inventory.UpdateStock(-inventory.QuantityOnHand, StockMovementTypeEnum.SalesOrder);
+
+                        inventory.UpdateStock(
+                            -inventory.QuantityOnHand,
+                            StockMovementTypeEnum.SalesOrder);
+
+                        order.AddReservation(
+                            inventory.Id,
+                            item.Product.Id,
+                            item.Quantity);
                     }
                 }
             }
@@ -112,16 +124,16 @@ public sealed class SalesOrderService
             cancellationToken);
         if (order is null)
         {
-            return Result.NotFound($"Order with Id{salesOrderId}"); 
+            return Result.NotFound($"Order with Id{salesOrderId}");
         }
         order.CompleteOrder();
-        foreach(var item in  order.Items)
+        foreach (var item in order.Items)
         {
-            foreach(var inventory in item.Product.Inventories)
+            foreach (var inventory in item.Product.Inventories)
             {
-                foreach(var stockMov in inventory.StockMovements)
+                foreach (var stockMov in inventory.StockMovements)
                 {
-                     
+
 
                 }
 

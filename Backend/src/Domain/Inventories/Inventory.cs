@@ -175,11 +175,14 @@ public class Inventory : AggregateRoot,
         decimal quantity,
         StockMovementTypeEnum stockMovementType)
     {
+        // this method expect negetive quantity if the user want to decrease stock
 
         EnsureQuantityIsLessThanMaxLevel(
             quantity < 0 ? QuantityOnHand - quantity : QuantityOnHand + quantity);
 
         QuantityOnHand += quantity;
+
+        QuantityReserved += quantity < 0 ? -quantity : quantity;
 
         var stockMovement = StockMovement.Create(
             Product,
