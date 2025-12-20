@@ -102,4 +102,33 @@ public sealed class SalesOrderService
             return Result<int>.Exception(nameof(CreateSalesOrderAsync), ex);
         }
     }
+
+    public async Task<Result> CompleteOrderAsync(
+        int salesOrderId,
+        CancellationToken cancellationToken = default)
+    {
+        var order = await _uow.SalesOrders
+            .FindAsync(e => e.Id == salesOrderId,
+            cancellationToken);
+        if (order is null)
+        {
+            return Result.NotFound($"Order with Id{salesOrderId}"); 
+        }
+        order.CompleteOrder();
+        foreach(var item in  order.Items)
+        {
+            foreach(var inventory in item.Product.Inventories)
+            {
+                foreach(var stockMov in inventory.StockMovements)
+                {
+                     
+
+                }
+
+            }
+        }
+        return Result.Success;
+    }
+
+
 }

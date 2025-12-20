@@ -11,5 +11,6 @@ namespace Domain.Enums
         Pending=1,
         Completed=2,
         Cancelled=3,
+        Shipped= 4
     }
 }

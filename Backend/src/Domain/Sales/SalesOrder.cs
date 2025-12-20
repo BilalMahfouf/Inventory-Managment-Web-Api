@@ -155,6 +155,26 @@ public class SalesOrder : AggregateRoot, IBaseEntity
         }
         SalesStatus = SalesOrderStatus.Completed;
         SalesStatusUpdatedAt = DateTime.UtcNow;
+
+        this.RaiseDomainEvent(new SalesOrderCompletedDomainEvent(
+            this.Id)
+            );
+    }
+
+    public void CancelOrder()
+    {
+        if(SalesStatus is SalesOrderStatus.Cancelled)
+        {
+            throw new DomainException("Order is already cancelled.");
+        }
+        var prevStatus = SalesStatus;
+        SalesStatus = SalesOrderStatus.Cancelled;
+        SalesStatusUpdatedAt = DateTime.UtcNow;
+
+        this.RaiseDomainEvent(new SalesOrderCancelledDomainEvent(
+            this.Id,
+            prevStatus)
+            );
     }
 
 

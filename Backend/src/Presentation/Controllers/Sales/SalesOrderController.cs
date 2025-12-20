@@ -32,7 +32,10 @@ public class SalesOrderController : ControllerBase
         var response = await _salesOrderService.CreateSalesOrderAsync(
             request,
             cancellationToken);
-        return response.HandleResult();
+        return response.HandleResult(nameof(GetOrderByIdAsync), new
+        {
+            id = response.Value
+        });
     }
 
 
@@ -53,6 +56,7 @@ public class SalesOrderController : ControllerBase
             search,
             sortColumn,
             sortOrder);
+        
         var response = await _query.GetOrdersTableAsync(
             request, cancellationToken);
         return response.HandleResult();

@@ -13,3 +13,12 @@ public sealed record SalesOrderCreatedDomainEvent(
     DateTime OrderDate,
     decimal TotalAmount
     ) : DomainEvent;
+
+public sealed record SalesOrderCancelledDomainEvent(
+    int SalesOrderId,
+    SalesOrderStatus prevStatus
+    ) : DomainEvent;
+
+public sealed record SalesOrderCompletedDomainEvent(
+    int SalesOrderId
+    ) : DomainEvent;
