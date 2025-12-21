@@ -60,7 +60,7 @@ namespace Infrastructure.UOW
         public IBaseRepository<UserRole> UserRoles { get; }
         public IUserSessionRepository UserSessions { get; }
         public IBaseRepository<ConfirmEmailToken> ConfirmEmailTokens { get; }
-
+        public IBaseRepository<SalesOrderReservation> SalesOrderReservations { get; }
         public UnitOfWork(InventoryManagmentDBContext context
             , ICurrentUserService currentUserService)
         {
@@ -96,6 +96,8 @@ namespace Infrastructure.UOW
             UserSessions = new UserSessionRepository(_context);
             ConfirmEmailTokens = new BaseRepository<ConfirmEmailToken>(_context);
             _currentUserService = currentUserService;
+
+            SalesOrderReservations = new BaseRepository<SalesOrderReservation>(_context);
         }
 
 
@@ -119,7 +121,7 @@ namespace Infrastructure.UOW
             .Where(e => e.Entity is IModifiableEntity && e.State == EntityState.Modified)
             .Select(e => e.Entity as IModifiableEntity);
 
-            
+
 
             foreach (var entity in modifiedEntities)
             {
@@ -136,7 +138,7 @@ namespace Infrastructure.UOW
             foreach (var entity in addedEntities)
             {
                 entity.CreatedAt = DateTime.UtcNow;
-                entity.CreatedByUserId= _currentUserService.UserId;
+                entity.CreatedByUserId = _currentUserService.UserId;
             }
         }
     }
