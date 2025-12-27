@@ -73,8 +73,13 @@ public partial class StockMovement : IBaseEntity
             );
     }
 
-    internal void MarkAsCompleted()
+    public void MarkAsCompleted()
     {
+        if(StockMovmentStatus is not StockMovementStatus.Pending)
+        {
+            throw new InvalidOperationException(
+                "Only pending stock movements can be completed.");
+        }
         StockMovmentStatus = StockMovementStatus.Completed;
     }
 

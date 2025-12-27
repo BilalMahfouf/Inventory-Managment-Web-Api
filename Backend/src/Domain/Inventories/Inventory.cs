@@ -242,4 +242,14 @@ public class Inventory : AggregateRoot,
         }
         IsDeleted = true;
     }
+
+    public void CompleteReservation(decimal quantity)
+    {
+        if (quantity > QuantityReserved)
+        {
+            throw new DomainException(
+                "Cannot complete reservation for more than reserved quantity");
+        }
+        QuantityReserved -= quantity;
+    }
 }

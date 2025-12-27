@@ -56,13 +56,13 @@ public class SalesOrderController : ControllerBase
             search,
             sortColumn,
             sortOrder);
-        
+
         var response = await _query.GetOrdersTableAsync(
             request, cancellationToken);
         return response.HandleResult();
     }
 
-    [HttpGet("{id:int}",Name =nameof(GetOrderByIdAsync))]
+    [HttpGet("{id:int}", Name = nameof(GetOrderByIdAsync))]
 
     public async Task<ActionResult<SalesOrderReadResponse>>
         GetOrderByIdAsync(
@@ -74,6 +74,25 @@ public class SalesOrderController : ControllerBase
         return response.HandleResult();
     }
 
+    [HttpPost("{id:int}/complete")]
+
+    public async Task<IActionResult> CompleteOrderAsync(
+        [FromRoute] int id,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await _salesOrderService.CompleteOrderAsync(
+            id, cancellationToken);
+        return response.HandleResult();
+    }
+
+    [HttpGet("summary")]
+
+    public async Task<ActionResult<object>> GetOrdersSummaryAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var response = await _query.GetDahsboardSummaryAsync(cancellationToken);
+        return response.HandleResult();
+    }
 
 
 }

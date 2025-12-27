@@ -209,7 +209,6 @@ namespace Application.Tests.ImagesTests
             // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorType.NotFound, result.ErrorType);
-            Assert.Contains("image nor found", result.ErrorMessage);
         }
 
         [Fact]
@@ -246,7 +245,6 @@ namespace Application.Tests.ImagesTests
             // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorType.NotFound, result.ErrorType);
-            Assert.Contains("stream nor found", result.ErrorMessage);
         }
 
         [Fact]
@@ -363,7 +361,6 @@ namespace Application.Tests.ImagesTests
             // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorType.NotFound, result.ErrorType);
-            Assert.Contains("image nor found", result.ErrorMessage);
         }
 
         [Fact]

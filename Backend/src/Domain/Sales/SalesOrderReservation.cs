@@ -1,4 +1,5 @@
 ﻿using Domain.Abstractions;
+using Domain.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +10,7 @@ public sealed class SalesOrderReservation : IBaseEntity
 {
     public int Id { get; private set; }
     public int OrderId { get; private set; }
+    public int StockMovemntId { get; private set; }
     public int ProductId { get; private set; }
     public int InventoryId { get; private set; }
     public decimal Quantity { get; private set; }
@@ -32,6 +34,17 @@ public sealed class SalesOrderReservation : IBaseEntity
         InventoryId = inventoryId;
         Quantity = quantity;
         Status = status;
+    }
+
+    public void CompleteReservation()
+    {
+        if(Status is not SalesOrderResevationStatus.Pending)
+        {
+            throw new DomainException(
+                "Only pending reservations can be completed.");
+        }
+        Status = SalesOrderResevationStatus.Completed;
+        StatusUpdateAt = DateTime.UtcNow;
     }
 
 }

@@ -37,5 +37,10 @@ internal class SalesOrderReservationConfiguration
             .WithMany()
             .HasForeignKey(e => e.InventoryId)
             .OnDelete(DeleteBehavior.ClientSetNull);
+        
+        builder.HasOne<StockMovement>()
+            .WithMany()
+            .HasForeignKey(e => e.StockMovemntId)
+            .OnDelete(DeleteBehavior.ClientSetNull);
     }
 }

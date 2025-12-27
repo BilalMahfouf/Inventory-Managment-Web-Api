@@ -2,6 +2,7 @@
 using Application.Results;
 using Application.Sales.Queries;
 using Application.Sales.RequestResponse;
+using Domain.Enums;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,9 +21,28 @@ internal class SalesOrderQueries : ISalesOrderQueries
         _context = context;
     }
 
-    public Task<Result<object>> GetDahsboardSummaryAsync(CancellationToken cancellationToken = default)
+    public async Task<Result<object>> GetDahsboardSummaryAsync(
+        CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var totalOrders = await _context.SalesOrders.CountAsync(cancellationToken);
+        var pendingOrders = await _context.SalesOrders
+            .CountAsync(e => e.SalesStatus == SalesOrderStatus.Pending
+            , cancellationToken);
+
+        var averageOrderValue = await _context.SalesOrders
+            .AverageAsync(e => e.TotalAmount, cancellationToken);
+
+        var revenueThisMonth = await _context.SalesOrders
+            .Where(e => e.OrderDate >= DateTime.UtcNow.AddMonths(-1))
+            .SumAsync(e => e.TotalAmount, cancellationToken);
+        var dashboardSummary = new
+        {
+            TotalOrders = totalOrders,
+            PendingOrders = pendingOrders,
+            AverageOrderValue = averageOrderValue,
+            RevenueThisMonth = revenueThisMonth
+        };
+        return Result<object>.Success(dashboardSummary);
     }
 
     public async Task<Result<PagedList<SalesOrderTableResponse>>> GetOrdersTableAsync(TableRequest request, CancellationToken cancellationToken = default)

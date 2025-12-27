@@ -186,6 +186,8 @@ public class SalesOrder : AggregateRoot, IBaseEntity
             );
     }
 
+   
+
     public void CancelOrder()
     {
         if(SalesStatus is SalesOrderStatus.Cancelled)

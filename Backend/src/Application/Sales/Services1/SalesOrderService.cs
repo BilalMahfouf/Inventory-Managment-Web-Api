@@ -121,24 +121,35 @@ public sealed class SalesOrderService
     {
         var order = await _uow.SalesOrders
             .FindAsync(e => e.Id == salesOrderId,
-            cancellationToken);
+            cancellationToken, includeProperties: nameof(SalesOrder.Reservations));
         if (order is null)
         {
             return Result.NotFound($"Order with Id{salesOrderId}");
         }
-        order.CompleteOrder();
-        foreach (var item in order.Items)
+        foreach (var reservation in order.Reservations)
         {
-            foreach (var inventory in item.Product.Inventories)
+            var stockMovement = await _uow.StockMovements
+                .FindAsync(e => e.Id == reservation.StockMovemntId,
+                cancellationToken);
+            if (stockMovement is null)
             {
-                foreach (var stockMov in inventory.StockMovements)
-                {
-
-
-                }
-
+                continue;
             }
+            var inventory = await _uow.Inventories
+                .FindAsync(e => e.Id == stockMovement.InventoryId,
+                cancellationToken);
+            if (inventory is null)
+            {
+                continue;
+            }
+            inventory.CompleteReservation(reservation.Quantity);
+            stockMovement.MarkAsCompleted();
+            reservation.CompleteReservation();
         }
+        order.CompleteOrder();
+
+        await _uow.SaveChangesAsync(cancellationToken);
+
         return Result.Success;
     }
 
