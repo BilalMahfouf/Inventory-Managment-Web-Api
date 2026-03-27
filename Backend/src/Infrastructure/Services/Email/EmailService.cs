@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Services.Email;
 using Application.DTOs.Email;
-using Application.Results;
+using Domain.Shared.Results;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.AspNetCore.WebUtilities;
@@ -51,7 +51,7 @@ namespace Infrastructure.Services.Email
             catch(Exception ex)
             {
                 return Result.Failure($"Error happened while sending email : {ex.Message}"
-                    , Domain.Enums.ErrorType.InternalServerError);
+                    , Domain.Shared.Enums.ErrorType.InternalServerError);
             }
         }
     }

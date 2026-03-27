@@ -1,4 +1,4 @@
-﻿using Domain.Common.Events;
+﻿using Domain.Shared.Events;
 using Infrastructure.Outbox;
 using Infrastructure.Persistence;
 using MediatR;

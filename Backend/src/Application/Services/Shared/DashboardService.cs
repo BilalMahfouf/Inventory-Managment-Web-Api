@@ -1,7 +1,7 @@
 ﻿using Application.Abstractions.Queries;
 using Application.Abstractions.UnitOfWork;
-using Application.Results;
-using Domain.Enums;
+using Domain.Shared.Results;
+using Domain.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

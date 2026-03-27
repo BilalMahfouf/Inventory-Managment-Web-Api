@@ -1,6 +1,6 @@
 ﻿using Application.DTOs.Products.Response.Products;
 using Application.PagedLists;
-using Application.Results;
+using Domain.Shared.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;

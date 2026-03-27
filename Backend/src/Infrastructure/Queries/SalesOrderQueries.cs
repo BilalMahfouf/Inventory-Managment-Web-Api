@@ -1,8 +1,8 @@
 ﻿using Application.PagedLists;
-using Application.Results;
+using Domain.Shared.Results;
 using Application.Sales.Queries;
 using Application.Sales.RequestResponse;
-using Domain.Enums;
+using Domain.Shared.Enums;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;

@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Auth;
-using Domain.Entities;
+using Domain.Shared.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;

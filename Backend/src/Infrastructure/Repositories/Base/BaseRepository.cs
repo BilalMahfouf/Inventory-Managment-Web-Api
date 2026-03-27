@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Repositories.Base;
-using Domain.Abstractions;
-using Domain.Entities;
+using Domain.Shared.Abstractions;
+using Domain.Shared.Entities;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;

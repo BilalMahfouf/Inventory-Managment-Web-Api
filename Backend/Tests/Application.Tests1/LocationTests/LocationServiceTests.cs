@@ -5,10 +5,10 @@
 //using Application.DTOs.Inventories;
 //using Application.DTOs.Locations.Request;
 //using Application.DTOs.Locations.Response;
-//using Application.Results;
+//using Domain.Shared.Results;
 //using Application.Services.Locations;
-//using Domain.Entities;
-//using Domain.Enums;
+//using Domain.Shared.Entities;
+//using Domain.Shared.Enums;
 //using FluentValidation;
 //using FluentValidation.Results;
 //using Moq;

@@ -1,9 +1,9 @@
 using Application.Abstractions.Repositories.Base;
 using Application.Abstractions.UnitOfWork;
 using Application.Customers;
-using Application.Results;
-using Domain.Entities;
-using Domain.Enums;
+using Domain.Shared.Results;
+using Domain.Shared.Entities;
+using Domain.Shared.Enums;
 using Moq;
 using Xunit;
 

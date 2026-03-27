@@ -1,9 +1,9 @@
 ﻿using Application.Abstractions.Repositories.Base;
 using Application.Common.Abstractions;
 using Application.DTOs.Authentication.Login;
-using Application.Results;
-using Domain.Entities;
-using Domain.Enums;
+using Domain.Shared.Results;
+using Domain.Shared.Entities;
+using Domain.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

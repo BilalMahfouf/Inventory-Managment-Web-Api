@@ -1,10 +1,9 @@
 ﻿using Application.Abstractions.UnitOfWork;
-using Application.Results;
+using Domain.Shared.Results;
 using Application.Sales.RequestResponse;
-using Domain.Entities.Products;
-using Domain.Enums;
-using Domain.Exceptions;
-using Domain.Sales;
+using Domain.Products.Entities;
+using Domain.Shared.Enums;
+using Domain.Shared.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -32,7 +31,7 @@ public sealed class SalesOrderService
             // add valdiation to request here
 
 
-            List<Domain.Sales.SalesOrderItemRequest> items = new();
+            List<Domain.Sales.Entities.SalesOrderItemRequest> items = new();
 
             foreach (var item in request.Items)
             {
@@ -45,7 +44,7 @@ public sealed class SalesOrderService
                     return Result<int>.NotFound(nameof(product));
                 }
 
-                items.Add(new Domain.Sales.SalesOrderItemRequest()
+                items.Add(new Domain.Sales.Entities.SalesOrderItemRequest()
                 {
                     Product = product,
                     Quantity = item.Quantity

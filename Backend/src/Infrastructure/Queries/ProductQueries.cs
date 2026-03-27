@@ -1,7 +1,7 @@
 ﻿using Application.Abstractions.Queries;
 using Application.DTOs.Products.Response.Products;
 using Application.PagedLists;
-using Application.Results;
+using Domain.Shared.Results;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;

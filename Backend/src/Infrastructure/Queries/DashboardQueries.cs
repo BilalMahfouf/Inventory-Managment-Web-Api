@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Queries;
-using Application.Results;
-using Domain.Enums;
+using Domain.Shared.Results;
+using Domain.Shared.Enums;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;

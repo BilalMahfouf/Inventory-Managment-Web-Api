@@ -1,5 +1,5 @@
-﻿using Application.Results;
-using Domain.Enums;
+﻿using Domain.Shared.Results;
+using Domain.Shared.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 

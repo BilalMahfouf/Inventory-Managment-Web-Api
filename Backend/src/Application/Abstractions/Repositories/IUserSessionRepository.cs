@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Repositories.Base;
-using Domain.Entities;
+using Domain.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

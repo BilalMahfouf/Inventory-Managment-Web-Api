@@ -1,4 +1,4 @@
-﻿using Domain.Enums;
+﻿using Domain.Shared.Enums;
 using Domain.Sales;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

@@ -1,5 +1,5 @@
 ﻿using Application.PagedLists;
-using Domain.Abstractions;
+using Domain.Shared.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

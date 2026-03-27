@@ -2,10 +2,10 @@
 using Application.Abstractions.UnitOfWork;
 using Application.DTOs.StockMovements.Request;
 using Application.DTOs.StockMovements.Response;
-using Application.Results;
+using Domain.Shared.Results;
 using Application.Services.Shared;
-using Domain.Entities;
-using Domain.Enums;
+using Domain.Shared.Entities;
+using Domain.Shared.Enums;
 using FluentValidation;
 using System;
 using System.Collections.Generic;

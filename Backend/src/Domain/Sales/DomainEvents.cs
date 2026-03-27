@@ -1,5 +1,5 @@
-﻿using Domain.Common.Events;
-using Domain.Enums;
+﻿using Domain.Shared.Events;
+using Domain.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;

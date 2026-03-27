@@ -1,4 +1,4 @@
-﻿using Domain.Entities.Common;
+﻿using Domain.Shared.Entities;
 using Newtonsoft.Json;
 using Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
-using Domain.Common.Events;
+using Domain.Shared.Events;
 
 namespace Infrastructure.Interceptors;
 

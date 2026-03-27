@@ -1,0 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Domain.Shared.Abstractions;
+    public interface ISoftDeletable : IEntity
+    {
+        bool IsDeleted { get; set; }
+        DateTime? DeletedAt { get; set; }
+        int? DeletedByUserId { get; set; } // 
+    }

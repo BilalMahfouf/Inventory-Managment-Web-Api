@@ -2,7 +2,7 @@
 using Application.DTOs.StockMovements.Response;
 using Application.Inventories;
 using Application.PagedLists;
-using Application.Results;
+using Domain.Shared.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;

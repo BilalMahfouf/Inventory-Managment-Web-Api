@@ -1,7 +1,7 @@
 ﻿using Application.Abstractions.Services.Product;
 using Application.DTOs.Products.Request.ProductImages;
 using Application.DTOs.Products.Response.ProductImages;
-using Application.Results;
+using Domain.Shared.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Extensions;

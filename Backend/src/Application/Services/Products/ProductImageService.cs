@@ -5,17 +5,17 @@ using Application.Abstractions.UnitOfWork;
 using Application.DTOs.Products.Request.ProductImages;
 using Application.DTOs.Products.Response.ProductImages;
 using Application.DTOs.Images;
-using Application.Results;
+using Domain.Shared.Results;
 using Application.Services.Images;
-using Domain.Entities;
-using Domain.Enums;
+using Domain.Shared.Entities;
+using Domain.Shared.Enums;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Domain.Entities.Products;
+using Domain.Products.Entities;
 
 namespace Application.Services.Products
 {

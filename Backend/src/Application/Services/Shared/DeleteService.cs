@@ -1,10 +1,10 @@
 ﻿using Application.Abstractions.Repositories.Base;
 using Application.Abstractions.Services.User;
 using Application.Abstractions.UnitOfWork;
-using Application.Results;
-using Domain.Abstractions;
-using Domain.Enums;
-using Domain.Exceptions;
+using Domain.Shared.Results;
+using Domain.Shared.Abstractions;
+using Domain.Shared.Enums;
+using Domain.Shared.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

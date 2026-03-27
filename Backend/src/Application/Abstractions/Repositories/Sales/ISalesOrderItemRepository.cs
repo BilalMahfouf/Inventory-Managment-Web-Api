@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Repositories.Base;
-using Application.Results;
+using Domain.Shared.Results;
 using Domain.Sales;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,5 @@
-﻿using Domain.Entities;
-using Domain.Entities.Products;
+﻿using Domain.Shared.Entities;
+using Domain.Products.Entities;
 using Domain.Inventories;
 using Domain.Sales;
 using Microsoft.EntityFrameworkCore;

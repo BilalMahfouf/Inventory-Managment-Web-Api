@@ -1,5 +1,5 @@
 ﻿using Application.Services.Images;
-using Domain.Enums;
+using Domain.Shared.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;

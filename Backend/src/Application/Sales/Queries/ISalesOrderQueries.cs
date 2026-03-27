@@ -1,5 +1,5 @@
 ﻿using Application.PagedLists;
-using Application.Results;
+using Domain.Shared.Results;
 using Application.Sales.RequestResponse;
 using System;
 using System.Collections.Generic;

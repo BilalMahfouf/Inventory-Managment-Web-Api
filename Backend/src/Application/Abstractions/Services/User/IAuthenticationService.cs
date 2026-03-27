@@ -2,7 +2,7 @@
 using Application.DTOs.Authentication.Email;
 using Application.DTOs.Authentication.Login;
 using Application.DTOs.Authentication.Password;
-using Application.Results;
+using Domain.Shared.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;

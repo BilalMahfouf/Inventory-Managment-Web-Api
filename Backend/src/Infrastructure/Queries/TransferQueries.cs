@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Queries;
-using Application.Results;
+using Domain.Shared.Results;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;

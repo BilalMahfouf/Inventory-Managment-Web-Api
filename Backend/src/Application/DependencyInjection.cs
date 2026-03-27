@@ -19,7 +19,7 @@ using Application.Services.Shared;
 using Application.Services.StockMovements;
 using Application.Services.UnitOfMeasures;
 using Application.Services.Users;
-using Domain.Abstractions;
+using Domain.Shared.Abstractions;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System;

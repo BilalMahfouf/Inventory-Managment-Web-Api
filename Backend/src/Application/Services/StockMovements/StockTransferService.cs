@@ -1,9 +1,9 @@
 ﻿using Application.Abstractions.UnitOfWork;
 using Application.DTOs.StockMovements.Request;
-using Application.Results;
-using Domain.Entities;
-using Domain.Enums;
-using Domain.Exceptions;
+using Domain.Shared.Results;
+using Domain.Shared.Entities;
+using Domain.Shared.Enums;
+using Domain.Shared.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

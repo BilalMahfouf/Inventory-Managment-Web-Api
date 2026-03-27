@@ -2,10 +2,10 @@
 //using Application.Abstractions.Repositories.Inventories;
 //using Application.DTOs.Inventories;
 //using Application.DTOs.Inventories.Request;
-//using Application.Results;
+//using Domain.Shared.Results;
 //using Application.Services.Inventories;
-//using Domain.Entities;
-//using Domain.Enums;
+//using Domain.Shared.Entities;
+//using Domain.Shared.Enums;
 //using FluentValidation;
 //using FluentValidation.Results;
 //using Moq;

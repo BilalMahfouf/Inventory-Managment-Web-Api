@@ -1,5 +1,5 @@
-﻿using Domain.Abstractions;
-using Domain.Entities;
+﻿using Domain.Shared.Abstractions;
+using Domain.Shared.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;

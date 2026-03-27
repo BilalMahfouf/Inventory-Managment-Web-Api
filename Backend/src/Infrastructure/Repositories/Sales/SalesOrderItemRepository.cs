@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Repositories.Sales;
-using Application.Results;
-using Domain.Enums;
+using Domain.Shared.Results;
+using Domain.Shared.Enums;
 using Domain.Sales;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Base;

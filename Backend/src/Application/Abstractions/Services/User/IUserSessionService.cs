@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.Users.Response;
-using Application.Results;
+using Domain.Shared.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;

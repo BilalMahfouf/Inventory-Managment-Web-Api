@@ -1,0 +1,22 @@
+global using Domain.Shared.Abstractions;
+global using Domain.Shared.Entities;
+global using Domain.Shared.Enums;
+global using Domain.Shared.Events;
+global using Domain.Shared.Exceptions;
+global using Domain.Shared.Results;
+global using Domain.Shared.ValueObjects;
+
+global using Domain.Customers.Entities;
+global using Domain.Customers.Enums;
+global using Domain.Inventories;
+global using Domain.Inventories.Entities;
+global using Domain.Inventories.Enums;
+global using Domain.Products.Entities;
+global using Domain.Products.Enums;
+global using Domain.Purchasing.Entities;
+global using Domain.Sales;
+global using Domain.Sales.Entities;
+global using Domain.Sales.Enums;
+global using Domain.Suppliers.Entities;
+global using Domain.Users.Entities;
+global using Domain.Users.Enums;
