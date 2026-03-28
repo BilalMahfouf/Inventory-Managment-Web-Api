@@ -1,7 +1,12 @@
 import NotificationBell from '@/components/notification/NotificationBell';
-import { Search, Bell, Menu } from 'lucide-react';
+import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { Search, Menu } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function TopNav({ onToggleSidebar }) {
+  const { t } = useTranslation();
+
   return (
     <nav className='fixed top-0 right-0 z-40 bg-white border-b border-gray-200 h-16 left-0 lg:left-64'>
       <div className='flex items-center justify-between h-full px-4 lg:px-6'>
@@ -23,7 +28,7 @@ export default function TopNav({ onToggleSidebar }) {
               </div>
               <input
                 type='text'
-                placeholder='Search products, orders, customers...'
+                placeholder={t(i18nKeyContainer.layout.topNav.searchPlaceholder)}
                 className='block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 focus:bg-white text-sm'
               />
             </div>
@@ -32,6 +37,8 @@ export default function TopNav({ onToggleSidebar }) {
 
         {/* Right Side - Notifications and User (always visible) */}
         <div className='flex items-center space-x-4 md:space-x-6'>
+          <LanguageSwitcher />
+
           {/* Notifications */}
           <NotificationBell />
 

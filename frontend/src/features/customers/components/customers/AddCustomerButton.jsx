@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { UserPlus } from 'lucide-react';
 import Button from '@components/Buttons/Button';
 import AddUpdateCustomer from './AddUpdateCustomer';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 /**
  * AddCustomerButton Component
@@ -26,6 +28,7 @@ import AddUpdateCustomer from './AddUpdateCustomer';
  * @param {function} props.onSuccess - Optional callback after successful customer creation
  */
 const AddCustomerButton = ({ onSuccess }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -35,7 +38,7 @@ const AddCustomerButton = ({ onSuccess }) => {
         LeftIcon={UserPlus}
         className='cursor-pointer'
       >
-        Add Customer
+        {t(i18nKeyContainer.customers.addButton.label)}
       </Button>
       <AddUpdateCustomer
         isOpen={isOpen}

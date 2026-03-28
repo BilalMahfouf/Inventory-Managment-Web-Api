@@ -1,6 +1,8 @@
 import React from 'react';
 import { MapPin, ArrowRight, Package as PackageIcon } from 'lucide-react';
 import { Input } from '@components/ui/input';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 /**
  * TransferDetailsTab Component
@@ -34,6 +36,7 @@ const TransferDetailsTab = ({
   notes = '',
   onNotesChange,
 }) => {
+  const { t } = useTranslation();
   // Get location names for display
   const fromLocation = locations.find(
     loc => loc.id === parseInt(fromLocationId)
@@ -53,7 +56,9 @@ const TransferDetailsTab = ({
     <div>
       <div className='flex items-center gap-2 mb-6'>
         <MapPin className='h-5 w-5' />
-        <h3 className='text-lg font-semibold'>Transfer Route</h3>
+        <h3 className='text-lg font-semibold'>
+          {t(i18nKeyContainer.inventory.stockTransfers.form.sections.transferRoute)}
+        </h3>
       </div>
 
       {/* From and To Warehouses */}
@@ -61,7 +66,10 @@ const TransferDetailsTab = ({
         {/* From Warehouse */}
         <div>
           <label className='block text-sm font-medium mb-2'>
-            From Warehouse <span className='text-red-500'>*</span>
+            {t(i18nKeyContainer.inventory.stockTransfers.form.fields.fromWarehouse)}{' '}
+            <span className='text-red-500'>
+              {t(i18nKeyContainer.inventory.shared.required)}
+            </span>
           </label>
           <select
             value={fromLocationId || ''}
@@ -69,7 +77,12 @@ const TransferDetailsTab = ({
             className='w-full h-12 px-3 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-blue-600'
             disabled={disabled}
           >
-            <option value=''>Select warehouse</option>
+            <option value=''>
+              {t(
+                i18nKeyContainer.inventory.stockTransfers.form.placeholders
+                  .selectWarehouse
+              )}
+            </option>
             {locations.map(location => (
               <option key={location.id} value={location.id}>
                 {location.name}
@@ -81,7 +94,10 @@ const TransferDetailsTab = ({
         {/* To Warehouse */}
         <div>
           <label className='block text-sm font-medium mb-2'>
-            To Warehouse <span className='text-red-500'>*</span>
+            {t(i18nKeyContainer.inventory.stockTransfers.form.fields.toWarehouse)}{' '}
+            <span className='text-red-500'>
+              {t(i18nKeyContainer.inventory.shared.required)}
+            </span>
           </label>
           <select
             value={toLocationId || ''}
@@ -89,7 +105,12 @@ const TransferDetailsTab = ({
             className='w-full h-12 px-3 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-blue-600'
             disabled={disabled}
           >
-            <option value=''>Select warehouse</option>
+            <option value=''>
+              {t(
+                i18nKeyContainer.inventory.stockTransfers.form.placeholders
+                  .selectWarehouse
+              )}
+            </option>
             {locations.map(location => (
               <option key={location.id} value={location.id}>
                 {location.name}
@@ -103,23 +124,31 @@ const TransferDetailsTab = ({
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
         <div>
           <label className='block text-sm font-medium mb-2'>
-            From Location
+            {t(i18nKeyContainer.inventory.stockTransfers.form.fields.fromLocation)}
           </label>
           <Input
             value={fromLocation?.name || ''}
             disabled
             className='h-12 bg-gray-50'
-            placeholder='Select a warehouse first'
+            placeholder={t(
+              i18nKeyContainer.inventory.stockTransfers.form.placeholders
+                .selectWarehouseFirst
+            )}
           />
         </div>
 
         <div>
-          <label className='block text-sm font-medium mb-2'>To Location</label>
+          <label className='block text-sm font-medium mb-2'>
+            {t(i18nKeyContainer.inventory.stockTransfers.form.fields.toLocation)}
+          </label>
           <Input
             value={toLocation?.name || ''}
             disabled
             className='h-12 bg-gray-50'
-            placeholder='Select a warehouse first'
+            placeholder={t(
+              i18nKeyContainer.inventory.stockTransfers.form.placeholders
+                .selectWarehouseFirst
+            )}
           />
         </div>
       </div>
@@ -150,7 +179,10 @@ const TransferDetailsTab = ({
       {/* Quantity Input */}
       <div className='mb-6'>
         <label className='block text-sm font-medium mb-2'>
-          Requested Quantity <span className='text-red-500'>*</span>
+          {t(i18nKeyContainer.inventory.stockTransfers.form.fields.requestedQuantity)}{' '}
+          <span className='text-red-500'>
+            {t(i18nKeyContainer.inventory.shared.required)}
+          </span>
         </label>
         <Input
           type='number'
@@ -166,9 +198,13 @@ const TransferDetailsTab = ({
 
       {/* Transfer Notes */}
       <div className='mb-6'>
-        <label className='block text-sm font-medium mb-2'>Transfer Notes</label>
+        <label className='block text-sm font-medium mb-2'>
+          {t(i18nKeyContainer.inventory.stockTransfers.form.fields.transferNotes)}
+        </label>
         <textarea
-          placeholder='Additional notes about this transfer...'
+          placeholder={t(
+            i18nKeyContainer.inventory.stockTransfers.form.placeholders.notes
+          )}
           value={notes}
           onChange={e => onNotesChange(e.target.value)}
           className='w-full min-h-[100px] px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 resize-vertical'
@@ -179,9 +215,13 @@ const TransferDetailsTab = ({
       {/* Transfer Summary */}
       <div className='bg-gray-50 rounded-lg p-6 border border-gray-200'>
         <div className='flex items-center justify-between mb-4'>
-          <h4 className='font-semibold text-gray-900'>Transfer Summary</h4>
+          <h4 className='font-semibold text-gray-900'>
+            {t(i18nKeyContainer.inventory.stockTransfers.form.sections.transferSummary)}
+          </h4>
           <div className='text-right'>
-            <div className='text-sm text-gray-600'>Total Value</div>
+            <div className='text-sm text-gray-600'>
+              {t(i18nKeyContainer.inventory.stockTransfers.form.fields.totalValue)}
+            </div>
             <div className='text-2xl font-bold text-green-600'>
               ${totalValue.toFixed(2)}
             </div>
@@ -189,8 +229,15 @@ const TransferDetailsTab = ({
         </div>
 
         <div className='text-sm text-gray-600'>
-          {productCount} {productCount === 1 ? 'product' : 'products'},{' '}
-          {quantity || 0} total items
+          {productCount}{' '}
+          {productCount === 1
+            ? t(i18nKeyContainer.inventory.stockTransfers.form.labels.singleProduct)
+            : t(
+                i18nKeyContainer.inventory.stockTransfers.form.labels
+                  .multipleProducts
+              )}
+          , {quantity || 0}{' '}
+          {t(i18nKeyContainer.inventory.stockTransfers.form.labels.totalItems)}
         </div>
       </div>
     </div>

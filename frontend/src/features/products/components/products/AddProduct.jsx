@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { X, Package, DollarSign, Archive, ShowerHead } from 'lucide-react';
+import { X, Package, DollarSign, Archive } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Button from '@components/Buttons/Button';
 import { Input } from '@components/ui/input';
 import { cn } from '@shared/lib/utils';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { getProductCategories } from '@features/products/services/productCategoryApi';
 import { GetUnitsNames } from '@features/products/services/unitOfMeasureApi';
 import { getLocationsNames } from '@features/inventory/services/locationApi';
@@ -24,6 +26,7 @@ import { useToast } from '@shared/context/ToastContext';
  * @param {number} props.productId - ID of the product to edit (0 for new product)
  */
 const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState(0);
   const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState({
@@ -32,7 +35,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
     sku: '',
     category: 0,
     description: '',
-    status: 'Active',
+    status: 'active',
 
     // Pricing
     costPrice: 0,
@@ -51,12 +54,27 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
   const [unitOfMeasurement, setUnitOfMeasurement] = useState([]);
   const [locations, setLocations] = useState([]);
   const tabs = [
-    { id: 0, label: 'Basic Info', icon: Package },
-    { id: 1, label: 'Pricing', icon: DollarSign },
-    { id: 2, label: 'Inventory', icon: Archive },
-    { id: 3, label: 'Details' },
+    {
+      id: 0,
+      label: t(i18nKeyContainer.products.addProductForm.tabs.basicInfo),
+      icon: Package,
+    },
+    {
+      id: 1,
+      label: t(i18nKeyContainer.products.addProductForm.tabs.pricing),
+      icon: DollarSign,
+    },
+    {
+      id: 2,
+      label: t(i18nKeyContainer.products.addProductForm.tabs.inventory),
+      icon: Archive,
+    },
+    {
+      id: 3,
+      label: t(i18nKeyContainer.products.addProductForm.tabs.details),
+    },
   ];
-  const statusOptions = ['Active', 'Inactive', 'Draft'];
+  const statusOptions = ['active', 'inactive', 'draft'];
   const [id, setId] = useState(productId);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -77,6 +95,22 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
       [field]: value,
     }));
   };
+
+  const getStatusLabel = status => {
+    switch (status) {
+      case true:
+      case 'active':
+        return t(i18nKeyContainer.products.shared.status.active);
+      case false:
+      case 'inactive':
+        return t(i18nKeyContainer.products.shared.status.inactive);
+      case 'draft':
+        return t(i18nKeyContainer.products.shared.status.draft);
+      default:
+        return status;
+    }
+  };
+
   const addNewProduct = async ({
     sku,
     name,
@@ -107,8 +141,10 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
 
       if (data) {
         showSuccess(
-          'Product Created Successfully',
-          `${name} has been added to your inventory.`
+          t(i18nKeyContainer.products.addProductForm.toasts.createSuccessTitle),
+          t(i18nKeyContainer.products.addProductForm.toasts.createSuccessMessage, {
+            name,
+          })
         );
         onClose();
 
@@ -122,8 +158,9 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
     } catch (error) {
       console.error('Product creation error:', error);
       showError(
-        'Product Creation Failed',
-        error.message || "Product can't be created. Please try again."
+        t(i18nKeyContainer.products.addProductForm.toasts.createErrorTitle),
+        error.message ||
+          t(i18nKeyContainer.products.addProductForm.toasts.createErrorMessage)
       );
     }
   };
@@ -156,8 +193,10 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
 
       if (data) {
         showSuccess(
-          'Product Updated Successfully',
-          `${name} has been updated.`
+          t(i18nKeyContainer.products.addProductForm.toasts.updateSuccessTitle),
+          t(i18nKeyContainer.products.addProductForm.toasts.updateSuccessMessage, {
+            name,
+          })
         );
         onClose();
 
@@ -166,7 +205,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
           sku: data.sku,
           category: data.categoryId,
           description: data.description,
-          status: data.isActive,
+          status: data.isActive ? 'active' : 'inactive',
           costPrice: data.costPrice,
           sellingPrice: data.unitPrice,
           currentStock: data.inventories[0].quantityOnHand,
@@ -183,15 +222,16 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
         setMode('update');
       } else {
         showError(
-          'Product Update Failed',
-          'Product could not be updated. Please try again.'
+          t(i18nKeyContainer.products.addProductForm.toasts.updateErrorTitle),
+          t(i18nKeyContainer.products.addProductForm.toasts.updateErrorMessage)
         );
       }
     } catch (error) {
       console.error('Product update error:', error);
       showError(
-        'Product Update Failed',
-        error.message || "Product can't be updated. Please try again."
+        t(i18nKeyContainer.products.addProductForm.toasts.updateErrorTitle),
+        error.message ||
+          t(i18nKeyContainer.products.addProductForm.toasts.updateErrorMessage)
       );
     }
   };
@@ -240,7 +280,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
       sku: '',
       category: 0,
       description: '',
-      status: 'Active',
+      status: 'active',
       costPrice: 0,
       sellingPrice: 0,
       currentStock: 0,
@@ -281,7 +321,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
             sku: data.sku,
             category: data.categoryId,
             description: data.description,
-            status: data.isActive,
+            status: data.isActive ? 'active' : 'inactive',
             costPrice: data.costPrice,
             sellingPrice: data.unitPrice,
 
@@ -323,7 +363,9 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
           <div className='flex items-center gap-3'>
             <Package className='h-6 w-6 text-gray-600' />
             <h2 className='text-xl font-semibold'>
-              {mode === 'add' ? 'Add New Product' : 'Edit Product'}
+              {mode === 'add'
+                ? t(i18nKeyContainer.products.addProductForm.title.add)
+                : t(i18nKeyContainer.products.addProductForm.title.edit)}
             </h2>
           </div>
           <button
@@ -365,16 +407,20 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
             <div>
               <div className='flex items-center gap-2 mb-6'>
                 <Package className='h-5 w-5' />
-                <h3 className='text-lg font-semibold'>Product Information</h3>
+                <h3 className='text-lg font-semibold'>
+                  {t(i18nKeyContainer.products.addProductForm.sections.productInformation)}
+                </h3>
               </div>
 
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <div>
                   <label className='block text-sm font-medium mb-2'>
-                    Product Name
+                    {t(i18nKeyContainer.products.addProductForm.fields.productName)}
                   </label>
                   <Input
-                    placeholder='Enter product name'
+                    placeholder={t(
+                      i18nKeyContainer.products.addProductForm.placeholders.productName
+                    )}
                     value={formData.productName}
                     onChange={e =>
                       handleInputChange('productName', e.target.value)
@@ -384,9 +430,13 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium mb-2'>SKU</label>
+                  <label className='block text-sm font-medium mb-2'>
+                    {t(i18nKeyContainer.products.addProductForm.fields.sku)}
+                  </label>
                   <Input
-                    placeholder='Enter SKU'
+                    placeholder={t(
+                      i18nKeyContainer.products.addProductForm.placeholders.sku
+                    )}
                     value={formData.sku}
                     onChange={e => handleInputChange('sku', e.target.value)}
                     className='h-12'
@@ -396,7 +446,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
 
                 <div>
                   <label className='block text-sm font-medium mb-2'>
-                    Category
+                    {t(i18nKeyContainer.products.addProductForm.fields.category)}
                   </label>
                   <select
                     value={formData.category}
@@ -415,10 +465,12 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
 
                 <div className='md:col-span-2'>
                   <label className='block text-sm font-medium mb-2'>
-                    Description
+                    {t(i18nKeyContainer.products.addProductForm.fields.description)}
                   </label>
                   <textarea
-                    placeholder='Enter product description'
+                    placeholder={t(
+                      i18nKeyContainer.products.addProductForm.placeholders.description
+                    )}
                     value={formData.description}
                     onChange={e =>
                       handleInputChange('description', e.target.value)
@@ -429,7 +481,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
 
                 <div>
                   <label className='block text-sm font-medium mb-2'>
-                    Status
+                    {t(i18nKeyContainer.products.addProductForm.fields.status)}
                   </label>
                   <select
                     value={formData.status}
@@ -438,7 +490,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
                   >
                     {statusOptions.map(status => (
                       <option key={status} value={status}>
-                        {status}
+                        {getStatusLabel(status)}
                       </option>
                     ))}
                   </select>
@@ -452,17 +504,21 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
             <div>
               <div className='flex items-center gap-2 mb-6'>
                 <DollarSign className='h-5 w-5' />
-                <h3 className='text-lg font-semibold'>Pricing Information</h3>
+                <h3 className='text-lg font-semibold'>
+                  {t(i18nKeyContainer.products.addProductForm.sections.pricingInformation)}
+                </h3>
               </div>
 
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-8'>
                 <div>
                   <label className='block text-sm font-medium mb-2'>
-                    Cost Price
+                    {t(i18nKeyContainer.products.addProductForm.fields.costPrice)}
                   </label>
                   <Input
                     type='number'
-                    placeholder='0'
+                    placeholder={t(
+                      i18nKeyContainer.products.addProductForm.placeholders.zero
+                    )}
                     value={formData.costPrice}
                     onChange={e =>
                       handleInputChange(
@@ -476,11 +532,13 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
 
                 <div>
                   <label className='block text-sm font-medium mb-2'>
-                    Selling Price
+                    {t(i18nKeyContainer.products.addProductForm.fields.sellingPrice)}
                   </label>
                   <Input
                     type='number'
-                    placeholder='0'
+                    placeholder={t(
+                      i18nKeyContainer.products.addProductForm.placeholders.zero
+                    )}
                     value={formData.sellingPrice}
                     onChange={e =>
                       handleInputChange(
@@ -497,7 +555,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
               <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
                 <div className='bg-blue-50 rounded-lg p-4'>
                   <div className='text-sm text-gray-600 mb-1'>
-                    Profit Margin
+                    {t(i18nKeyContainer.products.addProductForm.metrics.profitMargin)}
                   </div>
                   <div className='text-2xl font-bold text-blue-600'>
                     {profitMargin}%
@@ -506,7 +564,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
 
                 <div className='bg-green-50 rounded-lg p-4'>
                   <div className='text-sm text-gray-600 mb-1'>
-                    Profit per Unit
+                    {t(i18nKeyContainer.products.addProductForm.metrics.profitPerUnit)}
                   </div>
                   <div className='text-2xl font-bold text-green-600'>
                     ${profitPerUnit.toFixed(2)}
@@ -514,7 +572,9 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
                 </div>
 
                 <div className='bg-purple-50 rounded-lg p-4'>
-                  <div className='text-sm text-gray-600 mb-1'>Markup</div>
+                  <div className='text-sm text-gray-600 mb-1'>
+                    {t(i18nKeyContainer.products.addProductForm.metrics.markup)}
+                  </div>
                   <div className='text-2xl font-bold text-purple-600'>
                     {markup}%
                   </div>
@@ -528,17 +588,21 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
             <div>
               <div className='flex items-center gap-2 mb-6'>
                 <Archive className='h-5 w-5' />
-                <h3 className='text-lg font-semibold'>Inventory Management</h3>
+                <h3 className='text-lg font-semibold'>
+                  {t(i18nKeyContainer.products.addProductForm.sections.inventoryManagement)}
+                </h3>
               </div>
 
               <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-6'>
                 <div>
                   <label className='block text-sm font-medium mb-2'>
-                    Current Stock
+                    {t(i18nKeyContainer.products.addProductForm.fields.currentStock)}
                   </label>
                   <Input
                     type='number'
-                    placeholder='0'
+                    placeholder={t(
+                      i18nKeyContainer.products.addProductForm.placeholders.zero
+                    )}
                     value={formData.currentStock}
                     onChange={e =>
                       handleInputChange(
@@ -552,11 +616,13 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
 
                 <div>
                   <label className='block text-sm font-medium mb-2'>
-                    Minimum Stock
+                    {t(i18nKeyContainer.products.addProductForm.fields.minimumStock)}
                   </label>
                   <Input
                     type='number'
-                    placeholder='0'
+                    placeholder={t(
+                      i18nKeyContainer.products.addProductForm.placeholders.zero
+                    )}
                     value={formData.minimumStock}
                     onChange={e =>
                       handleInputChange(
@@ -570,11 +636,13 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
 
                 <div>
                   <label className='block text-sm font-medium mb-2'>
-                    Maximum Stock
+                    {t(i18nKeyContainer.products.addProductForm.fields.maximumStock)}
                   </label>
                   <Input
                     type='number'
-                    placeholder='0'
+                    placeholder={t(
+                      i18nKeyContainer.products.addProductForm.placeholders.zero
+                    )}
                     value={formData.maximumStock}
                     onChange={e =>
                       handleInputChange(
@@ -590,7 +658,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <div>
                   <label className='block text-sm font-medium mb-2'>
-                    Unit of Measurement
+                    {t(i18nKeyContainer.products.addProductForm.fields.unitOfMeasurement)}
                   </label>
                   <select
                     value={formData.unitOfMeasurement}
@@ -609,7 +677,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
 
                 <div>
                   <label className='block text-sm font-medium mb-2'>
-                    Storage Location
+                    {t(i18nKeyContainer.products.addProductForm.fields.storageLocation)}
                   </label>
                   <select
                     value={formData.storageLocation}
@@ -634,48 +702,66 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
             <div>
               <div className='flex items-center gap-2 mb-6'>
                 <Package className='h-5 w-5' />
-                <h3 className='text-lg font-semibold'>Additional Details</h3>
+                <h3 className='text-lg font-semibold'>
+                  {t(i18nKeyContainer.products.addProductForm.sections.additionalDetails)}
+                </h3>
               </div>
 
               <div className='bg-gray-50 rounded-lg p-6'>
-                <h4 className='font-medium mb-4'>Product Summary</h4>
+                <h4 className='font-medium mb-4'>
+                  {t(i18nKeyContainer.products.addProductForm.sections.productSummary)}
+                </h4>
                 <div className='space-y-3'>
                   <div className='flex justify-between'>
-                    <span className='text-gray-600'>Product Name:</span>
+                    <span className='text-gray-600'>
+                      {t(i18nKeyContainer.products.addProductForm.summary.productName)}
+                    </span>
                     <span className='font-medium'>
-                      {formData.productName || 'Not specified'}
+                      {formData.productName ||
+                        t(i18nKeyContainer.products.shared.notSpecified)}
                     </span>
                   </div>
                   <div className='flex justify-between'>
-                    <span className='text-gray-600'>SKU:</span>
+                    <span className='text-gray-600'>
+                      {t(i18nKeyContainer.products.addProductForm.summary.sku)}
+                    </span>
                     <span className='font-medium'>
-                      {formData.sku || 'Not specified'}
+                      {formData.sku || t(i18nKeyContainer.products.shared.notSpecified)}
                     </span>
                   </div>
                   <div className='flex justify-between'>
-                    <span className='text-gray-600'>Category:</span>
+                    <span className='text-gray-600'>
+                      {t(i18nKeyContainer.products.addProductForm.summary.category)}
+                    </span>
                     <span className='font-medium'>
-                      {formData.category || 'Not specified'}
+                      {formData.category ||
+                        t(i18nKeyContainer.products.shared.notSpecified)}
                     </span>
                   </div>
                   <div className='flex justify-between'>
-                    <span className='text-gray-600'>Selling Price:</span>
+                    <span className='text-gray-600'>
+                      {t(i18nKeyContainer.products.addProductForm.summary.sellingPrice)}
+                    </span>
                     <span className='font-medium'>
                       ${formData.sellingPrice.toFixed(2)}
                     </span>
                   </div>
                   <div className='flex justify-between'>
-                    <span className='text-gray-600'>Initial Stock:</span>
+                    <span className='text-gray-600'>
+                      {t(i18nKeyContainer.products.addProductForm.summary.initialStock)}
+                    </span>
                     <span className='font-medium'>
                       {formData.currentStock} {formData.unitOfMeasurement}
                     </span>
                   </div>
                   <div className='flex justify-between'>
-                    <span className='text-gray-600'>Status:</span>
+                    <span className='text-gray-600'>
+                      {t(i18nKeyContainer.products.addProductForm.summary.status)}
+                    </span>
                     <span
-                      className={`font-medium ${formData.status === 'Active' ? 'text-green-600' : 'text-gray-600'}`}
+                      className={`font-medium ${formData.status === 'active' ? 'text-green-600' : 'text-gray-600'}`}
                     >
-                      {formData.status}
+                      {getStatusLabel(formData.status)}
                     </span>
                   </div>
                 </div>
@@ -692,7 +778,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
             disabled={isLoading}
             className='cursor-pointer'
           >
-            Cancel
+            {t(i18nKeyContainer.products.addProductForm.actions.cancel)}
           </Button>
           <Button
             onClick={handleSubmit}
@@ -706,7 +792,9 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
             }
             className='cursor-pointer'
           >
-            {mode === 'add' ? 'Add Product' : 'Save Changes'}
+            {mode === 'add'
+              ? t(i18nKeyContainer.products.addProductForm.actions.addProduct)
+              : t(i18nKeyContainer.products.addProductForm.actions.saveChanges)}
           </Button>
         </div>
       </div>

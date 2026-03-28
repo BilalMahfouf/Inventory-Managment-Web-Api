@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import SimpleDataTable from '@components/DataTable/SimpleDataTable';
 import {
   deleteProductCategory,
@@ -8,8 +8,12 @@ import ProductCategoryView from './ProductCategoryView';
 import AddProductCategory from './AddProductCategory';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';
 import { useToast } from '@shared/context/ToastContext';
+import { useTranslation } from 'react-i18next';
+
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 export default function ProductCategoryDataTable({ refresh }) {
+  const { t } = useTranslation();
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [addEditDialogOpen, setAddEditDialogOpen] = useState(false);
   const [currentProductCategoryId, setCurrentProductCategoryId] = useState(0);
@@ -17,6 +21,7 @@ export default function ProductCategoryDataTable({ refresh }) {
   const [isLoading, setIsLoading] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { showSuccess, showError } = useToast();
+  const columns = useMemo(() => getDefaultColumns(t), [t]);
 
   const fetchProductCategories = async () => {
     setIsLoading(true);
@@ -45,10 +50,14 @@ export default function ProductCategoryDataTable({ refresh }) {
     const result = await deleteProductCategory(currentProductCategoryId);
     setDeleteDialogOpen(false);
     if (!result.success) {
-      showError(`failed to delete product category: ${result.message}`);
+      showError(
+        t(i18nKeyContainer.products.categories.table.toasts.deleteError, {
+          error: result.message,
+        })
+      );
       return;
     }
-    showSuccess('Product Category deleted successfully');
+    showSuccess(t(i18nKeyContainer.products.categories.table.toasts.deleteSuccess));
     await fetchProductCategories();
   };
 
@@ -67,7 +76,7 @@ export default function ProductCategoryDataTable({ refresh }) {
       <SimpleDataTable
         data={data}
         loading={isLoading}
-        columns={defaultColumns}
+        columns={columns}
         onView={handleView}
         onEdit={handleEdit}
         onDelete={row => {
@@ -97,34 +106,36 @@ export default function ProductCategoryDataTable({ refresh }) {
           onClose={() => setDeleteDialogOpen(false)}
           onConfirm={handleDelete}
           type='delete'
-          title='Delete Product Category'
-          message='Are you sure you want to delete this Category, this action cannot be undone.'
+          title={t(i18nKeyContainer.products.categories.table.dialogs.deleteTitle)}
+          message={t(i18nKeyContainer.products.categories.table.dialogs.deleteMessage)}
         />
       )}
     </>
   );
 }
-const defaultColumns = [
+const getDefaultColumns = t => [
   {
     accessorKey: 'id',
-    header: 'ID',
+    header: t(i18nKeyContainer.products.categories.table.columns.id),
   },
   {
     accessorKey: 'name',
-    header: 'Name',
+    header: t(i18nKeyContainer.products.categories.table.columns.name),
   },
   {
     accessorKey: 'parentName',
-    header: 'Parent Category',
-    cell: ({ getValue }) => getValue() || 'Main Category',
+    header: t(i18nKeyContainer.products.categories.table.columns.parentCategory),
+    cell: ({ getValue }) =>
+      getValue() ||
+      t(i18nKeyContainer.products.categories.table.columns.mainCategory),
   },
   {
     accessorKey: 'createdAt',
-    header: 'Created At',
+    header: t(i18nKeyContainer.products.categories.table.columns.createdAt),
     cell: ({ getValue }) => new Date(getValue()).toLocaleDateString(),
   },
   {
     accessorKey: 'createdByUserName',
-    header: 'Created By',
+    header: t(i18nKeyContainer.products.categories.table.columns.createdBy),
   },
 ];

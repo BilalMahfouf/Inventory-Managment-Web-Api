@@ -7,6 +7,8 @@ import {
 } from '@/components/ui/dialog';
 import { MapPin, Calendar, User, Building2 } from 'lucide-react';
 import { getLocationById } from '@features/inventory/services/locationApi';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 /**
  * ViewLocation Component
@@ -32,6 +34,7 @@ import { getLocationById } from '@features/inventory/services/locationApi';
  * ```
  */
 const ViewLocation = ({ open, onOpenChange, locationId }) => {
+  const { t, i18n } = useTranslation();
   const [locationData, setLocationData] = useState({
     id: 0,
     name: '',
@@ -75,9 +78,13 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
         <DialogHeader>
           <div className='flex items-center gap-2'>
             <MapPin className='w-5 h-5 text-blue-600' />
-            <DialogTitle className='text-xl'>Location Details</DialogTitle>
+            <DialogTitle className='text-xl'>
+              {t(i18nKeyContainer.inventory.locations.view.title)}
+            </DialogTitle>
             <span className='text-sm text-gray-500 font-normal'>
-              ID: {locationData.id}
+              {t(i18nKeyContainer.inventory.locations.view.subtitleId, {
+                id: locationData.id,
+              })}
             </span>
           </div>
         </DialogHeader>
@@ -94,7 +101,7 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
               <div>
                 <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
                   <MapPin className='w-5 h-5 text-blue-600' />
-                  Location Information
+                  {t(i18nKeyContainer.inventory.locations.view.sections.locationInformation)}
                 </h3>
 
                 {/* Status Badge */}
@@ -106,11 +113,13 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
                         : 'bg-gray-100 text-gray-800'
                     }`}
                   >
-                    {locationData.isActive ? '✓ Active' : '○ Inactive'}
+                    {locationData.isActive
+                      ? t(i18nKeyContainer.inventory.shared.status.active)
+                      : t(i18nKeyContainer.inventory.shared.status.inactive)}
                   </span>
                   {locationData.isDeleted && (
                     <span className='inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 ml-2'>
-                      🗑 Deleted
+                      {t(i18nKeyContainer.inventory.shared.status.deleted)}
                     </span>
                   )}
                 </div>
@@ -119,7 +128,7 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
                 <div className='space-y-4'>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Location Name
+                      {t(i18nKeyContainer.inventory.locations.view.fields.locationName)}
                     </label>
                     <p className='text-gray-900 text-lg font-medium'>
                       {locationData.name || '-'}
@@ -128,17 +137,21 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
 
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Address
+                      {t(i18nKeyContainer.inventory.locations.view.fields.address)}
                     </label>
                     <p className='text-gray-600 bg-gray-50 p-3 rounded-md min-h-[60px]'>
-                      {locationData.address || 'No address provided'}
+                      {locationData.address ||
+                        t(
+                          i18nKeyContainer.inventory.locations.view.placeholders
+                            .noAddressProvided
+                        )}
                     </p>
                   </div>
 
                   <div className='grid grid-cols-2 gap-4'>
                     <div>
                       <label className='block text-sm font-medium text-gray-700 mb-1'>
-                        Location Type
+                        {t(i18nKeyContainer.inventory.locations.view.fields.locationType)}
                       </label>
                       <div className='flex items-center gap-2 bg-blue-50 p-3 rounded-md'>
                         <Building2 className='w-4 h-4 text-blue-600' />
@@ -150,7 +163,7 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
 
                     <div>
                       <label className='block text-sm font-medium text-gray-700 mb-1'>
-                        Location Type ID
+                        {t(i18nKeyContainer.inventory.locations.view.fields.locationTypeId)}
                       </label>
                       <p className='text-gray-900 font-mono text-sm bg-gray-50 p-3 rounded-md'>
                         {locationData.locationTypeId || '-'}
@@ -164,7 +177,7 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
               <div className='border-t pt-6'>
                 <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
                   <Calendar className='w-5 h-5' />
-                  Audit Information
+                  {t(i18nKeyContainer.inventory.locations.view.sections.auditInformation)}
                 </h3>
 
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
@@ -172,16 +185,16 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
                   <div className='bg-blue-50 p-4 rounded-lg space-y-3'>
                     <h4 className='font-semibold text-blue-900 flex items-center gap-2'>
                       <Calendar className='w-4 h-4' />
-                      Created
+                      {t(i18nKeyContainer.inventory.locations.view.sections.created)}
                     </h4>
                     <div>
                       <label className='block text-sm font-medium text-blue-700 mb-1'>
-                        Date & Time
+                        {t(i18nKeyContainer.inventory.locations.view.fields.dateTime)}
                       </label>
                       <p className='text-blue-900 text-sm'>
                         {locationData.createdAt
                           ? new Date(locationData.createdAt).toLocaleString(
-                              'en-US',
+                              i18n.resolvedLanguage || i18n.language || 'en',
                               {
                                 year: 'numeric',
                                 month: 'long',
@@ -196,15 +209,16 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
                     <div>
                       <label className='text-sm font-medium text-blue-700 mb-1 flex items-center gap-1'>
                         <User className='w-3 h-3' />
-                        User
+                        {t(i18nKeyContainer.inventory.locations.view.fields.user)}
                       </label>
                       <p className='text-blue-900 text-sm'>
-                        {locationData.createdByUserName || 'System'}
+                        {locationData.createdByUserName ||
+                          t(i18nKeyContainer.inventory.shared.systemUser)}
                       </p>
                     </div>
                     <div>
                       <label className='block text-sm font-medium text-blue-700 mb-1'>
-                        User ID
+                        {t(i18nKeyContainer.inventory.locations.view.fields.userId)}
                       </label>
                       <p className='text-blue-900 font-mono text-xs'>
                         {locationData.createdByUserId || '-'}
@@ -217,16 +231,16 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
                     <div className='bg-red-50 p-4 rounded-lg space-y-3'>
                       <h4 className='font-semibold text-red-900 flex items-center gap-2'>
                         <Calendar className='w-4 h-4' />
-                        Deleted
+                        {t(i18nKeyContainer.inventory.locations.view.sections.deleted)}
                       </h4>
                       <div>
                         <label className='block text-sm font-medium text-red-700 mb-1'>
-                          Date & Time
+                          {t(i18nKeyContainer.inventory.locations.view.fields.dateTime)}
                         </label>
                         <p className='text-red-900 text-sm'>
                           {locationData.deleteAt
                             ? new Date(locationData.deleteAt).toLocaleString(
-                                'en-US',
+                                i18n.resolvedLanguage || i18n.language || 'en',
                                 {
                                   year: 'numeric',
                                   month: 'long',
@@ -241,7 +255,7 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
                       <div>
                         <label className='text-sm font-medium text-red-700 mb-1 flex items-center gap-1'>
                           <User className='w-3 h-3' />
-                          User
+                          {t(i18nKeyContainer.inventory.locations.view.fields.user)}
                         </label>
                         <p className='text-red-900 text-sm'>
                           {locationData.deletedByUserName || '-'}
@@ -249,7 +263,7 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
                       </div>
                       <div>
                         <label className='block text-sm font-medium text-red-700 mb-1'>
-                          User ID
+                          {t(i18nKeyContainer.inventory.locations.view.fields.userId)}
                         </label>
                         <p className='text-red-900 font-mono text-xs'>
                           {locationData.deletedByUserId || '-'}
@@ -259,7 +273,10 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
                   ) : (
                     <div className='bg-gray-50 p-4 rounded-lg flex items-center justify-center'>
                       <p className='text-gray-500 text-sm'>
-                        Location has not been deleted
+                        {t(
+                          i18nKeyContainer.inventory.locations.view.placeholders
+                            .notDeleted
+                        )}
                       </p>
                     </div>
                   )}
@@ -270,13 +287,13 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
               <div className='border-t pt-6'>
                 <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
                   <Building2 className='w-5 h-5' />
-                  System Information
+                  {t(i18nKeyContainer.inventory.locations.view.sections.systemInformation)}
                 </h3>
 
                 <div className='grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg'>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Location ID
+                      {t(i18nKeyContainer.inventory.locations.view.fields.locationId)}
                     </label>
                     <p className='text-gray-900 font-mono text-xs'>
                       {locationData.id || '-'}
@@ -284,7 +301,7 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Location Type ID
+                      {t(i18nKeyContainer.inventory.locations.view.fields.locationTypeId)}
                     </label>
                     <p className='text-gray-900 font-mono text-xs'>
                       {locationData.locationTypeId || '-'}
@@ -292,18 +309,22 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Status
+                      {t(i18nKeyContainer.inventory.locations.view.fields.status)}
                     </label>
                     <p className='text-gray-900 text-sm'>
-                      {locationData.isActive ? 'Active' : 'Inactive'}
+                      {locationData.isActive
+                        ? t(i18nKeyContainer.inventory.shared.status.active)
+                        : t(i18nKeyContainer.inventory.shared.status.inactive)}
                     </p>
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Is Deleted
+                      {t(i18nKeyContainer.inventory.locations.view.fields.isDeleted)}
                     </label>
                     <p className='text-gray-900 text-sm'>
-                      {locationData.isDeleted ? 'Yes' : 'No'}
+                      {locationData.isDeleted
+                        ? t(i18nKeyContainer.inventory.shared.yes)
+                        : t(i18nKeyContainer.inventory.shared.no)}
                     </p>
                   </div>
                 </div>
@@ -318,7 +339,7 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
             onClick={() => onOpenChange(false)}
             className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors'
           >
-            Close
+            {t(i18nKeyContainer.inventory.shared.close)}
           </button>
         </div>
       </DialogContent>

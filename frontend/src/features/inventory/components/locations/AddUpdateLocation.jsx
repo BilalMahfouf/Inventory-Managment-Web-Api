@@ -9,6 +9,8 @@ import {
 } from '@features/inventory/services/locationApi';
 import { getAllLocationTypes } from '@features/inventory/services/locationTypeApi';
 import { useToast } from '@shared/context/ToastContext';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 /**
  * AddUpdateLocation Component
@@ -23,6 +25,7 @@ import { useToast } from '@shared/context/ToastContext';
  * @param {function} props.onSuccess - Optional callback after successful save
  */
 const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
+  const { t } = useTranslation();
   const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState({
     name: '',
@@ -54,13 +57,19 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
   const validateForm = () => {
     const newErrors = {};
     if (!formData.name.trim()) {
-      newErrors.name = 'Location name is required';
+      newErrors.name = t(
+        i18nKeyContainer.inventory.locations.form.validation.locationNameRequired
+      );
     }
     if (!formData.address.trim()) {
-      newErrors.address = 'Address is required';
+      newErrors.address = t(
+        i18nKeyContainer.inventory.locations.form.validation.addressRequired
+      );
     }
     if (!formData.locationTypeId || formData.locationTypeId === 0) {
-      newErrors.locationTypeId = 'Location type is required';
+      newErrors.locationTypeId = t(
+        i18nKeyContainer.inventory.locations.form.validation.locationTypeRequired
+      );
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -73,11 +82,17 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
       if (response.success) {
         setLocationTypes(response.data);
       } else {
-        showError('Failed to Load', 'Could not load location types.');
+        showError(
+          t(i18nKeyContainer.inventory.locations.form.toasts.loadTypesFailedTitle),
+          t(i18nKeyContainer.inventory.locations.form.toasts.loadTypesFailedMessage)
+        );
       }
     } catch (error) {
       console.error('Error fetching location types:', error);
-      showError('Error', 'Failed to fetch location types.');
+      showError(
+        t(i18nKeyContainer.inventory.locations.form.toasts.fetchTypesFailedTitle),
+        t(i18nKeyContainer.inventory.locations.form.toasts.fetchTypesFailedMessage)
+      );
     } finally {
       setLoadingLocationTypes(false);
     }
@@ -92,7 +107,12 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
       locationTypeId,
     });
     if (response.success) {
-      showSuccess('Location Created', `${name} has been added successfully.`);
+      showSuccess(
+        t(i18nKeyContainer.inventory.locations.form.toasts.createSuccessTitle),
+        t(i18nKeyContainer.inventory.locations.form.toasts.createSuccessMessage, {
+          name,
+        })
+      );
       setId(response.data.id);
       setMode('update');
       if (onSuccess) {
@@ -102,8 +122,11 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
       onClose();
     } else {
       showError(
-        'Location Creation Failed',
-        `${name} could not be created. Error: ${response.message}`
+        t(i18nKeyContainer.inventory.locations.form.toasts.createFailedTitle),
+        t(i18nKeyContainer.inventory.locations.form.toasts.createFailedMessage, {
+          name,
+          error: response.message,
+        })
       );
     }
     setIsLoading(false);
@@ -122,7 +145,12 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
     });
 
     if (response.success) {
-      showSuccess('Location Updated', `${name} has been updated successfully.`);
+      showSuccess(
+        t(i18nKeyContainer.inventory.locations.form.toasts.updateSuccessTitle),
+        t(i18nKeyContainer.inventory.locations.form.toasts.updateSuccessMessage, {
+          name,
+        })
+      );
       setFormData({
         name: response.data.name,
         address: response.data.address,
@@ -135,8 +163,10 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
       onClose();
     } else {
       showError(
-        'Location Update Failed',
-        `Location could not be updated. Error: ${response.message}`
+        t(i18nKeyContainer.inventory.locations.form.toasts.updateFailedTitle),
+        t(i18nKeyContainer.inventory.locations.form.toasts.updateFailedMessage, {
+          error: response.message,
+        })
       );
     }
     setIsLoading(false);
@@ -210,13 +240,25 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
             setMode('update');
           } else {
             showError(
-              'Failed to Load Location',
-              'Could not load location data.'
+              t(
+                i18nKeyContainer.inventory.locations.form.toasts
+                  .loadLocationFailedTitle
+              ),
+              t(
+                i18nKeyContainer.inventory.locations.form.toasts
+                  .loadLocationFailedMessage
+              )
             );
           }
         } catch (error) {
           console.error('Error fetching location:', error);
-          showError('Failed to Load Location', 'Could not load location data.');
+          showError(
+            t(i18nKeyContainer.inventory.locations.form.toasts.loadLocationFailedTitle),
+            t(
+              i18nKeyContainer.inventory.locations.form.toasts
+                .loadLocationFailedMessage
+            )
+          );
         } finally {
           setIsLoading(false);
         }
@@ -247,7 +289,9 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
           <div className='flex items-center gap-3'>
             <MapPin className='h-6 w-6 text-blue-600' />
             <h2 className='text-xl font-semibold text-gray-900'>
-              {mode === 'add' ? 'Add Location' : 'Edit Location'}
+              {mode === 'add'
+                ? t(i18nKeyContainer.inventory.locations.form.title.add)
+                : t(i18nKeyContainer.inventory.locations.form.title.edit)}
             </h2>
           </div>
           <button
@@ -265,7 +309,7 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
             <div className='flex items-center gap-2 mb-6'>
               <MapPin className='h-5 w-5 text-blue-600' />
               <h3 className='text-lg font-semibold text-gray-900'>
-                Location Information
+                {t(i18nKeyContainer.inventory.locations.form.sections.locationInformation)}
               </h3>
             </div>
 
@@ -273,10 +317,16 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
               {/* Location Name */}
               <div>
                 <label className='block text-sm font-medium text-gray-700 mb-2'>
-                  Location Name <span className='text-red-500'>*</span>
+                  {t(i18nKeyContainer.inventory.locations.form.fields.locationName)}{' '}
+                  <span className='text-red-500'>
+                    {t(i18nKeyContainer.inventory.shared.required)}
+                  </span>
                 </label>
                 <Input
-                  placeholder='e.g., Main Warehouse, Store A, Distribution Center'
+                  placeholder={t(
+                    i18nKeyContainer.inventory.locations.form.placeholders
+                      .locationName
+                  )}
                   value={formData.name}
                   onChange={e => handleInputChange('name', e.target.value)}
                   className={`h-12 ${errors.name ? 'border-red-500' : ''}`}
@@ -291,10 +341,15 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
               {/* Address */}
               <div>
                 <label className='block text-sm font-medium text-gray-700 mb-2'>
-                  Address <span className='text-red-500'>*</span>
+                  {t(i18nKeyContainer.inventory.locations.form.fields.address)}{' '}
+                  <span className='text-red-500'>
+                    {t(i18nKeyContainer.inventory.shared.required)}
+                  </span>
                 </label>
                 <textarea
-                  placeholder='Enter the full address of this location...'
+                  placeholder={t(
+                    i18nKeyContainer.inventory.locations.form.placeholders.address
+                  )}
                   value={formData.address}
                   onChange={e => handleInputChange('address', e.target.value)}
                   className={`w-full h-24 px-3 py-2 border rounded-md resize-none focus:outline-none focus:ring-1 focus:ring-blue-600 ${
@@ -310,7 +365,10 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
               {/* Location Type */}
               <div>
                 <label className='block text-sm font-medium text-gray-700 mb-2'>
-                  Location Type <span className='text-red-500'>*</span>
+                  {t(i18nKeyContainer.inventory.locations.form.fields.locationType)}{' '}
+                  <span className='text-red-500'>
+                    {t(i18nKeyContainer.inventory.shared.required)}
+                  </span>
                 </label>
                 <select
                   value={formData.locationTypeId}
@@ -327,8 +385,11 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
                 >
                   <option value={0}>
                     {loadingLocationTypes
-                      ? 'Loading...'
-                      : 'Select a location type'}
+                      ? t(i18nKeyContainer.inventory.shared.loading)
+                      : t(
+                          i18nKeyContainer.inventory.locations.form.placeholders
+                            .selectLocationType
+                        )}
                   </option>
                   {locationTypes.map(type => (
                     <option key={type.id} value={type.id}>
@@ -350,12 +411,18 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
                   <div className='flex items-center justify-between'>
                     <div>
                       <label className='block text-sm font-medium text-gray-700 mb-1'>
-                        Location Status
+                        {t(i18nKeyContainer.inventory.locations.form.fields.locationStatus)}
                       </label>
                       <p className='text-sm text-gray-600'>
                         {formData.isActive
-                          ? 'This location is currently active and available for use'
-                          : 'This location is currently inactive'}
+                          ? t(
+                              i18nKeyContainer.inventory.locations.form.hints
+                                .locationActiveHint
+                            )
+                          : t(
+                              i18nKeyContainer.inventory.locations.form.hints
+                                .locationInactiveHint
+                            )}
                       </p>
                     </div>
                     <label className='relative inline-flex items-center cursor-pointer'>
@@ -385,7 +452,7 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
               disabled={isLoading}
               className='cursor-pointer'
             >
-              Cancel
+              {t(i18nKeyContainer.inventory.locations.form.actions.cancel)}
             </Button>
             <Button
               type='submit'
@@ -399,11 +466,11 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
             >
               {isLoading
                 ? mode === 'add'
-                  ? 'Creating...'
-                  : 'Saving...'
+                  ? t(i18nKeyContainer.inventory.locations.form.actions.creating)
+                  : t(i18nKeyContainer.inventory.locations.form.actions.saving)
                 : mode === 'add'
-                  ? 'Create Location'
-                  : 'Save Changes'}
+                  ? t(i18nKeyContainer.inventory.locations.form.actions.create)
+                  : t(i18nKeyContainer.inventory.locations.form.actions.saveChanges)}
             </Button>
           </div>
         </form>

@@ -6,6 +6,9 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { FolderTree, Calendar, User, Folder, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { getProductCategoryById } from '@features/products/services/productCategoryApi';
 
 /**
@@ -33,6 +36,7 @@ import { getProductCategoryById } from '@features/products/services/productCateg
  * ```
  */
 const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
+  const { t, i18n } = useTranslation();
   const [categoryData, setCategoryData] = useState({
     id: 0,
     name: '',
@@ -83,6 +87,7 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
 
   const isMainCategory = categoryData.type === 'MainCategory';
   const isSubCategory = categoryData.type === 'SubCategory';
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
   console.log('Category Data:', categoryData);
   console.log('parent name:', categoryData.parentName);
 
@@ -93,9 +98,13 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
         <DialogHeader>
           <div className='flex items-center gap-2'>
             <FolderTree className='w-5 h-5' />
-            <DialogTitle className='text-xl'>Category Details</DialogTitle>
+            <DialogTitle className='text-xl'>
+              {t(i18nKeyContainer.products.categories.view.title)}
+            </DialogTitle>
             <span className='text-sm text-gray-500 font-normal'>
-              ID: {categoryData.id}
+              {t(i18nKeyContainer.products.categories.view.subtitleId, {
+                id: categoryData.id,
+              })}
             </span>
           </div>
         </DialogHeader>
@@ -104,7 +113,9 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
         <div className='flex-1 overflow-y-auto py-6 space-y-6'>
           {isLoading ? (
             <div className='flex justify-center items-center py-8'>
-              <div className='text-gray-500'>Loading...</div>
+              <div className='text-gray-500'>
+                {t(i18nKeyContainer.products.categories.view.loading)}
+              </div>
             </div>
           ) : (
             <>
@@ -112,7 +123,10 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
               <div>
                 <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
                   <FolderTree className='w-5 h-5' />
-                  Category Information
+                  {t(
+                    i18nKeyContainer.products.categories.view.sections
+                      .categoryInformation
+                  )}
                 </h3>
 
                 {/* Type Badge */}
@@ -125,7 +139,15 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
                     }`}
                   >
                     <Folder className='w-3 h-3' />
-                    {categoryData.type}
+                    {isMainCategory
+                      ? t(
+                          i18nKeyContainer.products.categories.view.badges
+                            .mainCategory
+                        )
+                      : t(
+                          i18nKeyContainer.products.categories.view.badges
+                            .subCategory
+                        )}
                   </span>
                 </div>
 
@@ -133,10 +155,17 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
                 <div className='space-y-4'>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Category Name <span className='text-red-500'>*</span>
+                      {t(
+                        i18nKeyContainer.products.categories.view.fields
+                          .categoryName
+                      )}{' '}
+                      <span className='text-red-500'>
+                        {t(i18nKeyContainer.products.shared.required)}
+                      </span>
                     </label>
                     <p className='text-gray-900 text-lg font-medium'>
-                      {categoryData.name || '-'}
+                      {categoryData.name ||
+                        t(i18nKeyContainer.products.shared.hyphen)}
                     </p>
                   </div>
 
@@ -144,7 +173,10 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
                   {isSubCategory && (
                     <div>
                       <label className='block text-sm font-medium text-gray-700 mb-1'>
-                        Parent Category
+                        {t(
+                          i18nKeyContainer.products.categories.view.fields
+                            .parentCategory
+                        )}
                       </label>
                       <div className='flex items-center gap-2 bg-gray-50 p-3 rounded-md'>
                         <Folder className='w-4 h-4 text-blue-600' />
@@ -157,10 +189,17 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
 
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Description
+                      {t(
+                        i18nKeyContainer.products.categories.view.fields
+                          .description
+                      )}
                     </label>
                     <p className='text-gray-600 text-sm bg-gray-50 p-3 rounded-md min-h-[60px]'>
-                      {categoryData.description || 'No description provided'}
+                      {categoryData.description ||
+                        t(
+                          i18nKeyContainer.products.categories.view.placeholders
+                            .noDescription
+                        )}
                     </p>
                   </div>
                 </div>
@@ -171,7 +210,9 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
                 <div className='border-t pt-6'>
                   <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
                     <Folder className='w-5 h-5' />
-                    Subcategories ({categoryData.subCategories.length})
+                    {t(i18nKeyContainer.products.categories.view.sections.subcategories)}
+                    {' '}
+                    ({categoryData.subCategories.length})
                   </h3>
                   <div className='space-y-2'>
                     {categoryData.subCategories.map((subCategory, index) => (
@@ -199,12 +240,17 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
                 <div className='border-t pt-6'>
                   <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
                     <Folder className='w-5 h-5' />
-                    Subcategories (0)
+                    {t(i18nKeyContainer.products.categories.view.sections.subcategories)}
+                    {' '}
+                    (0)
                   </h3>
                   <div className='bg-gray-50 p-6 rounded-lg text-center'>
                     <Folder className='w-12 h-12 text-gray-300 mx-auto mb-2' />
                     <p className='text-gray-500 text-sm'>
-                      No subcategories yet
+                      {t(
+                        i18nKeyContainer.products.categories.view.placeholders
+                          .noSubcategories
+                      )}
                     </p>
                   </div>
                 </div>
@@ -214,7 +260,10 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
               <div className='border-t pt-6'>
                 <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
                   <Calendar className='w-5 h-5' />
-                  Audit Information
+                  {t(
+                    i18nKeyContainer.products.categories.view.sections
+                      .auditInformation
+                  )}
                 </h3>
 
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
@@ -222,16 +271,16 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
                   <div className='bg-blue-50 p-4 rounded-lg space-y-3'>
                     <h4 className='font-semibold text-blue-900 flex items-center gap-2'>
                       <Calendar className='w-4 h-4' />
-                      Created
+                      {t(i18nKeyContainer.products.categories.view.sections.created)}
                     </h4>
                     <div>
                       <label className='block text-sm font-medium text-blue-700 mb-1'>
-                        Date & Time
+                        {t(i18nKeyContainer.products.categories.view.fields.dateTime)}
                       </label>
                       <p className='text-blue-900 text-sm'>
                         {categoryData.createdAt
                           ? new Date(categoryData.createdAt).toLocaleString(
-                              'en-US',
+                              activeLocale,
                               {
                                 year: 'numeric',
                                 month: 'long',
@@ -240,16 +289,20 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
                                 minute: '2-digit',
                               }
                             )
-                          : '-'}
+                          : t(i18nKeyContainer.products.shared.hyphen)}
                       </p>
                     </div>
                     <div>
                       <label className='text-sm font-medium text-blue-700 mb-1 flex items-center gap-1'>
                         <User className='w-3 h-3' />
-                        User
+                        {t(i18nKeyContainer.products.categories.view.fields.user)}
                       </label>
                       <p className='text-blue-900 text-sm'>
-                        {categoryData.createdByUserName || 'Admin User'}
+                        {categoryData.createdByUserName ||
+                          t(
+                            i18nKeyContainer.products.categories.view.placeholders
+                              .adminUser
+                          )}
                       </p>
                     </div>
                   </div>
@@ -258,16 +311,16 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
                   <div className='bg-purple-50 p-4 rounded-lg space-y-3'>
                     <h4 className='font-semibold text-purple-900 flex items-center gap-2'>
                       <Calendar className='w-4 h-4' />
-                      Updated
+                      {t(i18nKeyContainer.products.categories.view.sections.updated)}
                     </h4>
                     <div>
                       <label className='block text-sm font-medium text-purple-700 mb-1'>
-                        Date & Time
+                        {t(i18nKeyContainer.products.categories.view.fields.dateTime)}
                       </label>
                       <p className='text-purple-900 text-sm'>
                         {categoryData.updatedByUserId
                           ? new Date(categoryData.updatedAt).toLocaleString(
-                              'en-US',
+                              activeLocale,
                               {
                                 year: 'numeric',
                                 month: 'long',
@@ -276,16 +329,20 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
                                 minute: '2-digit',
                               }
                             )
-                          : 'Never updated'}
+                          : t(
+                              i18nKeyContainer.products.categories.view
+                                .placeholders.neverUpdated
+                            )}
                       </p>
                     </div>
                     <div>
                       <label className='text-sm font-medium text-purple-700 mb-1 flex items-center gap-1'>
                         <User className='w-3 h-3' />
-                        User
+                        {t(i18nKeyContainer.products.categories.view.fields.user)}
                       </label>
                       <p className='text-purple-900 text-sm'>
-                        {categoryData.updatedByUserName || '-'}
+                        {categoryData.updatedByUserName ||
+                          t(i18nKeyContainer.products.shared.hyphen)}
                       </p>
                     </div>
                   </div>
@@ -301,7 +358,7 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
             onClick={() => onOpenChange(false)}
             className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors'
           >
-            Close
+            {t(i18nKeyContainer.products.shared.close)}
           </button>
         </div>
       </DialogContent>

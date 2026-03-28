@@ -1,0 +1,1197 @@
+{
+  "common": {
+    "languages": {
+      "english": "Anglais",
+      "french": "Français",
+      "arabic": "Arabe"
+    }
+  },
+  "layout": {
+    "sidebar": {
+      "brand": "InventoryPro",
+      "menu": {
+        "dashboard": "Tableau de bord",
+        "products": "Produits",
+        "inventory": "Inventaire",
+        "sales": "Ventes",
+        "customers": "Clients",
+        "settings": "Paramètres"
+      }
+    },
+    "topNav": {
+      "languageSwitcher": "Langue",
+      "searchPlaceholder": "Rechercher des produits, commandes, clients..."
+    }
+  },
+  "dashboard": {
+    "page": {
+      "title": "Tableau de bord",
+      "description": "Bon retour ! Voici ce qui se passe avec votre inventaire.",
+      "generateReport": "Générer un rapport"
+    },
+    "cards": {
+      "totalProducts": {
+        "title": "Produits totaux",
+        "description": "produits actifs"
+      },
+      "totalCustomers": {
+        "title": "Clients totaux",
+        "description": "clients actifs"
+      },
+      "lowStockItems": {
+        "title": "Stock faible",
+        "description": "réapprovisionnement nécessaire"
+      },
+      "totalSalesOrders": {
+        "title": "Commandes de vente totales",
+        "description": "ventes totales de l'entreprise"
+      },
+      "totalRevenues": {
+        "title": "Revenus totaux",
+        "description": "revenu total de l'entreprise"
+      },
+      "pendingOrders": {
+        "title": "Commandes en attente",
+        "description": "commandes en attente de traitement"
+      },
+      "fulfilledOrders": {
+        "title": "Commandes traitées",
+        "description": "commandes traitées avec succès"
+      },
+      "activeSuppliers": {
+        "title": "Fournisseurs actifs",
+        "description": "fournisseurs actifs"
+      }
+    },
+    "sections": {
+      "topSellingProducts": "Produits les plus vendus",
+      "quickActions": "Actions rapides",
+      "inventoryAlerts": "Alertes d'inventaire"
+    },
+    "todayPerformance": {
+      "title": "Performance d'aujourd'hui",
+      "todaysSales": "Ventes d'aujourd'hui",
+      "newOrders": "Nouvelles commandes",
+      "newCustomers": "Nouveaux clients",
+      "productsSold": "Produits vendus"
+    },
+    "quickActions": {
+      "addProduct": "Ajouter un produit",
+      "addCustomer": "Ajouter un client",
+      "newSaleOrder": "Nouvelle commande",
+      "addLocation": "Ajouter un emplacement"
+    },
+    "topProducts": {
+      "loading": "Chargement...",
+      "unitsSold": "{{count}} unités vendues",
+      "revenue": "Revenu"
+    }
+  },
+  "products": {
+    "shared": {
+      "loading": "Chargement...",
+      "close": "Fermer",
+      "notSpecified": "Non spécifié",
+      "noDescriptionProvided": "Aucune description fournie",
+      "hyphen": "-",
+      "required": "*",
+      "status": {
+        "active": "Actif",
+        "inactive": "Inactif",
+        "draft": "Brouillon",
+        "deleted": "Supprimé"
+      }
+    },
+    "page": {
+      "title": "Gestion des produits",
+      "description": "Gérez votre catalogue et votre inventaire de produits.",
+      "addProduct": "Ajouter un produit",
+      "tabs": {
+        "products": "Produits",
+        "stockMovements": "Mouvements de stock",
+        "unitOfMeasure": "Unités de mesure",
+        "productCategories": "Catégories de produits",
+        "productImages": "Images produits"
+      },
+      "sections": {
+        "productCatalog": "Catalogue produits",
+        "stockMovementHistory": "Historique des mouvements",
+        "unitOfMeasure": "Unités de mesure",
+        "productCategories": "Catégories de produits",
+        "productImages": "Images produits"
+      },
+      "placeholders": {
+        "productImages": "Les images produits seront affichées ici !"
+      }
+    },
+    "cards": {
+      "totalProducts": {
+        "title": "Produits totaux",
+        "description": "Ajoutez facilement de nouveaux produits à votre catalogue."
+      },
+      "inventoryValue": {
+        "title": "Valeur du stock",
+        "description": "Valeur totale de tous les produits en stock."
+      },
+      "lowStockItems": {
+        "title": "Stock faible",
+        "description": "Produits nécessitant un réapprovisionnement."
+      },
+      "profitPotential": {
+        "title": "Potentiel de profit",
+        "description": "Si tous les produits sont vendus au prix de détail."
+      }
+    },
+    "addProductForm": {
+      "title": {
+        "add": "Ajouter un nouveau produit",
+        "edit": "Modifier le produit"
+      },
+      "tabs": {
+        "basicInfo": "Informations de base",
+        "pricing": "Tarification",
+        "inventory": "Inventaire",
+        "details": "Détails"
+      },
+      "sections": {
+        "productInformation": "Informations produit",
+        "pricingInformation": "Informations tarifaires",
+        "inventoryManagement": "Gestion de l'inventaire",
+        "additionalDetails": "Détails supplémentaires",
+        "productSummary": "Résumé du produit"
+      },
+      "fields": {
+        "productName": "Nom du produit",
+        "sku": "SKU",
+        "category": "Catégorie",
+        "description": "Description",
+        "status": "Statut",
+        "costPrice": "Prix de revient",
+        "sellingPrice": "Prix de vente",
+        "currentStock": "Stock actuel",
+        "minimumStock": "Stock minimum",
+        "maximumStock": "Stock maximum",
+        "unitOfMeasurement": "Unité de mesure",
+        "storageLocation": "Emplacement de stockage"
+      },
+      "placeholders": {
+        "productName": "Saisir le nom du produit",
+        "sku": "Saisir le SKU",
+        "description": "Saisir la description du produit",
+        "zero": "0"
+      },
+      "metrics": {
+        "profitMargin": "Marge",
+        "profitPerUnit": "Profit par unité",
+        "markup": "Majoration"
+      },
+      "summary": {
+        "productName": "Nom du produit :",
+        "sku": "SKU :",
+        "category": "Catégorie :",
+        "sellingPrice": "Prix de vente :",
+        "initialStock": "Stock initial :",
+        "status": "Statut :"
+      },
+      "actions": {
+        "cancel": "Annuler",
+        "addProduct": "Ajouter un produit",
+        "saveChanges": "Enregistrer"
+      },
+      "toasts": {
+        "createSuccessTitle": "Produit créé",
+        "createSuccessMessage": "{{name}} a été ajouté à votre inventaire.",
+        "createErrorTitle": "Échec de création",
+        "createErrorMessage": "Le produit n'a pas pu être créé. Veuillez réessayer.",
+        "updateSuccessTitle": "Produit mis à jour",
+        "updateSuccessMessage": "{{name}} a été mis à jour.",
+        "updateErrorTitle": "Échec de mise à jour",
+        "updateErrorMessage": "Le produit n'a pas pu être mis à jour. Veuillez réessayer."
+      }
+    },
+    "productTable": {
+      "columns": {
+        "sku": "SKU",
+        "product": "Produit",
+        "stock": "Stock",
+        "price": "Prix",
+        "cost": "Coût",
+        "isActive": "Actif",
+        "createdAt": "Créé le"
+      },
+      "dialogs": {
+        "deleteTitle": "Supprimer le produit",
+        "deleteMessage": "Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible."
+      },
+      "toasts": {
+        "deleteCancelledTitle": "Suppression annulée",
+        "deleteCancelledMessage": "La suppression du produit a été annulée",
+        "deleteSuccessTitle": "Produit supprimé",
+        "deleteSuccessMessage": "Le produit avec l'identifiant {{id}} a été supprimé"
+      }
+    },
+    "productView": {
+      "title": "Détails du produit",
+      "tabs": {
+        "basicInfo": "Informations",
+        "pricing": "Tarification",
+        "details": "Détails"
+      },
+      "sections": {
+        "productInformation": "Informations produit",
+        "pricingInformation": "Informations tarifaires",
+        "creationDetails": "Détails de création",
+        "lastUpdateDetails": "Dernière mise à jour",
+        "systemInformation": "Informations système",
+        "deletionInformation": "Informations de suppression"
+      },
+      "fields": {
+        "productName": "Nom du produit",
+        "sku": "SKU",
+        "category": "Catégorie",
+        "unitOfMeasure": "Unité de mesure",
+        "description": "Description",
+        "status": "Statut",
+        "costPrice": "Prix de revient",
+        "sellingPrice": "Prix de vente",
+        "profitMargin": "Marge",
+        "profitPerUnit": "Profit par unité",
+        "markup": "Majoration",
+        "createdAt": "Créé le",
+        "createdBy": "Créé par",
+        "createdByUserId": "ID utilisateur créateur",
+        "updatedAt": "Mis à jour le",
+        "updatedBy": "Mis à jour par",
+        "updatedByUserId": "ID utilisateur modificateur",
+        "productId": "ID produit",
+        "categoryId": "ID catégorie",
+        "unitOfMeasureId": "ID unité de mesure",
+        "deletedAt": "Supprimé le",
+        "deletedBy": "Supprimé par"
+      },
+      "placeholders": {
+        "noDescriptionAvailable": "Aucune description disponible"
+      }
+    },
+    "stockMovements": {
+      "columns": {
+        "date": "Date",
+        "product": "Produit",
+        "type": "Type",
+        "quantity": "Quantité",
+        "reason": "Motif",
+        "processedBy": "Traité par"
+      },
+      "badges": {
+        "in": "↑ Entrée",
+        "out": "↓ Sortie",
+        "transfer": "⟲ Transfert",
+        "unknown": "Inconnu"
+      }
+    },
+    "categories": {
+      "buttonAdd": "Ajouter une catégorie",
+      "form": {
+        "title": {
+          "add": "Ajouter une catégorie",
+          "edit": "Modifier la catégorie"
+        },
+        "sectionInfo": "Informations de catégorie",
+        "fields": {
+          "categoryName": "Nom de catégorie",
+          "description": "Description",
+          "categoryType": "Type de catégorie",
+          "mainCategory": "Catégorie principale",
+          "mainCategoryDescription": "Catégorie de niveau supérieur pouvant contenir des sous-catégories",
+          "subcategory": "Sous-catégorie",
+          "subcategoryDescription": "Catégorie rattachée à une catégorie principale",
+          "parentCategory": "Catégorie parente"
+        },
+        "placeholders": {
+          "categoryName": "ex. Électronique, Vêtements, Alimentation",
+          "description": "Description facultative de cette catégorie...",
+          "parentCategory": "Sélectionnez une catégorie parente"
+        },
+        "validation": {
+          "categoryNameRequired": "Le nom de catégorie est requis",
+          "parentCategoryRequired": "La catégorie parente est requise pour les sous-catégories"
+        },
+        "actions": {
+          "cancel": "Annuler",
+          "create": "Créer la catégorie",
+          "saveChanges": "Enregistrer",
+          "creating": "Création...",
+          "saving": "Enregistrement..."
+        },
+        "toasts": {
+          "createSuccessTitle": "Catégorie créée",
+          "createSuccessMessage": "{{name}} a été ajoutée avec succès.",
+          "createErrorTitle": "Échec de création",
+          "createErrorMessage": "{{name}} n'a pas pu être créée. Erreur : {{error}}",
+          "updateSuccessTitle": "Catégorie mise à jour",
+          "updateSuccessMessage": "{{name}} a été mise à jour avec succès.",
+          "updateErrorTitle": "Échec de mise à jour",
+          "updateErrorMessage": "La catégorie n'a pas pu être mise à jour. Erreur : {{error}}",
+          "loadErrorTitle": "Échec de chargement",
+          "loadErrorMessage": "Impossible de charger les données de catégorie."
+        }
+      },
+      "table": {
+        "dialogs": {
+          "deleteTitle": "Supprimer la catégorie",
+          "deleteMessage": "Êtes-vous sûr de vouloir supprimer cette catégorie ? Cette action est irréversible."
+        },
+        "toasts": {
+          "deleteSuccess": "Catégorie supprimée avec succès",
+          "deleteError": "Échec de suppression de catégorie : {{error}}"
+        },
+        "columns": {
+          "id": "ID",
+          "name": "Nom",
+          "parentCategory": "Catégorie parente",
+          "mainCategory": "Catégorie principale",
+          "createdAt": "Créé le",
+          "createdBy": "Créé par"
+        }
+      },
+      "view": {
+        "title": "Détails de catégorie",
+        "subtitleId": "ID : {{id}}",
+        "loading": "Chargement...",
+        "sections": {
+          "categoryInformation": "Informations de catégorie",
+          "subcategories": "Sous-catégories",
+          "auditInformation": "Informations d'audit",
+          "created": "Créée",
+          "updated": "Mise à jour"
+        },
+        "badges": {
+          "mainCategory": "Catégorie principale",
+          "subCategory": "Sous-catégorie"
+        },
+        "fields": {
+          "categoryName": "Nom de catégorie",
+          "parentCategory": "Catégorie parente",
+          "description": "Description",
+          "dateTime": "Date et heure",
+          "user": "Utilisateur"
+        },
+        "placeholders": {
+          "noDescription": "Aucune description fournie",
+          "noSubcategories": "Aucune sous-catégorie",
+          "adminUser": "Utilisateur administrateur",
+          "neverUpdated": "Jamais mise à jour"
+        }
+      }
+    },
+    "units": {
+      "buttonAdd": "Ajouter une unité de mesure",
+      "form": {
+        "title": {
+          "add": "Ajouter une unité de mesure",
+          "edit": "Modifier l'unité de mesure"
+        },
+        "sectionInfo": "Informations d'unité",
+        "fields": {
+          "unitName": "Nom de l'unité",
+          "description": "Description"
+        },
+        "placeholders": {
+          "unitName": "ex. Pièces, Kilogrammes, Mètres, Litres",
+          "description": "Description facultative de cette unité de mesure..."
+        },
+        "validation": {
+          "unitNameRequired": "Le nom de l'unité est requis"
+        },
+        "actions": {
+          "cancel": "Annuler",
+          "create": "Créer l'unité",
+          "saveChanges": "Enregistrer",
+          "creating": "Création...",
+          "saving": "Enregistrement..."
+        },
+        "toasts": {
+          "createSuccessTitle": "Unité créée",
+          "createSuccessMessage": "{{name}} a été ajoutée avec succès.",
+          "createErrorTitle": "Échec de création",
+          "createErrorMessage": "{{name}} n'a pas pu être créée. Erreur : {{error}}",
+          "updateSuccessTitle": "Unité mise à jour",
+          "updateSuccessMessage": "{{name}} a été mise à jour avec succès.",
+          "updateErrorTitle": "Échec de mise à jour",
+          "updateErrorMessage": "L'unité n'a pas pu être mise à jour. Erreur : {{error}}",
+          "loadErrorTitle": "Échec de chargement",
+          "loadErrorMessage": "Impossible de charger les données d'unité."
+        }
+      },
+      "table": {
+        "dialogs": {
+          "deleteTitle": "Supprimer l'unité de mesure",
+          "deleteMessage": "Êtes-vous sûr de vouloir supprimer cette unité de mesure ? Cette action est irréversible."
+        },
+        "toasts": {
+          "deleteSuccessTitle": "Unité supprimée",
+          "deleteSuccessMessage": "Unité de mesure supprimée avec succès",
+          "deleteError": "Échec de suppression de l'unité",
+          "loadError": "Échec de chargement des unités de mesure"
+        },
+        "columns": {
+          "id": "ID",
+          "name": "Nom",
+          "createdAt": "Créé le",
+          "createdBy": "Créé par"
+        }
+      },
+      "view": {
+        "title": "Détails de l'unité de mesure",
+        "subtitleId": "ID : {{id}}",
+        "sections": {
+          "unitInformation": "Informations d'unité",
+          "auditInformation": "Informations d'audit",
+          "created": "Créée",
+          "updated": "Mise à jour"
+        },
+        "fields": {
+          "unitName": "Nom de l'unité",
+          "description": "Description",
+          "dateTime": "Date et heure",
+          "user": "Utilisateur"
+        },
+        "placeholders": {
+          "noDescription": "Aucune description fournie",
+          "adminUser": "Utilisateur administrateur",
+          "neverUpdated": "Jamais mise à jour"
+        }
+      }
+    },
+    "demo": {
+      "addProduct": {
+        "title": "Démo du composant AddProduct",
+        "description": "Cliquez sur le bouton ci-dessous pour tester la fenêtre AddProduct",
+        "addButton": "Ajouter un nouveau produit",
+        "listTitle": "Produits ajoutés ({{count}})",
+        "emptyState": "Aucun produit ajouté. Cliquez sur \"Ajouter un nouveau produit\" pour commencer.",
+        "alerts": {
+          "addSuccess": "Produit ajouté avec succès !",
+          "addError": "Erreur lors de l'ajout du produit. Veuillez réessayer."
+        },
+        "labels": {
+          "sku": "SKU",
+          "category": "Catégorie",
+          "brand": "Marque",
+          "stock": "Stock",
+          "status": "Statut"
+        }
+      },
+      "deleteExample": {
+        "title": "Supprimer le produit",
+        "message": "Cette action est irréversible et supprimera définitivement ce produit du système.",
+        "toastSuccessTitle": "Produit supprimé",
+        "toastSuccessMessage": "{{name}} a été supprimé définitivement.",
+        "toastErrorTitle": "Échec de suppression",
+        "toastErrorMessage": "Impossible de supprimer le produit. Veuillez réessayer."
+      }
+    }
+  },
+  "customers": {
+    "shared": {
+      "loading": "Chargement...",
+      "notAvailable": "N/A",
+      "required": "*",
+      "currencySymbol": "$",
+      "status": {
+        "active": "Actif",
+        "inactive": "Inactif"
+      },
+      "creditStatus": {
+        "active": "Actif",
+        "onHold": "En attente",
+        "suspended": "Suspendu"
+      },
+      "defaults": {
+        "paymentTerms": "Net 30",
+        "customerCategory": "Détail",
+        "createdBy": "admin@system.com"
+      }
+    },
+    "page": {
+      "title": "Gestion des clients",
+      "description": "Gérez les données et interactions de vos clients.",
+      "tabs": {
+        "customers": "Clients",
+        "customerCategories": "Catégories de clients",
+        "customerContacts": "Contacts clients"
+      },
+      "sections": {
+        "customerCatalog": "Catalogue clients",
+        "customerCategories": "Catégories de clients",
+        "customerContacts": "Contacts clients"
+      },
+      "placeholders": {
+        "customerCategories": "Les catégories de clients seront affichées ici !",
+        "customerContacts": "Les contacts clients seront affichés ici !"
+      }
+    },
+    "cards": {
+      "totalCustomers": {
+        "title": "Clients totaux",
+        "description": "{{count}} clients sont actifs."
+      },
+      "totalRevenue": {
+        "title": "Revenu total",
+        "description": "Revenu total généré par tous les clients."
+      },
+      "newCustomers": {
+        "title": "Nouveaux clients",
+        "description": "Nouveaux clients acquis le mois dernier."
+      },
+      "outOfStockItems": {
+        "title": "Articles en rupture",
+        "description": "Aucune donnée client liée à la rupture pour le moment.",
+        "value": "Rien pour le moment"
+      }
+    },
+    "addButton": {
+      "label": "Ajouter un client"
+    },
+    "form": {
+      "title": {
+        "add": "Ajouter un nouveau client",
+        "edit": "Mettre à jour le client"
+      },
+      "subtitle": {
+        "add": "Renseignez les détails ci-dessous pour ajouter un nouveau client au système.",
+        "edit": "Vérifiez les informations du client ci-dessous."
+      },
+      "tabs": {
+        "basicInfo": "Infos de base",
+        "business": "Entreprise",
+        "summary": "Résumé"
+      },
+      "sections": {
+        "personalDetails": "Informations personnelles",
+        "address": "Adresse",
+        "businessDetails": "Informations commerciales"
+      },
+      "fields": {
+        "fullName": "Nom complet",
+        "email": "E-mail",
+        "phone": "Téléphone",
+        "customerType": "Type de client",
+        "street": "Rue",
+        "city": "Ville",
+        "state": "Région",
+        "zipCode": "Code postal",
+        "creditLimit": "Limite de crédit",
+        "creditStatus": "Statut du crédit",
+        "paymentTerms": "Conditions de paiement"
+      },
+      "placeholders": {
+        "fullName": "Saisir le nom complet du client",
+        "email": "Saisir l'adresse e-mail",
+        "phone": "Saisir le numéro de téléphone",
+        "customerType": "Sélectionnez un type de client",
+        "street": "Saisir l'adresse",
+        "city": "Saisir la ville",
+        "state": "Saisir la région",
+        "zipCode": "Saisir le code postal",
+        "creditLimit": "5000.00",
+        "paymentTerms": "ex. Net 30"
+      },
+      "validation": {
+        "fullNameRequired": "Le nom complet est requis",
+        "emailRequired": "L'e-mail est requis",
+        "invalidEmail": "Format d'e-mail invalide",
+        "phoneRequired": "Le numéro de téléphone est requis",
+        "customerTypeRequired": "Le type de client est requis",
+        "streetRequired": "L'adresse est requise",
+        "cityRequired": "La ville est requise",
+        "stateRequired": "La région est requise",
+        "zipCodeRequired": "Le code postal est requis",
+        "creditLimitPositive": "La limite de crédit doit être un nombre positif"
+      },
+      "actions": {
+        "previous": "Précédent",
+        "cancel": "Annuler",
+        "close": "Fermer",
+        "saveCustomer": "Enregistrer le client",
+        "saveChanges": "Enregistrer les modifications",
+        "next": "Suivant",
+        "saving": "Enregistrement..."
+      },
+      "toasts": {
+        "validationErrorTitle": "Erreur de validation",
+        "validationErrorMessage": "Veuillez remplir correctement tous les champs requis.",
+        "createSuccessTitle": "Client créé",
+        "createSuccessMessage": "{{name}} a été ajouté avec succès.",
+        "createFailedTitle": "Échec de création du client",
+        "createFailedMessage": "Impossible de créer le client.",
+        "updateSuccessTitle": "Client mis à jour",
+        "updateSuccessMessage": "Le client avec l'ID {{id}} a été mis à jour avec succès.",
+        "updateFailedTitle": "Échec de mise à jour du client",
+        "updateFailedMessage": "Impossible de mettre à jour le client.",
+        "loadFailedTitle": "Échec du chargement",
+        "loadFailedMessage": "Impossible de charger les données client."
+      }
+    },
+    "table": {
+      "columns": {
+        "customer": "Client",
+        "phone": "Téléphone",
+        "category": "Catégorie",
+        "totalOrders": "Commandes totales",
+        "totalSpent": "Total dépensé",
+        "isActive": "Actif",
+        "createdAt": "Créé le"
+      },
+      "dialogs": {
+        "deleteTitle": "Supprimer le client",
+        "deleteMessage": "Êtes-vous sûr de vouloir supprimer ce client ? Cette action est irréversible."
+      },
+      "toasts": {
+        "deleteFailedTitle": "Échec de suppression",
+        "deleteFailedMessage": "Échec de suppression du client. {{error}}",
+        "deleteSuccessTitle": "Client supprimé",
+        "deleteSuccessMessage": "Client supprimé avec succès."
+      }
+    },
+    "view": {
+      "loading": "Chargement...",
+      "noCustomerData": "Aucune donnée client disponible",
+      "sections": {
+        "generalInformation": "Informations générales",
+        "address": "Adresse",
+        "businessInformation": "Informations commerciales",
+        "systemInformation": "Informations système"
+      },
+      "fields": {
+        "id": "ID",
+        "name": "Nom",
+        "customerCategory": "Catégorie client",
+        "email": "E-mail",
+        "phone": "Téléphone",
+        "status": "Statut",
+        "street": "Rue",
+        "city": "Ville",
+        "state": "Région",
+        "zipCode": "Code postal",
+        "creditLimit": "Limite de crédit",
+        "paymentTerms": "Conditions de paiement",
+        "creditStatus": "Statut du crédit",
+        "createdAt": "Créé le",
+        "createdBy": "Créé par"
+      },
+      "labels": {
+        "customerCode": "CUST-{{id}}"
+      }
+    }
+  },
+  "inventory": {
+    "shared": {
+      "loading": "Chargement...",
+      "close": "Fermer",
+      "cancel": "Annuler",
+      "search": "Rechercher",
+      "saveChanges": "Enregistrer",
+      "creating": "Création...",
+      "saving": "Enregistrement...",
+      "processing": "Traitement...",
+      "notSpecified": "Non spécifié",
+      "notAvailable": "N/A",
+      "noAddressProvided": "Aucune adresse fournie",
+      "noDescriptionProvided": "Aucune description fournie",
+      "required": "*",
+      "yes": "Oui",
+      "no": "Non",
+      "systemUser": "Système",
+      "adminUser": "Utilisateur administrateur",
+      "unknownUser": "Utilisateur inconnu",
+      "status": {
+        "active": "Actif",
+        "inactive": "Inactif",
+        "inStock": "En stock",
+        "lowStock": "Stock faible",
+        "outOfStock": "Rupture de stock",
+        "pending": "En attente",
+        "approved": "Approuvé",
+        "inTransit": "En transit",
+        "completed": "Terminé",
+        "cancelled": "Annulé",
+        "rejected": "Rejeté",
+        "failed": "Échoué",
+        "deleted": "Supprimé"
+      }
+    },
+    "page": {
+      "title": "Gestion de l'inventaire",
+      "description": "Gérez l'inventaire, les transferts de stock et les emplacements.",
+      "addInventory": "Ajouter un inventaire",
+      "tabs": {
+        "inventory": "Inventaire",
+        "stockMovements": "Mouvements de stock",
+        "stockTransfers": "Transferts de stock",
+        "stockAlerts": "Alertes de stock",
+        "locations": "Emplacements"
+      },
+      "sections": {
+        "inventoryCatalog": "Catalogue d'inventaire",
+        "stockMovements": "Mouvements de stock",
+        "stockTransfers": "Transferts de stock",
+        "stockAlerts": "Alertes de stock",
+        "locations": "Emplacements"
+      },
+      "placeholders": {
+        "stockAlerts": "Les alertes de stock seront affichées ici !"
+      }
+    },
+    "cards": {
+      "totalInventoryItems": {
+        "title": "Total des éléments d'inventaire",
+        "description": "Nombre total d'enregistrements d'inventaire."
+      },
+      "totalPotentialProfit": {
+        "title": "Profit potentiel total",
+        "description": "Profit potentiel de tous les articles en stock."
+      },
+      "lowStockItems": {
+        "title": "Articles à stock faible",
+        "description": "Articles proches du niveau de réapprovisionnement."
+      },
+      "outOfStockItems": {
+        "title": "Articles en rupture",
+        "description": "Articles actuellement indisponibles en inventaire."
+      }
+    },
+    "addInventoryButton": {
+      "ariaLabel": "Ajouter un nouvel inventaire",
+      "label": "Ajouter un inventaire"
+    },
+    "inventoryForm": {
+      "title": {
+        "add": "Ajouter un nouvel inventaire",
+        "edit": "Mettre à jour l'inventaire #{{id}}"
+      },
+      "tabs": {
+        "product": "Produit",
+        "location": "Emplacement",
+        "stockLevels": "Niveaux de stock"
+      },
+      "sections": {
+        "productSearch": "Recherche de produit",
+        "locationSelection": "Sélection de l'emplacement",
+        "stockLevels": "Niveaux de stock",
+        "productInformation": "Informations produit",
+        "locationInformation": "Informations d'emplacement",
+        "summary": "Résumé",
+        "currentAvailableStock": "Stock disponible actuel"
+      },
+      "fields": {
+        "searchProduct": "Rechercher un produit",
+        "productName": "Nom du produit",
+        "productSku": "SKU du produit",
+        "category": "Catégorie",
+        "unitOfMeasure": "Unité de mesure",
+        "productId": "ID produit",
+        "selectLocation": "Sélectionner un emplacement",
+        "locationName": "Nom de l'emplacement",
+        "locationId": "ID emplacement",
+        "address": "Adresse",
+        "type": "Type",
+        "quantityOnHand": "Quantité disponible",
+        "reorderLevel": "Niveau de réapprovisionnement",
+        "maxLevel": "Niveau maximal"
+      },
+      "placeholders": {
+        "searchProduct": "Saisir l'ID produit",
+        "selectLocation": "Choisissez un emplacement...",
+        "searchPrompt": "Recherchez un produit pour commencer",
+        "selectLocationPrompt": "Sélectionnez un emplacement dans la liste ci-dessus",
+        "enterQuantity": "Saisir la quantité",
+        "enterReorderLevel": "Saisir le niveau de réapprovisionnement",
+        "enterMaxLevel": "Saisir le niveau maximal"
+      },
+      "hints": {
+        "productReadonly": "Le produit ne peut pas être modifié en mode mise à jour",
+        "locationReadonly": "L'emplacement ne peut pas être modifié en mode mise à jour",
+        "quantityOnHand": "Quantité de stock actuelle à cet emplacement",
+        "reorderLevel": "Quantité minimale avant réapprovisionnement",
+        "maxLevel": "Capacité maximale de stockage pour ce produit à cet emplacement",
+        "completeProductAndLocation": "Veuillez d'abord compléter les sections Produit et Emplacement",
+        "readyToCreate": "Prêt à créer",
+        "readyToUpdate": "Prêt à mettre à jour"
+      },
+      "validation": {
+        "searchRequired": "Veuillez saisir un nom de produit, SKU ou ID",
+        "invalidProductId": "Veuillez saisir un ID produit valide",
+        "productNotFound": "Veuillez saisir un ID produit valide. La recherche par nom/SKU nécessite un point d'API supplémentaire.",
+        "productRequired": "Veuillez sélectionner un produit",
+        "locationRequired": "Veuillez sélectionner un emplacement",
+        "stockLevelsNegative": "Les niveaux de stock ne peuvent pas être négatifs",
+        "reorderGreaterThanMax": "Le niveau de réapprovisionnement ne peut pas dépasser le niveau maximal"
+      },
+      "warnings": {
+        "reorderGreaterThanMax": "Le niveau de réapprovisionnement ne peut pas dépasser le niveau maximal"
+      },
+      "actions": {
+        "cancel": "Annuler",
+        "search": "Rechercher",
+        "createInventory": "Créer l'inventaire",
+        "updateStockLevels": "Mettre à jour les niveaux de stock"
+      },
+      "toasts": {
+        "searchErrorTitle": "Erreur de recherche",
+        "searchErrorMessage": "Veuillez saisir un nom de produit, SKU ou ID",
+        "invalidInputTitle": "Entrée invalide",
+        "invalidInputMessage": "Veuillez saisir un ID produit valide",
+        "productFoundTitle": "Produit trouvé",
+        "productFoundMessage": "Trouvé : {{name}}",
+        "productNotFoundTitle": "Produit introuvable",
+        "productNotFoundMessage": "Aucun produit trouvé avec cet ID",
+        "searchFailedTitle": "Échec de recherche",
+        "searchFailedMessage": "Échec de la recherche du produit",
+        "loadFailedTitle": "Échec du chargement",
+        "loadFailedMessage": "Échec du chargement des données d'inventaire",
+        "locationLoadErrorTitle": "Erreur",
+        "locationLoadErrorMessage": "Échec du chargement des détails d'emplacement",
+        "createSuccessTitle": "Inventaire créé",
+        "createSuccessMessage": "Inventaire créé avec succès pour {{product}} à {{location}}",
+        "createErrorTitle": "Erreur",
+        "createErrorMessage": "Erreur lors de la création de l'inventaire : {{error}}",
+        "updateSuccessTitle": "Inventaire mis à jour",
+        "updateSuccessMessage": "Inventaire mis à jour avec succès pour {{product}} à {{location}}",
+        "updateErrorTitle": "Erreur",
+        "updateErrorMessage": "Erreur lors de la mise à jour de l'inventaire : {{error}}"
+      }
+    },
+    "inventoryTable": {
+      "columns": {
+        "product": "Produit",
+        "location": "Emplacement",
+        "quantity": "Quantité",
+        "reorder": "Réapprovisionnement",
+        "max": "Max",
+        "status": "Statut",
+        "potentialProfit": "Profit potentiel"
+      },
+      "dialogs": {
+        "deleteTitle": "Supprimer l'élément d'inventaire",
+        "deleteMessage": "Êtes-vous sûr de vouloir supprimer cet élément d'inventaire ? Cette action est irréversible.",
+        "deleteConfirmText": "Supprimer l'inventaire"
+      },
+      "toasts": {
+        "deleteSuccessTitle": "Succès",
+        "deleteSuccessMessage": "Inventaire avec l'ID {{id}} supprimé avec succès.",
+        "deleteErrorTitle": "Erreur",
+        "deleteErrorMessage": "Erreur : {{error}}."
+      }
+    },
+    "inventoryView": {
+      "title": "Détails de l'inventaire",
+      "subtitleId": "ID : {{id}}",
+      "tabs": {
+        "info": "Produit & emplacement",
+        "stock": "Niveaux de stock",
+        "system": "Infos système"
+      },
+      "sections": {
+        "productInformation": "Informations produit",
+        "locationInformation": "Informations d'emplacement",
+        "systemIdentifiers": "Identifiants système",
+        "auditTrail": "Journal d'audit",
+        "created": "Créé",
+        "updated": "Mis à jour"
+      },
+      "fields": {
+        "productName": "Nom du produit",
+        "sku": "SKU",
+        "category": "Catégorie",
+        "unitOfMeasure": "Unité de mesure",
+        "name": "Nom",
+        "type": "Type",
+        "address": "Adresse",
+        "locationId": "ID emplacement",
+        "quantityOnHand": "Quantité disponible",
+        "availableStock": "Stock disponible",
+        "reorderLevel": "Niveau de réapprovisionnement",
+        "maxLevel": "Niveau maximal",
+        "stockLevel": "Niveau de stock",
+        "inventoryId": "ID inventaire",
+        "productId": "ID produit",
+        "status": "Statut",
+        "createdByName": "Nom de l'utilisateur",
+        "updatedByName": "Nom de l'utilisateur",
+        "userId": "ID utilisateur",
+        "dateTime": "Date et heure"
+      },
+      "labels": {
+        "readyForUseOrSale": "Prêt à l'utilisation ou à la vente",
+        "minimumThreshold": "Seuil minimum",
+        "storageCapacity": "Capacité de stockage"
+      },
+      "placeholders": {
+        "neverUpdated": "Jamais mis à jour"
+      }
+    },
+    "locations": {
+      "buttonAdd": "Ajouter un emplacement",
+      "form": {
+        "title": {
+          "add": "Ajouter un emplacement",
+          "edit": "Modifier l'emplacement"
+        },
+        "sections": {
+          "locationInformation": "Informations d'emplacement"
+        },
+        "fields": {
+          "locationName": "Nom de l'emplacement",
+          "address": "Adresse",
+          "locationType": "Type d'emplacement",
+          "locationStatus": "Statut de l'emplacement"
+        },
+        "placeholders": {
+          "locationName": "ex. Entrepôt principal, Magasin A, Centre de distribution",
+          "address": "Saisissez l'adresse complète de cet emplacement...",
+          "selectLocationType": "Sélectionnez un type d'emplacement"
+        },
+        "hints": {
+          "locationActiveHint": "Cet emplacement est actuellement actif et disponible",
+          "locationInactiveHint": "Cet emplacement est actuellement inactif"
+        },
+        "validation": {
+          "locationNameRequired": "Le nom de l'emplacement est requis",
+          "addressRequired": "L'adresse est requise",
+          "locationTypeRequired": "Le type d'emplacement est requis"
+        },
+        "actions": {
+          "cancel": "Annuler",
+          "create": "Créer l'emplacement",
+          "saveChanges": "Enregistrer",
+          "creating": "Création...",
+          "saving": "Enregistrement..."
+        },
+        "toasts": {
+          "loadTypesFailedTitle": "Échec du chargement",
+          "loadTypesFailedMessage": "Impossible de charger les types d'emplacement.",
+          "fetchTypesFailedTitle": "Erreur",
+          "fetchTypesFailedMessage": "Échec de récupération des types d'emplacement.",
+          "createSuccessTitle": "Emplacement créé",
+          "createSuccessMessage": "{{name}} a été ajouté avec succès.",
+          "createFailedTitle": "Échec de création",
+          "createFailedMessage": "{{name}} n'a pas pu être créé. Erreur : {{error}}",
+          "updateSuccessTitle": "Emplacement mis à jour",
+          "updateSuccessMessage": "{{name}} a été mis à jour avec succès.",
+          "updateFailedTitle": "Échec de mise à jour",
+          "updateFailedMessage": "L'emplacement n'a pas pu être mis à jour. Erreur : {{error}}",
+          "loadLocationFailedTitle": "Échec du chargement de l'emplacement",
+          "loadLocationFailedMessage": "Impossible de charger les données de l'emplacement."
+        }
+      },
+      "table": {
+        "columns": {
+          "id": "ID",
+          "name": "Nom",
+          "address": "Adresse",
+          "typeName": "Type",
+          "createdAt": "Créé le",
+          "createdBy": "Créé par"
+        },
+        "dialogs": {
+          "deleteTitle": "Supprimer l'emplacement",
+          "deleteMessage": "Êtes-vous sûr de vouloir supprimer l'emplacement avec l'ID {{id}} ? Cette action est irréversible."
+        },
+        "toasts": {
+          "deleteFailedTitle": "Échec de suppression",
+          "deleteFailedMessage": "{{message}}",
+          "deleteSuccessTitle": "Supprimé",
+          "deleteSuccessMessage": "L'emplacement avec l'ID {{id}} a été supprimé avec succès."
+        }
+      },
+      "view": {
+        "title": "Détails de l'emplacement",
+        "subtitleId": "ID : {{id}}",
+        "loading": "Chargement...",
+        "sections": {
+          "locationInformation": "Informations d'emplacement",
+          "auditInformation": "Informations d'audit",
+          "systemInformation": "Informations système",
+          "created": "Créé",
+          "deleted": "Supprimé"
+        },
+        "fields": {
+          "locationName": "Nom de l'emplacement",
+          "address": "Adresse",
+          "locationType": "Type d'emplacement",
+          "locationTypeId": "ID du type d'emplacement",
+          "dateTime": "Date et heure",
+          "user": "Utilisateur",
+          "userId": "ID utilisateur",
+          "locationId": "ID emplacement",
+          "status": "Statut",
+          "isDeleted": "Est supprimé"
+        },
+        "placeholders": {
+          "noAddressProvided": "Aucune adresse fournie",
+          "notDeleted": "L'emplacement n'a pas été supprimé"
+        }
+      }
+    },
+    "stockTransfers": {
+      "buttonAdd": "Ajouter un transfert de stock",
+      "form": {
+        "title": {
+          "create": "Créer un transfert de stock",
+          "view": "Voir le transfert de stock"
+        },
+        "tabs": {
+          "product": "Produit",
+          "transferDetails": "Détails du transfert",
+          "history": "Historique"
+        },
+        "sections": {
+          "productInformation": "Informations produit",
+          "selectedProduct": "Produit sélectionné",
+          "transferRoute": "Itinéraire du transfert",
+          "transferSummary": "Résumé du transfert",
+          "transferTimeline": "Chronologie du transfert",
+          "currentStatus": "Statut actuel",
+          "transferInformation": "Informations du transfert",
+          "transferHistory": "Historique du transfert",
+          "noHistoryAvailable": "Aucun historique disponible",
+          "transferCreated": "Transfert créé"
+        },
+        "fields": {
+          "searchProduct": "Rechercher un produit",
+          "productName": "Nom du produit",
+          "sku": "SKU",
+          "category": "Catégorie",
+          "productId": "ID produit",
+          "unitPrice": "Prix unitaire",
+          "status": "Statut",
+          "fromWarehouse": "Entrepôt source",
+          "toWarehouse": "Entrepôt destination",
+          "fromLocation": "Emplacement source",
+          "toLocation": "Emplacement destination",
+          "requestedQuantity": "Quantité demandée",
+          "transferNotes": "Notes de transfert",
+          "totalValue": "Valeur totale",
+          "transferId": "ID transfert",
+          "createdBy": "Créé par",
+          "userId": "ID utilisateur",
+          "createdDate": "Date de création",
+          "dateTime": "Date et heure",
+          "user": "Utilisateur",
+          "fromLocationId": "ID emplacement source",
+          "toLocationId": "ID emplacement destination",
+          "createdByUserId": "ID utilisateur créateur"
+        },
+        "placeholders": {
+          "searchProduct": "Saisir l'ID produit",
+          "searchPrompt": "Saisissez l'ID produit pour rechercher",
+          "selectWarehouse": "Sélectionner un entrepôt",
+          "selectWarehouseFirst": "Sélectionnez d'abord un entrepôt",
+          "notes": "Notes supplémentaires sur ce transfert...",
+          "noHistoryMessage": "L'historique sera disponible après la création du transfert",
+          "searchToStart": "Recherchez un produit pour commencer",
+          "notSpecified": "Non spécifié",
+          "itemLabel": "Article {{index}}"
+        },
+        "labels": {
+          "singleProduct": "produit",
+          "multipleProducts": "produits",
+          "totalItems": "articles au total",
+          "units": "unités",
+          "statusWithValue": "Statut : {{status}}"
+        },
+        "validation": {
+          "selectProduct": "Veuillez sélectionner un produit",
+          "selectFromLocation": "Veuillez sélectionner un emplacement source",
+          "selectToLocation": "Veuillez sélectionner un emplacement destination",
+          "locationsMustDiffer": "Les emplacements source et destination doivent être différents",
+          "invalidQuantity": "Veuillez saisir une quantité valide",
+          "searchRequired": "Veuillez saisir un ID produit",
+          "invalidProductId": "Veuillez saisir un ID produit valide"
+        },
+        "actions": {
+          "cancel": "Annuler",
+          "createTransfer": "Créer le transfert",
+          "changeStatus": "Changer le statut",
+          "ok": "Ok"
+        },
+        "toasts": {
+          "transferCreateSuccessTitle": "Transfert créé avec succès",
+          "transferCreateSuccessMessage": "Le transfert de stock de {{from}} vers {{to}} a été lancé.",
+          "transferCreateFailedTitle": "Échec de création du transfert",
+          "transferCreateFailedMessage": "Échec de création du transfert de stock. Veuillez réessayer.",
+          "productFoundTitle": "Produit trouvé",
+          "productFoundMessage": "Trouvé : {{name}}",
+          "productNotFoundTitle": "Produit introuvable",
+          "productNotFoundMessage": "Aucun produit trouvé avec cet ID",
+          "searchFailedTitle": "Échec de recherche",
+          "searchFailedMessage": "Échec de la recherche du produit",
+          "searchErrorTitle": "Erreur de recherche",
+          "searchErrorMessage": "Veuillez saisir un ID produit",
+          "invalidInputTitle": "Entrée invalide",
+          "invalidInputMessage": "Veuillez saisir un ID produit valide",
+          "productSingleLocationError": "Le produit sélectionné n'a qu'un seul emplacement d'inventaire, veuillez en choisir un autre",
+          "productNoInventoryError": "Le produit sélectionné n'a aucun inventaire, veuillez choisir un autre produit ou créer un inventaire pour ce produit"
+        }
+      },
+      "table": {
+        "columns": {
+          "product": "Produit",
+          "fromLocation": "De l'emplacement",
+          "toLocation": "Vers l'emplacement",
+          "quantity": "Quantité",
+          "status": "Statut",
+          "user": "Utilisateur",
+          "createdAt": "Créé le"
+        }
+      },
+      "view": {
+        "title": "Détails du transfert de stock",
+        "transferCode": "TR{{id}}",
+        "loading": "Chargement...",
+        "tabs": {
+          "transferDetails": "Détails du transfert",
+          "items": "Articles",
+          "history": "Historique"
+        },
+        "sections": {
+          "transferRoute": "Itinéraire du transfert",
+          "productInformation": "Informations produit",
+          "transferItem": "Article transféré",
+          "transferSummary": "Résumé du transfert",
+          "transferHistory": "Historique du transfert",
+          "created": "Créé",
+          "transferInformation": "Informations du transfert"
+        },
+        "fields": {
+          "fromLocation": "Emplacement source",
+          "toLocation": "Emplacement destination",
+          "product": "Produit",
+          "quantity": "Quantité",
+          "status": "Statut",
+          "dateTime": "Date et heure",
+          "user": "Utilisateur",
+          "transferId": "ID transfert",
+          "currentStatus": "Statut actuel",
+          "fromLocationId": "ID emplacement source",
+          "toLocationId": "ID emplacement destination",
+          "productId": "ID produit",
+          "createdByUserId": "ID utilisateur créateur"
+        },
+        "placeholders": {
+          "fromLocation": "Emplacement source",
+          "toLocation": "Emplacement destination",
+          "notSpecified": "Non spécifié",
+          "itemLabel": "Article {{index}}"
+        },
+        "labels": {
+          "oneProduct": "1 produit",
+          "totalUnits": "{{count}} unités au total",
+          "units": "unités",
+          "statusWithValue": "Statut : {{status}}"
+        }
+      }
+    }
+  }
+}

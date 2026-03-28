@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import TopProductItem from './TopProductItem';
 import dashboardApi from '@features/dashboard/services/dashboardApi';
 
 const TopSellingProducts = ({ className = '' }) => {
+  const { t } = useTranslation();
+
   // Sample data if no products provided
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -23,7 +28,7 @@ const TopSellingProducts = ({ className = '' }) => {
   if (isLoading) {
     return (
       <div className={`p-4 border border-gray-200 rounded-lg ${className}`}>
-        Loading...
+        {t(i18nKeyContainer.dashboard.topProducts.loading)}
       </div>
     );
   }

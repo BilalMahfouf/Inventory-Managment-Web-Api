@@ -1,5 +1,4 @@
-import DataTable from '@components/DataTable/DataTable';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getUnitOfMeasures } from '@features/products/services/unitOfMeasureApi';
 import SimpleDataTable from '@components/DataTable/SimpleDataTable';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';
@@ -7,8 +6,12 @@ import { deleteUnitOfMeasure } from '@features/products/services/unitOfMeasureAp
 import { useToast } from '@shared/context/ToastContext';
 import AddUnitOfMeasure from './AddUnitOfMeasure';
 import UnitOfMeasureView from './UnitOfMeasureView';
+import { useTranslation } from 'react-i18next';
+
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 export default function UnitOfMeasureTable() {
+  const { t } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [addEditDialogOpen, setAddEditDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
@@ -17,6 +20,7 @@ export default function UnitOfMeasureTable() {
   const [isLoading, setIsLoading] = useState(false);
 
   const { showError, showSuccess } = useToast();
+  const columns = useMemo(() => getDefaultColumns(t), [t]);
 
   useEffect(() => {
     const fetchUnitOfMeasures = async () => {
@@ -27,14 +31,14 @@ export default function UnitOfMeasureTable() {
         console.log('Unit of Measures data:', responseData);
       } catch (error) {
         console.error('Error fetching unit of measures:', error);
-        showError('Failed to load units of measure');
+        showError(t(i18nKeyContainer.products.units.table.toasts.loadError));
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchUnitOfMeasures();
-  }, [showError]);
+  }, [showError, t]);
 
   const fetchUnitOfMeasures = async () => {
     setIsLoading(true);
@@ -43,7 +47,7 @@ export default function UnitOfMeasureTable() {
       setData(responseData);
     } catch (error) {
       console.error('Error fetching unit of measures:', error);
-      showError('Failed to load units of measure');
+      showError(t(i18nKeyContainer.products.units.table.toasts.loadError));
     } finally {
       setIsLoading(false);
     }
@@ -66,13 +70,13 @@ export default function UnitOfMeasureTable() {
         setCurrentUnitOfMeasureId(0);
         fetchUnitOfMeasures(); // Refresh data
         showSuccess(
-          `Unit of Measure Deleted`,
-          `Unit of measure deleted successfully`
+          t(i18nKeyContainer.products.units.table.toasts.deleteSuccessTitle),
+          t(i18nKeyContainer.products.units.table.toasts.deleteSuccessMessage)
         );
       })
       .catch(error => {
         console.error('Error deleting unit of measure:', error);
-        showError('Failed to delete unit of measure');
+        showError(t(i18nKeyContainer.products.units.table.toasts.deleteError));
       });
   };
 
@@ -94,7 +98,7 @@ export default function UnitOfMeasureTable() {
     <>
       <SimpleDataTable
         data={data}
-        columns={defaultColumns}
+        columns={columns}
         loading={isLoading}
         enableActions={true}
         onView={handleView}
@@ -107,8 +111,8 @@ export default function UnitOfMeasureTable() {
       />
       {deleteDialogOpen && (
         <ConfirmationDialog
-          title='Delete Unit of Measure'
-          message={`Are you sure you want to delete this unit of measure? This action cannot be undone.`}
+          title={t(i18nKeyContainer.products.units.table.dialogs.deleteTitle)}
+          message={t(i18nKeyContainer.products.units.table.dialogs.deleteMessage)}
           onConfirm={handleDelete}
           onClose={() => setDeleteDialogOpen(false)}
           isOpen={deleteDialogOpen}
@@ -129,22 +133,22 @@ export default function UnitOfMeasureTable() {
   );
 }
 
-const defaultColumns = [
+const getDefaultColumns = t => [
   {
     accessorKey: 'id',
-    header: 'ID',
+    header: t(i18nKeyContainer.products.units.table.columns.id),
   },
   {
     accessorKey: 'name',
-    header: 'Name',
+    header: t(i18nKeyContainer.products.units.table.columns.name),
   },
   {
     accessorKey: 'createdAt',
-    header: 'Created At',
+    header: t(i18nKeyContainer.products.units.table.columns.createdAt),
     cell: ({ getValue }) => new Date(getValue()).toLocaleDateString(),
   },
   {
     accessorKey: 'createdByUserName',
-    header: 'Created By',
+    header: t(i18nKeyContainer.products.units.table.columns.createdBy),
   },
 ];

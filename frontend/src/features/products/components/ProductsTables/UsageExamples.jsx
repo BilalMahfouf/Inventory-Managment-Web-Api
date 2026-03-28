@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * USAGE EXAMPLES FOR ProductViewDialog
  *
@@ -9,9 +10,11 @@
 // ============================================
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import DataTable from '@components/DataTable/DataTable';
 import ProductViewDialog from './ProductViewDialog';
 import { getProductById } from '@features/products/services/productApi';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 export default function ProductDataTable() {
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
@@ -166,6 +169,7 @@ const sampleInventory = {
 // ============================================
 
 export function ProductDataTableWithDetailsFetch() {
+  const { t } = useTranslation();
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -197,7 +201,9 @@ export function ProductDataTableWithDetailsFetch() {
           <DialogContent>
             <div className='flex items-center justify-center p-8'>
               <div className='animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent' />
-              <span className='ml-2'>Loading product details...</span>
+              <span className='ml-2'>
+                {t(i18nKeyContainer.products.shared.loading)}
+              </span>
             </div>
           </DialogContent>
         </Dialog>
@@ -289,6 +295,7 @@ export function ProductDataTableComplete() {
 // ============================================
 
 export function ProductDetailsPage() {
+  const { t } = useTranslation();
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -299,7 +306,9 @@ export function ProductDetailsPage() {
 
   return (
     <div>
-      <button onClick={() => setDialogOpen(true)}>View Full Details</button>
+      <button onClick={() => setDialogOpen(true)}>
+        {t(i18nKeyContainer.products.productView.title)}
+      </button>
 
       <ProductViewDialog
         open={dialogOpen}

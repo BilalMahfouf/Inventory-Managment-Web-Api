@@ -9,6 +9,8 @@ import TransferDetailsTab from './TransferDetailsTab';
 import HistoryTab from './HistoryTab';
 import { getInventoriesByProductId } from '@features/products/services/productApi';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 /**
  * AddStockTransfer Component
@@ -29,6 +31,7 @@ import ConfirmationDialog from '@components/ui/ConfirmationDialog';
  * 3. History Tab: View transfer status and timeline (read-only, shows after creation)
  */
 const AddStockTransfer = ({ isOpen, onClose, onSuccess, transferId = 0 }) => {
+  const { t } = useTranslation();
   const { showSuccess, showError } = useToast();
   const [activeTab, setActiveTab] = useState(0);
   const [mode, setMode] = useState('add'); // 'add' or 'view'
@@ -52,9 +55,21 @@ const AddStockTransfer = ({ isOpen, onClose, onSuccess, transferId = 0 }) => {
 
   // Tabs configuration
   const tabs = [
-    { id: 0, label: 'Product', icon: Package },
-    { id: 1, label: 'Transfer Details', icon: MapPin },
-    { id: 2, label: 'History', icon: HistoryIcon },
+    {
+      id: 0,
+      label: t(i18nKeyContainer.inventory.stockTransfers.form.tabs.product),
+      icon: Package,
+    },
+    {
+      id: 1,
+      label: t(i18nKeyContainer.inventory.stockTransfers.form.tabs.transferDetails),
+      icon: MapPin,
+    },
+    {
+      id: 2,
+      label: t(i18nKeyContainer.inventory.stockTransfers.form.tabs.history),
+      icon: HistoryIcon,
+    },
   ];
 
   /**
@@ -62,27 +77,45 @@ const AddStockTransfer = ({ isOpen, onClose, onSuccess, transferId = 0 }) => {
    */
   const isFormValid = () => {
     if (!selectedProduct) {
-      showError('Validation Error', 'Please select a product');
+      showError(
+        t(i18nKeyContainer.inventory.stockTransfers.form.toasts.searchErrorTitle),
+        t(i18nKeyContainer.inventory.stockTransfers.form.validation.selectProduct)
+      );
       setActiveTab(0);
       return false;
     }
     if (!fromLocationId) {
-      showError('Validation Error', 'Please select a from location');
+      showError(
+        t(i18nKeyContainer.inventory.stockTransfers.form.toasts.searchErrorTitle),
+        t(i18nKeyContainer.inventory.stockTransfers.form.validation.selectFromLocation)
+      );
       setActiveTab(1);
       return false;
     }
     if (!toLocationId) {
-      showError('Validation Error', 'Please select a to location');
+      showError(
+        t(i18nKeyContainer.inventory.stockTransfers.form.toasts.searchErrorTitle),
+        t(i18nKeyContainer.inventory.stockTransfers.form.validation.selectToLocation)
+      );
       setActiveTab(1);
       return false;
     }
     if (fromLocationId === toLocationId) {
-      showError('Validation Error', 'From and To locations must be different');
+      showError(
+        t(i18nKeyContainer.inventory.stockTransfers.form.toasts.searchErrorTitle),
+        t(
+          i18nKeyContainer.inventory.stockTransfers.form.validation
+            .locationsMustDiffer
+        )
+      );
       setActiveTab(1);
       return false;
     }
     if (!quantity || quantity <= 0) {
-      showError('Validation Error', 'Please enter a valid quantity');
+      showError(
+        t(i18nKeyContainer.inventory.stockTransfers.form.toasts.searchErrorTitle),
+        t(i18nKeyContainer.inventory.stockTransfers.form.validation.invalidQuantity)
+      );
       setActiveTab(1);
       return false;
     }
@@ -108,8 +141,18 @@ const AddStockTransfer = ({ isOpen, onClose, onSuccess, transferId = 0 }) => {
 
       if (result.success) {
         showSuccess(
-          'Transfer Created Successfully',
-          `Stock transfer from ${locations.find(l => l.id === parseInt(fromLocationId))?.name} to ${locations.find(l => l.id === parseInt(toLocationId))?.name} has been initiated.`
+          t(
+            i18nKeyContainer.inventory.stockTransfers.form.toasts
+              .transferCreateSuccessTitle
+          ),
+          t(
+            i18nKeyContainer.inventory.stockTransfers.form.toasts
+              .transferCreateSuccessMessage,
+            {
+              from: locations.find(l => l.id === parseInt(fromLocationId))?.name,
+              to: locations.find(l => l.id === parseInt(toLocationId))?.name,
+            }
+          )
         );
 
         // Call onSuccess callback if provided
@@ -120,15 +163,29 @@ const AddStockTransfer = ({ isOpen, onClose, onSuccess, transferId = 0 }) => {
         handleClose();
       } else {
         showError(
-          'Transfer Creation Failed',
-          result.error || 'Failed to create stock transfer. Please try again.'
+          t(
+            i18nKeyContainer.inventory.stockTransfers.form.toasts
+              .transferCreateFailedTitle
+          ),
+          result.error ||
+            t(
+              i18nKeyContainer.inventory.stockTransfers.form.toasts
+                .transferCreateFailedMessage
+            )
         );
       }
     } catch (error) {
       console.error('Transfer creation error:', error);
       showError(
-        'Transfer Creation Failed',
-        error.message || 'An unexpected error occurred. Please try again.'
+        t(
+          i18nKeyContainer.inventory.stockTransfers.form.toasts
+            .transferCreateFailedTitle
+        ),
+        error.message ||
+          t(
+            i18nKeyContainer.inventory.stockTransfers.form.toasts
+              .transferCreateFailedMessage
+          )
       );
     } finally {
       setIsLoading(false);
@@ -175,8 +232,10 @@ const AddStockTransfer = ({ isOpen, onClose, onSuccess, transferId = 0 }) => {
             console.log('location lenght is less then 2 ');
             setError({
               isError: true,
-              message:
-                'The selected Product has only one inventory location, please select a different product',
+              message: t(
+                i18nKeyContainer.inventory.stockTransfers.form.toasts
+                  .productSingleLocationError
+              ),
             });
             return;
           }
@@ -192,9 +251,10 @@ const AddStockTransfer = ({ isOpen, onClose, onSuccess, transferId = 0 }) => {
         } else {
           setError({
             isError: true,
-            message:
-              'The selected Product has no inventories, please select a different product ' +
-              'or create inventory for this product',
+            message: t(
+              i18nKeyContainer.inventory.stockTransfers.form.toasts
+                .productNoInventoryError
+            ),
           });
         }
       } catch (error) {
@@ -235,7 +295,9 @@ const AddStockTransfer = ({ isOpen, onClose, onSuccess, transferId = 0 }) => {
           <div className='flex items-center gap-3'>
             <Package className='h-6 w-6 text-gray-600' />
             <h2 className='text-xl font-semibold'>
-              {mode === 'add' ? 'Create Stock Transfer' : 'View Stock Transfer'}
+              {mode === 'add'
+                ? t(i18nKeyContainer.inventory.stockTransfers.form.title.create)
+                : t(i18nKeyContainer.inventory.stockTransfers.form.title.view)}
             </h2>
           </div>
           <button
@@ -318,7 +380,7 @@ const AddStockTransfer = ({ isOpen, onClose, onSuccess, transferId = 0 }) => {
             disabled={isLoading}
             className='min-w-[100px]'
           >
-            Cancel
+            {t(i18nKeyContainer.inventory.stockTransfers.form.actions.cancel)}
           </Button>
           {mode === 'add' && (
             <Button
@@ -327,16 +389,16 @@ const AddStockTransfer = ({ isOpen, onClose, onSuccess, transferId = 0 }) => {
               loading={isLoading}
               className='min-w-[150px]'
             >
-              Create Transfer
+              {t(i18nKeyContainer.inventory.stockTransfers.form.actions.createTransfer)}
             </Button>
           )}
         </div>
       </div>
       {error.isError && (
         <ConfirmationDialog
-          title='Error'
+          title={t(i18nKeyContainer.inventory.stockTransfers.form.toasts.searchErrorTitle)}
           message={error.message}
-          confirmText='Ok'
+          confirmText={t(i18nKeyContainer.inventory.stockTransfers.form.actions.ok)}
           type='delete'
           onConfirm={() => {
             setError({ isError: false, message: '' });

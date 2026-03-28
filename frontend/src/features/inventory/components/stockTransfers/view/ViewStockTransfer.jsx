@@ -15,6 +15,8 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { getStockTransferById } from '@features/inventory/services/stockTransferApi';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 /**
  * ViewStockTransfer Component
@@ -56,6 +58,7 @@ import { getStockTransferById } from '@features/inventory/services/stockTransfer
  * ```
  */
 const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
+  const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState('details');
   const [transfer, setTransfer] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -80,26 +83,62 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
   }, [transferId, open]);
 
   const tabs = [
-    { id: 'details', label: 'Transfer Details' },
-    { id: 'items', label: 'Items' },
-    { id: 'history', label: 'History' },
+    {
+      id: 'details',
+      label: t(i18nKeyContainer.inventory.stockTransfers.view.tabs.transferDetails),
+    },
+    { id: 'items', label: t(i18nKeyContainer.inventory.stockTransfers.view.tabs.items) },
+    {
+      id: 'history',
+      label: t(i18nKeyContainer.inventory.stockTransfers.view.tabs.history),
+    },
   ];
 
   // Status mapping - backend returns status as number string
   const getStatusInfo = status => {
     // Backend returns: 1=Pending, 2=In Transit, 3=Completed, 4=Cancelled
     const statusMap = {
-      1: { color: 'yellow', label: 'Pending' },
-      2: { color: 'blue', label: 'In Transit' },
-      3: { color: 'green', label: 'Completed' },
-      4: { color: 'red', label: 'Cancelled' },
+      1: { color: 'yellow', label: t(i18nKeyContainer.inventory.shared.status.pending) },
+      2: {
+        color: 'blue',
+        label: t(i18nKeyContainer.inventory.shared.status.inTransit),
+      },
+      3: {
+        color: 'green',
+        label: t(i18nKeyContainer.inventory.shared.status.completed),
+      },
+      4: {
+        color: 'red',
+        label: t(i18nKeyContainer.inventory.shared.status.cancelled),
+      },
       // Also support string versions
-      Pending: { color: 'yellow', label: 'Pending' },
-      'In Transit': { color: 'blue', label: 'In Transit' },
-      Completed: { color: 'green', label: 'Completed' },
-      Cancelled: { color: 'red', label: 'Cancelled' },
+      Pending: {
+        color: 'yellow',
+        label: t(i18nKeyContainer.inventory.shared.status.pending),
+      },
+      'In Transit': {
+        color: 'blue',
+        label: t(i18nKeyContainer.inventory.shared.status.inTransit),
+      },
+      InTransit: {
+        color: 'blue',
+        label: t(i18nKeyContainer.inventory.shared.status.inTransit),
+      },
+      Completed: {
+        color: 'green',
+        label: t(i18nKeyContainer.inventory.shared.status.completed),
+      },
+      Cancelled: {
+        color: 'red',
+        label: t(i18nKeyContainer.inventory.shared.status.cancelled),
+      },
     };
-    return statusMap[status] || { color: 'gray', label: status || 'Unknown' };
+    return (
+      statusMap[status] || {
+        color: 'gray',
+        label: status || t(i18nKeyContainer.inventory.shared.notSpecified),
+      }
+    );
   };
 
   if (loading || !transfer) {
@@ -107,7 +146,9 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className='max-w-5xl'>
           <div className='flex items-center justify-center p-8'>
-            <div className='text-gray-500'>Loading...</div>
+            <div className='text-gray-500'>
+              {t(i18nKeyContainer.inventory.stockTransfers.view.loading)}
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -125,10 +166,12 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
             <div className='flex items-center gap-2'>
               <Truck className='w-5 h-5' />
               <DialogTitle className='text-xl'>
-                Stock Transfer Details
+                {t(i18nKeyContainer.inventory.stockTransfers.view.title)}
               </DialogTitle>
               <span className='text-sm text-gray-500 font-normal'>
-                TR{transfer.id.toString().padStart(3, '0')}
+                {t(i18nKeyContainer.inventory.stockTransfers.view.transferCode, {
+                  id: transfer.id.toString().padStart(3, '0'),
+                })}
               </span>
             </div>
           </div>
@@ -179,29 +222,43 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
               <div>
                 <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
                   <MapPin className='w-5 h-5' />
-                  Transfer Route
+                  {t(i18nKeyContainer.inventory.stockTransfers.view.sections.transferRoute)}
                 </h3>
 
                 {/* From and To Locations */}
                 <div className='grid grid-cols-2 gap-6 mb-4'>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-2'>
-                      From Location <span className='text-red-500'>*</span>
+                      {t(i18nKeyContainer.inventory.stockTransfers.view.fields.fromLocation)}{' '}
+                      <span className='text-red-500'>
+                        {t(i18nKeyContainer.inventory.shared.required)}
+                      </span>
                     </label>
                     <div className='bg-gray-50 p-3 rounded-md'>
                       <p className='text-gray-900 font-medium'>
-                        {transfer.fromLocationName || 'Not specified'}
+                        {transfer.fromLocationName ||
+                          t(
+                            i18nKeyContainer.inventory.stockTransfers.view.placeholders
+                              .notSpecified
+                          )}
                       </p>
                     </div>
                   </div>
 
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-2'>
-                      To Location <span className='text-red-500'>*</span>
+                      {t(i18nKeyContainer.inventory.stockTransfers.view.fields.toLocation)}{' '}
+                      <span className='text-red-500'>
+                        {t(i18nKeyContainer.inventory.shared.required)}
+                      </span>
                     </label>
                     <div className='bg-gray-50 p-3 rounded-md'>
                       <p className='text-gray-900 font-medium'>
-                        {transfer.toLocationName || 'Not specified'}
+                        {transfer.toLocationName ||
+                          t(
+                            i18nKeyContainer.inventory.stockTransfers.view.placeholders
+                              .notSpecified
+                          )}
                       </p>
                     </div>
                   </div>
@@ -212,13 +269,21 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
                   <div className='flex items-center justify-center gap-4'>
                     <div className='text-center'>
                       <p className='font-semibold text-blue-900'>
-                        {transfer.fromLocationName || 'From Location'}
+                        {transfer.fromLocationName ||
+                          t(
+                            i18nKeyContainer.inventory.stockTransfers.view.placeholders
+                              .fromLocation
+                          )}
                       </p>
                     </div>
                     <ArrowRight className='w-8 h-8 text-blue-600' />
                     <div className='text-center'>
                       <p className='font-semibold text-blue-900'>
-                        {transfer.toLocationName || 'To Location'}
+                        {transfer.toLocationName ||
+                          t(
+                            i18nKeyContainer.inventory.stockTransfers.view.placeholders
+                              .toLocation
+                          )}
                       </p>
                     </div>
                   </div>
@@ -229,12 +294,15 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
               <div>
                 <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
                   <Package className='w-5 h-5' />
-                  Product Information
+                  {t(
+                    i18nKeyContainer.inventory.stockTransfers.view.sections
+                      .productInformation
+                  )}
                 </h3>
                 <div className='grid grid-cols-2 gap-6'>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-2'>
-                      Product
+                      {t(i18nKeyContainer.inventory.stockTransfers.view.fields.product)}
                     </label>
                     <div className='bg-gray-50 p-3 rounded-md'>
                       <p className='text-gray-900 font-medium'>
@@ -244,14 +312,14 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-2'>
-                      Quantity
+                      {t(i18nKeyContainer.inventory.stockTransfers.view.fields.quantity)}
                     </label>
                     <div className='bg-gray-50 p-3 rounded-md'>
                       <p className='text-gray-900 font-medium'>
                         {transfer.quantity
                           ? transfer.quantity.toFixed(2)
                           : '0.00'}{' '}
-                        units
+                        {t(i18nKeyContainer.inventory.stockTransfers.view.labels.units)}
                       </p>
                     </div>
                   </div>
@@ -265,13 +333,17 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
             <div className='space-y-6'>
               <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
                 <Package className='w-5 h-5' />
-                Transfer Item
+                {t(i18nKeyContainer.inventory.stockTransfers.view.sections.transferItem)}
               </h3>
 
               {/* Single Item Display */}
               <div className='border border-gray-200 rounded-lg p-4 space-y-4'>
                 <div className='flex items-center justify-between'>
-                  <h4 className='font-semibold text-gray-900'>Item 1</h4>
+                  <h4 className='font-semibold text-gray-900'>
+                    {t(i18nKeyContainer.inventory.stockTransfers.view.placeholders.itemLabel, {
+                      index: 1,
+                    })}
+                  </h4>
                   <span
                     className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
                       statusInfo.color === 'green'
@@ -279,14 +351,23 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
                         : 'bg-yellow-100 text-yellow-800'
                     }`}
                   >
-                    Status: {statusInfo.label}
+                    {t(
+                      i18nKeyContainer.inventory.stockTransfers.view.labels
+                        .statusWithValue,
+                      {
+                        status: statusInfo.label,
+                      }
+                    )}
                   </span>
                 </div>
 
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Product <span className='text-red-500'>*</span>
+                      {t(i18nKeyContainer.inventory.stockTransfers.view.fields.product)}{' '}
+                      <span className='text-red-500'>
+                        {t(i18nKeyContainer.inventory.shared.required)}
+                      </span>
                     </label>
                     <p className='text-gray-900'>
                       {transfer.productName || '-'}
@@ -295,13 +376,16 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
 
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Quantity <span className='text-red-500'>*</span>
+                      {t(i18nKeyContainer.inventory.stockTransfers.view.fields.quantity)}{' '}
+                      <span className='text-red-500'>
+                        {t(i18nKeyContainer.inventory.shared.required)}
+                      </span>
                     </label>
                     <p className='text-gray-900'>
                       {transfer.quantity
                         ? transfer.quantity.toFixed(2)
                         : '0.00'}{' '}
-                      units
+                      {t(i18nKeyContainer.inventory.stockTransfers.view.labels.units)}
                     </p>
                   </div>
                 </div>
@@ -312,14 +396,16 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
                 <div className='flex justify-between items-center'>
                   <div>
                     <p className='text-sm font-medium text-gray-700'>
-                      Transfer Summary
+                      {t(
+                        i18nKeyContainer.inventory.stockTransfers.view.sections
+                          .transferSummary
+                      )}
                     </p>
                     <p className='text-sm text-gray-500'>
-                      1 product,{' '}
-                      {transfer.quantity
-                        ? transfer.quantity.toFixed(2)
-                        : '0.00'}{' '}
-                      total units
+                      {t(i18nKeyContainer.inventory.stockTransfers.view.labels.oneProduct)},{' '}
+                      {t(i18nKeyContainer.inventory.stockTransfers.view.labels.totalUnits, {
+                        count: transfer.quantity ? transfer.quantity.toFixed(2) : '0.00',
+                      })}
                     </p>
                   </div>
                 </div>
@@ -332,39 +418,43 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
             <div className='space-y-6'>
               <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
                 <Clock className='w-5 h-5' />
-                Transfer History
+                {t(i18nKeyContainer.inventory.stockTransfers.view.sections.transferHistory)}
               </h3>
 
               {/* Creation Details */}
               <div className='bg-blue-50 p-4 rounded-lg space-y-3'>
                 <h4 className='font-semibold text-blue-900 flex items-center gap-2'>
                   <Calendar className='w-4 h-4' />
-                  Created
+                  {t(i18nKeyContainer.inventory.stockTransfers.view.sections.created)}
                 </h4>
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
                     <label className='block text-sm font-medium text-blue-700 mb-1'>
-                      Date & Time
+                      {t(i18nKeyContainer.inventory.stockTransfers.view.fields.dateTime)}
                     </label>
                     <p className='text-blue-900 text-sm'>
                       {transfer.createdAt
-                        ? new Date(transfer.createdAt).toLocaleString('en-US', {
+                        ? new Date(transfer.createdAt).toLocaleString(
+                            i18n.resolvedLanguage || i18n.language || 'en',
+                            {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric',
                             hour: '2-digit',
                             minute: '2-digit',
-                          })
+                            }
+                          )
                         : '-'}
                     </p>
                   </div>
                   <div>
                     <label className='text-sm font-medium text-blue-700 mb-1 flex items-center gap-1'>
                       <User className='w-3 h-3' />
-                      User
+                      {t(i18nKeyContainer.inventory.stockTransfers.view.fields.user)}
                     </label>
                     <p className='text-blue-900 text-sm'>
-                      {transfer.createdByUserName || 'System User'}
+                      {transfer.createdByUserName ||
+                        t(i18nKeyContainer.inventory.shared.systemUser)}
                     </p>
                   </div>
                 </div>
@@ -373,12 +463,15 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
               {/* Transfer Information */}
               <div className='border-t pt-4'>
                 <h4 className='font-semibold text-gray-900 mb-3'>
-                  Transfer Information
+                  {t(
+                    i18nKeyContainer.inventory.stockTransfers.view.sections
+                      .transferInformation
+                  )}
                 </h4>
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Transfer ID
+                      {t(i18nKeyContainer.inventory.stockTransfers.view.fields.transferId)}
                     </label>
                     <p className='text-gray-900 font-mono text-sm'>
                       {transfer.id}
@@ -386,13 +479,19 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Current Status
+                      {t(
+                        i18nKeyContainer.inventory.stockTransfers.view.fields
+                          .currentStatus
+                      )}
                     </label>
                     <p className='text-gray-900'>{statusInfo.label}</p>
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      From Location ID
+                      {t(
+                        i18nKeyContainer.inventory.stockTransfers.view.fields
+                          .fromLocationId
+                      )}
                     </label>
                     <p className='text-gray-900 font-mono text-sm'>
                       {transfer.fromLocationId || '-'}
@@ -400,7 +499,10 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      To Location ID
+                      {t(
+                        i18nKeyContainer.inventory.stockTransfers.view.fields
+                          .toLocationId
+                      )}
                     </label>
                     <p className='text-gray-900 font-mono text-sm'>
                       {transfer.toLocationId || '-'}
@@ -408,7 +510,7 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Product ID
+                      {t(i18nKeyContainer.inventory.stockTransfers.view.fields.productId)}
                     </label>
                     <p className='text-gray-900 font-mono text-sm'>
                       {transfer.prodcutId || '-'}
@@ -416,7 +518,10 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Created By User ID
+                      {t(
+                        i18nKeyContainer.inventory.stockTransfers.view.fields
+                          .createdByUserId
+                      )}
                     </label>
                     <p className='text-gray-900 font-mono text-sm'>
                       {transfer.createdByUserId || '-'}
@@ -434,7 +539,7 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
             onClick={() => onOpenChange(false)}
             className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors'
           >
-            Close
+            {t(i18nKeyContainer.inventory.shared.close)}
           </button>
         </div>
       </DialogContent>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import DataTable from '@components/DataTable/DataTable';
 import { getAllProducts } from '@features/products/services/productApi';
 import useServerSideDataTable from '@shared/hooks/useServerSideDataTable';
@@ -7,14 +7,18 @@ import { AddProduct } from '@features/products/components/products';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';
 import { deleteProduct } from '@features/products/services/productApi';
 import { useToast } from '@shared/context/ToastContext';
-import { ShowerHead } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 export default function ProductDataTable() {
+  const { t } = useTranslation();
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(0);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [currentProductId, setCurrentProductId] = useState(0);
   const { showError, showSuccess } = useToast();
+
+  const columns = useMemo(() => getDefaultColumns(t), [t]);
 
   const fetchProducts = async ({
     page,
@@ -53,8 +57,10 @@ export default function ProductDataTable() {
     deleteProduct(currentProductId);
 
     showSuccess(
-      `Product is Deleted `,
-      `Product with id ${currentProductId} is deleted successfully`
+      t(i18nKeyContainer.products.productTable.toasts.deleteSuccessTitle),
+      t(i18nKeyContainer.products.productTable.toasts.deleteSuccessMessage, {
+        id: currentProductId,
+      })
     );
     setDeleteDialogOpen(false);
   };
@@ -63,7 +69,7 @@ export default function ProductDataTable() {
     <>
       <DataTable
         data={tableProps.data}
-        columns={defaultColumns}
+      columns={columns}
         totalRows={tableProps.totalRows}
         pageIndex={tableProps.pageIndex}
         pageSize={tableProps.pageSize}
@@ -101,24 +107,30 @@ export default function ProductDataTable() {
           onConfirm={handleDelete}
           onClose={() => {
             setDeleteDialogOpen(false);
-            showError('Delete cancelled', 'Product delete action is cancelled');
+            showError(
+              t(i18nKeyContainer.products.productTable.toasts.deleteCancelledTitle),
+              t(
+                i18nKeyContainer.products.productTable.toasts
+                  .deleteCancelledMessage
+              )
+            );
           }}
-          title='Delete Product'
-          message='Are you sure you want to delete this product? This action cannot be undone.'
+          title={t(i18nKeyContainer.products.productTable.dialogs.deleteTitle)}
+          message={t(i18nKeyContainer.products.productTable.dialogs.deleteMessage)}
         />
       )}
     </>
   );
 }
 
-const defaultColumns = [
+const getDefaultColumns = t => [
   {
     accessorKey: 'sku',
-    header: 'SKU',
+    header: t(i18nKeyContainer.products.productTable.columns.sku),
   },
   {
     accessorKey: 'product',
-    header: 'Product',
+    header: t(i18nKeyContainer.products.productTable.columns.product),
     cell: ({ row }) => (
       <div>
         <div className='font-medium'>{row.original.product}</div>
@@ -128,31 +140,41 @@ const defaultColumns = [
   },
   {
     accessorKey: 'stock',
-    header: 'Stock',
+    header: t(i18nKeyContainer.products.productTable.columns.stock),
   },
   {
     accessorKey: 'price',
-    header: 'Price',
+    header: t(i18nKeyContainer.products.productTable.columns.price),
     cell: ({ getValue }) => `$${getValue().toFixed(2)}`,
   },
   {
     accessorKey: 'cost',
-    header: 'Cost',
+    header: t(i18nKeyContainer.products.productTable.columns.cost),
     cell: ({ getValue }) => `$${getValue().toFixed(2)}`,
   },
 
   {
     accessorKey: 'isActive',
-    header: 'IsActive',
-    cell: ({ getValue }) => (
-      <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800'>
-        ✓ {getValue()}
-      </span>
-    ),
+    header: t(i18nKeyContainer.products.productTable.columns.isActive),
+    cell: ({ getValue }) => {
+      const value = getValue();
+      const normalized =
+        typeof value === 'string' ? value.toLowerCase().trim() : value;
+      const isActive = normalized === true || normalized === 'active';
+
+      return (
+        <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800'>
+          ✓{' '}
+          {isActive
+            ? t(i18nKeyContainer.products.shared.status.active)
+            : t(i18nKeyContainer.products.shared.status.inactive)}
+        </span>
+      );
+    },
   },
   {
     accessorKey: 'createdAt',
-    header: 'Created At',
+    header: t(i18nKeyContainer.products.productTable.columns.createdAt),
     cell: ({ getValue }) => new Date(getValue()).toLocaleDateString(),
   },
 ];

@@ -12,7 +12,9 @@ import {
 import Button from '@components/Buttons/Button';
 import { getSummary } from '@features/products/services/productApi';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { useTranslation } from 'react-i18next';
 import { divStyles } from '@shared/utils/uiVariables';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import ProductDataTable from '@features/products/components/ProductsTables/ProductDataTable';
 import StockMovementHistoryTable from '@features/products/components/ProductsTables/StockMovementHistoryTable';
 import { AddProduct } from '@features/products/components/products';
@@ -21,6 +23,8 @@ import AddUnitOfMeasureButton from '@features/products/components/unitOfMeasure/
 import ProductCategoryDataTable from '@features/products/components/productCategories/ProductCategoryDataTable';
 import AddProductCategoryButton from '@features/products/components/productCategories/AddProductCategoryButton';
 export default function ProductsPage() {
+  const { t, i18n } = useTranslation();
+
   const [totalProductsCount, setTotalProductsCount] = useState(0);
   const [inventoryValue, setInventoryValue] = useState(0);
   const [lowStockCount, setLowStockCount] = useState(1);
@@ -28,6 +32,8 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [refreshCategories, setRefreshCategories] = useState(false);
+
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,38 +52,38 @@ export default function ProductsPage() {
     <div>
       <div className='flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4'>
         <PageHeader
-          title='Product Management'
-          description='Manage your product catalog and inventory.'
+          title={t(i18nKeyContainer.products.page.title)}
+          description={t(i18nKeyContainer.products.page.description)}
         />
 
         <Button LeftIcon={Plus} onClick={() => setIsAddModalOpen(true)}>
-          Add Product
+          {t(i18nKeyContainer.products.page.addProduct)}
         </Button>
       </div>
       <div className='flex flex-col md:flex-row gap-6'>
         <InfoCard
-          title='Total Products'
+          title={t(i18nKeyContainer.products.cards.totalProducts.title)}
           iconComponent={Package}
-          number={loading ? '...' : totalProductsCount.toLocaleString()}
-          description='Easily add new products to your catalog.'
+          number={loading ? '...' : totalProductsCount.toLocaleString(activeLocale)}
+          description={t(i18nKeyContainer.products.cards.totalProducts.description)}
           className='flex-1'
         />
         <InfoCard
-          title='Inventory Value'
+          title={t(i18nKeyContainer.products.cards.inventoryValue.title)}
           iconComponent={DollarSign}
           number={
             loading
               ? '...'
-              : `$${inventoryValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+              : `$${inventoryValue.toLocaleString(activeLocale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
           }
-          description='Total value of all products in inventory.'
+          description={t(i18nKeyContainer.products.cards.inventoryValue.description)}
           className='flex-1'
           numberClassName='text-green-600'
           iconClassName='text-green-600'
         />
         <InfoCard
-          title='Low Stock Items'
-          description='Products that need restocking soon.'
+          title={t(i18nKeyContainer.products.cards.lowStockItems.title)}
+          description={t(i18nKeyContainer.products.cards.lowStockItems.description)}
           number={loading ? '...' : lowStockCount}
           iconComponent={TriangleAlert}
           className='flex-1'
@@ -85,12 +91,12 @@ export default function ProductsPage() {
           iconClassName={lowStockCount > 0 ? 'text-red-600' : ''}
         />
         <InfoCard
-          title='Profit Potential'
-          description='if all products are sold at retail price.'
+          title={t(i18nKeyContainer.products.cards.profitPotential.title)}
+          description={t(i18nKeyContainer.products.cards.profitPotential.description)}
           number={
             loading
               ? '...'
-              : `$${profitPotential.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+              : `$${profitPotential.toLocaleString(activeLocale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
           }
           iconComponent={TrendingUp}
           className='flex-1'
@@ -103,38 +109,38 @@ export default function ProductsPage() {
             className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
             selectedClassName='!bg-white !text-gray-900 shadow-sm'
           >
-            Products
+            {t(i18nKeyContainer.products.page.tabs.products)}
           </Tab>
           <Tab
             className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
             selectedClassName='!bg-white !text-gray-900 shadow-sm'
           >
-            Stock Movements
+            {t(i18nKeyContainer.products.page.tabs.stockMovements)}
           </Tab>
           <Tab
             className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
             selectedClassName='!bg-white !text-gray-900 shadow-sm'
           >
-            Unit Of Measure
+            {t(i18nKeyContainer.products.page.tabs.unitOfMeasure)}
           </Tab>
           <Tab
             className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
             selectedClassName='!bg-white !text-gray-900 shadow-sm'
           >
-            Product Categories
+            {t(i18nKeyContainer.products.page.tabs.productCategories)}
           </Tab>
           <Tab
             className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
             selectedClassName='!bg-white !text-gray-900 shadow-sm'
           >
-            Product Images
+            {t(i18nKeyContainer.products.page.tabs.productImages)}
           </Tab>
         </TabList>
         <div className={divStyles + 'mt-6'}>
           <TabPanel>
             <div className='mb-9 flex items-center justify-between'>
               <h3 className='text-2xl font-semibold leading-none tracking-tight'>
-                Product Catalog
+                {t(i18nKeyContainer.products.page.sections.productCatalog)}
               </h3>
             </div>
             <ProductDataTable />
@@ -142,7 +148,7 @@ export default function ProductsPage() {
           <TabPanel>
             <div className='mb-9 flex items-center justify-between'>
               <h3 className='text-2xl font-semibold leading-none tracking-tight'>
-                Stock Movement History
+                {t(i18nKeyContainer.products.page.sections.stockMovementHistory)}
               </h3>
             </div>
             <StockMovementHistoryTable />
@@ -150,7 +156,7 @@ export default function ProductsPage() {
           <TabPanel>
             <div className='mb-9 flex items-center justify-between'>
               <h3 className='text-2xl font-semibold leading-none tracking-tight'>
-                Unit Of Measure
+                {t(i18nKeyContainer.products.page.sections.unitOfMeasure)}
               </h3>
               <AddUnitOfMeasureButton />
             </div>
@@ -159,7 +165,7 @@ export default function ProductsPage() {
           <TabPanel>
             <div className='mb-9 flex items-center justify-between'>
               <h3 className='text-2xl font-semibold leading-none tracking-tight'>
-                Product Categories
+                {t(i18nKeyContainer.products.page.sections.productCategories)}
               </h3>
               <AddProductCategoryButton
                 onClose={() => {
@@ -172,10 +178,10 @@ export default function ProductsPage() {
           <TabPanel>
             <div className='mb-9 flex items-center justify-between'>
               <h3 className='text-2xl font-semibold leading-none tracking-tight'>
-                Product Images
+                {t(i18nKeyContainer.products.page.sections.productImages)}
               </h3>
             </div>
-            <div> Product Images Will be here !</div>
+            <div>{t(i18nKeyContainer.products.page.placeholders.productImages)}</div>
           </TabPanel>
         </div>
       </Tabs>

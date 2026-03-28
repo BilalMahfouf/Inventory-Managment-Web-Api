@@ -6,6 +6,9 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Package, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { getProductById } from '@features/products/services/productApi';
 /**
  * ProductViewDialog Component
@@ -56,6 +59,7 @@ import { getProductById } from '@features/products/services/productApi';
  * ```
  */
 const ProductViewDialog = ({ open, onOpenChange, productId }) => {
+  const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState('basic');
   const [product, setProduct] = useState({
     id: 0,
@@ -90,10 +94,21 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
     ? ((profitPerUnit / product.costPrice) * 100).toFixed(0)
     : 0;
   const tabs = [
-    { id: 'basic', label: 'Basic Info' },
-    { id: 'pricing', label: 'Pricing' },
-    { id: 'details', label: 'Details' },
+    {
+      id: 'basic',
+      label: t(i18nKeyContainer.products.productView.tabs.basicInfo),
+    },
+    {
+      id: 'pricing',
+      label: t(i18nKeyContainer.products.productView.tabs.pricing),
+    },
+    {
+      id: 'details',
+      label: t(i18nKeyContainer.products.productView.tabs.details),
+    },
   ];
+
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -112,7 +127,9 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
         <DialogHeader>
           <div className='flex items-center gap-2'>
             <Package className='w-5 h-5' />
-            <DialogTitle className='text-xl'>Product Details</DialogTitle>
+            <DialogTitle className='text-xl'>
+              {t(i18nKeyContainer.products.productView.title)}
+            </DialogTitle>
             <span className='text-sm text-gray-500 font-normal'>
               {product.sku}
             </span>
@@ -144,7 +161,7 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
               <div>
                 <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
                   <Package className='w-5 h-5' />
-                  Product Information
+                  {t(i18nKeyContainer.products.productView.sections.productInformation)}
                 </h3>
 
                 {/* Status Badges */}
@@ -156,7 +173,10 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                         : 'bg-gray-100 text-gray-800'
                     }`}
                   >
-                    ✓ {product.isActive ? 'Active' : 'Inactive'}
+                    ✓{' '}
+                    {product.isActive
+                      ? t(i18nKeyContainer.products.shared.status.active)
+                      : t(i18nKeyContainer.products.shared.status.inactive)}
                   </span>
                 </div>
 
@@ -164,33 +184,39 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                 <div className='grid grid-cols-2 gap-6'>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Product Name
-                    </label>
-                    <p className='text-gray-900'>{product.name || '-'}</p>
-                  </div>
-
-                  <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      SKU
-                    </label>
-                    <p className='text-gray-900'>{product.sku || '-'}</p>
-                  </div>
-
-                  <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Category
+                      {t(i18nKeyContainer.products.productView.fields.productName)}
                     </label>
                     <p className='text-gray-900'>
-                      {product.categoryName || '-'}
+                      {product.name || t(i18nKeyContainer.products.shared.hyphen)}
                     </p>
                   </div>
 
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Unit of Measure
+                      {t(i18nKeyContainer.products.productView.fields.sku)}
                     </label>
                     <p className='text-gray-900'>
-                      {product.unitOfMeasureName || '-'}
+                      {product.sku || t(i18nKeyContainer.products.shared.hyphen)}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>
+                      {t(i18nKeyContainer.products.productView.fields.category)}
+                    </label>
+                    <p className='text-gray-900'>
+                      {product.categoryName ||
+                        t(i18nKeyContainer.products.shared.hyphen)}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>
+                      {t(i18nKeyContainer.products.productView.fields.unitOfMeasure)}
+                    </label>
+                    <p className='text-gray-900'>
+                      {product.unitOfMeasureName ||
+                        t(i18nKeyContainer.products.shared.hyphen)}
                     </p>
                   </div>
                 </div>
@@ -198,17 +224,21 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                 {/* Description */}
                 <div className='mt-6'>
                   <label className='block text-sm font-medium text-gray-700 mb-1'>
-                    Description
+                    {t(i18nKeyContainer.products.productView.fields.description)}
                   </label>
                   <p className='text-gray-600 text-sm'>
-                    {product.description || 'No description available'}
+                    {product.description ||
+                      t(
+                        i18nKeyContainer.products.productView.placeholders
+                          .noDescriptionAvailable
+                      )}
                   </p>
                 </div>
 
                 {/* Status */}
                 <div className='mt-6'>
                   <label className='block text-sm font-medium text-gray-700 mb-2'>
-                    Status
+                    {t(i18nKeyContainer.products.productView.fields.status)}
                   </label>
                   <span
                     className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
@@ -217,7 +247,10 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                         : 'bg-gray-100 text-gray-800'
                     }`}
                   >
-                    ✓ {product.isActive ? 'Active' : 'Inactive'}
+                    ✓{' '}
+                    {product.isActive
+                      ? t(i18nKeyContainer.products.shared.status.active)
+                      : t(i18nKeyContainer.products.shared.status.inactive)}
                   </span>
                 </div>
               </div>
@@ -228,14 +261,14 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
           {activeTab === 'pricing' && (
             <div className='space-y-6'>
               <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
-                $ Pricing Information
+                {t(i18nKeyContainer.products.productView.sections.pricingInformation)}
               </h3>
 
               {/* Main Pricing */}
               <div className='grid grid-cols-2 gap-6'>
                 <div>
                   <label className='block text-sm font-medium text-gray-700 mb-1'>
-                    Cost Price
+                    {t(i18nKeyContainer.products.productView.fields.costPrice)}
                   </label>
                   <p className='text-2xl font-semibold text-gray-900'>
                     ${product.costPrice?.toFixed(2) || '0.00'}
@@ -244,7 +277,7 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700 mb-1'>
-                    Selling Price
+                    {t(i18nKeyContainer.products.productView.fields.sellingPrice)}
                   </label>
                   <p className='text-2xl font-semibold text-gray-900'>
                     ${product.unitPrice?.toFixed(2) || '0.00'}
@@ -256,7 +289,7 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
               <div className='grid grid-cols-3 gap-4 mt-6'>
                 <div className='bg-blue-50 p-4 rounded-lg'>
                   <label className='block text-sm font-medium text-blue-700 mb-1'>
-                    Profit Margin
+                    {t(i18nKeyContainer.products.productView.fields.profitMargin)}
                   </label>
                   <p className='text-2xl font-bold text-blue-600'>
                     {profitMargin}%
@@ -265,7 +298,7 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
 
                 <div className='bg-green-50 p-4 rounded-lg'>
                   <label className='block text-sm font-medium text-green-700 mb-1'>
-                    Profit per Unit
+                    {t(i18nKeyContainer.products.productView.fields.profitPerUnit)}
                   </label>
                   <p className='text-2xl font-bold text-green-600'>
                     ${profitPerUnit.toFixed(2)}
@@ -274,7 +307,7 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
 
                 <div className='bg-purple-50 p-4 rounded-lg'>
                   <label className='block text-sm font-medium text-purple-700 mb-1'>
-                    Markup
+                    {t(i18nKeyContainer.products.productView.fields.markup)}
                   </label>
                   <p className='text-2xl font-bold text-purple-600'>
                     {markup}%
@@ -291,32 +324,34 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                 {/* Created Information */}
                 <div className='space-y-4'>
                   <h4 className='font-semibold text-gray-900'>
-                    Creation Details
+                    {t(i18nKeyContainer.products.productView.sections.creationDetails)}
                   </h4>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Created At
+                      {t(i18nKeyContainer.products.productView.fields.createdAt)}
                     </label>
                     <p className='text-gray-900'>
                       {product.createdAt
-                        ? new Date(product.createdAt).toLocaleString()
-                        : '-'}
+                        ? new Date(product.createdAt).toLocaleString(activeLocale)
+                        : t(i18nKeyContainer.products.shared.hyphen)}
                     </p>
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Created By
+                      {t(i18nKeyContainer.products.productView.fields.createdBy)}
                     </label>
                     <p className='text-gray-900'>
-                      {product.createdByUserName || '-'}
+                      {product.createdByUserName ||
+                        t(i18nKeyContainer.products.shared.hyphen)}
                     </p>
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Created By User ID
+                      {t(i18nKeyContainer.products.productView.fields.createdByUserId)}
                     </label>
                     <p className='text-gray-900 font-mono text-xs'>
-                      {product.createdByUserId || '-'}
+                      {product.createdByUserId ||
+                        t(i18nKeyContainer.products.shared.hyphen)}
                     </p>
                   </div>
                 </div>
@@ -324,32 +359,34 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                 {/* Updated Information */}
                 <div className='space-y-4'>
                   <h4 className='font-semibold text-gray-900'>
-                    Last Update Details
+                    {t(i18nKeyContainer.products.productView.sections.lastUpdateDetails)}
                   </h4>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Updated At
+                      {t(i18nKeyContainer.products.productView.fields.updatedAt)}
                     </label>
                     <p className='text-gray-900'>
                       {product.updatedAt
-                        ? new Date(product.updatedAt).toLocaleString()
-                        : '-'}
+                        ? new Date(product.updatedAt).toLocaleString(activeLocale)
+                        : t(i18nKeyContainer.products.shared.hyphen)}
                     </p>
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Updated By
+                      {t(i18nKeyContainer.products.productView.fields.updatedBy)}
                     </label>
                     <p className='text-gray-900'>
-                      {product.updatedByUserName || '-'}
+                      {product.updatedByUserName ||
+                        t(i18nKeyContainer.products.shared.hyphen)}
                     </p>
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Updated By User ID
+                      {t(i18nKeyContainer.products.productView.fields.updatedByUserId)}
                     </label>
                     <p className='text-gray-900 font-mono text-xs'>
-                      {product.updatedByUserId || '-'}
+                      {product.updatedByUserId ||
+                        t(i18nKeyContainer.products.shared.hyphen)}
                     </p>
                   </div>
                 </div>
@@ -358,39 +395,46 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
               {/* System Information */}
               <div className='border-t pt-6 mt-6'>
                 <h4 className='font-semibold text-gray-900 mb-4'>
-                  System Information
+                  {t(i18nKeyContainer.products.productView.sections.systemInformation)}
                 </h4>
                 <div className='grid grid-cols-2 gap-6'>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Product ID
+                      {t(i18nKeyContainer.products.productView.fields.productId)}
                     </label>
                     <p className='text-gray-900 font-mono text-xs'>
-                      {product.id || '-'}
+                      {product.id || t(i18nKeyContainer.products.shared.hyphen)}
                     </p>
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Category ID
+                      {t(i18nKeyContainer.products.productView.fields.categoryId)}
                     </label>
                     <p className='text-gray-900 font-mono text-xs'>
-                      {product.categoryId || '-'}
+                      {product.categoryId ||
+                        t(i18nKeyContainer.products.shared.hyphen)}
                     </p>
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Unit of Measure ID
+                      {t(
+                        i18nKeyContainer.products.productView.fields
+                          .unitOfMeasureId
+                      )}
                     </label>
                     <p className='text-gray-900 font-mono text-xs'>
-                      {product.unitOfMeasureId || '-'}
+                      {product.unitOfMeasureId ||
+                        t(i18nKeyContainer.products.shared.hyphen)}
                     </p>
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Status
+                      {t(i18nKeyContainer.products.productView.fields.status)}
                     </label>
                     <p className='text-gray-900'>
-                      {product.isDeleted ? 'Deleted' : 'Active'}
+                      {product.isDeleted
+                        ? t(i18nKeyContainer.products.shared.status.deleted)
+                        : t(i18nKeyContainer.products.shared.status.active)}
                     </p>
                   </div>
                 </div>
@@ -399,25 +443,29 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                 {product.isDeleted && (
                   <div className='mt-6 p-4 bg-red-50 rounded-lg'>
                     <h5 className='font-semibold text-red-900 mb-3'>
-                      Deletion Information
+                      {t(
+                        i18nKeyContainer.products.productView.sections
+                          .deletionInformation
+                      )}
                     </h5>
                     <div className='grid grid-cols-2 gap-4'>
                       <div>
                         <label className='block text-sm font-medium text-red-700 mb-1'>
-                          Deleted At
+                          {t(i18nKeyContainer.products.productView.fields.deletedAt)}
                         </label>
                         <p className='text-red-900 text-sm'>
                           {product.deleteAt
-                            ? new Date(product.deleteAt).toLocaleString()
-                            : '-'}
+                            ? new Date(product.deleteAt).toLocaleString(activeLocale)
+                            : t(i18nKeyContainer.products.shared.hyphen)}
                         </p>
                       </div>
                       <div>
                         <label className='block text-sm font-medium text-red-700 mb-1'>
-                          Deleted By
+                          {t(i18nKeyContainer.products.productView.fields.deletedBy)}
                         </label>
                         <p className='text-red-900 text-sm'>
-                          {product.deletedByUserName || '-'}
+                          {product.deletedByUserName ||
+                            t(i18nKeyContainer.products.shared.hyphen)}
                         </p>
                       </div>
                     </div>
@@ -434,7 +482,7 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
             onClick={() => onOpenChange(false)}
             className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors'
           >
-            Close
+            {t(i18nKeyContainer.products.shared.close)}
           </button>
         </div>
       </DialogContent>

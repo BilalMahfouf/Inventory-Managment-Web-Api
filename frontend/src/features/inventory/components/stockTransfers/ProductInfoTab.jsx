@@ -4,6 +4,8 @@ import Button from '@components/Buttons/Button';
 import { Input } from '@components/ui/input';
 import { getProductById } from '@features/products/services/productApi';
 import { useToast } from '@shared/context/ToastContext';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 /**
  * ProductInfoTab Component
@@ -23,6 +25,7 @@ const ProductInfoTab = ({
   disabled = false,
   showSearch = true,
 }) => {
+  const { t } = useTranslation();
   const { showSuccess, showError } = useToast();
   const [productSearchTerm, setProductSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
@@ -33,7 +36,10 @@ const ProductInfoTab = ({
    */
   const handleProductSearch = async () => {
     if (!productSearchTerm.trim()) {
-      showError('Search Error', 'Please enter a product ID');
+      showError(
+        t(i18nKeyContainer.inventory.stockTransfers.form.toasts.searchErrorTitle),
+        t(i18nKeyContainer.inventory.stockTransfers.form.toasts.searchErrorMessage)
+      );
       return;
     }
 
@@ -41,7 +47,13 @@ const ProductInfoTab = ({
     try {
       const searchId = parseInt(productSearchTerm);
       if (isNaN(searchId)) {
-        showError('Invalid Input', 'Please enter a valid product ID');
+        showError(
+          t(i18nKeyContainer.inventory.stockTransfers.form.toasts.invalidInputTitle),
+          t(
+            i18nKeyContainer.inventory.stockTransfers.form.toasts
+              .invalidInputMessage
+          )
+        );
         setIsSearching(false);
         return;
       }
@@ -49,13 +61,28 @@ const ProductInfoTab = ({
       const product = await getProductById(searchId);
       if (product) {
         onProductSelect(product);
-        showSuccess('Product Found', `Found: ${product.name}`);
+        showSuccess(
+          t(i18nKeyContainer.inventory.stockTransfers.form.toasts.productFoundTitle),
+          t(i18nKeyContainer.inventory.stockTransfers.form.toasts.productFoundMessage, {
+            name: product.name,
+          })
+        );
         setProductSearchTerm(''); // Clear search after successful selection
       } else {
-        showError('Product Not Found', 'No product found with this ID');
+        showError(
+          t(i18nKeyContainer.inventory.stockTransfers.form.toasts.productNotFoundTitle),
+          t(
+            i18nKeyContainer.inventory.stockTransfers.form.toasts
+              .productNotFoundMessage
+          )
+        );
       }
     } catch (error) {
-      showError('Search Failed', error.message || 'Failed to search product');
+      showError(
+        t(i18nKeyContainer.inventory.stockTransfers.form.toasts.searchFailedTitle),
+        error.message ||
+          t(i18nKeyContainer.inventory.stockTransfers.form.toasts.searchFailedMessage)
+      );
       onProductSelect(null);
     } finally {
       setIsSearching(false);
@@ -75,19 +102,27 @@ const ProductInfoTab = ({
     <div>
       <div className='flex items-center gap-2 mb-6'>
         <Package className='h-5 w-5' />
-        <h3 className='text-lg font-semibold'>Product Information</h3>
+        <h3 className='text-lg font-semibold'>
+          {t(i18nKeyContainer.inventory.stockTransfers.form.sections.productInformation)}
+        </h3>
       </div>
 
       {/* Search Section */}
       {showSearch && (
         <div className='mb-6'>
           <label className='block text-sm font-medium mb-2'>
-            Search Product <span className='text-red-500'>*</span>
+            {t(i18nKeyContainer.inventory.stockTransfers.form.fields.searchProduct)}{' '}
+            <span className='text-red-500'>
+              {t(i18nKeyContainer.inventory.shared.required)}
+            </span>
           </label>
           <div className='flex gap-2'>
             <div className='flex-1'>
               <Input
-                placeholder='Enter Product ID'
+                placeholder={t(
+                  i18nKeyContainer.inventory.stockTransfers.form.placeholders
+                    .searchProduct
+                )}
                 value={productSearchTerm}
                 onChange={e => setProductSearchTerm(e.target.value)}
                 onKeyPress={handleKeyPress}
@@ -102,11 +137,11 @@ const ProductInfoTab = ({
               className='h-12 px-6'
             >
               <Search className='h-5 w-5 mr-2' />
-              Search
+              {t(i18nKeyContainer.inventory.shared.search)}
             </Button>
           </div>
           <p className='text-sm text-gray-500 mt-2'>
-            Enter the Product ID to search
+            {t(i18nKeyContainer.inventory.stockTransfers.form.placeholders.searchPrompt)}
           </p>
         </div>
       )}
@@ -114,37 +149,52 @@ const ProductInfoTab = ({
       {/* Product Details Display */}
       {selectedProduct && (
         <div className='bg-blue-50 border border-blue-200 rounded-lg p-6'>
-          <h4 className='font-semibold text-blue-900 mb-4'>Selected Product</h4>
+          <h4 className='font-semibold text-blue-900 mb-4'>
+            {t(i18nKeyContainer.inventory.stockTransfers.form.sections.selectedProduct)}
+          </h4>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <div>
-              <p className='text-sm text-gray-600 mb-1'>Product Name</p>
+              <p className='text-sm text-gray-600 mb-1'>
+                {t(i18nKeyContainer.inventory.stockTransfers.form.fields.productName)}
+              </p>
               <p className='font-medium text-gray-900'>
                 {selectedProduct.name}
               </p>
             </div>
             <div>
-              <p className='text-sm text-gray-600 mb-1'>SKU</p>
+              <p className='text-sm text-gray-600 mb-1'>
+                {t(i18nKeyContainer.inventory.stockTransfers.form.fields.sku)}
+              </p>
               <p className='font-medium text-gray-900'>{selectedProduct.sku}</p>
             </div>
             <div>
-              <p className='text-sm text-gray-600 mb-1'>Category</p>
+              <p className='text-sm text-gray-600 mb-1'>
+                {t(i18nKeyContainer.inventory.stockTransfers.form.fields.category)}
+              </p>
               <p className='font-medium text-gray-900'>
-                {selectedProduct.categoryName || 'N/A'}
+                {selectedProduct.categoryName ||
+                  t(i18nKeyContainer.inventory.shared.notAvailable)}
               </p>
             </div>
             <div>
-              <p className='text-sm text-gray-600 mb-1'>Product ID</p>
+              <p className='text-sm text-gray-600 mb-1'>
+                {t(i18nKeyContainer.inventory.stockTransfers.form.fields.productId)}
+              </p>
               <p className='font-medium text-gray-900'>#{selectedProduct.id}</p>
             </div>
 
             <div>
-              <p className='text-sm text-gray-600 mb-1'>Unit Price</p>
+              <p className='text-sm text-gray-600 mb-1'>
+                {t(i18nKeyContainer.inventory.stockTransfers.form.fields.unitPrice)}
+              </p>
               <p className='font-medium text-gray-900'>
                 ${selectedProduct.unitPrice?.toFixed(2) || '0.00'}
               </p>
             </div>
             <div>
-              <p className='text-sm text-gray-600 mb-1'>Status</p>
+              <p className='text-sm text-gray-600 mb-1'>
+                {t(i18nKeyContainer.inventory.stockTransfers.form.fields.status)}
+              </p>
               <span
                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                   selectedProduct.isActive
@@ -152,7 +202,9 @@ const ProductInfoTab = ({
                     : 'bg-red-100 text-red-800'
                 }`}
               >
-                {selectedProduct.isActive ? 'Active' : 'Inactive'}
+                {selectedProduct.isActive
+                  ? t(i18nKeyContainer.inventory.shared.status.active)
+                  : t(i18nKeyContainer.inventory.shared.status.inactive)}
               </span>
             </div>
           </div>
@@ -163,7 +215,9 @@ const ProductInfoTab = ({
       {!selectedProduct && (
         <div className='text-center py-8 text-gray-500'>
           <Package className='h-12 w-12 mx-auto mb-3 text-gray-400' />
-          <p>Search for a product to get started</p>
+          <p>
+            {t(i18nKeyContainer.inventory.stockTransfers.form.placeholders.searchToStart)}
+          </p>
         </div>
       )}
     </div>

@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
 import AddProduct from './AddProduct';
 import Button from '@components/Buttons/Button';
 import { Plus } from 'lucide-react';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 /**
  * Demo component showing how to use the AddProduct modal
  * This is for testing/demonstration purposes
  */
 const AddProductDemo = () => {
+  const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState([]);
@@ -29,10 +33,10 @@ const AddProductDemo = () => {
       setIsModalOpen(false);
 
       console.log('Product added successfully:', newProduct);
-      alert('Product added successfully!');
+      alert(t(i18nKeyContainer.products.demo.addProduct.alerts.addSuccess));
     } catch (error) {
       console.error('Error adding product:', error);
-      alert('Error adding product. Please try again.');
+      alert(t(i18nKeyContainer.products.demo.addProduct.alerts.addError));
     } finally {
       setIsLoading(false);
     }
@@ -43,24 +47,28 @@ const AddProductDemo = () => {
       <div className='max-w-6xl mx-auto'>
         <div className='flex justify-between items-center mb-8'>
           <div>
-            <h1 className='text-2xl font-bold'>AddProduct Component Demo</h1>
+            <h1 className='text-2xl font-bold'>
+              {t(i18nKeyContainer.products.demo.addProduct.title)}
+            </h1>
             <p className='text-gray-600 mt-2'>
-              Click the button below to test the AddProduct modal component
+              {t(i18nKeyContainer.products.demo.addProduct.description)}
             </p>
           </div>
           <Button LeftIcon={Plus} onClick={() => setIsModalOpen(true)}>
-            Add New Product
+            {t(i18nKeyContainer.products.demo.addProduct.addButton)}
           </Button>
         </div>
 
         {/* Products List */}
         <div className='bg-white rounded-lg border p-6'>
           <h2 className='text-lg font-semibold mb-4'>
-            Added Products ({products.length})
+            {t(i18nKeyContainer.products.demo.addProduct.listTitle, {
+              count: products.length,
+            })}
           </h2>
           {products.length === 0 ? (
             <p className='text-gray-500 text-center py-8'>
-              No products added yet. Click "Add New Product" to get started.
+              {t(i18nKeyContainer.products.demo.addProduct.emptyState)}
             </p>
           ) : (
             <div className='space-y-4'>
@@ -73,13 +81,19 @@ const AddProductDemo = () => {
                     <div>
                       <h3 className='font-semibold'>{product.productName}</h3>
                       <p className='text-sm text-gray-600'>
-                        SKU: {product.sku}
+                        {t(i18nKeyContainer.products.demo.addProduct.labels.sku)}:{' '}
+                        {product.sku}
                       </p>
                       <p className='text-sm text-gray-600'>
-                        Category: {product.category}
+                        {t(
+                          i18nKeyContainer.products.demo.addProduct.labels
+                            .category
+                        )}
+                        : {product.category}
                       </p>
                       <p className='text-sm text-gray-600'>
-                        Brand: {product.brand}
+                        {t(i18nKeyContainer.products.demo.addProduct.labels.brand)}:{' '}
+                        {product.brand}
                       </p>
                     </div>
                     <div className='text-right'>
@@ -87,11 +101,12 @@ const AddProductDemo = () => {
                         ${product.sellingPrice.toFixed(2)}
                       </p>
                       <p className='text-sm text-gray-600'>
-                        Stock: {product.currentStock}{' '}
+                        {t(i18nKeyContainer.products.demo.addProduct.labels.stock)}:{' '}
+                        {product.currentStock}{' '}
                         {product.unitOfMeasurement}
                       </p>
                       <p className='text-sm text-gray-600'>
-                        Status:{' '}
+                        {t(i18nKeyContainer.products.demo.addProduct.labels.status)}:{' '}
                         <span
                           className={
                             product.status === 'Active'
@@ -99,7 +114,11 @@ const AddProductDemo = () => {
                               : 'text-gray-600'
                           }
                         >
-                          {product.status}
+                          {product.status === 'Active'
+                            ? t(i18nKeyContainer.products.shared.status.active)
+                            : product.status === 'Draft'
+                              ? t(i18nKeyContainer.products.shared.status.draft)
+                              : t(i18nKeyContainer.products.shared.status.inactive)}
                         </span>
                       </p>
                     </div>

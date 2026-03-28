@@ -8,6 +8,8 @@ import {
   Calendar,
   DollarSign,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 /**
  * ViewCustomer Component
@@ -20,6 +22,9 @@ import {
  * @param {boolean} props.loading - Loading state
  */
 const ViewCustomer = ({ customer, loading }) => {
+  const { t, i18n } = useTranslation();
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
+
   if (loading) {
     return (
       <div className='flex items-center justify-center py-12'>
@@ -31,7 +36,9 @@ const ViewCustomer = ({ customer, loading }) => {
   if (!customer) {
     return (
       <div className='flex items-center justify-center py-12'>
-        <p className='text-gray-500'>No customer data available</p>
+        <p className='text-gray-500'>
+          {t(i18nKeyContainer.customers.view.noCustomerData)}
+        </p>
       </div>
     );
   }
@@ -55,7 +62,7 @@ const ViewCustomer = ({ customer, loading }) => {
           {label}
         </p>
         <p className='text-sm text-gray-900 mt-1 break-words'>
-          {value || 'N/A'}
+          {value || t(i18nKeyContainer.customers.shared.notAvailable)}
         </p>
       </div>
     </div>
@@ -67,15 +74,26 @@ const ViewCustomer = ({ customer, loading }) => {
         isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
       }`}
     >
-      {isActive ? '● Active' : '● Inactive'}
+      {isActive
+        ? `● ${t(i18nKeyContainer.customers.shared.status.active)}`
+        : `● ${t(i18nKeyContainer.customers.shared.status.inactive)}`}
     </span>
   );
 
   const CreditStatusBadge = ({ status }) => {
     const statusConfig = {
-      0: { label: 'Active', color: 'bg-green-100 text-green-800' },
-      1: { label: 'On Hold', color: 'bg-yellow-100 text-yellow-800' },
-      2: { label: 'Suspended', color: 'bg-red-100 text-red-800' },
+      0: {
+        label: t(i18nKeyContainer.customers.shared.creditStatus.active),
+        color: 'bg-green-100 text-green-800',
+      },
+      1: {
+        label: t(i18nKeyContainer.customers.shared.creditStatus.onHold),
+        color: 'bg-yellow-100 text-yellow-800',
+      },
+      2: {
+        label: t(i18nKeyContainer.customers.shared.creditStatus.suspended),
+        color: 'bg-red-100 text-red-800',
+      },
     };
 
     const config = statusConfig[status] || statusConfig[0];
@@ -92,27 +110,41 @@ const ViewCustomer = ({ customer, loading }) => {
   return (
     <div className='space-y-6'>
       {/* General Information */}
-      <InfoSection title='General Information'>
+      <InfoSection title={t(i18nKeyContainer.customers.view.sections.generalInformation)}>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           <InfoRow
-            label='ID'
-            value={`CUST-${String(customer.id).padStart(4, '0')}`}
+            label={t(i18nKeyContainer.customers.view.fields.id)}
+            value={t(i18nKeyContainer.customers.view.labels.customerCode, {
+              id: String(customer.id).padStart(4, '0'),
+            })}
           />
-          <InfoRow label='Name' value={customer.name} icon={User} />
           <InfoRow
-            label='Customer Category'
+            label={t(i18nKeyContainer.customers.view.fields.name)}
+            value={customer.name}
+            icon={User}
+          />
+          <InfoRow
+            label={t(i18nKeyContainer.customers.view.fields.customerCategory)}
             value={
               customer.customerCategoryName ||
               customer.customerCategory?.name ||
-              'Retail'
+              t(i18nKeyContainer.customers.shared.defaults.customerCategory)
             }
           />
-          <InfoRow label='Email' value={customer.email} icon={Mail} />
-          <InfoRow label='Phone' value={customer.phone} icon={Phone} />
+          <InfoRow
+            label={t(i18nKeyContainer.customers.view.fields.email)}
+            value={customer.email}
+            icon={Mail}
+          />
+          <InfoRow
+            label={t(i18nKeyContainer.customers.view.fields.phone)}
+            value={customer.phone}
+            icon={Phone}
+          />
           <div className='flex items-start gap-3'>
             <div className='flex-1 min-w-0'>
               <p className='text-xs font-medium text-gray-500 uppercase tracking-wide'>
-                Status
+                {t(i18nKeyContainer.customers.view.fields.status)}
               </p>
               <div className='mt-1'>
                 <StatusBadge isActive={customer.isActive} />
@@ -123,41 +155,44 @@ const ViewCustomer = ({ customer, loading }) => {
       </InfoSection>
 
       {/* Address */}
-      <InfoSection title='Address'>
+      <InfoSection title={t(i18nKeyContainer.customers.view.sections.address)}>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           <div className='md:col-span-2'>
             <InfoRow
-              label='Street'
+              label={t(i18nKeyContainer.customers.view.fields.street)}
               value={customer.address?.street || customer.street}
               icon={MapPin}
             />
           </div>
           <InfoRow
-            label='City'
+            label={t(i18nKeyContainer.customers.view.fields.city)}
             value={customer.address?.city || customer.city}
           />
           <InfoRow
-            label='State'
+            label={t(i18nKeyContainer.customers.view.fields.state)}
             value={customer.address?.state || customer.state}
           />
           <InfoRow
-            label='Zip Code'
+            label={t(i18nKeyContainer.customers.view.fields.zipCode)}
             value={customer.address?.zipCode || customer.zipCode}
           />
         </div>
       </InfoSection>
 
       {/* Business Information */}
-      <InfoSection title='Business Information'>
+      <InfoSection title={t(i18nKeyContainer.customers.view.sections.businessInformation)}>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           <InfoRow
-            label='Credit Limit'
-            value={`$${(customer.creditLimit || 0).toFixed(2)}`}
+            label={t(i18nKeyContainer.customers.view.fields.creditLimit)}
+            value={`${t(i18nKeyContainer.customers.shared.currencySymbol)}${Number(customer.creditLimit || 0).toLocaleString(activeLocale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
             icon={DollarSign}
           />
           <InfoRow
-            label='Payment Terms'
-            value={customer.paymentTerms || 'Net 30'}
+            label={t(i18nKeyContainer.customers.view.fields.paymentTerms)}
+            value={
+              customer.paymentTerms ||
+              t(i18nKeyContainer.customers.shared.defaults.paymentTerms)
+            }
           />
           <div className='flex items-start gap-3'>
             <div className='mt-0.5'>
@@ -165,7 +200,7 @@ const ViewCustomer = ({ customer, loading }) => {
             </div>
             <div className='flex-1 min-w-0'>
               <p className='text-xs font-medium text-gray-500 uppercase tracking-wide'>
-                Credit Status
+                {t(i18nKeyContainer.customers.view.fields.creditStatus)}
               </p>
               <div className='mt-1'>
                 <CreditStatusBadge status={customer.creditStatus} />
@@ -176,20 +211,23 @@ const ViewCustomer = ({ customer, loading }) => {
       </InfoSection>
 
       {/* System Information */}
-      <InfoSection title='System Information'>
+      <InfoSection title={t(i18nKeyContainer.customers.view.sections.systemInformation)}>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           <InfoRow
-            label='Created At'
+            label={t(i18nKeyContainer.customers.view.fields.createdAt)}
             value={
               customer.createdAt
-                ? new Date(customer.createdAt).toLocaleString()
-                : 'N/A'
+                ? new Date(customer.createdAt).toLocaleString(activeLocale)
+                : t(i18nKeyContainer.customers.shared.notAvailable)
             }
             icon={Calendar}
           />
           <InfoRow
-            label='Created By'
-            value={customer.createdByUserName || 'admin@system.com'}
+            label={t(i18nKeyContainer.customers.view.fields.createdBy)}
+            value={
+              customer.createdByUserName ||
+              t(i18nKeyContainer.customers.shared.defaults.createdBy)
+            }
           />
         </div>
       </InfoSection>

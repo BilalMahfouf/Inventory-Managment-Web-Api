@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { X, FolderTree } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
 import Button from '@components/Buttons/Button';
 import { Input } from '@components/ui/input';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import {
   createProductCategory,
   getProductCategoryById,
@@ -24,6 +27,7 @@ import { useToast } from '@shared/context/ToastContext';
  * @param {function} props.onSuccess - Optional callback after successful save
  */
 const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
+  const { t } = useTranslation();
   const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState({
     name: '',
@@ -68,10 +72,16 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
   const validateForm = () => {
     const newErrors = {};
     if (!formData.name.trim()) {
-      newErrors.name = 'Category name is required';
+      newErrors.name = t(
+        i18nKeyContainer.products.categories.form.validation
+          .categoryNameRequired
+      );
     }
     if (formData.type === 2 && !formData.parentId) {
-      newErrors.parentId = 'Parent category is required for subcategories';
+      newErrors.parentId = t(
+        i18nKeyContainer.products.categories.form.validation
+          .parentCategoryRequired
+      );
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -87,8 +97,10 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
     });
     if (response.success) {
       showSuccess(
-        'Product Category Created',
-        `${name} has been added successfully.`
+        t(i18nKeyContainer.products.categories.form.toasts.createSuccessTitle),
+        t(i18nKeyContainer.products.categories.form.toasts.createSuccessMessage, {
+          name,
+        })
       );
       setId(response.data.id);
       if (onSuccess) {
@@ -97,8 +109,11 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
       onClose();
     } else {
       showError(
-        'Category Creation Failed',
-        `${name} could not be created. Error: ${response.message}`
+        t(i18nKeyContainer.products.categories.form.toasts.createErrorTitle),
+        t(i18nKeyContainer.products.categories.form.toasts.createErrorMessage, {
+          name,
+          error: response.message,
+        })
       );
     }
     setIsLoading(false);
@@ -115,8 +130,10 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
 
     if (response.success) {
       showSuccess(
-        'Product Category Updated',
-        `${name} has been updated successfully.`
+        t(i18nKeyContainer.products.categories.form.toasts.updateSuccessTitle),
+        t(i18nKeyContainer.products.categories.form.toasts.updateSuccessMessage, {
+          name,
+        })
       );
       setFormData({
         name: response.data.name,
@@ -130,8 +147,10 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
       onClose();
     } else {
       showError(
-        'Category Update Failed',
-        `Category could not be updated. Error: ${response.message}`
+        t(i18nKeyContainer.products.categories.form.toasts.updateErrorTitle),
+        t(i18nKeyContainer.products.categories.form.toasts.updateErrorMessage, {
+          error: response.message,
+        })
       );
     }
     setIsLoading(false);
@@ -216,8 +235,8 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
         } catch (error) {
           console.error('Error fetching category:', error);
           showError(
-            'Failed to Load Category',
-            'Could not load product category data.'
+            t(i18nKeyContainer.products.categories.form.toasts.loadErrorTitle),
+            t(i18nKeyContainer.products.categories.form.toasts.loadErrorMessage)
           );
         } finally {
           setIsLoading(false);
@@ -233,7 +252,7 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
         parentId: null,
       });
     }
-  }, [id, isOpen, showError]);
+  }, [id, isOpen, showError, t]);
 
   useEffect(() => {
     setId(categoryId);
@@ -250,8 +269,8 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
             <FolderTree className='h-6 w-6 text-gray-600' />
             <h2 className='text-xl font-semibold'>
               {mode === 'add'
-                ? 'Add Product Category'
-                : 'Edit Product Category'}
+                ? t(i18nKeyContainer.products.categories.form.title.add)
+                : t(i18nKeyContainer.products.categories.form.title.edit)}
             </h2>
           </div>
           <button
@@ -271,16 +290,24 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
           <div className='p-6 overflow-y-auto flex-1'>
             <div className='flex items-center gap-2 mb-6'>
               <FolderTree className='h-5 w-5' />
-              <h3 className='text-lg font-semibold'>Category Information</h3>
+              <h3 className='text-lg font-semibold'>
+                {t(i18nKeyContainer.products.categories.form.sectionInfo)}
+              </h3>
             </div>
 
             <div className='space-y-6'>
               <div>
                 <label className='block text-sm font-medium mb-2'>
-                  Category Name <span className='text-red-500'>*</span>
+                  {t(i18nKeyContainer.products.categories.form.fields.categoryName)}{' '}
+                  <span className='text-red-500'>
+                    {t(i18nKeyContainer.products.shared.required)}
+                  </span>
                 </label>
                 <Input
-                  placeholder='e.g., Electronics, Clothing, Food & Beverages'
+                  placeholder={t(
+                    i18nKeyContainer.products.categories.form.placeholders
+                      .categoryName
+                  )}
                   value={formData.name}
                   onChange={e => handleInputChange('name', e.target.value)}
                   className={`h-12 ${errors.name ? 'border-red-500' : ''}`}
@@ -294,10 +321,13 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
 
               <div>
                 <label className='block text-sm font-medium mb-2'>
-                  Description
+                  {t(i18nKeyContainer.products.categories.form.fields.description)}
                 </label>
                 <textarea
-                  placeholder='Optional description for this category...'
+                  placeholder={t(
+                    i18nKeyContainer.products.categories.form.placeholders
+                      .description
+                  )}
                   value={formData.description}
                   onChange={e =>
                     handleInputChange('description', e.target.value)
@@ -309,7 +339,10 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
 
               <div>
                 <label className='block text-sm font-medium mb-3'>
-                  Category Type <span className='text-red-500'>*</span>
+                  {t(i18nKeyContainer.products.categories.form.fields.categoryType)}{' '}
+                  <span className='text-red-500'>
+                    {t(i18nKeyContainer.products.shared.required)}
+                  </span>
                 </label>
                 <div className='space-y-3'>
                   {/* Main Category Radio */}
@@ -325,10 +358,13 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
                     />
                     <div className='ml-3'>
                       <span className='text-sm font-medium text-gray-900'>
-                        Main Category
+                        {t(i18nKeyContainer.products.categories.form.fields.mainCategory)}
                       </span>
                       <p className='text-xs text-gray-500 mt-0.5'>
-                        A top-level category that can contain subcategories
+                        {t(
+                          i18nKeyContainer.products.categories.form.fields
+                            .mainCategoryDescription
+                        )}
                       </p>
                     </div>
                   </label>
@@ -346,10 +382,13 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
                     />
                     <div className='ml-3'>
                       <span className='text-sm font-medium text-gray-900'>
-                        Subcategory
+                        {t(i18nKeyContainer.products.categories.form.fields.subcategory)}
                       </span>
                       <p className='text-xs text-gray-500 mt-0.5'>
-                        A category that belongs to a main category
+                        {t(
+                          i18nKeyContainer.products.categories.form.fields
+                            .subcategoryDescription
+                        )}
                       </p>
                     </div>
                   </label>
@@ -360,7 +399,10 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
               {formData.type === 2 && (
                 <div>
                   <label className='block text-sm font-medium mb-2'>
-                    Parent Category <span className='text-red-500'>*</span>
+                    {t(i18nKeyContainer.products.categories.form.fields.parentCategory)}{' '}
+                    <span className='text-red-500'>
+                      {t(i18nKeyContainer.products.shared.required)}
+                    </span>
                   </label>
                   <select
                     value={formData.parentId || ''}
@@ -375,7 +417,12 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
                     }`}
                     disabled={isLoading}
                   >
-                    <option value=''>Select a parent category</option>
+                    <option value=''>
+                      {t(
+                        i18nKeyContainer.products.categories.form.placeholders
+                          .parentCategory
+                      )}
+                    </option>
                     {mainCategories.map(category => (
                       <option key={category.id} value={category.id}>
                         {category.name}
@@ -401,7 +448,7 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
               disabled={isLoading}
               className='cursor-pointer'
             >
-              Cancel
+              {t(i18nKeyContainer.products.categories.form.actions.cancel)}
             </Button>
             <Button
               type='submit'
@@ -410,11 +457,11 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
             >
               {isLoading
                 ? mode === 'add'
-                  ? 'Creating...'
-                  : 'Saving...'
+                  ? t(i18nKeyContainer.products.categories.form.actions.creating)
+                  : t(i18nKeyContainer.products.categories.form.actions.saving)
                 : mode === 'add'
-                  ? 'Create Category'
-                  : 'Save Changes'}
+                  ? t(i18nKeyContainer.products.categories.form.actions.create)
+                  : t(i18nKeyContainer.products.categories.form.actions.saveChanges)}
             </Button>
           </div>
         </form>

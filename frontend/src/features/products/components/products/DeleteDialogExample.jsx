@@ -1,11 +1,16 @@
+/* eslint-disable */
 // Example: Integrating ConfirmationDialog into ProductDataTable for Delete Operations
 
 import { useState } from 'react';
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog';
 import { useToast } from '@shared/context/ToastContext';
 import { deleteProduct } from '@features/products/services/productApi';
+import { useTranslation } from 'react-i18next';
+
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 const ProductDataTable = () => {
+  const { t } = useTranslation();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -26,8 +31,10 @@ const ProductDataTable = () => {
 
       // Show success toast
       showSuccess(
-        'Product Deleted',
-        `${selectedProduct.name} has been permanently removed.`
+        t(i18nKeyContainer.products.demo.deleteExample.toastSuccessTitle),
+        t(i18nKeyContainer.products.demo.deleteExample.toastSuccessMessage, {
+          name: selectedProduct.name,
+        })
       );
 
       // Close dialog
@@ -38,8 +45,9 @@ const ProductDataTable = () => {
     } catch (error) {
       // Show error toast but keep dialog open
       showError(
-        'Delete Failed',
-        error.message || 'Could not delete the product. Please try again.'
+        t(i18nKeyContainer.products.demo.deleteExample.toastErrorTitle),
+        error.message ||
+          t(i18nKeyContainer.products.demo.deleteExample.toastErrorMessage)
       );
     } finally {
       setDeleteLoading(false);
@@ -70,9 +78,9 @@ const ProductDataTable = () => {
         onClose={handleCloseDialog}
         onConfirm={handleConfirmDelete}
         type='delete'
-        title='Delete Product'
+        title={t(i18nKeyContainer.products.demo.deleteExample.title)}
         itemName={selectedProduct?.name}
-        message='This action cannot be undone and will permanently remove this product from the system.'
+        message={t(i18nKeyContainer.products.demo.deleteExample.message)}
         loading={deleteLoading}
       />
     </>

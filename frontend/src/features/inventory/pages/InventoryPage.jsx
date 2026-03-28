@@ -14,14 +14,18 @@ import AddStockTransferButton from '@features/inventory/components/stockTransfer
 import LocationDataTable from '@features/inventory/components/locations/LocationDataTable';
 import AddLocationButton from '@features/inventory/components/locations/AddLocationButton';
 import StockMovementHistoryTable from '@features/products/components/ProductsTables/StockMovementHistoryTable';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 export default function InventoryPage() {
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [totalInventoryItems, setTotalInventoryItems] = useState(0);
   const [totalPotentialProfit, setTotalPotentialProfit] = useState(0);
   const [lowStockCount, setLowStockCount] = useState(0);
   const [outOfStockCount, setOutOfStockCount] = useState(0);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
 
   const handleSummaryData = async () => {
     setLoading(true);
@@ -44,41 +48,54 @@ export default function InventoryPage() {
     <>
       <div className='flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4'>
         <PageHeader
-          title='Inventory Management'
-          description='Manage your product catalog and inventory.'
+          title={t(i18nKeyContainer.inventory.page.title)}
+          description={t(i18nKeyContainer.inventory.page.description)}
         />
 
         <Button LeftIcon={Plus} onClick={() => setIsAddModalOpen(true)}>
-          Add Inventory
+          {t(i18nKeyContainer.inventory.page.addInventory)}
         </Button>
       </div>
       <div className='flex flex-col md:flex-row gap-6'>
         <InfoCard
-          title='Total Inventory Items'
+          title={t(i18nKeyContainer.inventory.cards.totalInventoryItems.title)}
           iconComponent={Package}
-          number={loading ? '...' : totalInventoryItems.toLocaleString()}
-          description='Easily add new products to your catalog.'
+          number={loading ? '...' : totalInventoryItems.toLocaleString(activeLocale)}
+          description={t(
+            i18nKeyContainer.inventory.cards.totalInventoryItems.description
+          )}
           className='flex-1'
         />
         <InfoCard
-          title='Total Potential Profit'
+          title={t(i18nKeyContainer.inventory.cards.totalPotentialProfit.title)}
           iconComponent={Boxes}
-          number={loading ? '...' : `$${totalPotentialProfit.toLocaleString()}`}
-          description='Total potential profit from all products in stock.'
+          number={
+            loading
+              ? '...'
+              : `$${totalPotentialProfit.toLocaleString(activeLocale, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}`
+          }
+          description={t(
+            i18nKeyContainer.inventory.cards.totalPotentialProfit.description
+          )}
           className='flex-1'
         />
         <InfoCard
-          title='Low Stock Items'
+          title={t(i18nKeyContainer.inventory.cards.lowStockItems.title)}
           iconComponent={AlertTriangle}
-          number={loading ? '...' : lowStockCount}
-          description='Products that are low in stock.'
+          number={loading ? '...' : lowStockCount.toLocaleString(activeLocale)}
+          description={t(i18nKeyContainer.inventory.cards.lowStockItems.description)}
           className='flex-1'
         />
         <InfoCard
-          title='Out of Stock Items'
+          title={t(i18nKeyContainer.inventory.cards.outOfStockItems.title)}
           iconComponent={XCircle}
-          number={loading ? '...' : outOfStockCount}
-          description='Products that are out of stock.'
+          number={loading ? '...' : outOfStockCount.toLocaleString(activeLocale)}
+          description={t(
+            i18nKeyContainer.inventory.cards.outOfStockItems.description
+          )}
           className='flex-1'
         />
       </div>
@@ -89,38 +106,38 @@ export default function InventoryPage() {
               className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
               selectedClassName='!bg-white !text-gray-900 shadow-sm'
             >
-              Inventory
+              {t(i18nKeyContainer.inventory.page.tabs.inventory)}
             </Tab>
             <Tab
               className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
               selectedClassName='!bg-white !text-gray-900 shadow-sm'
             >
-              Stock Movements
+              {t(i18nKeyContainer.inventory.page.tabs.stockMovements)}
             </Tab>
             <Tab
               className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
               selectedClassName='!bg-white !text-gray-900 shadow-sm'
             >
-              Stock Transfers
+              {t(i18nKeyContainer.inventory.page.tabs.stockTransfers)}
             </Tab>
             <Tab
               className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
               selectedClassName='!bg-white !text-gray-900 shadow-sm'
             >
-              Stock Alerts
+              {t(i18nKeyContainer.inventory.page.tabs.stockAlerts)}
             </Tab>
             <Tab
               className='px-4 py-2 rounded-md cursor-pointer text-gray-600 transition-colors hover:text-gray-800'
               selectedClassName='!bg-white !text-gray-900 shadow-sm'
             >
-              Locations
+              {t(i18nKeyContainer.inventory.page.tabs.locations)}
             </Tab>
           </TabList>
           <div className={divStyles + 'mt-6'}>
             <TabPanel>
               <div className='mb-9 flex items-center justify-between'>
                 <h3 className='text-2xl font-semibold leading-none tracking-tight'>
-                  Inventory Catalog
+                  {t(i18nKeyContainer.inventory.page.sections.inventoryCatalog)}
                 </h3>
               </div>
               <InventoryDataTable />
@@ -128,7 +145,7 @@ export default function InventoryPage() {
             <TabPanel>
               <div className='mb-9 flex items-center justify-between'>
                 <h3 className='text-2xl font-semibold leading-none tracking-tight'>
-                  Stock Movements
+                  {t(i18nKeyContainer.inventory.page.sections.stockMovements)}
                 </h3>
               </div>
               <StockMovementHistoryTable />
@@ -136,7 +153,7 @@ export default function InventoryPage() {
             <TabPanel>
               <div className='mb-9 flex items-center justify-between'>
                 <h3 className='text-2xl font-semibold leading-none tracking-tight'>
-                  Stock Transfers
+                  {t(i18nKeyContainer.inventory.page.sections.stockTransfers)}
                 </h3>
                 <AddStockTransferButton />
               </div>
@@ -145,15 +162,15 @@ export default function InventoryPage() {
             <TabPanel>
               <div className='mb-9 flex items-center justify-between'>
                 <h3 className='text-2xl font-semibold leading-none tracking-tight'>
-                  Stock Alerts
+                  {t(i18nKeyContainer.inventory.page.sections.stockAlerts)}
                 </h3>
-                <div>Stock alerts will be here !</div>
+                <div>{t(i18nKeyContainer.inventory.page.placeholders.stockAlerts)}</div>
               </div>
             </TabPanel>
             <TabPanel>
               <div className='mb-9 flex items-center justify-between'>
                 <h3 className='text-2xl font-semibold leading-none tracking-tight'>
-                  Locations
+                  {t(i18nKeyContainer.inventory.page.sections.locations)}
                 </h3>
                 <AddLocationButton />
               </div>

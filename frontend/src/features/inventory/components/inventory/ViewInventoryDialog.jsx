@@ -7,6 +7,8 @@ import {
 } from '@/components/ui/dialog';
 import { Package, MapPin, Archive, Calendar, User } from 'lucide-react';
 import { getInventoryById } from '@features/inventory/services/inventoryApi';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 /**
  * ViewInventoryDialog Component
@@ -32,6 +34,7 @@ import { getInventoryById } from '@features/inventory/services/inventoryApi';
  * ```
  */
 const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
+  const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState('info');
   const [inventoryData, setInventoryData] = useState({
     id: 0,
@@ -61,9 +64,15 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
 
   // Tab configuration
   const tabs = [
-    { id: 'info', label: 'Product & Location' },
-    { id: 'stock', label: 'Stock Levels' },
-    { id: 'system', label: 'System Info' },
+    { id: 'info', label: t(i18nKeyContainer.inventory.inventoryView.tabs.info) },
+    {
+      id: 'stock',
+      label: t(i18nKeyContainer.inventory.inventoryView.tabs.stock),
+    },
+    {
+      id: 'system',
+      label: t(i18nKeyContainer.inventory.inventoryView.tabs.system),
+    },
   ];
 
   /**
@@ -71,9 +80,13 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
    */
   const getStockStatus = () => {
     const { quantityOnHand, reorderLevel } = inventoryData;
-    if (quantityOnHand === 0) return 'Out of Stock';
-    if (quantityOnHand <= reorderLevel) return 'Low Stock';
-    return 'In Stock';
+    if (quantityOnHand === 0) {
+      return t(i18nKeyContainer.inventory.shared.status.outOfStock);
+    }
+    if (quantityOnHand <= reorderLevel) {
+      return t(i18nKeyContainer.inventory.shared.status.lowStock);
+    }
+    return t(i18nKeyContainer.inventory.shared.status.inStock);
   };
 
   /**
@@ -120,9 +133,13 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
         <DialogHeader>
           <div className='flex items-center gap-2'>
             <Archive className='w-5 h-5' />
-            <DialogTitle className='text-xl'>Inventory Details</DialogTitle>
+            <DialogTitle className='text-xl'>
+              {t(i18nKeyContainer.inventory.inventoryView.title)}
+            </DialogTitle>
             <span className='text-sm text-gray-500 font-normal'>
-              ID: {inventoryData.id}
+              {t(i18nKeyContainer.inventory.inventoryView.subtitleId, {
+                id: inventoryData.id,
+              })}
             </span>
           </div>
         </DialogHeader>
@@ -154,12 +171,12 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                 <div className='bg-blue-50 border border-blue-200 rounded-lg p-6'>
                   <h3 className='text-lg font-semibold mb-4 flex items-center gap-2 text-blue-900'>
                     <Package className='w-5 h-5' />
-                    Product Information
+                    {t(i18nKeyContainer.inventory.inventoryView.sections.productInformation)}
                   </h3>
                   <div className='space-y-4'>
                     <div>
                       <label className='block text-sm font-medium text-blue-700 mb-1'>
-                        Product Name
+                        {t(i18nKeyContainer.inventory.inventoryView.fields.productName)}
                       </label>
                       <p className='text-blue-900 font-medium text-lg'>
                         {inventoryData.product.name || '-'}
@@ -167,7 +184,7 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                     </div>
                     <div>
                       <label className='block text-sm font-medium text-blue-700 mb-1'>
-                        SKU
+                        {t(i18nKeyContainer.inventory.inventoryView.fields.sku)}
                       </label>
                       <p className='text-blue-900 font-mono'>
                         {inventoryData.product.sku || '-'}
@@ -175,7 +192,7 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                     </div>
                     <div>
                       <label className='block text-sm font-medium text-blue-700 mb-1'>
-                        Category
+                        {t(i18nKeyContainer.inventory.inventoryView.fields.category)}
                       </label>
                       <p className='text-blue-900'>
                         {inventoryData.product.categoryName || '-'}
@@ -183,7 +200,7 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                     </div>
                     <div>
                       <label className='block text-sm font-medium text-blue-700 mb-1'>
-                        Unit of Measure
+                        {t(i18nKeyContainer.inventory.inventoryView.fields.unitOfMeasure)}
                       </label>
                       <p className='text-blue-900'>
                         {inventoryData.product.unitOfMeasureName || '-'}
@@ -196,12 +213,12 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                 <div className='bg-green-50 border border-green-200 rounded-lg p-6'>
                   <h3 className='text-lg font-semibold mb-4 flex items-center gap-2 text-green-900'>
                     <MapPin className='w-5 h-5' />
-                    Location Information
+                    {t(i18nKeyContainer.inventory.inventoryView.sections.locationInformation)}
                   </h3>
                   <div className='space-y-4'>
                     <div>
                       <label className='block text-sm font-medium text-green-700 mb-1'>
-                        Name
+                        {t(i18nKeyContainer.inventory.inventoryView.fields.name)}
                       </label>
                       <p className='text-green-900 font-medium text-lg'>
                         {inventoryData.location.name || '-'}
@@ -209,7 +226,7 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                     </div>
                     <div>
                       <label className='block text-sm font-medium text-green-700 mb-1'>
-                        Type
+                        {t(i18nKeyContainer.inventory.inventoryView.fields.type)}
                       </label>
                       <p className='text-green-900'>
                         {inventoryData.location.type || '-'}
@@ -217,7 +234,7 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                     </div>
                     <div>
                       <label className='block text-sm font-medium text-green-700 mb-1'>
-                        Address
+                        {t(i18nKeyContainer.inventory.inventoryView.fields.address)}
                       </label>
                       <p className='text-green-900'>
                         {inventoryData.location.address || '-'}
@@ -225,7 +242,7 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                     </div>
                     <div>
                       <label className='block text-sm font-medium text-green-700 mb-1'>
-                        Location ID
+                        {t(i18nKeyContainer.inventory.inventoryView.fields.locationId)}
                       </label>
                       <p className='text-green-900 font-mono'>
                         #{inventoryData.location.id || '-'}
@@ -244,9 +261,11 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
               <div className='flex items-center justify-center mb-6'>
                 <span
                   className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
-                    getStockStatus() === 'In Stock'
+                    getStockStatus() ===
+                    t(i18nKeyContainer.inventory.shared.status.inStock)
                       ? 'bg-green-100 text-green-800'
-                      : getStockStatus() === 'Low Stock'
+                      : getStockStatus() ===
+                          t(i18nKeyContainer.inventory.shared.status.lowStock)
                         ? 'bg-yellow-100 text-yellow-800'
                         : 'bg-red-100 text-red-800'
                   }`}
@@ -261,7 +280,7 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                 {/* Quantity on Hand */}
                 <div className='bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-6'>
                   <label className='block text-sm font-medium text-blue-700 mb-2'>
-                    Quantity on Hand
+                    {t(i18nKeyContainer.inventory.inventoryView.fields.quantityOnHand)}
                   </label>
                   <p className='text-4xl font-bold text-blue-900'>
                     {inventoryData.quantityOnHand.toFixed(2)}
@@ -274,39 +293,39 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                 {/* Available Stock (same as quantity on hand in this context) */}
                 <div className='bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-6'>
                   <label className='block text-sm font-medium text-green-700 mb-2'>
-                    Available Stock
+                    {t(i18nKeyContainer.inventory.inventoryView.fields.availableStock)}
                   </label>
                   <p className='text-4xl font-bold text-green-900'>
                     {inventoryData.quantityOnHand.toFixed(2)}
                   </p>
                   <p className='text-sm text-green-600 mt-2'>
-                    Ready for use or sale
+                    {t(i18nKeyContainer.inventory.inventoryView.labels.readyForUseOrSale)}
                   </p>
                 </div>
 
                 {/* Reorder Level */}
                 <div className='bg-gradient-to-br from-yellow-50 to-yellow-100 border border-yellow-200 rounded-lg p-6'>
                   <label className='block text-sm font-medium text-yellow-700 mb-2'>
-                    Reorder Level
+                    {t(i18nKeyContainer.inventory.inventoryView.fields.reorderLevel)}
                   </label>
                   <p className='text-4xl font-bold text-yellow-900'>
                     {inventoryData.reorderLevel.toFixed(2)}
                   </p>
                   <p className='text-sm text-yellow-600 mt-2'>
-                    Minimum threshold
+                    {t(i18nKeyContainer.inventory.inventoryView.labels.minimumThreshold)}
                   </p>
                 </div>
 
                 {/* Max Level */}
                 <div className='bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-6'>
                   <label className='block text-sm font-medium text-purple-700 mb-2'>
-                    Maximum Level
+                    {t(i18nKeyContainer.inventory.inventoryView.fields.maxLevel)}
                   </label>
                   <p className='text-4xl font-bold text-purple-900'>
                     {inventoryData.maxLevel.toFixed(2)}
                   </p>
                   <p className='text-sm text-purple-600 mt-2'>
-                    Storage capacity
+                    {t(i18nKeyContainer.inventory.inventoryView.labels.storageCapacity)}
                   </p>
                 </div>
               </div>
@@ -315,7 +334,7 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
               <div className='bg-gray-50 border border-gray-200 rounded-lg p-6'>
                 <div className='flex items-center justify-between mb-2'>
                   <label className='text-sm font-medium text-gray-700'>
-                    Stock Level
+                    {t(i18nKeyContainer.inventory.inventoryView.fields.stockLevel)}
                   </label>
                   <span className='text-sm font-semibold text-gray-900'>
                     {getStockPercentage()}%
@@ -348,12 +367,12 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
               {/* System IDs Section */}
               <div className='bg-gray-50 border border-gray-200 rounded-lg p-6'>
                 <h3 className='text-lg font-semibold mb-4 text-gray-900'>
-                  System Identifiers
+                  {t(i18nKeyContainer.inventory.inventoryView.sections.systemIdentifiers)}
                 </h3>
                 <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Inventory ID
+                      {t(i18nKeyContainer.inventory.inventoryView.fields.inventoryId)}
                     </label>
                     <p className='text-gray-900 font-mono text-sm'>
                       {inventoryData.id}
@@ -361,7 +380,7 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Product ID
+                      {t(i18nKeyContainer.inventory.inventoryView.fields.productId)}
                     </label>
                     <p className='text-gray-900 font-mono text-sm'>
                       {inventoryData.product.id || '-'}
@@ -369,7 +388,7 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Location ID
+                      {t(i18nKeyContainer.inventory.inventoryView.fields.locationId)}
                     </label>
                     <p className='text-gray-900 font-mono text-sm'>
                       {inventoryData.location.id || '-'}
@@ -382,7 +401,7 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
               <div className='border-t pt-6'>
                 <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
                   <Calendar className='w-5 h-5' />
-                  Audit Trail
+                  {t(i18nKeyContainer.inventory.inventoryView.sections.auditTrail)}
                 </h3>
 
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
@@ -390,16 +409,16 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                   <div className='bg-blue-50 p-4 rounded-lg space-y-3'>
                     <h4 className='font-semibold text-blue-900 flex items-center gap-2'>
                       <Calendar className='w-4 h-4' />
-                      Created
+                      {t(i18nKeyContainer.inventory.inventoryView.sections.created)}
                     </h4>
                     <div>
                       <label className='block text-sm font-medium text-blue-700 mb-1'>
-                        Date & Time
+                        {t(i18nKeyContainer.inventory.inventoryView.fields.dateTime)}
                       </label>
                       <p className='text-blue-900 text-sm'>
                         {inventoryData.createdAt
                           ? new Date(inventoryData.createdAt).toLocaleString(
-                              'en-US',
+                              i18n.resolvedLanguage || i18n.language || 'en',
                               {
                                 year: 'numeric',
                                 month: 'long',
@@ -414,7 +433,7 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                     <div>
                       <label className='text-sm font-medium text-blue-700 mb-1 flex items-center gap-1'>
                         <User className='w-3 h-3' />
-                        By User Name
+                        {t(i18nKeyContainer.inventory.inventoryView.fields.createdByName)}
                       </label>
                       <p className='text-blue-900 text-sm'>
                         {inventoryData.createdByUserName || '-'}
@@ -422,7 +441,7 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                     </div>
                     <div>
                       <label className='block text-sm font-medium text-blue-700 mb-1'>
-                        User ID
+                        {t(i18nKeyContainer.inventory.inventoryView.fields.userId)}
                       </label>
                       <p className='text-blue-900 font-mono text-xs'>
                         {inventoryData.createdByUserId || '-'}
@@ -434,16 +453,16 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                   <div className='bg-purple-50 p-4 rounded-lg space-y-3'>
                     <h4 className='font-semibold text-purple-900 flex items-center gap-2'>
                       <Calendar className='w-4 h-4' />
-                      Updated
+                      {t(i18nKeyContainer.inventory.inventoryView.sections.updated)}
                     </h4>
                     <div>
                       <label className='block text-sm font-medium text-purple-700 mb-1'>
-                        Date & Time
+                        {t(i18nKeyContainer.inventory.inventoryView.fields.dateTime)}
                       </label>
                       <p className='text-purple-900 text-sm'>
                         {inventoryData.updatedAt
                           ? new Date(inventoryData.updatedAt).toLocaleString(
-                              'en-US',
+                              i18n.resolvedLanguage || i18n.language || 'en',
                               {
                                 year: 'numeric',
                                 month: 'long',
@@ -452,13 +471,16 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                                 minute: '2-digit',
                               }
                             )
-                          : 'Never updated'}
+                          : t(
+                              i18nKeyContainer.inventory.inventoryView.placeholders
+                                .neverUpdated
+                            )}
                       </p>
                     </div>
                     <div>
                       <label className='text-sm font-medium text-purple-700 mb-1 flex items-center gap-1'>
                         <User className='w-3 h-3' />
-                        By User Name
+                        {t(i18nKeyContainer.inventory.inventoryView.fields.updatedByName)}
                       </label>
                       <p className='text-purple-900 text-sm'>
                         {inventoryData.updatedByUserName || '-'}
@@ -466,7 +488,7 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                     </div>
                     <div>
                       <label className='block text-sm font-medium text-purple-700 mb-1'>
-                        User ID
+                        {t(i18nKeyContainer.inventory.inventoryView.fields.userId)}
                       </label>
                       <p className='text-purple-900 font-mono text-xs'>
                         {inventoryData.updatedByUserId || '-'}
@@ -485,7 +507,7 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
             onClick={() => onOpenChange(false)}
             className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors'
           >
-            Close
+            {t(i18nKeyContainer.inventory.shared.close)}
           </button>
         </div>
       </DialogContent>

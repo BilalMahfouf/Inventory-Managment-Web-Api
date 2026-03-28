@@ -1,8 +1,21 @@
 import Logo from "@/components/ui/Logo"
 import SideBarLink from "@/components/ui/common/SideBarLink"
 import { Package, Warehouse, TrendingUp, Users, Settings, LayoutPanelLeft, X } from "lucide-react"
+import { useTranslation } from "react-i18next"
+import i18nKeyContainer from "@shared/lib/i18n/keyContainer"
 
 export default function Sidebar({ isOpen, onClose }) {
+    const { t } = useTranslation();
+
+    const menuItems = [
+        { pathname: "/dashboard", contentKey: i18nKeyContainer.layout.sidebar.menu.dashboard, icon: LayoutPanelLeft },
+        { pathname: "/products", contentKey: i18nKeyContainer.layout.sidebar.menu.products, icon: Package },
+        { pathname: "/inventory", contentKey: i18nKeyContainer.layout.sidebar.menu.inventory, icon: Warehouse },
+        { pathname: "/sales", contentKey: i18nKeyContainer.layout.sidebar.menu.sales, icon: TrendingUp },
+        { pathname: "/customers", contentKey: i18nKeyContainer.layout.sidebar.menu.customers, icon: Users },
+        { pathname: "/settings", contentKey: i18nKeyContainer.layout.sidebar.menu.settings, icon: Settings }
+    ];
+
     return (
         <>
             {/* Sidebar */}
@@ -15,7 +28,7 @@ export default function Sidebar({ isOpen, onClose }) {
                     <div className="flex items-center justify-between mb-6 lg:justify-start">
                         <div className={`flex items-start gap-2 transition-all duration-1000 ease-out transform ${isOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0 lg:translate-x-0 lg:opacity-100'}`}>
                             <Logo extraStye="" />
-                            <span className="text-white font-bold text-[20px] mr-8.5 mt-1">InventoryPro</span>
+                            <span className="text-white font-bold text-[20px] mr-8.5 mt-1">{t(i18nKeyContainer.layout.sidebar.brand)}</span>
                         </div>
                         <button 
                             onClick={onClose}
@@ -26,14 +39,7 @@ export default function Sidebar({ isOpen, onClose }) {
                     </div>
                     
                     <div className="flex gap-3 flex-col">
-                        {[
-                            { pathname: "/dashboard", content: "Dashboard", icon: LayoutPanelLeft },
-                            { pathname: "/products", content: "Products", icon: Package },
-                            { pathname: "/inventory", content: "Inventory", icon: Warehouse },
-                            { pathname: "/sales", content: "Sales", icon: TrendingUp },
-                            { pathname: "/customers", content: "Customers", icon: Users },
-                            { pathname: "/settings", content: "Settings", icon: Settings }
-                        ].map((item, index) => (
+                        {menuItems.map((item, index) => (
                             <div 
                                 key={item.pathname}
                                 className={`transition-all duration-700 ease-out transform ${
@@ -45,7 +51,7 @@ export default function Sidebar({ isOpen, onClose }) {
                             >
                                 <SideBarLink 
                                     pathname={item.pathname} 
-                                    content={item.content} 
+                                    content={t(item.contentKey)} 
                                     leftIcon={item.icon} 
                                 />
                             </div>

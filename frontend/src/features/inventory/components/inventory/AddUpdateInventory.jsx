@@ -14,6 +14,8 @@ import {
   updateInventory,
   getInventoryById,
 } from '@features/inventory/services/inventoryApi';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 /**
  * AddUpdateInventory Component
@@ -43,6 +45,7 @@ const AddUpdateInventory = ({
   inventoryId = 0,
   onSuccess,
 }) => {
+  const { t } = useTranslation();
   const { showSuccess, showError } = useToast();
   const [activeTab, setActiveTab] = useState(0);
   const [mode, setMode] = useState('add'); // 'add' or 'update'
@@ -69,9 +72,21 @@ const AddUpdateInventory = ({
 
   // Tabs configuration
   const tabs = [
-    { id: 0, label: 'Product', icon: Package },
-    { id: 1, label: 'Location', icon: MapPin },
-    { id: 2, label: 'Stock Levels', icon: Archive },
+    {
+      id: 0,
+      label: t(i18nKeyContainer.inventory.inventoryForm.tabs.product),
+      icon: Package,
+    },
+    {
+      id: 1,
+      label: t(i18nKeyContainer.inventory.inventoryForm.tabs.location),
+      icon: MapPin,
+    },
+    {
+      id: 2,
+      label: t(i18nKeyContainer.inventory.inventoryForm.tabs.stockLevels),
+      icon: Archive,
+    },
   ];
 
   /**
@@ -86,7 +101,10 @@ const AddUpdateInventory = ({
    */
   const handleProductSearch = async () => {
     if (!productSearchTerm.trim()) {
-      showError('Search Error', 'Please enter a product name, SKU, or ID');
+      showError(
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.searchErrorTitle),
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.searchErrorMessage)
+      );
       return;
     }
 
@@ -98,7 +116,12 @@ const AddUpdateInventory = ({
         const product = await getProductById(searchId);
         if (product) {
           setSearchedProduct(product);
-          showSuccess('Product Found', `Found: ${product.name}`);
+          showSuccess(
+            t(i18nKeyContainer.inventory.inventoryForm.toasts.productFoundTitle),
+            t(i18nKeyContainer.inventory.inventoryForm.toasts.productFoundMessage, {
+              name: product.name,
+            })
+          );
           return;
         }
       }
@@ -106,11 +129,15 @@ const AddUpdateInventory = ({
       // If not found by ID or not a number, show error
       // In a real scenario, you'd have a search endpoint that searches by name/SKU
       showError(
-        'Product Not Found',
-        'Please enter a valid product ID. Name/SKU search requires additional API endpoint.'
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.productNotFoundTitle),
+        t(i18nKeyContainer.inventory.inventoryForm.validation.productNotFound)
       );
     } catch (error) {
-      showError('Search Failed', error.message || 'Failed to search product');
+      showError(
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.searchFailedTitle),
+        error.message ||
+          t(i18nKeyContainer.inventory.inventoryForm.toasts.searchFailedMessage)
+      );
       setSearchedProduct(null);
     } finally {
       setIsSearching(false);
@@ -131,17 +158,28 @@ const AddUpdateInventory = ({
       // Find the location in the locations array
       const location = await getLocationById(locationId);
       if (!location.success) {
-        showError('Error', `Error: ${location.error}, please try again`);
+        showError(
+          t(i18nKeyContainer.inventory.inventoryForm.toasts.locationLoadErrorTitle),
+          `Error: ${location.error}, please try again`
+        );
       } else {
         setSelectedLocation({
           id: location.data.id,
           name: location.data.name,
-          address: location.data.address || 'N/A',
-          type: location.data.typeName || location.locationTypeName || 'N/A',
+          address:
+            location.data.address ||
+            t(i18nKeyContainer.inventory.shared.notAvailable),
+          type:
+            location.data.typeName ||
+            location.data.locationTypeName ||
+            t(i18nKeyContainer.inventory.shared.notAvailable),
         });
       }
     } catch {
-      showError('Error', 'Failed to load location details');
+      showError(
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.locationLoadErrorTitle),
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.locationLoadErrorMessage)
+      );
     }
   };
 
@@ -161,19 +199,28 @@ const AddUpdateInventory = ({
    */
   const validateForm = () => {
     if (!searchedProduct) {
-      showError('Validation Error', 'Please select a product');
+      showError(
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.searchErrorTitle),
+        t(i18nKeyContainer.inventory.inventoryForm.validation.productRequired)
+      );
       setActiveTab(0);
       return false;
     }
 
     if (!selectedLocation) {
-      showError('Validation Error', 'Please select a location');
+      showError(
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.searchErrorTitle),
+        t(i18nKeyContainer.inventory.inventoryForm.validation.locationRequired)
+      );
       setActiveTab(1);
       return false;
     }
 
     if (stockLevels.reorderLevel < 0 || stockLevels.maxLevel < 0) {
-      showError('Validation Error', 'Stock levels cannot be negative');
+      showError(
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.searchErrorTitle),
+        t(i18nKeyContainer.inventory.inventoryForm.validation.stockLevelsNegative)
+      );
       setActiveTab(2);
       return false;
     }
@@ -183,8 +230,8 @@ const AddUpdateInventory = ({
       stockLevels.reorderLevel > stockLevels.maxLevel
     ) {
       showError(
-        'Validation Error',
-        'Reorder level cannot be greater than max level'
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.searchErrorTitle),
+        t(i18nKeyContainer.inventory.inventoryForm.validation.reorderGreaterThanMax)
       );
       setActiveTab(2);
       return false;
@@ -207,14 +254,19 @@ const AddUpdateInventory = ({
     });
     if (!response.success) {
       showError(
-        'Error',
-        `Error while creating new inventory: ${response.error}`
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.createErrorTitle),
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.createErrorMessage, {
+          error: response.error,
+        })
       );
       return;
     }
     showSuccess(
-      'Inventory Created',
-      `Successfully created inventory for ${searchedProduct.name} at ${selectedLocation.name}`
+      t(i18nKeyContainer.inventory.inventoryForm.toasts.createSuccessTitle),
+      t(i18nKeyContainer.inventory.inventoryForm.toasts.createSuccessMessage, {
+        product: searchedProduct.name,
+        location: selectedLocation.name,
+      })
     );
   };
   const updateInventoryLevels = async () => {
@@ -224,12 +276,20 @@ const AddUpdateInventory = ({
       maxLevel: stockLevels.maxLevel,
     });
     if (!response.success) {
-      showError('Error', `Error while updating inventory: ${response.error}`);
+      showError(
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.updateErrorTitle),
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.updateErrorMessage, {
+          error: response.error,
+        })
+      );
       return;
     }
     showSuccess(
-      'Inventory Updated',
-      `Successfully updated inventory for ${searchedProduct.name} at ${selectedLocation.name}`
+      t(i18nKeyContainer.inventory.inventoryForm.toasts.updateSuccessTitle),
+      t(i18nKeyContainer.inventory.inventoryForm.toasts.updateSuccessMessage, {
+        product: searchedProduct.name,
+        location: selectedLocation.name,
+      })
     );
   };
   const handleSubmit = async e => {
@@ -253,9 +313,17 @@ const AddUpdateInventory = ({
       handleCancel();
     } catch (error) {
       showError(
-        mode === 'add' ? 'Create Failed' : 'Update Failed',
+        mode === 'add'
+          ? t(i18nKeyContainer.inventory.inventoryForm.toasts.createErrorTitle)
+          : t(i18nKeyContainer.inventory.inventoryForm.toasts.updateErrorTitle),
         error.message ||
-          `Failed to ${mode === 'add' ? 'create' : 'update'} inventory`
+          (mode === 'add'
+            ? t(i18nKeyContainer.inventory.inventoryForm.toasts.createErrorMessage, {
+                error: t(i18nKeyContainer.inventory.shared.notSpecified),
+              })
+            : t(i18nKeyContainer.inventory.inventoryForm.toasts.updateErrorMessage, {
+                error: t(i18nKeyContainer.inventory.shared.notSpecified),
+              }))
       );
     } finally {
       setIsLoading(false);
@@ -314,7 +382,7 @@ const AddUpdateInventory = ({
           const inventoryResult = await getInventoryById(inventoryId);
           if (!inventoryResult.success) {
             showError(
-              'Error',
+              t(i18nKeyContainer.inventory.inventoryForm.toasts.loadFailedTitle),
               `Error: ${inventoryResult.error}, please try again`
             );
             return;
@@ -335,7 +403,10 @@ const AddUpdateInventory = ({
           //     'API integration needed. Please implement getInventoryById endpoint.'
           //   );
         } catch {
-          showError('Load Failed', 'Failed to load inventory data');
+          showError(
+            t(i18nKeyContainer.inventory.inventoryForm.toasts.loadFailedTitle),
+            t(i18nKeyContainer.inventory.inventoryForm.toasts.loadFailedMessage)
+          );
         } finally {
           setIsLoading(false);
         }
@@ -357,8 +428,10 @@ const AddUpdateInventory = ({
             <Archive className='h-6 w-6 text-gray-600' />
             <h2 className='text-xl font-semibold'>
               {mode === 'add'
-                ? 'Add New Inventory'
-                : `Update Inventory #${inventoryId}`}
+                ? t(i18nKeyContainer.inventory.inventoryForm.title.add)
+                : t(i18nKeyContainer.inventory.inventoryForm.title.edit, {
+                    id: inventoryId,
+                  })}
             </h2>
           </div>
           <button
@@ -406,17 +479,25 @@ const AddUpdateInventory = ({
               <div>
                 <div className='flex items-center gap-2 mb-6'>
                   <Package className='h-5 w-5' />
-                  <h3 className='text-lg font-semibold'>Product Search</h3>
+                  <h3 className='text-lg font-semibold'>
+                    {t(i18nKeyContainer.inventory.inventoryForm.sections.productSearch)}
+                  </h3>
                 </div>
 
                 {/* Search Section */}
                 <div className='mb-6'>
                   <label className='block text-sm font-medium mb-2'>
-                    Search Product <span className='text-red-500'>*</span>
+                    {t(i18nKeyContainer.inventory.inventoryForm.fields.searchProduct)}{' '}
+                    <span className='text-red-500'>
+                      {t(i18nKeyContainer.inventory.shared.required)}
+                    </span>
                   </label>
                   <div className='flex gap-2'>
                     <Input
-                      placeholder='Enter product name, SKU, or ID'
+                      placeholder={t(
+                        i18nKeyContainer.inventory.inventoryForm.placeholders
+                          .searchProduct
+                      )}
                       value={productSearchTerm}
                       onChange={e => setProductSearchTerm(e.target.value)}
                       onKeyDown={e => {
@@ -435,12 +516,12 @@ const AddUpdateInventory = ({
                       className='h-12 px-6 cursor-pointer'
                     >
                       <Search className='h-4 w-4 mr-2' />
-                      Search
+                      {t(i18nKeyContainer.inventory.inventoryForm.actions.search)}
                     </Button>
                   </div>
                   {mode === 'update' && (
                     <p className='text-sm text-gray-500 mt-2'>
-                      Product cannot be changed in update mode
+                      {t(i18nKeyContainer.inventory.inventoryForm.hints.productReadonly)}
                     </p>
                   )}
                 </div>
@@ -449,12 +530,15 @@ const AddUpdateInventory = ({
                 {searchedProduct && (
                   <div className='bg-blue-50 border border-blue-200 rounded-lg p-6'>
                     <h4 className='font-semibold text-blue-900 mb-4'>
-                      Product Information
+                      {t(
+                        i18nKeyContainer.inventory.inventoryForm.sections
+                          .productInformation
+                      )}
                     </h4>
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                       <div>
                         <p className='text-sm text-gray-600 mb-1'>
-                          Product Name
+                          {t(i18nKeyContainer.inventory.inventoryForm.fields.productName)}
                         </p>
                         <p className='font-medium text-gray-900'>
                           {searchedProduct.name}
@@ -462,28 +546,37 @@ const AddUpdateInventory = ({
                       </div>
                       <div>
                         <p className='text-sm text-gray-600 mb-1'>
-                          Product SKU
+                          {t(i18nKeyContainer.inventory.inventoryForm.fields.productSku)}
                         </p>
                         <p className='font-medium text-gray-900'>
                           {searchedProduct.sku}
                         </p>
                       </div>
                       <div>
-                        <p className='text-sm text-gray-600 mb-1'>Category</p>
+                        <p className='text-sm text-gray-600 mb-1'>
+                          {t(i18nKeyContainer.inventory.inventoryForm.fields.category)}
+                        </p>
                         <p className='font-medium text-gray-900'>
-                          {searchedProduct.categoryName || 'N/A'}
+                          {searchedProduct.categoryName ||
+                            t(i18nKeyContainer.inventory.shared.notAvailable)}
                         </p>
                       </div>
                       <div>
                         <p className='text-sm text-gray-600 mb-1'>
-                          Unit of Measure
+                          {t(
+                            i18nKeyContainer.inventory.inventoryForm.fields
+                              .unitOfMeasure
+                          )}
                         </p>
                         <p className='font-medium text-gray-900'>
-                          {searchedProduct.unitOfMeasureName || 'N/A'}
+                          {searchedProduct.unitOfMeasureName ||
+                            t(i18nKeyContainer.inventory.shared.notAvailable)}
                         </p>
                       </div>
                       <div>
-                        <p className='text-sm text-gray-600 mb-1'>Product ID</p>
+                        <p className='text-sm text-gray-600 mb-1'>
+                          {t(i18nKeyContainer.inventory.inventoryForm.fields.productId)}
+                        </p>
                         <p className='font-medium text-gray-900'>
                           #{searchedProduct.id}
                         </p>
@@ -495,7 +588,12 @@ const AddUpdateInventory = ({
                 {!searchedProduct && (
                   <div className='text-center py-8 text-gray-500'>
                     <Package className='h-12 w-12 mx-auto mb-3 text-gray-400' />
-                    <p>Search for a product to get started</p>
+                    <p>
+                      {t(
+                        i18nKeyContainer.inventory.inventoryForm.placeholders
+                          .searchPrompt
+                      )}
+                    </p>
                   </div>
                 )}
               </div>
@@ -506,13 +604,21 @@ const AddUpdateInventory = ({
               <div>
                 <div className='flex items-center gap-2 mb-6'>
                   <MapPin className='h-5 w-5' />
-                  <h3 className='text-lg font-semibold'>Location Selection</h3>
+                  <h3 className='text-lg font-semibold'>
+                    {t(
+                      i18nKeyContainer.inventory.inventoryForm.sections
+                        .locationSelection
+                    )}
+                  </h3>
                 </div>
 
                 {/* Location Dropdown */}
                 <div className='mb-6'>
                   <label className='block text-sm font-medium mb-2'>
-                    Select Location <span className='text-red-500'>*</span>
+                    {t(i18nKeyContainer.inventory.inventoryForm.fields.selectLocation)}{' '}
+                    <span className='text-red-500'>
+                      {t(i18nKeyContainer.inventory.shared.required)}
+                    </span>
                   </label>
                   <select
                     value={selectedLocation?.id || ''}
@@ -520,7 +626,12 @@ const AddUpdateInventory = ({
                     className='w-full h-12 px-3 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-blue-600'
                     disabled={mode === 'update' || isLoading}
                   >
-                    <option value=''>Choose a location...</option>
+                    <option value=''>
+                      {t(
+                        i18nKeyContainer.inventory.inventoryForm.placeholders
+                          .selectLocation
+                      )}
+                    </option>
                     {locations.map(location => (
                       <option key={location.id} value={location.id}>
                         {location.name}
@@ -529,7 +640,7 @@ const AddUpdateInventory = ({
                   </select>
                   {mode === 'update' && (
                     <p className='text-sm text-gray-500 mt-2'>
-                      Location cannot be changed in update mode
+                      {t(i18nKeyContainer.inventory.inventoryForm.hints.locationReadonly)}
                     </p>
                   )}
                 </div>
@@ -538,12 +649,18 @@ const AddUpdateInventory = ({
                 {selectedLocation && (
                   <div className='bg-green-50 border border-green-200 rounded-lg p-6'>
                     <h4 className='font-semibold text-green-900 mb-4'>
-                      Location Information
+                      {t(
+                        i18nKeyContainer.inventory.inventoryForm.sections
+                          .locationInformation
+                      )}
                     </h4>
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                       <div>
                         <p className='text-sm text-gray-600 mb-1'>
-                          Location Name
+                          {t(
+                            i18nKeyContainer.inventory.inventoryForm.fields
+                              .locationName
+                          )}
                         </p>
                         <p className='font-medium text-gray-900'>
                           {selectedLocation.name}
@@ -551,20 +668,27 @@ const AddUpdateInventory = ({
                       </div>
                       <div>
                         <p className='text-sm text-gray-600 mb-1'>
-                          Location ID
+                          {t(
+                            i18nKeyContainer.inventory.inventoryForm.fields
+                              .locationId
+                          )}
                         </p>
                         <p className='font-medium text-gray-900'>
                           #{selectedLocation.id}
                         </p>
                       </div>
                       <div>
-                        <p className='text-sm text-gray-600 mb-1'>Address</p>
+                        <p className='text-sm text-gray-600 mb-1'>
+                          {t(i18nKeyContainer.inventory.inventoryForm.fields.address)}
+                        </p>
                         <p className='font-medium text-gray-900'>
                           {selectedLocation.address}
                         </p>
                       </div>
                       <div>
-                        <p className='text-sm text-gray-600 mb-1'>Type</p>
+                        <p className='text-sm text-gray-600 mb-1'>
+                          {t(i18nKeyContainer.inventory.inventoryForm.fields.type)}
+                        </p>
                         <p className='font-medium text-gray-900'>
                           {selectedLocation.type}
                         </p>
@@ -576,7 +700,12 @@ const AddUpdateInventory = ({
                 {!selectedLocation && (
                   <div className='text-center py-8 text-gray-500'>
                     <MapPin className='h-12 w-12 mx-auto mb-3 text-gray-400' />
-                    <p>Select a location from the dropdown above</p>
+                    <p>
+                      {t(
+                        i18nKeyContainer.inventory.inventoryForm.placeholders
+                          .selectLocationPrompt
+                      )}
+                    </p>
                   </div>
                 )}
               </div>
@@ -587,7 +716,9 @@ const AddUpdateInventory = ({
               <div>
                 <div className='flex items-center gap-2 mb-6'>
                   <Archive className='h-5 w-5' />
-                  <h3 className='text-lg font-semibold'>Stock Levels</h3>
+                  <h3 className='text-lg font-semibold'>
+                    {t(i18nKeyContainer.inventory.inventoryForm.sections.stockLevels)}
+                  </h3>
                 </div>
 
                 {/* Available Stock (Update Mode Only) */}
@@ -597,7 +728,10 @@ const AddUpdateInventory = ({
                       <Archive className='h-5 w-5 text-yellow-600' />
                       <div>
                         <p className='text-sm font-medium text-yellow-900'>
-                          Current Available Stock
+                          {t(
+                            i18nKeyContainer.inventory.inventoryForm.sections
+                              .currentAvailableStock
+                          )}
                         </p>
                         <p className='text-2xl font-bold text-yellow-700'>
                           {availableStock.toFixed(2)}
@@ -611,13 +745,22 @@ const AddUpdateInventory = ({
                 <div className='space-y-6'>
                   <div>
                     <label className='block text-sm font-medium mb-2'>
-                      Quantity on Hand <span className='text-red-500'>*</span>
+                      {t(
+                        i18nKeyContainer.inventory.inventoryForm.fields
+                          .quantityOnHand
+                      )}{' '}
+                      <span className='text-red-500'>
+                        {t(i18nKeyContainer.inventory.shared.required)}
+                      </span>
                     </label>
                     <Input
                       type='number'
                       step='1'
                       min='0'
-                      placeholder='Enter quantity'
+                      placeholder={t(
+                        i18nKeyContainer.inventory.inventoryForm.placeholders
+                          .enterQuantity
+                      )}
                       value={stockLevels.quantityOnHand}
                       onChange={e =>
                         handleStockLevelChange('quantityOnHand', e.target.value)
@@ -626,19 +769,27 @@ const AddUpdateInventory = ({
                       disabled={isLoading}
                     />
                     <p className='text-sm text-gray-500 mt-1'>
-                      Current stock quantity at this location
+                      {t(i18nKeyContainer.inventory.inventoryForm.hints.quantityOnHand)}
                     </p>
                   </div>
 
                   <div>
                     <label className='block text-sm font-medium mb-2'>
-                      Reorder Level <span className='text-red-500'>*</span>
+                      {t(
+                        i18nKeyContainer.inventory.inventoryForm.fields.reorderLevel
+                      )}{' '}
+                      <span className='text-red-500'>
+                        {t(i18nKeyContainer.inventory.shared.required)}
+                      </span>
                     </label>
                     <Input
                       type='number'
                       step='1'
                       min='0'
-                      placeholder='Enter reorder level'
+                      placeholder={t(
+                        i18nKeyContainer.inventory.inventoryForm.placeholders
+                          .enterReorderLevel
+                      )}
                       value={stockLevels.reorderLevel}
                       onChange={e =>
                         handleStockLevelChange('reorderLevel', e.target.value)
@@ -647,19 +798,25 @@ const AddUpdateInventory = ({
                       disabled={isLoading}
                     />
                     <p className='text-sm text-gray-500 mt-1'>
-                      Minimum quantity before reordering is needed
+                      {t(i18nKeyContainer.inventory.inventoryForm.hints.reorderLevel)}
                     </p>
                   </div>
 
                   <div>
                     <label className='block text-sm font-medium mb-2'>
-                      Maximum Level <span className='text-red-500'>*</span>
+                      {t(i18nKeyContainer.inventory.inventoryForm.fields.maxLevel)}{' '}
+                      <span className='text-red-500'>
+                        {t(i18nKeyContainer.inventory.shared.required)}
+                      </span>
                     </label>
                     <Input
                       type='number'
                       step='1'
                       min='0'
-                      placeholder='Enter maximum level'
+                      placeholder={t(
+                        i18nKeyContainer.inventory.inventoryForm.placeholders
+                          .enterMaxLevel
+                      )}
                       value={stockLevels.maxLevel}
                       onChange={e =>
                         handleStockLevelChange('maxLevel', e.target.value)
@@ -668,7 +825,7 @@ const AddUpdateInventory = ({
                       disabled={isLoading}
                     />
                     <p className='text-sm text-gray-500 mt-1'>
-                      Maximum storage capacity for this product at this location
+                      {t(i18nKeyContainer.inventory.inventoryForm.hints.maxLevel)}
                     </p>
                   </div>
 
@@ -677,7 +834,10 @@ const AddUpdateInventory = ({
                     stockLevels.reorderLevel > stockLevels.maxLevel && (
                       <div className='bg-red-50 border border-red-200 rounded-lg p-4'>
                         <p className='text-sm text-red-700'>
-                          ⚠️ Reorder level cannot be greater than maximum level
+                          {t(
+                            i18nKeyContainer.inventory.inventoryForm.warnings
+                              .reorderGreaterThanMax
+                          )}
                         </p>
                       </div>
                     )}
@@ -686,34 +846,54 @@ const AddUpdateInventory = ({
                 {/* Summary */}
                 {searchedProduct && selectedLocation && (
                   <div className='mt-8 bg-gray-50 rounded-lg p-6'>
-                    <h4 className='font-semibold mb-4'>Summary</h4>
+                    <h4 className='font-semibold mb-4'>
+                      {t(i18nKeyContainer.inventory.inventoryForm.sections.summary)}
+                    </h4>
                     <div className='space-y-2 text-sm'>
                       <div className='flex justify-between'>
-                        <span className='text-gray-600'>Product:</span>
+                        <span className='text-gray-600'>
+                          {t(i18nKeyContainer.inventory.inventoryForm.tabs.product)}:
+                        </span>
                         <span className='font-medium'>
                           {searchedProduct.name}
                         </span>
                       </div>
                       <div className='flex justify-between'>
-                        <span className='text-gray-600'>Location:</span>
+                        <span className='text-gray-600'>
+                          {t(i18nKeyContainer.inventory.inventoryForm.tabs.location)}:
+                        </span>
                         <span className='font-medium'>
                           {selectedLocation.name}
                         </span>
                       </div>
                       <div className='flex justify-between'>
-                        <span className='text-gray-600'>Quantity:</span>
+                        <span className='text-gray-600'>
+                          {t(
+                            i18nKeyContainer.inventory.inventoryForm.fields
+                              .quantityOnHand
+                          )}
+                          :
+                        </span>
                         <span className='font-medium'>
                           {stockLevels.quantityOnHand}
                         </span>
                       </div>
                       <div className='flex justify-between'>
-                        <span className='text-gray-600'>Reorder Level:</span>
+                        <span className='text-gray-600'>
+                          {t(
+                            i18nKeyContainer.inventory.inventoryForm.fields
+                              .reorderLevel
+                          )}
+                          :
+                        </span>
                         <span className='font-medium'>
                           {stockLevels.reorderLevel}
                         </span>
                       </div>
                       <div className='flex justify-between'>
-                        <span className='text-gray-600'>Max Level:</span>
+                        <span className='text-gray-600'>
+                          {t(i18nKeyContainer.inventory.inventoryForm.fields.maxLevel)}:
+                        </span>
                         <span className='font-medium'>
                           {stockLevels.maxLevel}
                         </span>
@@ -730,12 +910,17 @@ const AddUpdateInventory = ({
             <div className='text-sm text-gray-600'>
               {!isReadyToSave && (
                 <span className='text-yellow-600'>
-                  ⚠️ Please complete Product and Location sections first
+                  {t(
+                    i18nKeyContainer.inventory.inventoryForm.hints
+                      .completeProductAndLocation
+                  )}
                 </span>
               )}
               {isReadyToSave && (
                 <span className='text-green-600'>
-                  ✓ Ready to {mode === 'add' ? 'create' : 'update'}
+                  {mode === 'add'
+                    ? t(i18nKeyContainer.inventory.inventoryForm.hints.readyToCreate)
+                    : t(i18nKeyContainer.inventory.inventoryForm.hints.readyToUpdate)}
                 </span>
               )}
             </div>
@@ -747,7 +932,7 @@ const AddUpdateInventory = ({
                 disabled={isLoading}
                 className='cursor-pointer'
               >
-                Cancel
+                {t(i18nKeyContainer.inventory.inventoryForm.actions.cancel)}
               </Button>
               <Button
                 type='submit'
@@ -755,10 +940,13 @@ const AddUpdateInventory = ({
                 className='cursor-pointer'
               >
                 {isLoading
-                  ? 'Processing...'
+                  ? t(i18nKeyContainer.inventory.shared.processing)
                   : mode === 'add'
-                    ? 'Create Inventory'
-                    : 'Update Stock Levels'}
+                    ? t(i18nKeyContainer.inventory.inventoryForm.actions.createInventory)
+                    : t(
+                        i18nKeyContainer.inventory.inventoryForm.actions
+                          .updateStockLevels
+                      )}
               </Button>
             </div>
           </div>

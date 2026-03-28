@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
 import Button from '@components/Buttons/Button';
 import AddUpdateInventory from './AddUpdateInventory';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 /**
  * AddInventoryButton Component
@@ -13,6 +15,7 @@ import AddUpdateInventory from './AddUpdateInventory';
  * @param {function} props.onSuccess - Optional callback after successful creation
  */
 const AddInventoryButton = ({ onSuccess }) => {
+  const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleSuccess = () => {
@@ -27,10 +30,10 @@ const AddInventoryButton = ({ onSuccess }) => {
       <Button
         onClick={() => setDialogOpen(true)}
         className='cursor-pointer'
-        aria-label='Add new inventory'
+        aria-label={t(i18nKeyContainer.inventory.addInventoryButton.ariaLabel)}
       >
         <Plus className='h-4 w-4 mr-2' />
-        Add Inventory
+        {t(i18nKeyContainer.inventory.addInventoryButton.label)}
       </Button>
 
       <AddUpdateInventory

@@ -8,8 +8,69 @@ import {
 import DataTable from '@components/DataTable/DataTable';
 import AddUpdateCustomer from './AddUpdateCustomer';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+
+const getStatusLabel = (isActive, t) =>
+  isActive
+    ? t(i18nKeyContainer.customers.shared.status.active)
+    : t(i18nKeyContainer.customers.shared.status.inactive);
+
+const getDefaultColumns = t => [
+  {
+    accessorKey: 'name',
+    header: t(i18nKeyContainer.customers.table.columns.customer),
+    cell: ({ row }) => (
+      <div>
+        <div className='font-medium'>{row.original.name}</div>
+        <div className='text-sm text-gray-500'>{row.original.email}</div>
+      </div>
+    ),
+  },
+  {
+    accessorKey: 'phone',
+    header: t(i18nKeyContainer.customers.table.columns.phone),
+  },
+  {
+    accessorKey: 'customerCategoryName',
+    header: t(i18nKeyContainer.customers.table.columns.category),
+  },
+  {
+    accessorKey: 'totalOrders',
+    header: t(i18nKeyContainer.customers.table.columns.totalOrders),
+    cell: ({ getValue }) => `${Number(getValue() || 0).toFixed(2)}`,
+  },
+
+  {
+    accessorKey: 'totalSpent',
+    header: t(i18nKeyContainer.customers.table.columns.totalSpent),
+    cell: ({ getValue }) => `$${Number(getValue() || 0).toFixed(2)}`,
+  },
+  {
+    accessorKey: 'isActive',
+    header: t(i18nKeyContainer.customers.table.columns.isActive),
+    cell: ({ getValue }) => {
+      const isActive = Boolean(getValue());
+      return (
+        <span
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          }`}
+        >
+          {getStatusLabel(isActive, t)}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: 'createdAt',
+    header: t(i18nKeyContainer.customers.table.columns.createdAt),
+    cell: ({ getValue }) => new Date(getValue()).toLocaleDateString(),
+  },
+];
 
 export default function CustomerDataTable() {
+  const { t } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [currentCustomerId, setCurrentCustomerId] = useState(0);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
@@ -44,11 +105,19 @@ export default function CustomerDataTable() {
   const handleDeleteConfirm = async () => {
     const response = await deleteCustomerById(currentCustomerId);
     if (!response.success) {
-      showError('Failed to delete customer. ' + response.error);
+      showError(
+        t(i18nKeyContainer.customers.table.toasts.deleteFailedTitle),
+        t(i18nKeyContainer.customers.table.toasts.deleteFailedMessage, {
+          error: response.error,
+        })
+      );
       setDeleteDialogOpen(false);
       return;
     }
-    showSuccess('Customer deleted successfully.');
+    showSuccess(
+      t(i18nKeyContainer.customers.table.toasts.deleteSuccessTitle),
+      t(i18nKeyContainer.customers.table.toasts.deleteSuccessMessage)
+    );
     setDeleteDialogOpen(false);
     tableProps.refresh();
   };
@@ -59,7 +128,7 @@ export default function CustomerDataTable() {
     <>
       <DataTable
         data={tableProps.data}
-        columns={defaultColumns}
+        columns={getDefaultColumns(t)}
         totalRows={tableProps.totalRows}
         pageIndex={tableProps.pageIndex}
         pageSize={tableProps.pageSize}
@@ -88,8 +157,8 @@ export default function CustomerDataTable() {
       {deleteDialogOpen && (
         <ConfirmationDialog
           isOpen={deleteDialogOpen}
-          title='Delete Customer'
-          message='Are you sure you want to delete this customer? This action cannot be undone.'
+          title={t(i18nKeyContainer.customers.table.dialogs.deleteTitle)}
+          message={t(i18nKeyContainer.customers.table.dialogs.deleteMessage)}
           onCancel={() => setDeleteDialogOpen(false)}
           onConfirm={handleDeleteConfirm}
         />
@@ -97,49 +166,3 @@ export default function CustomerDataTable() {
     </>
   );
 }
-
-const defaultColumns = [
-  {
-    accessorKey: 'name',
-    header: 'Customer',
-    cell: ({ row }) => (
-      <div>
-        <div className='font-medium'>{row.original.name}</div>
-        <div className='text-sm text-gray-500'>{row.original.email}</div>
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'phone',
-    header: 'Phone',
-  },
-  {
-    accessorKey: 'customerCategoryName',
-    header: 'Category',
-  },
-  {
-    accessorKey: 'totalOrders',
-    header: 'Total Orders',
-    cell: ({ getValue }) => `${getValue().toFixed(2)}`,
-  },
-
-  {
-    accessorKey: 'totalSpent',
-    header: 'Total Spent',
-    cell: ({ getValue }) => `$${getValue().toFixed(2)}`,
-  },
-  {
-    accessorKey: 'isActive',
-    header: 'IsActive',
-    cell: ({ getValue }) => (
-      <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800'>
-        ✓ {getValue()}
-      </span>
-    ),
-  },
-  {
-    accessorKey: 'createdAt',
-    header: 'Created At',
-    cell: ({ getValue }) => new Date(getValue()).toLocaleDateString(),
-  },
-];

@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { X, Tag } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
 import Button from '@components/Buttons/Button';
 import { Input } from '@components/ui/input';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import {
   createUnitOfMeasure,
   getUnitOfMeasureById,
@@ -22,6 +25,7 @@ import { useToast } from '@shared/context/ToastContext';
  * @param {function} props.onSuccess - Optional callback after successful save
  */
 const AddUnitOfMeasure = ({ isOpen, onClose, unitId = 0, onSuccess }) => {
+  const { t } = useTranslation();
   const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState({
     name: '',
@@ -49,7 +53,9 @@ const AddUnitOfMeasure = ({ isOpen, onClose, unitId = 0, onSuccess }) => {
   const validateForm = () => {
     const newErrors = {};
     if (!formData.name.trim()) {
-      newErrors.name = 'Unit name is required';
+      newErrors.name = t(
+        i18nKeyContainer.products.units.form.validation.unitNameRequired
+      );
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -63,8 +69,10 @@ const AddUnitOfMeasure = ({ isOpen, onClose, unitId = 0, onSuccess }) => {
     });
     if (response.success) {
       showSuccess(
-        'Unit of Measure Created',
-        `${name} has been added successfully.`
+        t(i18nKeyContainer.products.units.form.toasts.createSuccessTitle),
+        t(i18nKeyContainer.products.units.form.toasts.createSuccessMessage, {
+          name,
+        })
       );
       setId(response.data.id);
       setMode('update');
@@ -74,8 +82,11 @@ const AddUnitOfMeasure = ({ isOpen, onClose, unitId = 0, onSuccess }) => {
       onClose();
     } else if (!response.success) {
       showError(
-        'Unit Creation Failed',
-        `${name} could not be created. error: ${response.message}`
+        t(i18nKeyContainer.products.units.form.toasts.createErrorTitle),
+        t(i18nKeyContainer.products.units.form.toasts.createErrorMessage, {
+          name,
+          error: response.message,
+        })
       );
     }
     setIsLoading(false);
@@ -90,8 +101,10 @@ const AddUnitOfMeasure = ({ isOpen, onClose, unitId = 0, onSuccess }) => {
 
     if (response.success) {
       showSuccess(
-        'Unit of Measure Updated',
-        `${name} has been updated successfully.`
+        t(i18nKeyContainer.products.units.form.toasts.updateSuccessTitle),
+        t(i18nKeyContainer.products.units.form.toasts.updateSuccessMessage, {
+          name,
+        })
       );
       setFormData({
         name: response.data.name,
@@ -103,8 +116,10 @@ const AddUnitOfMeasure = ({ isOpen, onClose, unitId = 0, onSuccess }) => {
       onClose();
     } else {
       showError(
-        'Unit Update Failed',
-        `Unit could not be updated. Error: ${response.message}`
+        t(i18nKeyContainer.products.units.form.toasts.updateErrorTitle),
+        t(i18nKeyContainer.products.units.form.toasts.updateErrorMessage, {
+          error: response.message,
+        })
       );
     }
     setIsLoading(false);
@@ -162,8 +177,8 @@ const AddUnitOfMeasure = ({ isOpen, onClose, unitId = 0, onSuccess }) => {
         } catch (error) {
           console.error('Error fetching unit:', error);
           showError(
-            'Failed to Load Unit',
-            'Could not load unit of measure data.'
+            t(i18nKeyContainer.products.units.form.toasts.loadErrorTitle),
+            t(i18nKeyContainer.products.units.form.toasts.loadErrorMessage)
           );
         } finally {
           setIsLoading(false);
@@ -177,7 +192,7 @@ const AddUnitOfMeasure = ({ isOpen, onClose, unitId = 0, onSuccess }) => {
         description: '',
       });
     }
-  }, [id, isOpen, showError]);
+  }, [id, isOpen, showError, t]);
 
   useEffect(() => {
     setId(unitId);
@@ -193,7 +208,9 @@ const AddUnitOfMeasure = ({ isOpen, onClose, unitId = 0, onSuccess }) => {
           <div className='flex items-center gap-3'>
             <Tag className='h-6 w-6 text-gray-600' />
             <h2 className='text-xl font-semibold'>
-              {mode === 'add' ? 'Add Unit of Measure' : 'Edit Unit of Measure'}
+              {mode === 'add'
+                ? t(i18nKeyContainer.products.units.form.title.add)
+                : t(i18nKeyContainer.products.units.form.title.edit)}
             </h2>
           </div>
           <button
@@ -210,16 +227,23 @@ const AddUnitOfMeasure = ({ isOpen, onClose, unitId = 0, onSuccess }) => {
           <div className='p-6'>
             <div className='flex items-center gap-2 mb-6'>
               <Tag className='h-5 w-5' />
-              <h3 className='text-lg font-semibold'>Unit Information</h3>
+              <h3 className='text-lg font-semibold'>
+                {t(i18nKeyContainer.products.units.form.sectionInfo)}
+              </h3>
             </div>
 
             <div className='space-y-6'>
               <div>
                 <label className='block text-sm font-medium mb-2'>
-                  Unit Name <span className='text-red-500'>*</span>
+                  {t(i18nKeyContainer.products.units.form.fields.unitName)}{' '}
+                  <span className='text-red-500'>
+                    {t(i18nKeyContainer.products.shared.required)}
+                  </span>
                 </label>
                 <Input
-                  placeholder='e.g., Pieces, Kilograms, Meters, Liters'
+                  placeholder={t(
+                    i18nKeyContainer.products.units.form.placeholders.unitName
+                  )}
                   value={formData.name}
                   onChange={e => handleInputChange('name', e.target.value)}
                   className={`h-12 ${errors.name ? 'border-red-500' : ''}`}
@@ -233,10 +257,12 @@ const AddUnitOfMeasure = ({ isOpen, onClose, unitId = 0, onSuccess }) => {
 
               <div>
                 <label className='block text-sm font-medium mb-2'>
-                  Description
+                  {t(i18nKeyContainer.products.units.form.fields.description)}
                 </label>
                 <textarea
-                  placeholder='Optional description for this unit of measure...'
+                  placeholder={t(
+                    i18nKeyContainer.products.units.form.placeholders.description
+                  )}
                   value={formData.description}
                   onChange={e =>
                     handleInputChange('description', e.target.value)
@@ -257,7 +283,7 @@ const AddUnitOfMeasure = ({ isOpen, onClose, unitId = 0, onSuccess }) => {
               disabled={isLoading}
               className='cursor-pointer'
             >
-              Cancel
+              {t(i18nKeyContainer.products.units.form.actions.cancel)}
             </Button>
             <Button
               type='submit'
@@ -266,11 +292,11 @@ const AddUnitOfMeasure = ({ isOpen, onClose, unitId = 0, onSuccess }) => {
             >
               {isLoading
                 ? mode === 'add'
-                  ? 'Creating...'
-                  : 'Saving...'
+                  ? t(i18nKeyContainer.products.units.form.actions.creating)
+                  : t(i18nKeyContainer.products.units.form.actions.saving)
                 : mode === 'add'
-                  ? 'Create Unit'
-                  : 'Save Changes'}
+                  ? t(i18nKeyContainer.products.units.form.actions.create)
+                  : t(i18nKeyContainer.products.units.form.actions.saveChanges)}
             </Button>
           </div>
         </form>

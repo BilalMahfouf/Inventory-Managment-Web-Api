@@ -10,7 +10,91 @@ import AddUpdateInventory from './AddUpdateInventory';
 import ViewInventoryDialog from './ViewInventoryDialog';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';
 import { useToast } from '@shared/context/ToastContext';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+
+const getLocalizedInventoryStatus = (status, t) => {
+  if (status === 'In Stock') {
+    return t(i18nKeyContainer.inventory.shared.status.inStock);
+  }
+
+  if (status === 'Low Stock') {
+    return t(i18nKeyContainer.inventory.shared.status.lowStock);
+  }
+
+  if (status === 'Out of Stock') {
+    return t(i18nKeyContainer.inventory.shared.status.outOfStock);
+  }
+
+  return status;
+};
+
+const getDefaultColumns = t => [
+  {
+    accessorKey: 'product',
+    header: t(i18nKeyContainer.inventory.inventoryTable.columns.product),
+    cell: ({ row }) => (
+      <div>
+        <div className='font-medium'>{row.original.product}</div>
+        <div className='text-sm text-gray-500'>{row.original.sku}</div>
+      </div>
+    ),
+  },
+  {
+    accessorKey: 'location',
+    header: t(i18nKeyContainer.inventory.inventoryTable.columns.location),
+  },
+  {
+    accessorKey: 'quantity',
+    header: t(i18nKeyContainer.inventory.inventoryTable.columns.quantity),
+    cell: ({ getValue }) => `${getValue().toFixed(2)}`,
+  },
+  {
+    accessorKey: 'reorder',
+    header: t(i18nKeyContainer.inventory.inventoryTable.columns.reorder),
+    cell: ({ getValue }) => `${getValue().toFixed(2)}`,
+  },
+
+  {
+    accessorKey: 'max',
+    header: t(i18nKeyContainer.inventory.inventoryTable.columns.max),
+  },
+  {
+    accessorKey: 'status',
+    header: t(i18nKeyContainer.inventory.inventoryTable.columns.status),
+    cell: ({ getValue }) => {
+      const status = getValue();
+      const isInStock = status === 'In Stock';
+      const isLowStock = status === 'Low Stock';
+      const isOutOfStock = status === 'Out of Stock';
+
+      return (
+        <span
+          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+            isInStock
+              ? 'bg-green-100 text-green-700 hover:bg-green-700 hover:text-white'
+              : isLowStock
+                ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-600 hover:text-white'
+                : 'bg-red-100 text-red-700 hover:bg-red-700 hover:text-white'
+          }`}
+        >
+          {isInStock && <CheckCircle className='w-3 h-3' />}
+          {isLowStock && <AlertTriangle className='w-3 h-3' />}
+          {isOutOfStock && <XCircle className='w-3 h-3' />}
+          {getLocalizedInventoryStatus(status, t)}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: 'potentialProfit',
+    header: t(i18nKeyContainer.inventory.inventoryTable.columns.potentialProfit),
+    cell: ({ getValue }) => `$${getValue().toFixed(2)}`,
+  },
+];
+
 export default function InventoryDataTable() {
+  const { t } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [currentInventoryId, setCurrentInventoryId] = useState(0);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
@@ -22,12 +106,19 @@ export default function InventoryDataTable() {
     if (response.success) {
       setDeleteDialogOpen(false);
       showSuccess(
-        'Success',
-        `Inventory with Id ${currentInventoryId} deleted successfully.`
+        t(i18nKeyContainer.inventory.inventoryTable.toasts.deleteSuccessTitle),
+        t(i18nKeyContainer.inventory.inventoryTable.toasts.deleteSuccessMessage, {
+          id: currentInventoryId,
+        })
       );
       return;
     }
-    showError('Error', `Error: ${response.error}.`);
+    showError(
+      t(i18nKeyContainer.inventory.inventoryTable.toasts.deleteErrorTitle),
+      t(i18nKeyContainer.inventory.inventoryTable.toasts.deleteErrorMessage, {
+        error: response.error,
+      })
+    );
     setDeleteDialogOpen(false);
     return;
   };
@@ -67,7 +158,7 @@ export default function InventoryDataTable() {
     <>
       <DataTable
         data={tableProps.data}
-        columns={defaultColumns}
+        columns={getDefaultColumns(t)}
         totalRows={tableProps.totalRows}
         pageIndex={tableProps.pageIndex}
         pageSize={tableProps.pageSize}
@@ -102,76 +193,16 @@ export default function InventoryDataTable() {
         <ConfirmationDialog
           isOpen={deleteDialogOpen}
           onClose={() => setDeleteDialogOpen(false)}
-          title='Delete Inventory Item'
-          message='Are you sure you want to delete this inventory item? This action cannot be undone.'
-          confirmText='Delete Inventory'
+          title={t(i18nKeyContainer.inventory.inventoryTable.dialogs.deleteTitle)}
+          message={t(
+            i18nKeyContainer.inventory.inventoryTable.dialogs.deleteMessage
+          )}
+          confirmText={t(
+            i18nKeyContainer.inventory.inventoryTable.dialogs.deleteConfirmText
+          )}
           onConfirm={handleDelete}
         />
       )}
     </>
   );
 }
-
-const defaultColumns = [
-  {
-    accessorKey: 'product',
-    header: 'Product',
-    cell: ({ row }) => (
-      <div>
-        <div className='font-medium'>{row.original.product}</div>
-        <div className='text-sm text-gray-500'>{row.original.sku}</div>
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'location',
-    header: 'Location',
-  },
-  {
-    accessorKey: 'quantity',
-    header: 'Quantity',
-    cell: ({ getValue }) => `${getValue().toFixed(2)}`,
-  },
-  {
-    accessorKey: 'reorder',
-    header: 'Reorder',
-    cell: ({ getValue }) => `${getValue().toFixed(2)}`,
-  },
-
-  {
-    accessorKey: 'max',
-    header: 'Max',
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ getValue }) => {
-      const status = getValue();
-      const isInStock = status === 'In Stock';
-      const isLowStock = status === 'Low Stock';
-      const isOutOfStock = status === 'Out of Stock';
-
-      return (
-        <span
-          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-            isInStock
-              ? 'bg-green-100 text-green-700 hover:bg-green-700 hover:text-white'
-              : isLowStock
-                ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-600 hover:text-white'
-                : 'bg-red-100 text-red-700 hover:bg-red-700 hover:text-white'
-          }`}
-        >
-          {isInStock && <CheckCircle className='w-3 h-3' />}
-          {isLowStock && <AlertTriangle className='w-3 h-3' />}
-          {isOutOfStock && <XCircle className='w-3 h-3' />}
-          {status}
-        </span>
-      );
-    },
-  },
-  {
-    accessorKey: 'potentialProfit',
-    header: 'Potential Profit',
-    cell: ({ getValue }) => `$${getValue().toFixed(2)}`,
-  },
-];

@@ -1,0 +1,1197 @@
+{
+  "common": {
+    "languages": {
+      "english": "English",
+      "french": "French",
+      "arabic": "Arabic"
+    }
+  },
+  "layout": {
+    "sidebar": {
+      "brand": "InventoryPro",
+      "menu": {
+        "dashboard": "Dashboard",
+        "products": "Products",
+        "inventory": "Inventory",
+        "sales": "Sales",
+        "customers": "Customers",
+        "settings": "Settings"
+      }
+    },
+    "topNav": {
+      "languageSwitcher": "Language",
+      "searchPlaceholder": "Search products, orders, customers..."
+    }
+  },
+  "dashboard": {
+    "page": {
+      "title": "Dashboard",
+      "description": "Welcome back! Here's what's happening with your inventory.",
+      "generateReport": "Generate Report"
+    },
+    "cards": {
+      "totalProducts": {
+        "title": "Total Products",
+        "description": "active products"
+      },
+      "totalCustomers": {
+        "title": "Total Customers",
+        "description": "active customers"
+      },
+      "lowStockItems": {
+        "title": "Low Stock Items",
+        "description": "need restock"
+      },
+      "totalSalesOrders": {
+        "title": "Total Sales Orders",
+        "description": "total sales of the business"
+      },
+      "totalRevenues": {
+        "title": "Total Revenues",
+        "description": "total revenue of the business"
+      },
+      "pendingOrders": {
+        "title": "Pending Orders",
+        "description": "orders pending fulfillment"
+      },
+      "fulfilledOrders": {
+        "title": "Fulfilled Orders",
+        "description": "orders successfully fulfilled"
+      },
+      "activeSuppliers": {
+        "title": "Active Suppliers",
+        "description": "active suppliers"
+      }
+    },
+    "sections": {
+      "topSellingProducts": "Top Selling Products",
+      "quickActions": "Quick Actions",
+      "inventoryAlerts": "Inventory Alerts"
+    },
+    "todayPerformance": {
+      "title": "Today's Performance",
+      "todaysSales": "Today's Sales",
+      "newOrders": "New Orders",
+      "newCustomers": "New Customers",
+      "productsSold": "Products Sold"
+    },
+    "quickActions": {
+      "addProduct": "Add Product",
+      "addCustomer": "Add Customer",
+      "newSaleOrder": "New Sale Order",
+      "addLocation": "Add Location"
+    },
+    "topProducts": {
+      "loading": "Loading...",
+      "unitsSold": "{{count}} units sold",
+      "revenue": "Revenue"
+    }
+  },
+  "products": {
+    "shared": {
+      "loading": "Loading...",
+      "close": "Close",
+      "notSpecified": "Not specified",
+      "noDescriptionProvided": "No description provided",
+      "hyphen": "-",
+      "required": "*",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "draft": "Draft",
+        "deleted": "Deleted"
+      }
+    },
+    "page": {
+      "title": "Product Management",
+      "description": "Manage your product catalog and inventory.",
+      "addProduct": "Add Product",
+      "tabs": {
+        "products": "Products",
+        "stockMovements": "Stock Movements",
+        "unitOfMeasure": "Unit Of Measure",
+        "productCategories": "Product Categories",
+        "productImages": "Product Images"
+      },
+      "sections": {
+        "productCatalog": "Product Catalog",
+        "stockMovementHistory": "Stock Movement History",
+        "unitOfMeasure": "Unit Of Measure",
+        "productCategories": "Product Categories",
+        "productImages": "Product Images"
+      },
+      "placeholders": {
+        "productImages": "Product images will be here!"
+      }
+    },
+    "cards": {
+      "totalProducts": {
+        "title": "Total Products",
+        "description": "Easily add new products to your catalog."
+      },
+      "inventoryValue": {
+        "title": "Inventory Value",
+        "description": "Total value of all products in inventory."
+      },
+      "lowStockItems": {
+        "title": "Low Stock Items",
+        "description": "Products that need restocking soon."
+      },
+      "profitPotential": {
+        "title": "Profit Potential",
+        "description": "If all products are sold at retail price."
+      }
+    },
+    "addProductForm": {
+      "title": {
+        "add": "Add New Product",
+        "edit": "Edit Product"
+      },
+      "tabs": {
+        "basicInfo": "Basic Info",
+        "pricing": "Pricing",
+        "inventory": "Inventory",
+        "details": "Details"
+      },
+      "sections": {
+        "productInformation": "Product Information",
+        "pricingInformation": "Pricing Information",
+        "inventoryManagement": "Inventory Management",
+        "additionalDetails": "Additional Details",
+        "productSummary": "Product Summary"
+      },
+      "fields": {
+        "productName": "Product Name",
+        "sku": "SKU",
+        "category": "Category",
+        "description": "Description",
+        "status": "Status",
+        "costPrice": "Cost Price",
+        "sellingPrice": "Selling Price",
+        "currentStock": "Current Stock",
+        "minimumStock": "Minimum Stock",
+        "maximumStock": "Maximum Stock",
+        "unitOfMeasurement": "Unit of Measurement",
+        "storageLocation": "Storage Location"
+      },
+      "placeholders": {
+        "productName": "Enter product name",
+        "sku": "Enter SKU",
+        "description": "Enter product description",
+        "zero": "0"
+      },
+      "metrics": {
+        "profitMargin": "Profit Margin",
+        "profitPerUnit": "Profit per Unit",
+        "markup": "Markup"
+      },
+      "summary": {
+        "productName": "Product Name:",
+        "sku": "SKU:",
+        "category": "Category:",
+        "sellingPrice": "Selling Price:",
+        "initialStock": "Initial Stock:",
+        "status": "Status:"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "addProduct": "Add Product",
+        "saveChanges": "Save Changes"
+      },
+      "toasts": {
+        "createSuccessTitle": "Product Created Successfully",
+        "createSuccessMessage": "{{name}} has been added to your inventory.",
+        "createErrorTitle": "Product Creation Failed",
+        "createErrorMessage": "Product cannot be created. Please try again.",
+        "updateSuccessTitle": "Product Updated Successfully",
+        "updateSuccessMessage": "{{name}} has been updated.",
+        "updateErrorTitle": "Product Update Failed",
+        "updateErrorMessage": "Product could not be updated. Please try again."
+      }
+    },
+    "productTable": {
+      "columns": {
+        "sku": "SKU",
+        "product": "Product",
+        "stock": "Stock",
+        "price": "Price",
+        "cost": "Cost",
+        "isActive": "Is Active",
+        "createdAt": "Created At"
+      },
+      "dialogs": {
+        "deleteTitle": "Delete Product",
+        "deleteMessage": "Are you sure you want to delete this product? This action cannot be undone."
+      },
+      "toasts": {
+        "deleteCancelledTitle": "Delete cancelled",
+        "deleteCancelledMessage": "Product delete action is cancelled",
+        "deleteSuccessTitle": "Product Deleted",
+        "deleteSuccessMessage": "Product with id {{id}} was deleted successfully"
+      }
+    },
+    "productView": {
+      "title": "Product Details",
+      "tabs": {
+        "basicInfo": "Basic Info",
+        "pricing": "Pricing",
+        "details": "Details"
+      },
+      "sections": {
+        "productInformation": "Product Information",
+        "pricingInformation": "Pricing Information",
+        "creationDetails": "Creation Details",
+        "lastUpdateDetails": "Last Update Details",
+        "systemInformation": "System Information",
+        "deletionInformation": "Deletion Information"
+      },
+      "fields": {
+        "productName": "Product Name",
+        "sku": "SKU",
+        "category": "Category",
+        "unitOfMeasure": "Unit of Measure",
+        "description": "Description",
+        "status": "Status",
+        "costPrice": "Cost Price",
+        "sellingPrice": "Selling Price",
+        "profitMargin": "Profit Margin",
+        "profitPerUnit": "Profit per Unit",
+        "markup": "Markup",
+        "createdAt": "Created At",
+        "createdBy": "Created By",
+        "createdByUserId": "Created By User ID",
+        "updatedAt": "Updated At",
+        "updatedBy": "Updated By",
+        "updatedByUserId": "Updated By User ID",
+        "productId": "Product ID",
+        "categoryId": "Category ID",
+        "unitOfMeasureId": "Unit of Measure ID",
+        "deletedAt": "Deleted At",
+        "deletedBy": "Deleted By"
+      },
+      "placeholders": {
+        "noDescriptionAvailable": "No description available"
+      }
+    },
+    "stockMovements": {
+      "columns": {
+        "date": "Date",
+        "product": "Product",
+        "type": "Type",
+        "quantity": "Quantity",
+        "reason": "Reason",
+        "processedBy": "Processed By"
+      },
+      "badges": {
+        "in": "↑ In",
+        "out": "↓ Out",
+        "transfer": "⟲ Transfer",
+        "unknown": "Unknown"
+      }
+    },
+    "categories": {
+      "buttonAdd": "Add Product Category",
+      "form": {
+        "title": {
+          "add": "Add Product Category",
+          "edit": "Edit Product Category"
+        },
+        "sectionInfo": "Category Information",
+        "fields": {
+          "categoryName": "Category Name",
+          "description": "Description",
+          "categoryType": "Category Type",
+          "mainCategory": "Main Category",
+          "mainCategoryDescription": "A top-level category that can contain subcategories",
+          "subcategory": "Subcategory",
+          "subcategoryDescription": "A category that belongs to a main category",
+          "parentCategory": "Parent Category"
+        },
+        "placeholders": {
+          "categoryName": "e.g., Electronics, Clothing, Food & Beverages",
+          "description": "Optional description for this category...",
+          "parentCategory": "Select a parent category"
+        },
+        "validation": {
+          "categoryNameRequired": "Category name is required",
+          "parentCategoryRequired": "Parent category is required for subcategories"
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "create": "Create Category",
+          "saveChanges": "Save Changes",
+          "creating": "Creating...",
+          "saving": "Saving..."
+        },
+        "toasts": {
+          "createSuccessTitle": "Product Category Created",
+          "createSuccessMessage": "{{name}} has been added successfully.",
+          "createErrorTitle": "Category Creation Failed",
+          "createErrorMessage": "{{name}} could not be created. Error: {{error}}",
+          "updateSuccessTitle": "Product Category Updated",
+          "updateSuccessMessage": "{{name}} has been updated successfully.",
+          "updateErrorTitle": "Category Update Failed",
+          "updateErrorMessage": "Category could not be updated. Error: {{error}}",
+          "loadErrorTitle": "Failed to Load Category",
+          "loadErrorMessage": "Could not load product category data."
+        }
+      },
+      "table": {
+        "dialogs": {
+          "deleteTitle": "Delete Product Category",
+          "deleteMessage": "Are you sure you want to delete this category? This action cannot be undone."
+        },
+        "toasts": {
+          "deleteSuccess": "Product category deleted successfully",
+          "deleteError": "Failed to delete product category: {{error}}"
+        },
+        "columns": {
+          "id": "ID",
+          "name": "Name",
+          "parentCategory": "Parent Category",
+          "mainCategory": "Main Category",
+          "createdAt": "Created At",
+          "createdBy": "Created By"
+        }
+      },
+      "view": {
+        "title": "Category Details",
+        "subtitleId": "ID: {{id}}",
+        "loading": "Loading...",
+        "sections": {
+          "categoryInformation": "Category Information",
+          "subcategories": "Subcategories",
+          "auditInformation": "Audit Information",
+          "created": "Created",
+          "updated": "Updated"
+        },
+        "badges": {
+          "mainCategory": "Main Category",
+          "subCategory": "Subcategory"
+        },
+        "fields": {
+          "categoryName": "Category Name",
+          "parentCategory": "Parent Category",
+          "description": "Description",
+          "dateTime": "Date & Time",
+          "user": "User"
+        },
+        "placeholders": {
+          "noDescription": "No description provided",
+          "noSubcategories": "No subcategories yet",
+          "adminUser": "Admin User",
+          "neverUpdated": "Never updated"
+        }
+      }
+    },
+    "units": {
+      "buttonAdd": "Add Unit of Measure",
+      "form": {
+        "title": {
+          "add": "Add Unit of Measure",
+          "edit": "Edit Unit of Measure"
+        },
+        "sectionInfo": "Unit Information",
+        "fields": {
+          "unitName": "Unit Name",
+          "description": "Description"
+        },
+        "placeholders": {
+          "unitName": "e.g., Pieces, Kilograms, Meters, Liters",
+          "description": "Optional description for this unit of measure..."
+        },
+        "validation": {
+          "unitNameRequired": "Unit name is required"
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "create": "Create Unit",
+          "saveChanges": "Save Changes",
+          "creating": "Creating...",
+          "saving": "Saving..."
+        },
+        "toasts": {
+          "createSuccessTitle": "Unit of Measure Created",
+          "createSuccessMessage": "{{name}} has been added successfully.",
+          "createErrorTitle": "Unit Creation Failed",
+          "createErrorMessage": "{{name}} could not be created. Error: {{error}}",
+          "updateSuccessTitle": "Unit of Measure Updated",
+          "updateSuccessMessage": "{{name}} has been updated successfully.",
+          "updateErrorTitle": "Unit Update Failed",
+          "updateErrorMessage": "Unit could not be updated. Error: {{error}}",
+          "loadErrorTitle": "Failed to Load Unit",
+          "loadErrorMessage": "Could not load unit of measure data."
+        }
+      },
+      "table": {
+        "dialogs": {
+          "deleteTitle": "Delete Unit of Measure",
+          "deleteMessage": "Are you sure you want to delete this unit of measure? This action cannot be undone."
+        },
+        "toasts": {
+          "deleteSuccessTitle": "Unit of Measure Deleted",
+          "deleteSuccessMessage": "Unit of measure deleted successfully",
+          "deleteError": "Failed to delete unit of measure",
+          "loadError": "Failed to load units of measure"
+        },
+        "columns": {
+          "id": "ID",
+          "name": "Name",
+          "createdAt": "Created At",
+          "createdBy": "Created By"
+        }
+      },
+      "view": {
+        "title": "Unit of Measure Details",
+        "subtitleId": "ID: {{id}}",
+        "sections": {
+          "unitInformation": "Unit Information",
+          "auditInformation": "Audit Information",
+          "created": "Created",
+          "updated": "Updated"
+        },
+        "fields": {
+          "unitName": "Unit Name",
+          "description": "Description",
+          "dateTime": "Date & Time",
+          "user": "User"
+        },
+        "placeholders": {
+          "noDescription": "No description provided",
+          "adminUser": "Admin User",
+          "neverUpdated": "Never updated"
+        }
+      }
+    },
+    "demo": {
+      "addProduct": {
+        "title": "AddProduct Component Demo",
+        "description": "Click the button below to test the AddProduct modal component",
+        "addButton": "Add New Product",
+        "listTitle": "Added Products ({{count}})",
+        "emptyState": "No products added yet. Click \"Add New Product\" to get started.",
+        "alerts": {
+          "addSuccess": "Product added successfully!",
+          "addError": "Error adding product. Please try again."
+        },
+        "labels": {
+          "sku": "SKU",
+          "category": "Category",
+          "brand": "Brand",
+          "stock": "Stock",
+          "status": "Status"
+        }
+      },
+      "deleteExample": {
+        "title": "Delete Product",
+        "message": "This action cannot be undone and will permanently remove this product from the system.",
+        "toastSuccessTitle": "Product Deleted",
+        "toastSuccessMessage": "{{name}} has been permanently removed.",
+        "toastErrorTitle": "Delete Failed",
+        "toastErrorMessage": "Could not delete the product. Please try again."
+      }
+    }
+  },
+  "customers": {
+    "shared": {
+      "loading": "Loading...",
+      "notAvailable": "N/A",
+      "required": "*",
+      "currencySymbol": "$",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "creditStatus": {
+        "active": "Active",
+        "onHold": "On Hold",
+        "suspended": "Suspended"
+      },
+      "defaults": {
+        "paymentTerms": "Net 30",
+        "customerCategory": "Retail",
+        "createdBy": "admin@system.com"
+      }
+    },
+    "page": {
+      "title": "Customer Management",
+      "description": "Manage your customer data and interactions.",
+      "tabs": {
+        "customers": "Customers",
+        "customerCategories": "Customer Categories",
+        "customerContacts": "Customer Contacts"
+      },
+      "sections": {
+        "customerCatalog": "Customer Catalog",
+        "customerCategories": "Customer Categories",
+        "customerContacts": "Customer Contacts"
+      },
+      "placeholders": {
+        "customerCategories": "Customer Categories will be here!",
+        "customerContacts": "Customer Contacts will be here!"
+      }
+    },
+    "cards": {
+      "totalCustomers": {
+        "title": "Total Customers",
+        "description": "{{count}} customers are active."
+      },
+      "totalRevenue": {
+        "title": "Total Revenue",
+        "description": "Total revenue generated from all customers."
+      },
+      "newCustomers": {
+        "title": "New Customers",
+        "description": "New customers acquired in the last month."
+      },
+      "outOfStockItems": {
+        "title": "Out of Stock Items",
+        "description": "No out of stock customer-related data yet.",
+        "value": "Nothing yet"
+      }
+    },
+    "addButton": {
+      "label": "Add Customer"
+    },
+    "form": {
+      "title": {
+        "add": "Add New Customer",
+        "edit": "Update Customer"
+      },
+      "subtitle": {
+        "add": "Fill in the details below to add a new customer to the system.",
+        "edit": "Review the customer information below."
+      },
+      "tabs": {
+        "basicInfo": "Basic Info",
+        "business": "Business",
+        "summary": "Summary"
+      },
+      "sections": {
+        "personalDetails": "Personal Details",
+        "address": "Address",
+        "businessDetails": "Business Details"
+      },
+      "fields": {
+        "fullName": "Full Name",
+        "email": "Email",
+        "phone": "Phone",
+        "customerType": "Customer Type",
+        "street": "Street",
+        "city": "City",
+        "state": "State",
+        "zipCode": "Zip Code",
+        "creditLimit": "Credit Limit",
+        "creditStatus": "Credit Status",
+        "paymentTerms": "Payment Terms"
+      },
+      "placeholders": {
+        "fullName": "Enter customer full name",
+        "email": "Enter email address",
+        "phone": "Enter phone number",
+        "customerType": "Select customer type",
+        "street": "Enter street address",
+        "city": "Enter city",
+        "state": "Enter state",
+        "zipCode": "Enter zip code",
+        "creditLimit": "5000.00",
+        "paymentTerms": "e.g., Net 30"
+      },
+      "validation": {
+        "fullNameRequired": "Full name is required",
+        "emailRequired": "Email is required",
+        "invalidEmail": "Invalid email format",
+        "phoneRequired": "Phone number is required",
+        "customerTypeRequired": "Customer type is required",
+        "streetRequired": "Street address is required",
+        "cityRequired": "City is required",
+        "stateRequired": "State is required",
+        "zipCodeRequired": "Zip code is required",
+        "creditLimitPositive": "Credit limit must be a positive number"
+      },
+      "actions": {
+        "previous": "Previous",
+        "cancel": "Cancel",
+        "close": "Close",
+        "saveCustomer": "Save Customer",
+        "saveChanges": "Save Changes",
+        "next": "Next",
+        "saving": "Saving..."
+      },
+      "toasts": {
+        "validationErrorTitle": "Validation Error",
+        "validationErrorMessage": "Please fill in all required fields correctly.",
+        "createSuccessTitle": "Customer Created",
+        "createSuccessMessage": "{{name}} has been added successfully.",
+        "createFailedTitle": "Customer Creation Failed",
+        "createFailedMessage": "Could not create customer.",
+        "updateSuccessTitle": "Customer Updated",
+        "updateSuccessMessage": "Customer with ID {{id}} has been updated successfully.",
+        "updateFailedTitle": "Customer Update Failed",
+        "updateFailedMessage": "Could not update customer.",
+        "loadFailedTitle": "Failed to Load",
+        "loadFailedMessage": "Could not load customer data."
+      }
+    },
+    "table": {
+      "columns": {
+        "customer": "Customer",
+        "phone": "Phone",
+        "category": "Category",
+        "totalOrders": "Total Orders",
+        "totalSpent": "Total Spent",
+        "isActive": "Is Active",
+        "createdAt": "Created At"
+      },
+      "dialogs": {
+        "deleteTitle": "Delete Customer",
+        "deleteMessage": "Are you sure you want to delete this customer? This action cannot be undone."
+      },
+      "toasts": {
+        "deleteFailedTitle": "Delete Failed",
+        "deleteFailedMessage": "Failed to delete customer. {{error}}",
+        "deleteSuccessTitle": "Customer Deleted",
+        "deleteSuccessMessage": "Customer deleted successfully."
+      }
+    },
+    "view": {
+      "loading": "Loading...",
+      "noCustomerData": "No customer data available",
+      "sections": {
+        "generalInformation": "General Information",
+        "address": "Address",
+        "businessInformation": "Business Information",
+        "systemInformation": "System Information"
+      },
+      "fields": {
+        "id": "ID",
+        "name": "Name",
+        "customerCategory": "Customer Category",
+        "email": "Email",
+        "phone": "Phone",
+        "status": "Status",
+        "street": "Street",
+        "city": "City",
+        "state": "State",
+        "zipCode": "Zip Code",
+        "creditLimit": "Credit Limit",
+        "paymentTerms": "Payment Terms",
+        "creditStatus": "Credit Status",
+        "createdAt": "Created At",
+        "createdBy": "Created By"
+      },
+      "labels": {
+        "customerCode": "CUST-{{id}}"
+      }
+    }
+  },
+  "inventory": {
+    "shared": {
+      "loading": "Loading...",
+      "close": "Close",
+      "cancel": "Cancel",
+      "search": "Search",
+      "saveChanges": "Save Changes",
+      "creating": "Creating...",
+      "saving": "Saving...",
+      "processing": "Processing...",
+      "notSpecified": "Not specified",
+      "notAvailable": "N/A",
+      "noAddressProvided": "No address provided",
+      "noDescriptionProvided": "No description provided",
+      "required": "*",
+      "yes": "Yes",
+      "no": "No",
+      "systemUser": "System",
+      "adminUser": "Admin User",
+      "unknownUser": "Unknown User",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "inStock": "In Stock",
+        "lowStock": "Low Stock",
+        "outOfStock": "Out of Stock",
+        "pending": "Pending",
+        "approved": "Approved",
+        "inTransit": "In Transit",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "rejected": "Rejected",
+        "failed": "Failed",
+        "deleted": "Deleted"
+      }
+    },
+    "page": {
+      "title": "Inventory Management",
+      "description": "Manage your inventory, stock transfers, and locations.",
+      "addInventory": "Add Inventory",
+      "tabs": {
+        "inventory": "Inventory",
+        "stockMovements": "Stock Movements",
+        "stockTransfers": "Stock Transfers",
+        "stockAlerts": "Stock Alerts",
+        "locations": "Locations"
+      },
+      "sections": {
+        "inventoryCatalog": "Inventory Catalog",
+        "stockMovements": "Stock Movements",
+        "stockTransfers": "Stock Transfers",
+        "stockAlerts": "Stock Alerts",
+        "locations": "Locations"
+      },
+      "placeholders": {
+        "stockAlerts": "Stock alerts will be here!"
+      }
+    },
+    "cards": {
+      "totalInventoryItems": {
+        "title": "Total Inventory Items",
+        "description": "Total number of inventory records."
+      },
+      "totalPotentialProfit": {
+        "title": "Total Potential Profit",
+        "description": "Potential profit from all stocked inventory items."
+      },
+      "lowStockItems": {
+        "title": "Low Stock Items",
+        "description": "Items that are approaching reorder level."
+      },
+      "outOfStockItems": {
+        "title": "Out of Stock Items",
+        "description": "Items currently unavailable in inventory."
+      }
+    },
+    "addInventoryButton": {
+      "ariaLabel": "Add new inventory",
+      "label": "Add Inventory"
+    },
+    "inventoryForm": {
+      "title": {
+        "add": "Add New Inventory",
+        "edit": "Update Inventory #{{id}}"
+      },
+      "tabs": {
+        "product": "Product",
+        "location": "Location",
+        "stockLevels": "Stock Levels"
+      },
+      "sections": {
+        "productSearch": "Product Search",
+        "locationSelection": "Location Selection",
+        "stockLevels": "Stock Levels",
+        "productInformation": "Product Information",
+        "locationInformation": "Location Information",
+        "summary": "Summary",
+        "currentAvailableStock": "Current Available Stock"
+      },
+      "fields": {
+        "searchProduct": "Search Product",
+        "productName": "Product Name",
+        "productSku": "Product SKU",
+        "category": "Category",
+        "unitOfMeasure": "Unit of Measure",
+        "productId": "Product ID",
+        "selectLocation": "Select Location",
+        "locationName": "Location Name",
+        "locationId": "Location ID",
+        "address": "Address",
+        "type": "Type",
+        "quantityOnHand": "Quantity on Hand",
+        "reorderLevel": "Reorder Level",
+        "maxLevel": "Maximum Level"
+      },
+      "placeholders": {
+        "searchProduct": "Enter product ID",
+        "selectLocation": "Choose a location...",
+        "searchPrompt": "Search for a product to get started",
+        "selectLocationPrompt": "Select a location from the dropdown above",
+        "enterQuantity": "Enter quantity",
+        "enterReorderLevel": "Enter reorder level",
+        "enterMaxLevel": "Enter maximum level"
+      },
+      "hints": {
+        "productReadonly": "Product cannot be changed in update mode",
+        "locationReadonly": "Location cannot be changed in update mode",
+        "quantityOnHand": "Current stock quantity at this location",
+        "reorderLevel": "Minimum quantity before reordering is needed",
+        "maxLevel": "Maximum storage capacity for this product at this location",
+        "completeProductAndLocation": "Please complete Product and Location sections first",
+        "readyToCreate": "Ready to create",
+        "readyToUpdate": "Ready to update"
+      },
+      "validation": {
+        "searchRequired": "Please enter a product name, SKU, or ID",
+        "invalidProductId": "Please enter a valid product ID",
+        "productNotFound": "Please enter a valid product ID. Name/SKU search requires an additional API endpoint.",
+        "productRequired": "Please select a product",
+        "locationRequired": "Please select a location",
+        "stockLevelsNegative": "Stock levels cannot be negative",
+        "reorderGreaterThanMax": "Reorder level cannot be greater than max level"
+      },
+      "warnings": {
+        "reorderGreaterThanMax": "Reorder level cannot be greater than maximum level"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "search": "Search",
+        "createInventory": "Create Inventory",
+        "updateStockLevels": "Update Stock Levels"
+      },
+      "toasts": {
+        "searchErrorTitle": "Search Error",
+        "searchErrorMessage": "Please enter a product name, SKU, or ID",
+        "invalidInputTitle": "Invalid Input",
+        "invalidInputMessage": "Please enter a valid product ID",
+        "productFoundTitle": "Product Found",
+        "productFoundMessage": "Found: {{name}}",
+        "productNotFoundTitle": "Product Not Found",
+        "productNotFoundMessage": "No product found with this ID",
+        "searchFailedTitle": "Search Failed",
+        "searchFailedMessage": "Failed to search product",
+        "loadFailedTitle": "Load Failed",
+        "loadFailedMessage": "Failed to load inventory data",
+        "locationLoadErrorTitle": "Error",
+        "locationLoadErrorMessage": "Failed to load location details",
+        "createSuccessTitle": "Inventory Created",
+        "createSuccessMessage": "Successfully created inventory for {{product}} at {{location}}",
+        "createErrorTitle": "Error",
+        "createErrorMessage": "Error while creating new inventory: {{error}}",
+        "updateSuccessTitle": "Inventory Updated",
+        "updateSuccessMessage": "Successfully updated inventory for {{product}} at {{location}}",
+        "updateErrorTitle": "Error",
+        "updateErrorMessage": "Error while updating inventory: {{error}}"
+      }
+    },
+    "inventoryTable": {
+      "columns": {
+        "product": "Product",
+        "location": "Location",
+        "quantity": "Quantity",
+        "reorder": "Reorder",
+        "max": "Max",
+        "status": "Status",
+        "potentialProfit": "Potential Profit"
+      },
+      "dialogs": {
+        "deleteTitle": "Delete Inventory Item",
+        "deleteMessage": "Are you sure you want to delete this inventory item? This action cannot be undone.",
+        "deleteConfirmText": "Delete Inventory"
+      },
+      "toasts": {
+        "deleteSuccessTitle": "Success",
+        "deleteSuccessMessage": "Inventory with ID {{id}} deleted successfully.",
+        "deleteErrorTitle": "Error",
+        "deleteErrorMessage": "Error: {{error}}."
+      }
+    },
+    "inventoryView": {
+      "title": "Inventory Details",
+      "subtitleId": "ID: {{id}}",
+      "tabs": {
+        "info": "Product & Location",
+        "stock": "Stock Levels",
+        "system": "System Info"
+      },
+      "sections": {
+        "productInformation": "Product Information",
+        "locationInformation": "Location Information",
+        "systemIdentifiers": "System Identifiers",
+        "auditTrail": "Audit Trail",
+        "created": "Created",
+        "updated": "Updated"
+      },
+      "fields": {
+        "productName": "Product Name",
+        "sku": "SKU",
+        "category": "Category",
+        "unitOfMeasure": "Unit of Measure",
+        "name": "Name",
+        "type": "Type",
+        "address": "Address",
+        "locationId": "Location ID",
+        "quantityOnHand": "Quantity on Hand",
+        "availableStock": "Available Stock",
+        "reorderLevel": "Reorder Level",
+        "maxLevel": "Maximum Level",
+        "stockLevel": "Stock Level",
+        "inventoryId": "Inventory ID",
+        "productId": "Product ID",
+        "status": "Status",
+        "createdByName": "By User Name",
+        "updatedByName": "By User Name",
+        "userId": "User ID",
+        "dateTime": "Date & Time"
+      },
+      "labels": {
+        "readyForUseOrSale": "Ready for use or sale",
+        "minimumThreshold": "Minimum threshold",
+        "storageCapacity": "Storage capacity"
+      },
+      "placeholders": {
+        "neverUpdated": "Never updated"
+      }
+    },
+    "locations": {
+      "buttonAdd": "Add Location",
+      "form": {
+        "title": {
+          "add": "Add Location",
+          "edit": "Edit Location"
+        },
+        "sections": {
+          "locationInformation": "Location Information"
+        },
+        "fields": {
+          "locationName": "Location Name",
+          "address": "Address",
+          "locationType": "Location Type",
+          "locationStatus": "Location Status"
+        },
+        "placeholders": {
+          "locationName": "e.g., Main Warehouse, Store A, Distribution Center",
+          "address": "Enter the full address of this location...",
+          "selectLocationType": "Select a location type"
+        },
+        "hints": {
+          "locationActiveHint": "This location is currently active and available for use",
+          "locationInactiveHint": "This location is currently inactive"
+        },
+        "validation": {
+          "locationNameRequired": "Location name is required",
+          "addressRequired": "Address is required",
+          "locationTypeRequired": "Location type is required"
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "create": "Create Location",
+          "saveChanges": "Save Changes",
+          "creating": "Creating...",
+          "saving": "Saving..."
+        },
+        "toasts": {
+          "loadTypesFailedTitle": "Failed to Load",
+          "loadTypesFailedMessage": "Could not load location types.",
+          "fetchTypesFailedTitle": "Error",
+          "fetchTypesFailedMessage": "Failed to fetch location types.",
+          "createSuccessTitle": "Location Created",
+          "createSuccessMessage": "{{name}} has been added successfully.",
+          "createFailedTitle": "Location Creation Failed",
+          "createFailedMessage": "{{name}} could not be created. Error: {{error}}",
+          "updateSuccessTitle": "Location Updated",
+          "updateSuccessMessage": "{{name}} has been updated successfully.",
+          "updateFailedTitle": "Location Update Failed",
+          "updateFailedMessage": "Location could not be updated. Error: {{error}}",
+          "loadLocationFailedTitle": "Failed to Load Location",
+          "loadLocationFailedMessage": "Could not load location data."
+        }
+      },
+      "table": {
+        "columns": {
+          "id": "ID",
+          "name": "Name",
+          "address": "Address",
+          "typeName": "Type Name",
+          "createdAt": "Created At",
+          "createdBy": "Created By"
+        },
+        "dialogs": {
+          "deleteTitle": "Delete Location",
+          "deleteMessage": "Are you sure you want to delete location with ID {{id}}? This action cannot be undone."
+        },
+        "toasts": {
+          "deleteFailedTitle": "Delete Failed",
+          "deleteFailedMessage": "{{message}}",
+          "deleteSuccessTitle": "Deleted",
+          "deleteSuccessMessage": "Location with ID {{id}} deleted successfully."
+        }
+      },
+      "view": {
+        "title": "Location Details",
+        "subtitleId": "ID: {{id}}",
+        "loading": "Loading...",
+        "sections": {
+          "locationInformation": "Location Information",
+          "auditInformation": "Audit Information",
+          "systemInformation": "System Information",
+          "created": "Created",
+          "deleted": "Deleted"
+        },
+        "fields": {
+          "locationName": "Location Name",
+          "address": "Address",
+          "locationType": "Location Type",
+          "locationTypeId": "Location Type ID",
+          "dateTime": "Date & Time",
+          "user": "User",
+          "userId": "User ID",
+          "locationId": "Location ID",
+          "status": "Status",
+          "isDeleted": "Is Deleted"
+        },
+        "placeholders": {
+          "noAddressProvided": "No address provided",
+          "notDeleted": "Location has not been deleted"
+        }
+      }
+    },
+    "stockTransfers": {
+      "buttonAdd": "Add Stock Transfer",
+      "form": {
+        "title": {
+          "create": "Create Stock Transfer",
+          "view": "View Stock Transfer"
+        },
+        "tabs": {
+          "product": "Product",
+          "transferDetails": "Transfer Details",
+          "history": "History"
+        },
+        "sections": {
+          "productInformation": "Product Information",
+          "selectedProduct": "Selected Product",
+          "transferRoute": "Transfer Route",
+          "transferSummary": "Transfer Summary",
+          "transferTimeline": "Transfer Timeline",
+          "currentStatus": "Current Status",
+          "transferInformation": "Transfer Information",
+          "transferHistory": "Transfer History",
+          "noHistoryAvailable": "No History Available",
+          "transferCreated": "Transfer Created"
+        },
+        "fields": {
+          "searchProduct": "Search Product",
+          "productName": "Product Name",
+          "sku": "SKU",
+          "category": "Category",
+          "productId": "Product ID",
+          "unitPrice": "Unit Price",
+          "status": "Status",
+          "fromWarehouse": "From Warehouse",
+          "toWarehouse": "To Warehouse",
+          "fromLocation": "From Location",
+          "toLocation": "To Location",
+          "requestedQuantity": "Requested Quantity",
+          "transferNotes": "Transfer Notes",
+          "totalValue": "Total Value",
+          "transferId": "Transfer ID",
+          "createdBy": "Created By",
+          "userId": "User ID",
+          "createdDate": "Created Date",
+          "dateTime": "Date & Time",
+          "user": "User",
+          "fromLocationId": "From Location ID",
+          "toLocationId": "To Location ID",
+          "createdByUserId": "Created By User ID"
+        },
+        "placeholders": {
+          "searchProduct": "Enter Product ID",
+          "searchPrompt": "Enter the Product ID to search",
+          "selectWarehouse": "Select warehouse",
+          "selectWarehouseFirst": "Select a warehouse first",
+          "notes": "Additional notes about this transfer...",
+          "noHistoryMessage": "History will be available after the transfer is created",
+          "searchToStart": "Search for a product to get started",
+          "notSpecified": "Not specified",
+          "itemLabel": "Item {{index}}"
+        },
+        "labels": {
+          "singleProduct": "product",
+          "multipleProducts": "products",
+          "totalItems": "total items",
+          "units": "units",
+          "statusWithValue": "Status: {{status}}"
+        },
+        "validation": {
+          "selectProduct": "Please select a product",
+          "selectFromLocation": "Please select a from location",
+          "selectToLocation": "Please select a to location",
+          "locationsMustDiffer": "From and To locations must be different",
+          "invalidQuantity": "Please enter a valid quantity",
+          "searchRequired": "Please enter a product ID",
+          "invalidProductId": "Please enter a valid product ID"
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "createTransfer": "Create Transfer",
+          "changeStatus": "Change Status",
+          "ok": "Ok"
+        },
+        "toasts": {
+          "transferCreateSuccessTitle": "Transfer Created Successfully",
+          "transferCreateSuccessMessage": "Stock transfer from {{from}} to {{to}} has been initiated.",
+          "transferCreateFailedTitle": "Transfer Creation Failed",
+          "transferCreateFailedMessage": "Failed to create stock transfer. Please try again.",
+          "productFoundTitle": "Product Found",
+          "productFoundMessage": "Found: {{name}}",
+          "productNotFoundTitle": "Product Not Found",
+          "productNotFoundMessage": "No product found with this ID",
+          "searchFailedTitle": "Search Failed",
+          "searchFailedMessage": "Failed to search product",
+          "searchErrorTitle": "Search Error",
+          "searchErrorMessage": "Please enter a product ID",
+          "invalidInputTitle": "Invalid Input",
+          "invalidInputMessage": "Please enter a valid product ID",
+          "productSingleLocationError": "The selected product has only one inventory location, please select a different product",
+          "productNoInventoryError": "The selected product has no inventories, please select a different product or create inventory for this product"
+        }
+      },
+      "table": {
+        "columns": {
+          "product": "Product",
+          "fromLocation": "From Location",
+          "toLocation": "To Location",
+          "quantity": "Quantity",
+          "status": "Status",
+          "user": "User",
+          "createdAt": "Created At"
+        }
+      },
+      "view": {
+        "title": "Stock Transfer Details",
+        "transferCode": "TR{{id}}",
+        "loading": "Loading...",
+        "tabs": {
+          "transferDetails": "Transfer Details",
+          "items": "Items",
+          "history": "History"
+        },
+        "sections": {
+          "transferRoute": "Transfer Route",
+          "productInformation": "Product Information",
+          "transferItem": "Transfer Item",
+          "transferSummary": "Transfer Summary",
+          "transferHistory": "Transfer History",
+          "created": "Created",
+          "transferInformation": "Transfer Information"
+        },
+        "fields": {
+          "fromLocation": "From Location",
+          "toLocation": "To Location",
+          "product": "Product",
+          "quantity": "Quantity",
+          "status": "Status",
+          "dateTime": "Date & Time",
+          "user": "User",
+          "transferId": "Transfer ID",
+          "currentStatus": "Current Status",
+          "fromLocationId": "From Location ID",
+          "toLocationId": "To Location ID",
+          "productId": "Product ID",
+          "createdByUserId": "Created By User ID"
+        },
+        "placeholders": {
+          "fromLocation": "From Location",
+          "toLocation": "To Location",
+          "notSpecified": "Not specified",
+          "itemLabel": "Item {{index}}"
+        },
+        "labels": {
+          "oneProduct": "1 product",
+          "totalUnits": "{{count}} total units",
+          "units": "units",
+          "statusWithValue": "Status: {{status}}"
+        }
+      }
+    }
+  }
+}

@@ -8,8 +8,39 @@ import AddUpdateLocation from './AddUpdateLocation';
 import ViewLocation from './ViewLocation';
 import { useToast } from '@shared/context/ToastContext';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+
+const getDefaultColumns = t => [
+  {
+    accessorKey: 'id',
+    header: t(i18nKeyContainer.inventory.locations.table.columns.id),
+  },
+  {
+    accessorKey: 'name',
+    header: t(i18nKeyContainer.inventory.locations.table.columns.name),
+  },
+  {
+    accessorKey: 'address',
+    header: t(i18nKeyContainer.inventory.locations.table.columns.address),
+  },
+  {
+    accessorKey: 'locationTypeName',
+    header: t(i18nKeyContainer.inventory.locations.table.columns.typeName),
+  },
+  {
+    accessorKey: 'createdAt',
+    header: t(i18nKeyContainer.inventory.locations.table.columns.createdAt),
+    cell: ({ getValue }) => new Date(getValue()).toLocaleDateString(),
+  },
+  {
+    accessorKey: 'createdByUserName',
+    header: t(i18nKeyContainer.inventory.locations.table.columns.createdBy),
+  },
+];
 
 export default function LocationDataTable() {
+  const { t } = useTranslation();
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [addEditDialogOpen, setAddEditDialogOpen] = useState(false);
@@ -69,15 +100,18 @@ export default function LocationDataTable() {
     const response = await deleteLocation(currentLocationId);
     if (!response.success) {
       showError(
-        'Delete Failed',
-        response.message || 'Could not delete location.'
+        t(i18nKeyContainer.inventory.locations.table.toasts.deleteFailedTitle),
+        response.message ||
+          t(i18nKeyContainer.inventory.locations.form.toasts.loadLocationFailedMessage)
       );
       setDeleteDialogOpen(false);
       return;
     }
     showSuccess(
-      'Deleted',
-      `Location with ID ${currentLocationId} deleted successfully.`
+      t(i18nKeyContainer.inventory.locations.table.toasts.deleteSuccessTitle),
+      t(i18nKeyContainer.inventory.locations.table.toasts.deleteSuccessMessage, {
+        id: currentLocationId,
+      })
     );
     setDeleteDialogOpen(false);
   };
@@ -86,7 +120,7 @@ export default function LocationDataTable() {
     <>
       <SimpleDataTable
         data={data}
-        columns={defaultColumns}
+        columns={getDefaultColumns(t)}
         loading={isLoading}
         enableActions={true}
         onView={handleView}
@@ -115,8 +149,10 @@ export default function LocationDataTable() {
       {deleteDialogOpen && (
         <ConfirmationDialog
           isOpen={deleteDialogOpen}
-          title='Delete Location'
-          message={`Are you sure you want to delete location with ID ${currentLocationId}? This action cannot be undone.`}
+          title={t(i18nKeyContainer.inventory.locations.table.dialogs.deleteTitle)}
+          message={t(i18nKeyContainer.inventory.locations.table.dialogs.deleteMessage, {
+            id: currentLocationId,
+          })}
           onConfirm={handleDelete}
           onCancel={() => setDeleteDialogOpen(false)}
           onClose={handleSuccess}
@@ -125,31 +161,3 @@ export default function LocationDataTable() {
     </>
   );
 }
-
-const defaultColumns = [
-  {
-    accessorKey: 'id',
-    header: 'ID',
-  },
-  {
-    accessorKey: 'name',
-    header: 'Name',
-  },
-  {
-    accessorKey: 'address',
-    header: 'Address',
-  },
-  {
-    accessorKey: 'locationTypeName',
-    header: 'Type Name',
-  },
-  {
-    accessorKey: 'createdAt',
-    header: 'Created At',
-    cell: ({ getValue }) => new Date(getValue()).toLocaleDateString(),
-  },
-  {
-    accessorKey: 'createdByUserName',
-    header: 'Created By',
-  },
-];

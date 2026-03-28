@@ -21,8 +21,11 @@ import Alerts from '@features/dashboard/components/alerts/Alerts';
 import TopSellingProducts from '@features/dashboard/components/TopSellingProducts';
 import TodaysPerformanceContainer from '@features/dashboard/components/TodaysPerformanceContainer';
 import AddProductButton from '@features/products/components/products/AddProductButton';
+import { useTranslation } from 'react-i18next';
+import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const [activeProducts, setActiveProducts] = useState(0);
   const [activeCustomers, setActiveCustomers] = useState(0);
   const [lowStockProducts, setLowStockProducts] = useState(0);
@@ -75,14 +78,14 @@ export default function DashboardPage() {
     <div className=''>
       <div className='flex flex-col md:flex-row md:justify-between md:items-center mb-5'>
         <PageHeader
-          title='Dashboard'
-          description="Welcome back! Here's what's happening with your inventory."
+          title={t(i18nKeyContainer.dashboard.page.title)}
+          description={t(i18nKeyContainer.dashboard.page.description)}
           containerClass='sm: mb-4 flex-1'
         />
 
         <div className='flex-1 md:justify-end flex gap-2'>
           <Button variant='secondary' className='text-sm' LeftIcon={FileText}>
-            Generate Report
+            {t(i18nKeyContainer.dashboard.page.generateReport)}
           </Button>
           <AddProductButton />
         </div>
@@ -91,45 +94,45 @@ export default function DashboardPage() {
       <div className='flex flex-col w-full md:grid md:grid-cols-2 lg:grid lg:grid-cols-4 gap-6 '>
         <InfoCard
           className='flex-1'
-          title='Total Products'
+          title={t(i18nKeyContainer.dashboard.cards.totalProducts.title)}
           number={loading ? '?' : activeProducts}
-          description='active products'
+          description={t(i18nKeyContainer.dashboard.cards.totalProducts.description)}
           status={false}
           statusLabel='-12%'
           iconComponent={Package}
         />
         <InfoCard
           className='flex-1'
-          title='Total Customers'
+          title={t(i18nKeyContainer.dashboard.cards.totalCustomers.title)}
           number={loading ? '?' : activeCustomers}
-          description='active customers'
+          description={t(i18nKeyContainer.dashboard.cards.totalCustomers.description)}
           status={true}
           statusLabel='+12%'
           iconComponent={Users2}
         />
         <InfoCard
           className='flex-1'
-          title='Low Stock Items'
+          title={t(i18nKeyContainer.dashboard.cards.lowStockItems.title)}
           number={loading ? '?' : lowStockProducts}
-          description='need restock'
+          description={t(i18nKeyContainer.dashboard.cards.lowStockItems.description)}
           status={false}
           statusLabel='-4%'
           iconComponent={TriangleAlert}
         />
         <InfoCard
           className='flex-1'
-          title='Total Sales Orders'
+          title={t(i18nKeyContainer.dashboard.cards.totalSalesOrders.title)}
           number={loading ? '?' : totalSalesOrders}
-          description='total sales of the bussiness'
+          description={t(i18nKeyContainer.dashboard.cards.totalSalesOrders.description)}
           status={true}
           statusLabel='+8%'
           iconComponent={ShoppingCart}
         />
         <InfoCard
           className='flex-1'
-          title='Total Revenues'
+          title={t(i18nKeyContainer.dashboard.cards.totalRevenues.title)}
           number={loading ? '?' : `$${totalRevenues}`}
-          description='total revenue of the bussiness'
+          description={t(i18nKeyContainer.dashboard.cards.totalRevenues.description)}
           status={true}
           statusLabel='+8%'
           iconComponent={DollarSign}
@@ -138,9 +141,9 @@ export default function DashboardPage() {
         />
         <InfoCard
           className='flex-1'
-          title='Pending Orders'
+          title={t(i18nKeyContainer.dashboard.cards.pendingOrders.title)}
           number={loading ? '?' : pendingSalesOrders}
-          description='total revenue of the bussiness'
+          description={t(i18nKeyContainer.dashboard.cards.pendingOrders.description)}
           status={true}
           statusLabel='+8%'
           iconComponent={Clock3}
@@ -149,9 +152,9 @@ export default function DashboardPage() {
         />
         <InfoCard
           className='flex-1'
-          title='Fulfilled Orders'
+          title={t(i18nKeyContainer.dashboard.cards.fulfilledOrders.title)}
           number={loading ? '?' : completedSalesOrders}
-          description='total revenue of the bussiness'
+          description={t(i18nKeyContainer.dashboard.cards.fulfilledOrders.description)}
           status={true}
           statusLabel='+8%'
           iconComponent={BadgeCheck}
@@ -159,9 +162,9 @@ export default function DashboardPage() {
         />
         <InfoCard
           className='flex-1'
-          title='Active Suppliers'
+          title={t(i18nKeyContainer.dashboard.cards.activeSuppliers.title)}
           number={loading ? '?' : activeSuppliers}
-          description='total revenue of the bussiness'
+          description={t(i18nKeyContainer.dashboard.cards.activeSuppliers.description)}
           status={true}
           statusLabel='+8%'
           iconComponent={Truck}
@@ -174,7 +177,7 @@ export default function DashboardPage() {
           <div className='mb-6 flex items-center gap-2'>
             <Flame className='w-6 h-6 text-black' />
             <h3 className='text-gray-900 font-semibold text-2xl'>
-              Top Selling Products
+              {t(i18nKeyContainer.dashboard.sections.topSellingProducts)}
             </h3>
           </div>
           <TopSellingProducts />
@@ -184,7 +187,7 @@ export default function DashboardPage() {
           <div className='mb-6 flex items-center gap-2'>
             <Zap className='w-6 h-6 text-black' />
             <h3 className='text-gray-900 font-semibold text-2xl'>
-              Quick Actions
+              {t(i18nKeyContainer.dashboard.sections.quickActions)}
             </h3>
           </div>
           <QuickActions className='' />
@@ -194,7 +197,7 @@ export default function DashboardPage() {
           <div className='mb-6 flex items-center gap-2'>
             <TriangleAlert className='w-6 h-6 text-black' />
             <h3 className='text-gray-900 font-semibold text-2xl'>
-              Inventory Alerts
+              {t(i18nKeyContainer.dashboard.sections.inventoryAlerts)}
             </h3>
           </div>
           <Alerts />
