@@ -1,14 +1,14 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { Login } from '@/pages/Login';
-import NotFoundPage from '@/pages/NotFoundPage';
-import DashboardPage from '@/pages/DashboardPage';
-import ProductsPage from '@/pages/ProductsPage';
-import SalesPage from '@/pages/SalesPage';
-import CustomersPage from '@/pages/CustomersPage';
-import SettingsPage from '@/pages/SettingsPage';
-import MainLayout from '@/layout/MainLayout';
-import InventoryPage from './pages/InventoryPage';
-import { ToastProvider } from '@/context/ToastContext';
+import { Login } from '@features/auth/pages/Login';
+import NotFoundPage from '@shared/pages/NotFoundPage';
+import DashboardPage from '@features/dashboard/pages/DashboardPage';
+import ProductsPage from '@features/products/pages/ProductsPage';
+import SalesPage from '@features/sales/pages/SalesPage';
+import CustomersPage from '@features/customers/pages/CustomersPage';
+import SettingsPage from '@features/settings/pages/SettingsPage';
+import MainLayout from '@components/layout/MainLayout';
+import InventoryPage from '@features/inventory/pages/InventoryPage';
+import { ToastProvider } from '@shared/context/ToastContext';
 
 const router = createBrowserRouter([
   {

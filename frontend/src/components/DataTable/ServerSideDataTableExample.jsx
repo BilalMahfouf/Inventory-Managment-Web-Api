@@ -1,6 +1,6 @@
 import React from 'react';
 import DataTable from './DataTable';
-import useServerSideDataTable from '../../hooks/useServerSideDataTable';
+import useServerSideDataTable from '@shared/hooks/useServerSideDataTable';
 
 // Example service function that matches your backend API
 const fetchExampleData = async ({

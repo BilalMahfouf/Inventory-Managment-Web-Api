@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Bell, X, AlertTriangle, CheckCircle, Info } from 'lucide-react';
-import useSignalR from '@/signalr/useSignalR';
+import useSignalR from '@shared/signalr/useSignalR';
 
 const test = {
   //   id: 1,
