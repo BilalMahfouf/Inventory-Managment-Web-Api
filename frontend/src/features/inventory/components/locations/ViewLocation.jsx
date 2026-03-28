@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { MapPin, Calendar, User, Building2 } from 'lucide-react';
-import { getLocationById } from '@features/inventory/services/locationService';
+import { getLocationById } from '@features/inventory/services/locationApi';
 
 /**
  * ViewLocation Component

@@ -3,14 +3,14 @@ import { X, Package, DollarSign, Archive, ShowerHead } from 'lucide-react';
 import Button from '@components/Buttons/Button';
 import { Input } from '@components/ui/input';
 import { cn } from '@shared/lib/utils';
-import { getProductCategories } from '@features/products/services/productCategoryService';
-import { GetUnitsNames } from '@features/products/services/UnitOfMeasureService';
-import { getLocationsNames } from '@features/inventory/services/locationService';
+import { getProductCategories } from '@features/products/services/productCategoryApi';
+import { GetUnitsNames } from '@features/products/services/unitOfMeasureApi';
+import { getLocationsNames } from '@features/inventory/services/locationApi';
 import {
   createProduct,
   getProductById,
   updateProduct,
-} from '@features/products/services/productService';
+} from '@features/products/services/productApi';
 import { useToast } from '@shared/context/ToastContext';
 /**
  * AddProduct Component

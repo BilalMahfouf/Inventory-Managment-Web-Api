@@ -3,11 +3,11 @@ import { X, Package, MapPin, History as HistoryIcon } from 'lucide-react';
 import Button from '@components/Buttons/Button';
 import { cn } from '@shared/lib/utils';
 import { useToast } from '@shared/context/ToastContext';
-import { createStockTransfer } from '@features/inventory/services/stockTransferService';
+import { createStockTransfer } from '@features/inventory/services/stockTransferApi';
 import ProductInfoTab from './ProductInfoTab';
 import TransferDetailsTab from './TransferDetailsTab';
 import HistoryTab from './HistoryTab';
-import { getInventoriesByProductId } from '@features/products/services/productService';
+import { getInventoriesByProductId } from '@features/products/services/productApi';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';
 
 /**

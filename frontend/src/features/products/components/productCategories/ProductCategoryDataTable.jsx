@@ -3,7 +3,7 @@ import SimpleDataTable from '@components/DataTable/SimpleDataTable';
 import {
   deleteProductCategory,
   getAllProductCategories,
-} from '@features/products/services/productCategoryService';
+} from '@features/products/services/productCategoryApi';
 import ProductCategoryView from './ProductCategoryView';
 import AddProductCategory from './AddProductCategory';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';

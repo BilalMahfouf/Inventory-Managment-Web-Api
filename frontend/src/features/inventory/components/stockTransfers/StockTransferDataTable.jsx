@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import DataTable from '@components/DataTable/DataTable';
-import { getAllStockTransfers } from '@features/inventory/services/stockTransferService';
+import { getAllStockTransfers } from '@features/inventory/services/stockTransferApi';
 import useServerSideDataTable from '@shared/hooks/useServerSideDataTable';
 import ViewStockTransfer from './view/ViewStockTransfer';
 

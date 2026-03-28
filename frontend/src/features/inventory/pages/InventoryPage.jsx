@@ -8,7 +8,7 @@ import { divStyles } from '@shared/utils/uiVariables';
 import { TabList, Tabs, Tab, TabPanel } from 'react-tabs';
 import InventoryDataTable from '@features/inventory/components/inventory/InventoryDataTable';
 import AddUpdateInventory from '@features/inventory/components/inventory/AddUpdateInventory';
-import { getInventorySummary } from '@features/inventory/services/inventoryService';
+import { getInventorySummary } from '@features/inventory/services/inventoryApi';
 import StockTransferDataTable from '@features/inventory/components/stockTransfers/StockTransferDataTable';
 import AddStockTransferButton from '@features/inventory/components/stockTransfers/AddStockTransferButton';
 import LocationDataTable from '@features/inventory/components/locations/LocationDataTable';

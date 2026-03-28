@@ -6,7 +6,7 @@ import {
   createUnitOfMeasure,
   getUnitOfMeasureById,
   updateUnitOfMeasure,
-} from '@features/products/services/UnitOfMeasureService';
+} from '@features/products/services/unitOfMeasureApi';
 import { useToast } from '@shared/context/ToastContext';
 
 /**

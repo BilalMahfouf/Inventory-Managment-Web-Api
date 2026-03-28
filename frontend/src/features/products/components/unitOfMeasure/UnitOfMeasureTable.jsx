@@ -1,9 +1,9 @@
 import DataTable from '@components/DataTable/DataTable';
 import { useEffect, useState } from 'react';
-import { getUnitOfMeasures } from '@features/products/services/UnitOfMeasureService';
+import { getUnitOfMeasures } from '@features/products/services/unitOfMeasureApi';
 import SimpleDataTable from '@components/DataTable/SimpleDataTable';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';
-import { deleteUnitOfMeasure } from '@features/products/services/UnitOfMeasureService';
+import { deleteUnitOfMeasure } from '@features/products/services/unitOfMeasureApi';
 import { useToast } from '@shared/context/ToastContext';
 import AddUnitOfMeasure from './AddUnitOfMeasure';
 import UnitOfMeasureView from './UnitOfMeasureView';

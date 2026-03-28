@@ -6,8 +6,8 @@ import {
   createLocation,
   getLocationById,
   updateLocation,
-} from '@features/inventory/services/locationService';
-import { getAllLocationTypes } from '@features/inventory/services/locationTypeService';
+} from '@features/inventory/services/locationApi';
+import { getAllLocationTypes } from '@features/inventory/services/locationTypeApi';
 import { useToast } from '@shared/context/ToastContext';
 
 /**

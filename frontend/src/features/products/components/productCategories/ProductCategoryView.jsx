@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { FolderTree, Calendar, User, Folder, ChevronRight } from 'lucide-react';
-import { getProductCategoryById } from '@features/products/services/productCategoryService';
+import { getProductCategoryById } from '@features/products/services/productCategoryApi';
 
 /**
  * ProductCategoryView Component

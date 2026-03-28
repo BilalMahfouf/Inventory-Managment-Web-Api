@@ -2,7 +2,7 @@ import Button from '@/components/Buttons/Button';
 import CustomerDataTable from '@features/customers/components/customers/CustomerDataTable';
 import InfoCard from '@/components/ui/InfoCard';
 import PageHeader from '@/components/ui/PageHeader';
-import { getCustomerSummary } from '@features/customers/services/customerService';
+import { getCustomerSummary } from '@features/customers/services/customerApi';
 import { divStyles } from '@shared/utils/uiVariables';
 import { DollarSign, Plus, User2 } from 'lucide-react';
 import { useState, useEffect } from 'react';

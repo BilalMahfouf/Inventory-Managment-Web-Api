@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchWithAuth } from '@shared/services/auth/authService';
+import dashboardApi from '@features/dashboard/services/dashboardApi';
 import TodaysPerformance from './TodaysPerformance';
 
 const TodaysPerformanceContainer = ({ className = '' }) => {
@@ -22,16 +22,7 @@ const TodaysPerformanceContainer = ({ className = '' }) => {
         setLoading(true);
         setError(null);
 
-        // Replace with your actual API endpoint
-        const result = await fetchWithAuth('api/dashboard/today-performance');
-
-        if (!result.success) {
-          throw new Error(
-            result.error || "Failed to fetch today's performance data"
-          );
-        }
-
-        const data = await result.response.json();
+        const data = await dashboardApi.getTodayPerformance();
 
         // Map the API response to component props
         // Adjust these field names based on your actual API response structure

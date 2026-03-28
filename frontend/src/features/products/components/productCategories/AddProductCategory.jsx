@@ -7,7 +7,7 @@ import {
   getProductCategoryById,
   updateProductCategory,
   getMainCategories,
-} from '@features/products/services/productCategoryService';
+} from '@features/products/services/productCategoryApi';
 import { useToast } from '@shared/context/ToastContext';
 
 /**

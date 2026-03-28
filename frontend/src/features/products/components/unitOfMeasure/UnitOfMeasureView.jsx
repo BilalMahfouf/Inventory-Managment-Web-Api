@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Tag, Calendar, User } from 'lucide-react';
-import { getUnitOfMeasureById } from '@features/products/services/UnitOfMeasureService';
+import { getUnitOfMeasureById } from '@features/products/services/unitOfMeasureApi';
 
 /**
  * UnitOfMeasureView Component

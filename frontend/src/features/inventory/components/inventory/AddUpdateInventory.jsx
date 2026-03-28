@@ -3,17 +3,17 @@ import { X, Package, MapPin, Archive, Search } from 'lucide-react';
 import Button from '@components/Buttons/Button';
 import { Input } from '@components/ui/input';
 import { cn } from '@shared/lib/utils';
-import { getProductById } from '@features/products/services/productService';
+import { getProductById } from '@features/products/services/productApi';
 import {
   getLocationById,
   getLocationsNames,
-} from '@features/inventory/services/locationService';
+} from '@features/inventory/services/locationApi';
 import { useToast } from '@shared/context/ToastContext';
 import {
   createInventory,
   updateInventory,
   getInventoryById,
-} from '@features/inventory/services/inventoryService';
+} from '@features/inventory/services/inventoryApi';
 
 /**
  * AddUpdateInventory Component

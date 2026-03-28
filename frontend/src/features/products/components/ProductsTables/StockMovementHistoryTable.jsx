@@ -1,4 +1,4 @@
-import { getStockMovementsHistory } from '@features/products/services/productService';
+import { getStockMovementsHistory } from '@features/products/services/productApi';
 import useServerSideDataTable from '@shared/hooks/useServerSideDataTable';
 import DataTable from '@components/DataTable/DataTable';
 

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog';
 import { useToast } from '@shared/context/ToastContext';
-import { deleteProduct } from '@features/products/services/productService';
+import { deleteProduct } from '@features/products/services/productApi';
 
 const ProductDataTable = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);

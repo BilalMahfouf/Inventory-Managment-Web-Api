@@ -14,7 +14,7 @@ import {
   User,
   ArrowRight,
 } from 'lucide-react';
-import { getStockTransferById } from '@features/inventory/services/stockTransferService';
+import { getStockTransferById } from '@features/inventory/services/stockTransferApi';
 
 /**
  * ViewStockTransfer Component

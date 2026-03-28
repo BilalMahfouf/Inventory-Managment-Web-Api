@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getOrdersDahsobardSummary } from '@features/sales/services/salesOrderService';
+import { getOrdersDahsobardSummary } from '@features/sales/services/salesOrderApi';
 import InfoCard from '@/components/ui/InfoCard';
 
 import { TabList, Tabs, Tab, TabPanel } from 'react-tabs';

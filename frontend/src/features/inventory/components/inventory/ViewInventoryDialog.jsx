@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Package, MapPin, Archive, Calendar, User } from 'lucide-react';
-import { getInventoryById } from '@features/inventory/services/inventoryService';
+import { getInventoryById } from '@features/inventory/services/inventoryApi';
 
 /**
  * ViewInventoryDialog Component

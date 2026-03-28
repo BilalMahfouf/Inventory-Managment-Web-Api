@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import PageHeader from '@components/ui/PageHeader';
 import Button from '@components/Buttons/Button';
-import { fetchWithAuth } from '@shared/services/auth/authService';
+import dashboardApi from '@features/dashboard/services/dashboardApi';
 import QuickActions from '@features/dashboard/components/quickAction/QuickActions';
 import Alerts from '@features/dashboard/components/alerts/Alerts';
 import TopSellingProducts from '@features/dashboard/components/TopSellingProducts';
@@ -40,15 +40,6 @@ export default function DashboardPage() {
     console.log('use effect runs ....');
     const fetchData = async () => {
       try {
-        const result = await fetchWithAuth('api/dashboard/summary');
-        if (!result.success) {
-          console.error('Failed to fetch dashboard summary:', result.error);
-          //  setError(result.error);
-          setLoading(false);
-          throw new Error(result.error);
-        }
-        console.log(result);
-
         const {
           totalProducts,
           lowStockProducts,
@@ -58,7 +49,7 @@ export default function DashboardPage() {
           pendingSalesOrders,
           activeSuppliers,
           completedSalesOrders,
-        } = await result.response.json();
+        } = await dashboardApi.getSummary();
         setLoading(false);
         setActiveProducts(totalProducts);
         setActiveCustomers(activeCustomers);

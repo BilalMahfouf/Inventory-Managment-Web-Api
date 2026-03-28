@@ -4,7 +4,7 @@ import useServerSideDataTable from '@shared/hooks/useServerSideDataTable';
 import {
   getAllInventory,
   deleteInventoryById,
-} from '@features/inventory/services/inventoryService';
+} from '@features/inventory/services/inventoryApi';
 import { CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
 import AddUpdateInventory from './AddUpdateInventory';
 import ViewInventoryDialog from './ViewInventoryDialog';

@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Package, AlertCircle } from 'lucide-react';
-import { getProductById } from '@features/products/services/productService';
+import { getProductById } from '@features/products/services/productApi';
 /**
  * ProductViewDialog Component
  *

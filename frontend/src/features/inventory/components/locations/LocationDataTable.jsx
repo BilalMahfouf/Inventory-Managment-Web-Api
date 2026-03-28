@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   getLocations,
   deleteLocation,
-} from '@features/inventory/services/locationService';
+} from '@features/inventory/services/locationApi';
 import AddUpdateLocation from './AddUpdateLocation';
 import ViewLocation from './ViewLocation';
 import { useToast } from '@shared/context/ToastContext';

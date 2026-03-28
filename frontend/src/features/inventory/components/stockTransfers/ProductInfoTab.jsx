@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Package, Search } from 'lucide-react';
 import Button from '@components/Buttons/Button';
 import { Input } from '@components/ui/input';
-import { getProductById } from '@features/products/services/productService';
+import { getProductById } from '@features/products/services/productApi';
 import { useToast } from '@shared/context/ToastContext';
 
 /**

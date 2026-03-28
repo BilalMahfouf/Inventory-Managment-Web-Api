@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TopProductItem from './TopProductItem';
-import dashboardService from '@features/dashboard/services/dashboardService';
+import dashboardApi from '@features/dashboard/services/dashboardApi';
 
 const TopSellingProducts = ({ className = '' }) => {
   // Sample data if no products provided
@@ -10,7 +10,7 @@ const TopSellingProducts = ({ className = '' }) => {
   useEffect(() => {
     const fetchTopProducts = async () => {
       setIsLoading(true);
-      const products = await dashboardService.getTopSellingProducts(7);
+      const products = await dashboardApi.getTopSellingProducts(7);
       if (products && products.length > 0) {
         setProducts(products);
         setIsLoading(false);

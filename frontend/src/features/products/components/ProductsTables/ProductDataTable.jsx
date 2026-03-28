@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import DataTable from '@components/DataTable/DataTable';
-import { getAllProducts } from '@features/products/services/productService';
+import { getAllProducts } from '@features/products/services/productApi';
 import useServerSideDataTable from '@shared/hooks/useServerSideDataTable';
 import ProductViewDialog from './ProductViewDialog';
 import { AddProduct } from '@features/products/components/products';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';
-import { deleteProduct } from '@features/products/services/productService';
+import { deleteProduct } from '@features/products/services/productApi';
 import { useToast } from '@shared/context/ToastContext';
 import { ShowerHead } from 'lucide-react';
 export default function ProductDataTable() {

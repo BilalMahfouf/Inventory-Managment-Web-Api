@@ -10,7 +10,7 @@ import {
   TriangleAlert,
 } from 'lucide-react';
 import Button from '@components/Buttons/Button';
-import { getSummary } from '@features/products/services/productService';
+import { getSummary } from '@features/products/services/productApi';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { divStyles } from '@shared/utils/uiVariables';
 import ProductDataTable from '@features/products/components/ProductsTables/ProductDataTable';

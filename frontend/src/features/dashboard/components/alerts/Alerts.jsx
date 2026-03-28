@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Alert from './alert';
-import dashboardService from '@features/dashboard/services/dashboardService';
+import dashboardApi from '@features/dashboard/services/dashboardApi';
 
 export default function Alerts() {
   const [alerts, setAlerts] = useState([]);
@@ -8,7 +8,7 @@ export default function Alerts() {
   useEffect(() => {
     const fetchAlerts = async () => {
       try {
-        const data = await dashboardService.getInventoryAlerts();
+        const data = await dashboardApi.getInventoryAlerts();
         setAlerts(data);
       } catch (error) {
         console.error('Error fetching alerts:', error);

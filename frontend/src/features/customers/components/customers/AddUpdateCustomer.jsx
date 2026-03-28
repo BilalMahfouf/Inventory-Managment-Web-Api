@@ -8,9 +8,9 @@ import {
   createCustomer,
   updateCustomer,
   getCustomerCategories,
-} from '@features/customers/services/customerService';
+} from '@features/customers/services/customerApi';
 import { useToast } from '@shared/context/ToastContext';
-import { getCustomerCategoriesNames } from '@features/customers/services/customerCategoryService';
+import { getCustomerCategoriesNames } from '@features/customers/services/customerCategoryApi';
 
 /**
  * AddUpdateCustomer Component

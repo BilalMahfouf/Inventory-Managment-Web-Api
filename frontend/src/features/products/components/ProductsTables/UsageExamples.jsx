@@ -11,6 +11,7 @@
 import { useState } from 'react';
 import DataTable from '@components/DataTable/DataTable';
 import ProductViewDialog from './ProductViewDialog';
+import { getProductById } from '@features/products/services/productApi';
 
 export default function ProductDataTable() {
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
@@ -175,8 +176,7 @@ export function ProductDataTableWithDetailsFetch() {
 
     try {
       // Fetch complete product details with inventory
-      const response = await fetch(`/api/products/${row.id}`);
-      const data = await response.json();
+      const data = await getProductById(row.id);
 
       setSelectedProduct(data);
     } catch (error) {

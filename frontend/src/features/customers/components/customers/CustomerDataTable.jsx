@@ -4,7 +4,7 @@ import { useState } from 'react';
 import {
   deleteCustomerById,
   getCustomers,
-} from '@features/customers/services/customerService';
+} from '@features/customers/services/customerApi';
 import DataTable from '@components/DataTable/DataTable';
 import AddUpdateCustomer from './AddUpdateCustomer';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';
