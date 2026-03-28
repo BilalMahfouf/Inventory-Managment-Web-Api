@@ -1,7 +1,4 @@
-﻿using Application.Abstractions.Services.User;
-using Application.DTOs.Users.Request;
-using Application.DTOs.Users.Response;
-using Application.FluentValidations.User.Configuration;
+﻿using Application.Users.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Extensions;

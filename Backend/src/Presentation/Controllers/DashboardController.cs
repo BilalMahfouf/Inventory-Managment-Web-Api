@@ -1,5 +1,4 @@
-﻿using Application.Abstractions.Queries;
-using Application.Services.Shared;
+﻿using Application.Products.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Extensions;

@@ -1,8 +1,8 @@
-﻿using Application.Abstractions.Queries;
-using Application.DTOs.Inventories;
-using Application.DTOs.StockMovements.Response;
+﻿using Application.Products.Contracts;
+using Application.Inventories.DTOs;
+using Application.StockMovements.DTOs.Response;
 using Application.Inventories;
-using Application.PagedLists;
+using Application.Shared.Paging;
 using Domain.Shared.Results;
 using Domain.Shared.Entities;
 using Domain.Shared.Enums;

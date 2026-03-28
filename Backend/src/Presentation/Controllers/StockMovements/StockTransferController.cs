@@ -1,8 +1,4 @@
-﻿using Application.Abstractions.Queries;
-using Application.DTOs.StockMovements.Request;
-using Application.DTOs.StockMovements.Response;
-using Application.PagedLists;
-using Application.Services.StockMovements;
+﻿using Application.Products.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;

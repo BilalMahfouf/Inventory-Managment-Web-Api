@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Repositories.Base;
+﻿using Application.Shared.Contracts;
 using Domain.Shared.Abstractions;
 using Domain.Shared.Entities;
 using Infrastructure.Persistence;

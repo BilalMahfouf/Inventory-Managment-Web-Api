@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Repositories.Customers;
+﻿using Application.Customers;
 using Domain.Shared.Entities;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Base;

@@ -1,10 +1,9 @@
-using Application.Abstractions.Repositories.Base;
-using Application.Abstractions.Services.User;
-using Application.Abstractions.UnitOfWork;
-using Application.DTOs.Users.Request;
-using Application.DTOs.Users.Response;
+using Application.Shared.Contracts;
+using Application.Users.Contracts;
+using Application.Users.DTOs.Request;
+using Application.Users.DTOs.Response;
 using Domain.Shared.Results;
-using Application.Services.Users;
+using Application.Users.Services;
 using Domain.Shared.Entities;
 using Domain.Shared.Enums;
 using FluentValidation;

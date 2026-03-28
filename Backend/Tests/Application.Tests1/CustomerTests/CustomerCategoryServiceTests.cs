@@ -1,5 +1,4 @@
-using Application.Abstractions.Repositories.Base;
-using Application.Abstractions.UnitOfWork;
+using Application.Shared.Contracts;
 using Application.Customers;
 using Domain.Shared.Results;
 using Domain.Shared.Entities;

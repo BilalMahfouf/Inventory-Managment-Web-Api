@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Repositories.Inventories;
+﻿using Application.Inventories;
 using Domain.Inventories;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Base;

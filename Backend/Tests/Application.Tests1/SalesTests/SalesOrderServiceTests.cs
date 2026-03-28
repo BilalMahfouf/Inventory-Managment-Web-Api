@@ -1,10 +1,9 @@
-using Application.Abstractions.Repositories.Base;
-using Application.Abstractions.Repositories.Inventories;
-using Application.Abstractions.Repositories.Products;
-using Application.Abstractions.UnitOfWork;
+using Application.Shared.Contracts;
+using Application.Inventories;
+using Application.Products.Contracts;
 using Domain.Shared.Results;
 using Application.Sales.RequestResponse;
-using Application.Sales.Services1;
+using Application.Sales.Services;
 using Domain.Shared.Entities;
 using Domain.Products.Entities;
 using Domain.Shared.Enums;

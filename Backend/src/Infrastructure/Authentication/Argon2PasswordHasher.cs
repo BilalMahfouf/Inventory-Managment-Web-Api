@@ -1,4 +1,4 @@
-﻿using Application.Common.Abstractions;
+﻿using Application.Shared.Contracts;
 using Isopoh.Cryptography.Argon2;
 using System;
 using System.Collections.Generic;

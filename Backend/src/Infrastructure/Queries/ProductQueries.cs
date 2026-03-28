@@ -1,6 +1,6 @@
-﻿using Application.Abstractions.Queries;
-using Application.DTOs.Products.Response.Products;
-using Application.PagedLists;
+﻿using Application.Products.Contracts;
+using Application.Products.DTOs.Response.Products;
+using Application.Shared.Paging;
 using Domain.Shared.Results;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;

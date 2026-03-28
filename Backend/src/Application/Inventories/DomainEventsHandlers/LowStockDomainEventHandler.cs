@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Application.Abstractions;
-using Application.Abstractions.Queries;
-using Application.Abstractions.UnitOfWork;
-using Application.DTOs.Notifications;
+using Application.Inventories;
+using Application.Shared.Contracts;
+using Application.Shared.DTOs;
 using Domain.Inventories;
 using MediatR;
 

@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Queries;
+﻿using Application.Dashboard.Contracts;
 using Domain.Shared.Results;
 using Domain.Shared.Enums;
 using Infrastructure.Persistence;

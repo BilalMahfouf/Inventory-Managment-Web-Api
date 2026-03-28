@@ -1,6 +1,4 @@
-﻿using Application.Abstractions.Services.Product;
-using Application.DTOs.Products.Request.ProductImages;
-using Application.DTOs.Products.Response.ProductImages;
+﻿using Application.Products.Contracts;
 using Domain.Shared.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

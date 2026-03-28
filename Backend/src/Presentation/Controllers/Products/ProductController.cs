@@ -1,9 +1,4 @@
-﻿using Application.Abstractions.Queries;
-using Application.Abstractions.Services.Products;
-using Application.DTOs.Inventories;
-using Application.DTOs.Products.Request.Products;
-using Application.DTOs.Products.Response.Products;
-using Application.PagedLists;
+﻿using Application.Products.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit.Tnef;

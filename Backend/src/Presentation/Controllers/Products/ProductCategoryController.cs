@@ -1,7 +1,4 @@
-﻿using Application.Abstractions.Queries;
-using Application.Abstractions.Services.Products;
-using Application.DTOs.Products.Request.Categories;
-using Application.DTOs.Products.Response.Categories;
+﻿using Application.Products.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Extensions;

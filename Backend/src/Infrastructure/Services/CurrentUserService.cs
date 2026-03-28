@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Services.User;
+﻿using Application.Users.Contracts;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;

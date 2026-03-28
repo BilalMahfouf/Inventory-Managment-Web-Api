@@ -1,0 +1,33 @@
+﻿using Application.Products.DTOs.Request.Categories;
+using Application.Products.DTOs.Response.Categories;
+using Domain.Shared.Results;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Application.Products.Contracts
+{
+    public interface IProductCategoryService
+    {
+        Task<Result<IReadOnlyCollection<ProductCategoryReadResponse>>>
+            GetAllAsync(CancellationToken cancellationToken = default);
+        Task<Result<IReadOnlyCollection<ProductCategoryChildrenReadResponse>>>
+            GetAllChildrenAsync(
+            int id,CancellationToken cancellationToken = default);
+        Task<Result<IReadOnlyCollection<ProductCategoryTreeReadResponse>>>
+            GetAllTreeAsync(CancellationToken cancellationToken = default);
+
+        Task<Result<ProductCategoryReadResponse>> FindAsync(int id
+            ,CancellationToken cancellationToken = default);
+        Task<Result<ProductCategoryReadResponse>> AddAsync(
+            ProductCategoryRequest request, CancellationToken cancellationToken);
+        Task<Result<ProductCategoryDetailsResponse>> UpdateAsync(int id, ProductCategoryRequest request
+            , CancellationToken cancellationToken);
+        Task<Result> DeleteAsync(int id, CancellationToken cancellationToken);
+
+        Task<Result<IEnumerable<object>>> GetCategoriesNamesAsync(
+            CancellationToken cancellationToken = default);
+    }
+}

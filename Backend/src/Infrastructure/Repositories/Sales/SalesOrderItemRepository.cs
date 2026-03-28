@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Repositories.Sales;
+﻿using Application.Sales;
 using Domain.Shared.Results;
 using Domain.Shared.Enums;
 using Domain.Sales;

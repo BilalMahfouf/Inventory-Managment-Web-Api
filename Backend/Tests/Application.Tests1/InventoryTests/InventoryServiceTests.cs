@@ -1,7 +1,7 @@
-//using Application.Abstractions.UnitOfWork;
-//using Application.Abstractions.Repositories.Inventories;
-//using Application.DTOs.Inventories;
-//using Application.DTOs.Inventories.Request;
+//using Application.Shared.Contracts;
+//using Application.Inventories;
+//using Application.Inventories.DTOs;
+//using Application.Inventories.DTOs.Request;
 //using Domain.Shared.Results;
 //using Application.Services.Inventories;
 //using Domain.Shared.Entities;

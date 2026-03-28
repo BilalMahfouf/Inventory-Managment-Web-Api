@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Auth;
+﻿using Application.Shared.Contracts;
 using Domain.Shared.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

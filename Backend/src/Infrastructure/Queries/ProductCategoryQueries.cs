@@ -1,5 +1,5 @@
-﻿using Application.Abstractions.Queries;
-using Application.DTOs.Products.Response.Categories;
+﻿using Application.Products.Contracts;
+using Application.Products.DTOs.Response.Categories;
 using Domain.Shared.Results;
 using Domain.Shared.Enums;
 using Infrastructure.Persistence;

@@ -1,11 +1,9 @@
-using Application.Abstractions.Repositories.Base;
-using Application.Abstractions.Repositories.Inventories;
-using Application.Abstractions.Repositories.Products;
-using Application.Abstractions.Services.User;
-using Application.Abstractions.UnitOfWork;
-using Application.DTOs.Inventories.Request;
-using Application.DTOs.Inventories;
+using Application.Shared.Contracts;
 using Application.Inventories;
+using Application.Products.Contracts;
+using Application.Users.Contracts;
+using Application.Inventories.DTOs.Request;
+using Application.Inventories.DTOs;
 using Domain.Shared.Results;
 using Domain.Shared.Entities;
 using Domain.Products.Entities;

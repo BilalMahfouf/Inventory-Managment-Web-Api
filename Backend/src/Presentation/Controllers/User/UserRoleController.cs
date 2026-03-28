@@ -1,6 +1,4 @@
-﻿using Application.DTOs.Users.Request;
-using Application.DTOs.Users.Response;
-using Application.Services.Users;
+﻿using Application.Users.DTOs.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Extensions;

@@ -1,9 +1,9 @@
-using Application.Abstractions.Services.Storage;
-using Application.Abstractions.Services.User;
-using Application.Abstractions.UnitOfWork;
-using Application.DTOs.Images;
+using Application.Images.Contracts;
+using Application.Users.Contracts;
+using Application.Shared.Contracts;
+using Application.Images.DTOs;
 using Domain.Shared.Results;
-using Application.Services.Images;
+using Application.Images.Services;
 using Domain.Shared.Entities;
 using Domain.Shared.Enums;
 using Moq;
@@ -34,7 +34,7 @@ namespace Application.Tests.ImagesTests
         {
             // Arrange
             var service = CreateService();
-            var request = new Application.DTOs.Images.ImageUploadRequest
+            var request = new Application.Images.DTOs.ImageUploadRequest
             {
                 FileName = "test.jpg",
                 FileStream = new MemoryStream(),
@@ -81,7 +81,7 @@ namespace Application.Tests.ImagesTests
         {
             // Arrange
             var service = CreateService();
-            var request = new Application.DTOs.Images.ImageUploadRequest
+            var request = new Application.Images.DTOs.ImageUploadRequest
             {
                 FileName = "test.jpg",
                 FileStream = new MemoryStream(),
@@ -111,7 +111,7 @@ namespace Application.Tests.ImagesTests
         {
             // Arrange
             var service = CreateService();
-            var request = new Application.DTOs.Images.ImageUploadRequest
+            var request = new Application.Images.DTOs.ImageUploadRequest
             {
                 FileName = "test.jpg",
                 FileStream = new MemoryStream(),
@@ -491,7 +491,7 @@ namespace Application.Tests.ImagesTests
         {
             // Arrange
             var service = CreateService();
-            var request = new Application.DTOs.Images.ImageUploadRequest
+            var request = new Application.Images.DTOs.ImageUploadRequest
             {
                 FileName = fileName,
                 FileStream = new MemoryStream(),

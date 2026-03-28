@@ -1,7 +1,4 @@
-﻿using Application.PagedLists;
-using Application.Sales.Queries;
-using Application.Sales.RequestResponse;
-using Application.Sales.Services1;
+﻿using Application.Shared.Paging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Extensions;

@@ -1,7 +1,4 @@
-﻿using Application.DTOs.Inventories;
-using Application.DTOs.Locations.Request;
-using Application.DTOs.Locations.Response;
-using Application.Services.Locations;
+﻿using Application.Inventories.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Extensions;

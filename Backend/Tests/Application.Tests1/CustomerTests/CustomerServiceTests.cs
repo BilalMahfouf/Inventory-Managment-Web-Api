@@ -1,10 +1,8 @@
-using Application.Abstractions.Queries;
-using Application.Abstractions.Repositories.Base;
-using Application.Abstractions.Services.User;
-using Application.Abstractions.UnitOfWork;
+using Application.Products.Contracts;
+using Application.Shared.Contracts;
+using Application.Users.Contracts;
 using Application.Customers;
 using Application.Customers.Dtos;
-using Application.DTOs.Customers;
 using Domain.Shared.Results;
 using Domain.Shared.Entities;
 using Domain.Shared.Enums;

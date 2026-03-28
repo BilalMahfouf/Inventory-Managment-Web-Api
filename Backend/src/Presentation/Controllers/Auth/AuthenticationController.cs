@@ -1,10 +1,4 @@
-﻿using Application.Abstractions.Services.Email;
-using Application.Abstractions.Services.User;
-using Application.DTOs.Authentication;
-using Application.DTOs.Authentication.Email;
-using Application.DTOs.Authentication.Login;
-using Application.DTOs.Authentication.Password;
-using Application.DTOs.Email;
+﻿using Application.Shared.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

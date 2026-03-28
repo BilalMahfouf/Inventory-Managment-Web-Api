@@ -1,6 +1,4 @@
-﻿using Application.DTOs.StockMovements.Request;
-using Application.DTOs.StockMovements.Response;
-using Application.Services.StockMovements;
+﻿using Application.StockMovements.DTOs.Request;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Extensions;
 

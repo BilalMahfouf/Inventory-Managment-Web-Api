@@ -1,6 +1,6 @@
-﻿using Application.Abstractions.Queries;
-using Application.DTOs.Customers;
-using Application.PagedLists;
+﻿using Application.Customers;
+using Application.Customers.Dtos;
+using Application.Shared.Paging;
 using Domain.Shared.Results;
 using Domain.Shared.Enums;
 using Infrastructure.Persistence;

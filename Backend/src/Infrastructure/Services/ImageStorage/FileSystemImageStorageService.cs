@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Services.Storage;
+﻿using Application.Images.Contracts;
 using Microsoft.AspNetCore.Hosting;
 
 namespace Infrastructure.Services.ImageStorage

@@ -1,17 +1,12 @@
-﻿using Application.Abstractions;
-using Application.Abstractions.Auth;
-using Application.Abstractions.Queries;
-using Application.Abstractions.Repositories;
-using Application.Abstractions.Repositories.Base;
-using Application.Abstractions.Repositories.Inventories;
-using Application.Abstractions.Repositories.Products;
-using Application.Abstractions.Services.Email;
-using Application.Abstractions.Services.Storage;
-using Application.Abstractions.Services.User;
-using Application.Abstractions.UnitOfWork;
-using Application.Common.Abstractions;
+﻿using Application.Customers;
+using Application.Dashboard.Contracts;
+using Application.Images.Contracts;
+using Application.Inventories;
+using Application.Products.Contracts;
 using Application.Sales.Queries;
-using Application.Services.Shared;
+using Application.Shared.Contracts;
+using Application.StockMovements.Contracts;
+using Application.Users.Contracts;
 using Infrastructure.Authentication;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.Common;
@@ -38,12 +33,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Quartz;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Security;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure
 {

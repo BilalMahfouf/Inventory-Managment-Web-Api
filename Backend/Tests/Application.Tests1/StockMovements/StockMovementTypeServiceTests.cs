@@ -1,10 +1,10 @@
-//using Application.Abstractions.Repositories.Base;
-//using Application.Abstractions.Services.User;
-//using Application.Abstractions.UnitOfWork;
-//using Application.DTOs.StockMovements.Request;
-//using Application.DTOs.StockMovements.Response;
+//using Application.Shared.Contracts;
+//using Application.Users.Contracts;
+//using Application.Shared.Contracts;
+//using Application.StockMovements.DTOs.Request;
+//using Application.StockMovements.DTOs.Response;
 //using Domain.Shared.Results;
-//using Application.Services.StockMovements;
+//using Application.StockMovements.Services;
 //using Domain.Shared.Entities;
 //using Domain.Shared.Enums;
 //using FluentValidation;

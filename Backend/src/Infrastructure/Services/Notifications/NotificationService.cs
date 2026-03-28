@@ -1,5 +1,5 @@
-﻿using Application.Abstractions;
-using Application.DTOs.Notifications;
+﻿using Application.Shared.Contracts;
+using Application.Shared.DTOs;
 using Infrastructure.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using System;

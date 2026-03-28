@@ -1,11 +1,10 @@
-using Application.Abstractions.Queries;
-using Application.Abstractions.Repositories.Base;
-using Application.Abstractions.Services.User;
-using Application.Abstractions.UnitOfWork;
-using Application.DTOs.Products.Request.Categories;
-using Application.DTOs.Products.Response.Categories;
+using Application.Products.Contracts;
+using Application.Shared.Contracts;
+using Application.Users.Contracts;
+using Application.Products.DTOs.Request.Categories;
+using Application.Products.DTOs.Response.Categories;
 using Domain.Shared.Results;
-using Application.Services.Products;
+using Application.Products.Services;
 using Domain.Shared.Entities;
 using Domain.Products.Entities;
 using Domain.Shared.Enums;

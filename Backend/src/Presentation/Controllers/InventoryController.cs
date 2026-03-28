@@ -1,8 +1,4 @@
-﻿using Application.Abstractions.Queries;
-using Application.DTOs.Inventories;
-using Application.DTOs.Inventories.Request;
-using Application.Inventories;
-using Application.PagedLists;
+﻿using Application.Products.Contracts;
 using Domain.Shared.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

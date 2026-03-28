@@ -1,4 +1,4 @@
-﻿using Application.Services.Images;
+﻿using Application.Images.Services;
 using Domain.Shared.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;

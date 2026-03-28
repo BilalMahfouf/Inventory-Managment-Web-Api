@@ -1,9 +1,8 @@
-using Application.Abstractions.Repositories.Base;
-using Application.Abstractions.Services.User;
-using Application.Abstractions.UnitOfWork;
-using Application.DTOs.UnitOfMeasure;
+using Application.Shared.Contracts;
+using Application.Users.Contracts;
+using Application.UnitOfMeasures.DTOs;
 using Domain.Shared.Results;
-using Application.Services.UnitOfMeasures;
+using Application.UnitOfMeasures.Services;
 using Domain.Shared.Entities;
 using Domain.Shared.Enums;
 using Domain.Shared.Exceptions;

@@ -1,8 +1,4 @@
-﻿using Application.Abstractions.Queries;
-using Application.Customers;
-using Application.Customers.Dtos;
-using Application.DTOs.Customers;
-using Application.PagedLists;
+﻿using Application.Products.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;

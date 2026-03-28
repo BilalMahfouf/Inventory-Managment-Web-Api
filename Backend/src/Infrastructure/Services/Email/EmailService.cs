@@ -1,5 +1,5 @@
-﻿using Application.Abstractions.Services.Email;
-using Application.DTOs.Email;
+﻿using Application.Shared.Contracts;
+using Application.Shared.DTOs;
 using Domain.Shared.Results;
 using MailKit.Net.Smtp;
 using MailKit.Security;

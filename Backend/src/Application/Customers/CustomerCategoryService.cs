@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.UnitOfWork;
+﻿using Application.Shared.Contracts;
 using Domain.Shared.Results;
 using System;
 using System.Collections.Generic;

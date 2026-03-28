@@ -1,4 +1,4 @@
-﻿using Application.PagedLists;
+﻿using Application.Shared.Paging;
 using Domain.Shared.Results;
 using Application.Sales.Queries;
 using Application.Sales.RequestResponse;
