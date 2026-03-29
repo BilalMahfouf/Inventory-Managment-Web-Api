@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import DataTable from '@components/DataTable/DataTable';
 import { getAllProducts } from '@features/products/services/productApi';
 import useServerSideDataTable from '@shared/hooks/useServerSideDataTable';
@@ -9,6 +10,7 @@ import { deleteProduct } from '@features/products/services/productApi';
 import { useToast } from '@shared/context/ToastContext';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 export default function ProductDataTable() {
   const { t } = useTranslation();
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
@@ -17,6 +19,7 @@ export default function ProductDataTable() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [currentProductId, setCurrentProductId] = useState(0);
   const { showError, showSuccess } = useToast();
+  const queryClient = useQueryClient();
 
   const columns = useMemo(() => getDefaultColumns(t), [t]);
 
@@ -37,7 +40,34 @@ export default function ProductDataTable() {
     return response;
   };
 
-  const tableProps = useServerSideDataTable(fetchProducts);
+  const tableProps = useServerSideDataTable(fetchProducts, {
+    queryKey: queryKeys.products.table('catalog'),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteProduct,
+    onSuccess: async () => {
+      showSuccess(
+        t(i18nKeyContainer.products.productTable.toasts.deleteSuccessTitle),
+        t(i18nKeyContainer.products.productTable.toasts.deleteSuccessMessage, {
+          id: currentProductId,
+        })
+      );
+      setDeleteDialogOpen(false);
+      await queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
+    },
+    onError: error => {
+      showError(
+        t(i18nKeyContainer.products.productTable.toasts.deleteCancelledTitle),
+        error?.message ||
+          t(
+            i18nKeyContainer.products.productTable.toasts
+              .deleteCancelledMessage
+          )
+      );
+      setDeleteDialogOpen(false);
+    },
+  });
 
   const handleView = row => {
     console.log('view is clicked', row.id);
@@ -50,19 +80,10 @@ export default function ProductDataTable() {
   };
   const handleEditClose = () => {
     setUpdateDialogOpen(false);
-    tableProps.refresh();
+    queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
   };
   const handleDelete = () => {
-    console.log('delete is clicked', currentProductId);
-    deleteProduct(currentProductId);
-
-    showSuccess(
-      t(i18nKeyContainer.products.productTable.toasts.deleteSuccessTitle),
-      t(i18nKeyContainer.products.productTable.toasts.deleteSuccessMessage, {
-        id: currentProductId,
-      })
-    );
-    setDeleteDialogOpen(false);
+    deleteMutation.mutate(currentProductId);
   };
 
   return (

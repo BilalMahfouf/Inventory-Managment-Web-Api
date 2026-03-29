@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { X, Package, DollarSign, Archive } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import Button from '@components/Buttons/Button';
@@ -14,6 +15,7 @@ import {
   updateProduct,
 } from '@features/products/services/productApi';
 import { useToast } from '@shared/context/ToastContext';
+import { queryKeys } from '@shared/lib/queryKeys';
 /**
  * AddProduct Component
  *
@@ -29,6 +31,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState(0);
   const { showSuccess, showError } = useToast();
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     // Basic Info
     productName: '',
@@ -49,10 +52,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
     storageLocation: 0,
   });
   const [mode, setMode] = useState('add'); // 'add' or 'update'
-  // to do make these in custom hook
-  const [categories, setCategories] = useState([]);
-  const [unitOfMeasurement, setUnitOfMeasurement] = useState([]);
-  const [locations, setLocations] = useState([]);
+  const [productLocations, setProductLocations] = useState([]);
   const tabs = [
     {
       id: 0,
@@ -77,6 +77,115 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
   const statusOptions = ['active', 'inactive', 'draft'];
   const [id, setId] = useState(productId);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { data: categories = [] } = useQuery({
+    queryKey: queryKeys.products.categories(),
+    queryFn: getProductCategories,
+    enabled: isOpen,
+  });
+
+  const { data: unitOfMeasurement = [] } = useQuery({
+    queryKey: queryKeys.products.unitOfMeasure(),
+    queryFn: GetUnitsNames,
+    enabled: isOpen,
+  });
+
+  const { data: baseLocations = [] } = useQuery({
+    queryKey: [...queryKeys.inventory.locations('names')],
+    queryFn: getLocationsNames,
+    enabled: isOpen && mode === 'add',
+  });
+
+  const { data: productResponse } = useQuery({
+    queryKey: queryKeys.products.detail(id),
+    queryFn: () => getProductById(id),
+    enabled: isOpen && id > 0,
+  });
+
+  const createProductMutation = useMutation({
+    mutationFn: createProduct,
+    onSuccess: async data => {
+      if (data) {
+        showSuccess(
+          t(i18nKeyContainer.products.addProductForm.toasts.createSuccessTitle),
+          t(i18nKeyContainer.products.addProductForm.toasts.createSuccessMessage, {
+            name: data.name,
+          })
+        );
+        onClose();
+
+        const locations = data.inventories.map(i => {
+          return { id: i.locationId, name: i.locationName };
+        });
+        setProductLocations(locations);
+        setId(data.id);
+        setMode('update');
+
+        await queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
+        await queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+      }
+    },
+    onError: error => {
+      console.error('Product creation error:', error);
+      showError(
+        t(i18nKeyContainer.products.addProductForm.toasts.createErrorTitle),
+        error.message ||
+          t(i18nKeyContainer.products.addProductForm.toasts.createErrorMessage)
+      );
+    },
+  });
+
+  const updateProductMutation = useMutation({
+    mutationFn: payload => updateProduct(payload.id, payload.data),
+    onSuccess: async data => {
+      if (data) {
+        showSuccess(
+          t(i18nKeyContainer.products.addProductForm.toasts.updateSuccessTitle),
+          t(i18nKeyContainer.products.addProductForm.toasts.updateSuccessMessage, {
+            name: data.name,
+          })
+        );
+        onClose();
+
+        setFormData({
+          productName: data.name,
+          sku: data.sku,
+          category: data.categoryId,
+          description: data.description,
+          status: data.isActive ? 'active' : 'inactive',
+          costPrice: data.costPrice,
+          sellingPrice: data.unitPrice,
+          currentStock: data.inventories[0].quantityOnHand,
+          minimumStock: data.inventories[0].reorderLevel,
+          maximumStock: data.inventories[0].maxLevel,
+          unitOfMeasurement: data.unitOfMeasureId,
+          storageLocation: data.inventories[0].locationId,
+        });
+
+        const locations = data.inventories.map(i => {
+          return { id: i.locationId, name: i.locationName };
+        });
+        setProductLocations(locations);
+        setMode('update');
+
+        await queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
+        await queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+      } else {
+        showError(
+          t(i18nKeyContainer.products.addProductForm.toasts.updateErrorTitle),
+          t(i18nKeyContainer.products.addProductForm.toasts.updateErrorMessage)
+        );
+      }
+    },
+    onError: error => {
+      console.error('Product update error:', error);
+      showError(
+        t(i18nKeyContainer.products.addProductForm.toasts.updateErrorTitle),
+        error.message ||
+          t(i18nKeyContainer.products.addProductForm.toasts.updateErrorMessage)
+      );
+    },
+  });
 
   // Calculate profit metrics
   const profitPerUnit = formData.sellingPrice - formData.costPrice;
@@ -124,45 +233,19 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
     reorderLevel,
     maxLevel,
   }) => {
-    try {
-      const data = await createProduct({
-        sku,
-        name,
-        description,
-        categoryId,
-        unitOfMeasureId,
-        unitPrice,
-        costPrice,
-        locationId,
-        quantityOnHand,
-        reorderLevel,
-        maxLevel,
-      });
-
-      if (data) {
-        showSuccess(
-          t(i18nKeyContainer.products.addProductForm.toasts.createSuccessTitle),
-          t(i18nKeyContainer.products.addProductForm.toasts.createSuccessMessage, {
-            name,
-          })
-        );
-        onClose();
-
-        const locations = data.inventories.map(i => {
-          return { id: i.locationId, name: i.locationName };
-        });
-        setLocations(locations);
-        setId(data.id);
-        setMode('update');
-      }
-    } catch (error) {
-      console.error('Product creation error:', error);
-      showError(
-        t(i18nKeyContainer.products.addProductForm.toasts.createErrorTitle),
-        error.message ||
-          t(i18nKeyContainer.products.addProductForm.toasts.createErrorMessage)
-      );
-    }
+    await createProductMutation.mutateAsync({
+      sku,
+      name,
+      description,
+      categoryId,
+      unitOfMeasureId,
+      unitPrice,
+      costPrice,
+      locationId,
+      quantityOnHand,
+      reorderLevel,
+      maxLevel,
+    });
   };
   const editProduct = async ({
     id,
@@ -177,8 +260,9 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
     reorderLevel,
     maxLevel,
   }) => {
-    try {
-      const data = await updateProduct(id, {
+    await updateProductMutation.mutateAsync({
+      id,
+      data: {
         name,
         description,
         categoryId,
@@ -189,55 +273,12 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
         quantityOnHand,
         reorderLevel,
         maxLevel,
-      });
-
-      if (data) {
-        showSuccess(
-          t(i18nKeyContainer.products.addProductForm.toasts.updateSuccessTitle),
-          t(i18nKeyContainer.products.addProductForm.toasts.updateSuccessMessage, {
-            name,
-          })
-        );
-        onClose();
-
-        setFormData({
-          productName: data.name,
-          sku: data.sku,
-          category: data.categoryId,
-          description: data.description,
-          status: data.isActive ? 'active' : 'inactive',
-          costPrice: data.costPrice,
-          sellingPrice: data.unitPrice,
-          currentStock: data.inventories[0].quantityOnHand,
-          minimumStock: data.inventories[0].reorderLevel,
-          maximumStock: data.inventories[0].maxLevel,
-          unitOfMeasurement: data.unitOfMeasureId,
-          storageLocation: data.inventories[0].locationId,
-        });
-
-        const locations = data.inventories.map(i => {
-          return { id: i.locationId, name: i.locationName };
-        });
-        setLocations(locations);
-        setMode('update');
-      } else {
-        showError(
-          t(i18nKeyContainer.products.addProductForm.toasts.updateErrorTitle),
-          t(i18nKeyContainer.products.addProductForm.toasts.updateErrorMessage)
-        );
-      }
-    } catch (error) {
-      console.error('Product update error:', error);
-      showError(
-        t(i18nKeyContainer.products.addProductForm.toasts.updateErrorTitle),
-        error.message ||
-          t(i18nKeyContainer.products.addProductForm.toasts.updateErrorMessage)
-      );
-    }
+      },
+    });
   };
-  const saveProduct = () => {
+  const saveProduct = async () => {
     if (mode === 'add') {
-      addNewProduct({
+      await addNewProduct({
         sku: formData.sku,
         name: formData.productName,
         description: formData.description,
@@ -254,7 +295,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
     if (mode === 'update') {
       console.log('data: ', formData);
       console.log('sku:', formData.sku);
-      editProduct({
+      await editProduct({
         id: id,
         name: formData.productName,
         description: formData.description,
@@ -270,8 +311,13 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
     }
     setMode('update');
   };
-  const handleSubmit = () => {
-    saveProduct();
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    try {
+      await saveProduct();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -290,68 +336,39 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
       storageLocation: 0,
     });
     setActiveTab(0);
+    setProductLocations([]);
     if (onClose) {
       onClose();
     }
   };
 
   useEffect(() => {
-    setIsLoading(true);
-    const fetchCategories = async () => {
-      const data = await getProductCategories();
-      if (data) {
-        setCategories(data);
-      }
-    };
-    const fetchUnitOfMeasures = async () => {
-      const data = await GetUnitsNames();
-      if (data) {
-        setUnitOfMeasurement(data);
-      }
-    };
-
-    fetchUnitOfMeasures();
-    fetchCategories();
-    if (id > 0) {
-      const fetchProduct = async id => {
-        const data = await getProductById(id);
-        if (data) {
-          setFormData({
-            productName: data.name,
-            sku: data.sku,
-            category: data.categoryId,
-            description: data.description,
-            status: data.isActive ? 'active' : 'inactive',
-            costPrice: data.costPrice,
-            sellingPrice: data.unitPrice,
-
-            unitOfMeasurement: data.unitOfMeasureId,
-            currentStock: data.inventories[0].quantityOnHand,
-            minimumStock: data.inventories[0].reorderLevel,
-            maximumStock: data.inventories[0].maxLevel,
-            storageLocation: data.inventories[0].locationId,
-          });
-          const locations = data.inventories.map(i => {
-            return { id: i.locationId, name: i.locationName };
-          });
-          setLocations(locations);
-          setMode('update');
-        }
-      };
-
-      fetchProduct(id);
+    if (!productResponse || id <= 0) {
+      return;
     }
-    if (mode === 'add') {
-      const fetchLocations = async () => {
-        const data = await getLocationsNames();
-        if (data) {
-          setLocations(data);
-        }
-      };
-      fetchLocations();
-    }
-    setIsLoading(false);
-  }, [mode, id]);
+
+    setFormData({
+      productName: productResponse.name,
+      sku: productResponse.sku,
+      category: productResponse.categoryId,
+      description: productResponse.description,
+      status: productResponse.isActive ? 'active' : 'inactive',
+      costPrice: productResponse.costPrice,
+      sellingPrice: productResponse.unitPrice,
+      unitOfMeasurement: productResponse.unitOfMeasureId,
+      currentStock: productResponse.inventories[0].quantityOnHand,
+      minimumStock: productResponse.inventories[0].reorderLevel,
+      maximumStock: productResponse.inventories[0].maxLevel,
+      storageLocation: productResponse.inventories[0].locationId,
+    });
+    const locations = productResponse.inventories.map(i => {
+      return { id: i.locationId, name: i.locationName };
+    });
+    setProductLocations(locations);
+    setMode('update');
+  }, [id, productResponse]);
+
+  const locations = mode === 'add' ? baseLocations : productLocations;
 
   if (!isOpen) return null;
 

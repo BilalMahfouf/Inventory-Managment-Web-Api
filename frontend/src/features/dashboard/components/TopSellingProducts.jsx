@@ -1,30 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import TopProductItem from './TopProductItem';
 import dashboardApi from '@features/dashboard/services/dashboardApi';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 const TopSellingProducts = ({ className = '' }) => {
   const { t } = useTranslation();
 
-  // Sample data if no products provided
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: products = [], isLoading } = useQuery({
+    queryKey: queryKeys.dashboard.topSellingProducts(7),
+    queryFn: () => dashboardApi.getTopSellingProducts(7),
+  });
 
-  useEffect(() => {
-    const fetchTopProducts = async () => {
-      setIsLoading(true);
-      const products = await dashboardApi.getTopSellingProducts(7);
-      if (products && products.length > 0) {
-        setProducts(products);
-        setIsLoading(false);
-        return;
-      }
-      setProducts([]);
-    }
-    fetchTopProducts();
-  }, []);
   if (isLoading) {
     return (
       <div className={`p-4 border border-gray-200 rounded-lg ${className}`}>

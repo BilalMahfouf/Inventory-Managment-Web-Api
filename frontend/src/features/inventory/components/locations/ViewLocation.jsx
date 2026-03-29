@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,7 @@ import { MapPin, Calendar, User, Building2 } from 'lucide-react';
 import { getLocationById } from '@features/inventory/services/locationApi';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 /**
  * ViewLocation Component
@@ -35,7 +36,7 @@ import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
  */
 const ViewLocation = ({ open, onOpenChange, locationId }) => {
   const { t, i18n } = useTranslation();
-  const [locationData, setLocationData] = useState({
+  const defaultLocationData = {
     id: 0,
     name: '',
     address: '',
@@ -49,27 +50,18 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
     deleteAt: null,
     deletedByUserId: null,
     deletedByUserName: null,
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  };
 
-  useEffect(() => {
-    const fetchLocation = async () => {
-      if (locationId) {
-        setIsLoading(true);
-        try {
-          const response = await getLocationById(locationId);
-          if (response.success && response.data) {
-            setLocationData(response.data);
-          }
-        } catch (error) {
-          console.error('Error fetching location:', error);
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
-    fetchLocation();
-  }, [locationId]);
+  const { data: locationResponse, isLoading } = useQuery({
+    queryKey: [...queryKeys.inventory.locations('list'), 'detail', locationId],
+    queryFn: () => getLocationById(locationId),
+    enabled: open && Boolean(locationId),
+  });
+
+  const locationData =
+    locationResponse?.success && locationResponse?.data
+      ? locationResponse.data
+      : defaultLocationData;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

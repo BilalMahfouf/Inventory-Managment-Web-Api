@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,7 @@ import {
 import { getStockTransferById } from '@features/inventory/services/stockTransferApi';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 /**
  * ViewStockTransfer Component
@@ -60,27 +62,13 @@ import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
   const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState('details');
-  const [transfer, setTransfer] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { data: transferResponse, isLoading: loading } = useQuery({
+    queryKey: [...queryKeys.inventory.stockTransfers('list'), 'detail', transferId],
+    queryFn: () => getStockTransferById(transferId),
+    enabled: open && Boolean(transferId),
+  });
 
-  useEffect(() => {
-    const fetchTransfer = async () => {
-      if (transferId && open) {
-        setLoading(true);
-        try {
-          const response = await getStockTransferById(transferId);
-          if (response.success) {
-            setTransfer(response.data);
-          }
-        } catch (error) {
-          console.error('Error fetching stock transfer:', error);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-    fetchTransfer();
-  }, [transferId, open]);
+  const transfer = transferResponse?.success ? transferResponse.data : null;
 
   const tabs = [
     {

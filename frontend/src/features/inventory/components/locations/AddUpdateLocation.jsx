@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { X, MapPin } from 'lucide-react';
 import Button from '@components/Buttons/Button';
 import { Input } from '@components/ui/input';
@@ -11,6 +12,7 @@ import { getAllLocationTypes } from '@features/inventory/services/locationTypeAp
 import { useToast } from '@shared/context/ToastContext';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 /**
  * AddUpdateLocation Component
@@ -37,8 +39,94 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
   const [id, setId] = useState(locationId);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [locationTypes, setLocationTypes] = useState([]);
-  const [loadingLocationTypes, setLoadingLocationTypes] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { data: locationTypesResponse, isLoading: loadingLocationTypes } =
+    useQuery({
+      queryKey: [...queryKeys.inventory.locations('list'), 'types'],
+      queryFn: getAllLocationTypes,
+      enabled: isOpen,
+    });
+
+  const locationTypes = locationTypesResponse?.success
+    ? locationTypesResponse.data
+    : [];
+
+  const { data: locationResponse } = useQuery({
+    queryKey: [...queryKeys.inventory.locations('list'), 'detail', id],
+    queryFn: () => getLocationById(id),
+    enabled: isOpen && id > 0,
+  });
+
+  const createMutation = useMutation({
+    mutationFn: createLocation,
+    onSuccess: async response => {
+      if (response.success) {
+        showSuccess(
+          t(i18nKeyContainer.inventory.locations.form.toasts.createSuccessTitle),
+          t(i18nKeyContainer.inventory.locations.form.toasts.createSuccessMessage, {
+            name: response.data.name,
+          })
+        );
+        setId(response.data.id);
+        setMode('update');
+        await queryClient.invalidateQueries({
+          queryKey: queryKeys.inventory.locations('list'),
+        });
+        await queryClient.invalidateQueries({ queryKey: queryKeys.inventory.summary() });
+        if (onSuccess) {
+          onSuccess();
+        }
+        resetForm();
+        onClose();
+        return;
+      }
+
+      showError(
+        t(i18nKeyContainer.inventory.locations.form.toasts.createFailedTitle),
+        t(i18nKeyContainer.inventory.locations.form.toasts.createFailedMessage, {
+          name: formData.name,
+          error: response.message,
+        })
+      );
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: payload => updateLocation(payload.id, payload.data),
+    onSuccess: async response => {
+      if (response.success) {
+        showSuccess(
+          t(i18nKeyContainer.inventory.locations.form.toasts.updateSuccessTitle),
+          t(i18nKeyContainer.inventory.locations.form.toasts.updateSuccessMessage, {
+            name: response.data.name,
+          })
+        );
+        setFormData({
+          name: response.data.name,
+          address: response.data.address,
+          locationTypeId: response.data.locationTypeId,
+          isActive: response.data.isActive,
+        });
+        await queryClient.invalidateQueries({
+          queryKey: queryKeys.inventory.locations('list'),
+        });
+        await queryClient.invalidateQueries({ queryKey: queryKeys.inventory.summary() });
+        if (onSuccess) {
+          onSuccess();
+        }
+        onClose();
+        return;
+      }
+
+      showError(
+        t(i18nKeyContainer.inventory.locations.form.toasts.updateFailedTitle),
+        t(i18nKeyContainer.inventory.locations.form.toasts.updateFailedMessage, {
+          error: response.message,
+        })
+      );
+    },
+  });
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -75,120 +163,26 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const fetchLocationTypes = useCallback(async () => {
-    setLoadingLocationTypes(true);
-    try {
-      const response = await getAllLocationTypes();
-      if (response.success) {
-        setLocationTypes(response.data);
-      } else {
-        showError(
-          t(i18nKeyContainer.inventory.locations.form.toasts.loadTypesFailedTitle),
-          t(i18nKeyContainer.inventory.locations.form.toasts.loadTypesFailedMessage)
-        );
-      }
-    } catch (error) {
-      console.error('Error fetching location types:', error);
-      showError(
-        t(i18nKeyContainer.inventory.locations.form.toasts.fetchTypesFailedTitle),
-        t(i18nKeyContainer.inventory.locations.form.toasts.fetchTypesFailedMessage)
-      );
-    } finally {
-      setLoadingLocationTypes(false);
-    }
-  }, [showError]);
-
-  const addNewLocation = async ({ name, address, locationTypeId }) => {
-    setIsLoading(true);
-    console.log('Creating location with:', { name, address, locationTypeId });
-    const response = await createLocation({
-      name,
-      address,
-      locationTypeId,
-    });
-    if (response.success) {
-      showSuccess(
-        t(i18nKeyContainer.inventory.locations.form.toasts.createSuccessTitle),
-        t(i18nKeyContainer.inventory.locations.form.toasts.createSuccessMessage, {
-          name,
-        })
-      );
-      setId(response.data.id);
-      setMode('update');
-      if (onSuccess) {
-        onSuccess();
-      }
-      resetForm();
-      onClose();
-    } else {
-      showError(
-        t(i18nKeyContainer.inventory.locations.form.toasts.createFailedTitle),
-        t(i18nKeyContainer.inventory.locations.form.toasts.createFailedMessage, {
-          name,
-          error: response.message,
-        })
-      );
-    }
-    setIsLoading(false);
-  };
-
-  const editLocation = async (
-    id,
-    { name, address, locationTypeId, isActive }
-  ) => {
-    setIsLoading(true);
-    const response = await updateLocation(id, {
-      name,
-      address,
-      locationTypeId,
-      isActive,
-    });
-
-    if (response.success) {
-      showSuccess(
-        t(i18nKeyContainer.inventory.locations.form.toasts.updateSuccessTitle),
-        t(i18nKeyContainer.inventory.locations.form.toasts.updateSuccessMessage, {
-          name,
-        })
-      );
-      setFormData({
-        name: response.data.name,
-        address: response.data.address,
-        locationTypeId: response.data.locationTypeId,
-        isActive: response.data.isActive,
-      });
-      if (onSuccess) {
-        onSuccess();
-      }
-      onClose();
-    } else {
-      showError(
-        t(i18nKeyContainer.inventory.locations.form.toasts.updateFailedTitle),
-        t(i18nKeyContainer.inventory.locations.form.toasts.updateFailedMessage, {
-          error: response.message,
-        })
-      );
-    }
-    setIsLoading(false);
-  };
-
   const saveLocation = () => {
     if (!validateForm()) {
       return;
     }
 
     if (mode === 'add') {
-      addNewLocation({
+      createMutation.mutate({
         name: formData.name,
         address: formData.address,
         locationTypeId: formData.locationTypeId,
       });
     } else if (mode === 'update') {
-      editLocation(id, {
-        name: formData.name,
-        address: formData.address,
-        locationTypeId: formData.locationTypeId,
-        isActive: formData.isActive,
+      updateMutation.mutate({
+        id,
+        data: {
+          name: formData.name,
+          address: formData.address,
+          locationTypeId: formData.locationTypeId,
+          isActive: formData.isActive,
+        },
       });
     }
   };
@@ -219,52 +213,7 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
   };
 
   useEffect(() => {
-    if (isOpen) {
-      fetchLocationTypes();
-    }
-  }, [isOpen, fetchLocationTypes]);
-
-  useEffect(() => {
-    if (isOpen && id > 0) {
-      const fetchLocation = async id => {
-        try {
-          setIsLoading(true);
-          const response = await getLocationById(id);
-          if (response.success && response.data) {
-            setFormData({
-              name: response.data.name,
-              address: response.data.address,
-              locationTypeId: response.data.locationTypeId,
-              isActive: response.data.isActive,
-            });
-            setMode('update');
-          } else {
-            showError(
-              t(
-                i18nKeyContainer.inventory.locations.form.toasts
-                  .loadLocationFailedTitle
-              ),
-              t(
-                i18nKeyContainer.inventory.locations.form.toasts
-                  .loadLocationFailedMessage
-              )
-            );
-          }
-        } catch (error) {
-          console.error('Error fetching location:', error);
-          showError(
-            t(i18nKeyContainer.inventory.locations.form.toasts.loadLocationFailedTitle),
-            t(
-              i18nKeyContainer.inventory.locations.form.toasts
-                .loadLocationFailedMessage
-            )
-          );
-        } finally {
-          setIsLoading(false);
-        }
-      };
-      fetchLocation(id);
-    } else if (isOpen && id === 0) {
+    if (isOpen && id === 0) {
       setMode('add');
       setFormData({
         name: '',
@@ -273,11 +222,27 @@ const AddUpdateLocation = ({ isOpen, onClose, locationId = 0, onSuccess }) => {
         isActive: true,
       });
     }
-  }, [id, isOpen, showError]);
+  }, [id, isOpen]);
+
+  useEffect(() => {
+    if (locationResponse?.success && locationResponse?.data) {
+      setFormData({
+        name: locationResponse.data.name,
+        address: locationResponse.data.address,
+        locationTypeId: locationResponse.data.locationTypeId,
+        isActive: locationResponse.data.isActive,
+      });
+      setMode('update');
+    }
+  }, [locationResponse]);
 
   useEffect(() => {
     setId(locationId);
   }, [locationId]);
+
+  useEffect(() => {
+    setIsLoading(createMutation.isPending || updateMutation.isPending);
+  }, [createMutation.isPending, updateMutation.isPending]);
 
   if (!isOpen) return null;
 

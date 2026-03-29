@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import PageHeader from '@components/ui/PageHeader';
 import InfoCard from '@components/ui/InfoCard';
 import {
@@ -22,31 +23,22 @@ import UnitOfMeasureTable from '@features/products/components/unitOfMeasure/Unit
 import AddUnitOfMeasureButton from '@features/products/components/unitOfMeasure/AddUnitOfMeasureButton';
 import ProductCategoryDataTable from '@features/products/components/productCategories/ProductCategoryDataTable';
 import AddProductCategoryButton from '@features/products/components/productCategories/AddProductCategoryButton';
+import { queryKeys } from '@shared/lib/queryKeys';
 export default function ProductsPage() {
   const { t, i18n } = useTranslation();
 
-  const [totalProductsCount, setTotalProductsCount] = useState(0);
-  const [inventoryValue, setInventoryValue] = useState(0);
-  const [lowStockCount, setLowStockCount] = useState(1);
-  const [profitPotential, setProfitPotential] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const { data: summary, isLoading: loading } = useQuery({
+    queryKey: queryKeys.products.summary(),
+    queryFn: getSummary,
+  });
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [refreshCategories, setRefreshCategories] = useState(false);
 
   const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const summary = await getSummary();
-      setTotalProductsCount(summary.totalProducts);
-      setInventoryValue(summary.inventoryValue);
-      setLowStockCount(summary.lowStockProducts);
-      setProfitPotential(summary.profitPotential);
-    };
-    fetchData();
-    setLoading(false);
-  }, []);
+  const totalProductsCount = summary?.totalProducts ?? 0;
+  const inventoryValue = summary?.inventoryValue ?? 0;
+  const lowStockCount = summary?.lowStockProducts ?? 0;
+  const profitPotential = summary?.profitPotential ?? 0;
 
   return (
     <div>
@@ -167,13 +159,9 @@ export default function ProductsPage() {
               <h3 className='text-2xl font-semibold leading-none tracking-tight'>
                 {t(i18nKeyContainer.products.page.sections.productCategories)}
               </h3>
-              <AddProductCategoryButton
-                onClose={() => {
-                  setRefreshCategories(!refreshCategories);
-                }}
-              />
+              <AddProductCategoryButton />
             </div>
-            <ProductCategoryDataTable refresh={refreshCategories} />
+            <ProductCategoryDataTable />
           </TabPanel>
           <TabPanel>
             <div className='mb-9 flex items-center justify-between'>

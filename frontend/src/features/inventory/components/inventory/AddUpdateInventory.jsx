@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { X, Package, MapPin, Archive, Search } from 'lucide-react';
 import Button from '@components/Buttons/Button';
 import { Input } from '@components/ui/input';
@@ -16,6 +17,7 @@ import {
 } from '@features/inventory/services/inventoryApi';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 /**
  * AddUpdateInventory Component
@@ -47,6 +49,7 @@ const AddUpdateInventory = ({
 }) => {
   const { t } = useTranslation();
   const { showSuccess, showError } = useToast();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState(0);
   const [mode, setMode] = useState('add'); // 'add' or 'update'
   const [isLoading, setIsLoading] = useState(false);
@@ -56,8 +59,6 @@ const AddUpdateInventory = ({
   const [searchedProduct, setSearchedProduct] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
 
-  // Location state
-  const [locations, setLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
   // Stock levels state
@@ -69,6 +70,74 @@ const AddUpdateInventory = ({
 
   // Available stock (only in update mode)
   const [availableStock, setAvailableStock] = useState(0);
+
+  const { data: locations = [] } = useQuery({
+    queryKey: [...queryKeys.inventory.locations('names')],
+    queryFn: getLocationsNames,
+    enabled: isOpen,
+  });
+
+  const { data: inventoryResponse } = useQuery({
+    queryKey: queryKeys.inventory.detail(inventoryId),
+    queryFn: () => getInventoryById(inventoryId),
+    enabled: isOpen && inventoryId > 0,
+  });
+
+  const productSearchMutation = useMutation({
+    mutationFn: getProductById,
+  });
+
+  const locationDetailsMutation = useMutation({
+    mutationFn: getLocationById,
+  });
+
+  const createInventoryMutation = useMutation({
+    mutationFn: createInventory,
+    onSuccess: async response => {
+      if (!response.success) {
+        showError(
+          t(i18nKeyContainer.inventory.inventoryForm.toasts.createErrorTitle),
+          t(i18nKeyContainer.inventory.inventoryForm.toasts.createErrorMessage, {
+            error: response.error,
+          })
+        );
+        return;
+      }
+      showSuccess(
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.createSuccessTitle),
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.createSuccessMessage, {
+          product: searchedProduct.name,
+          location: selectedLocation.name,
+        })
+      );
+      await queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
+    },
+  });
+
+  const updateInventoryMutation = useMutation({
+    mutationFn: payload => updateInventory(payload.inventoryId, payload.data),
+    onSuccess: async response => {
+      if (!response.success) {
+        showError(
+          t(i18nKeyContainer.inventory.inventoryForm.toasts.updateErrorTitle),
+          t(i18nKeyContainer.inventory.inventoryForm.toasts.updateErrorMessage, {
+            error: response.error,
+          })
+        );
+        return;
+      }
+      showSuccess(
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.updateSuccessTitle),
+        t(i18nKeyContainer.inventory.inventoryForm.toasts.updateSuccessMessage, {
+          product: searchedProduct.name,
+          location: selectedLocation.name,
+        })
+      );
+      await queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
+    },
+  });
 
   // Tabs configuration
   const tabs = [
@@ -113,7 +182,7 @@ const AddUpdateInventory = ({
       // Try to search by ID first if it's a number
       const searchId = parseInt(productSearchTerm);
       if (!isNaN(searchId)) {
-        const product = await getProductById(searchId);
+        const product = await productSearchMutation.mutateAsync(searchId);
         if (product) {
           setSearchedProduct(product);
           showSuccess(
@@ -156,7 +225,7 @@ const AddUpdateInventory = ({
 
     try {
       // Find the location in the locations array
-      const location = await getLocationById(locationId);
+      const location = await locationDetailsMutation.mutateAsync(locationId);
       if (!location.success) {
         showError(
           t(i18nKeyContainer.inventory.inventoryForm.toasts.locationLoadErrorTitle),
@@ -245,52 +314,23 @@ const AddUpdateInventory = ({
    * Creates or updates inventory based on mode
    */
   const addInventory = async () => {
-    const response = await createInventory({
+    await createInventoryMutation.mutateAsync({
       productId: searchedProduct.id,
       locationId: selectedLocation.id,
       quantityOnHand: stockLevels.quantityOnHand,
       reorderLevel: stockLevels.reorderLevel,
       maxLevel: stockLevels.maxLevel,
     });
-    if (!response.success) {
-      showError(
-        t(i18nKeyContainer.inventory.inventoryForm.toasts.createErrorTitle),
-        t(i18nKeyContainer.inventory.inventoryForm.toasts.createErrorMessage, {
-          error: response.error,
-        })
-      );
-      return;
-    }
-    showSuccess(
-      t(i18nKeyContainer.inventory.inventoryForm.toasts.createSuccessTitle),
-      t(i18nKeyContainer.inventory.inventoryForm.toasts.createSuccessMessage, {
-        product: searchedProduct.name,
-        location: selectedLocation.name,
-      })
-    );
   };
   const updateInventoryLevels = async () => {
-    const response = await updateInventory(inventoryId, {
-      quantityOnHand: stockLevels.quantityOnHand,
-      reorderLevel: stockLevels.reorderLevel,
-      maxLevel: stockLevels.maxLevel,
+    await updateInventoryMutation.mutateAsync({
+      inventoryId,
+      data: {
+        quantityOnHand: stockLevels.quantityOnHand,
+        reorderLevel: stockLevels.reorderLevel,
+        maxLevel: stockLevels.maxLevel,
+      },
     });
-    if (!response.success) {
-      showError(
-        t(i18nKeyContainer.inventory.inventoryForm.toasts.updateErrorTitle),
-        t(i18nKeyContainer.inventory.inventoryForm.toasts.updateErrorMessage, {
-          error: response.error,
-        })
-      );
-      return;
-    }
-    showSuccess(
-      t(i18nKeyContainer.inventory.inventoryForm.toasts.updateSuccessTitle),
-      t(i18nKeyContainer.inventory.inventoryForm.toasts.updateSuccessMessage, {
-        product: searchedProduct.name,
-        location: selectedLocation.name,
-      })
-    );
   };
   const handleSubmit = async e => {
     e.preventDefault();
@@ -350,72 +390,32 @@ const AddUpdateInventory = ({
     }
   };
 
-  /**
-   * Load locations on component mount
-   */
   useEffect(() => {
-    const fetchLocations = async () => {
-      try {
-        const data = await getLocationsNames();
-        if (data) {
-          setLocations(data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch locations:', error);
+    if (inventoryId > 0 && isOpen) {
+      setMode('update');
+      if (!inventoryResponse) {
+        return;
       }
-    };
 
-    if (isOpen) {
-      fetchLocations();
+      if (!inventoryResponse.success) {
+        showError(
+          t(i18nKeyContainer.inventory.inventoryForm.toasts.loadFailedTitle),
+          `Error: ${inventoryResponse.error}, please try again`
+        );
+        return;
+      }
+
+      const inventoryData = inventoryResponse.data;
+      setSearchedProduct(inventoryData.product);
+      setSelectedLocation(inventoryData.location);
+      setStockLevels({
+        quantityOnHand: inventoryData.quantityOnHand,
+        reorderLevel: inventoryData.reorderLevel,
+        maxLevel: inventoryData.maxLevel,
+      });
+      setAvailableStock(inventoryData.quantityOnHand);
     }
-  }, [isOpen]);
-
-  /**
-   * Load inventory data in update mode
-   */
-  useEffect(() => {
-    const fetchInventoryData = async () => {
-      if (inventoryId > 0 && isOpen) {
-        setMode('update');
-        setIsLoading(true);
-        try {
-          const inventoryResult = await getInventoryById(inventoryId);
-          if (!inventoryResult.success) {
-            showError(
-              t(i18nKeyContainer.inventory.inventoryForm.toasts.loadFailedTitle),
-              `Error: ${inventoryResult.error}, please try again`
-            );
-            return;
-          }
-          const inventoryData = inventoryResult.data;
-
-          setSearchedProduct(inventoryData.product);
-          setSelectedLocation(inventoryData.location);
-          setStockLevels({
-            quantityOnHand: inventoryData.quantityOnHand,
-            reorderLevel: inventoryData.reorderLevel,
-            maxLevel: inventoryData.maxLevel,
-          });
-          setAvailableStock(inventoryData.quantityOnHand);
-
-          //   showError(
-          //     'Update Mode',
-          //     'API integration needed. Please implement getInventoryById endpoint.'
-          //   );
-        } catch {
-          showError(
-            t(i18nKeyContainer.inventory.inventoryForm.toasts.loadFailedTitle),
-            t(i18nKeyContainer.inventory.inventoryForm.toasts.loadFailedMessage)
-          );
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    fetchInventoryData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inventoryId, isOpen]);
+  }, [inventoryId, isOpen, inventoryResponse, showError, t]);
 
   if (!isOpen) return null;
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { X, Tag } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -11,6 +12,7 @@ import {
   updateUnitOfMeasure,
 } from '@features/products/services/unitOfMeasureApi';
 import { useToast } from '@shared/context/ToastContext';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 /**
  * AddUnitOfMeasure Component
@@ -35,6 +37,76 @@ const AddUnitOfMeasure = ({ isOpen, onClose, unitId = 0, onSuccess }) => {
   const [id, setId] = useState(unitId);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const queryClient = useQueryClient();
+
+  const { data: unitData } = useQuery({
+    queryKey: [...queryKeys.products.unitOfMeasure(), 'detail', id],
+    queryFn: () => getUnitOfMeasureById(id),
+    enabled: isOpen && id > 0,
+  });
+
+  const createMutation = useMutation({
+    mutationFn: createUnitOfMeasure,
+    onSuccess: async response => {
+      showSuccess(
+        t(i18nKeyContainer.products.units.form.toasts.createSuccessTitle),
+        t(i18nKeyContainer.products.units.form.toasts.createSuccessMessage, {
+          name: response.data.name,
+        })
+      );
+      setId(response.data.id);
+      setMode('update');
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.products.unitOfMeasure(),
+      });
+      if (onSuccess) {
+        onSuccess();
+      }
+      onClose();
+    },
+    onError: error => {
+      showError(
+        t(i18nKeyContainer.products.units.form.toasts.createErrorTitle),
+        error?.message ||
+          t(i18nKeyContainer.products.units.form.toasts.createErrorMessage, {
+            name: formData.name,
+            error: t(i18nKeyContainer.products.shared.notSpecified),
+          })
+      );
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: payload => updateUnitOfMeasure(payload.id, payload.data),
+    onSuccess: async response => {
+      showSuccess(
+        t(i18nKeyContainer.products.units.form.toasts.updateSuccessTitle),
+        t(i18nKeyContainer.products.units.form.toasts.updateSuccessMessage, {
+          name: response.data.name,
+        })
+      );
+      setFormData({
+        name: response.data.name,
+        description: response.data.description || '',
+      });
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.products.unitOfMeasure(),
+      });
+      if (onSuccess) {
+        onSuccess();
+      }
+      onClose();
+    },
+    onError: error => {
+      showError(
+        t(i18nKeyContainer.products.units.form.toasts.updateErrorTitle),
+        error?.message ||
+          t(i18nKeyContainer.products.units.form.toasts.updateErrorMessage, {
+            error: t(i18nKeyContainer.products.shared.notSpecified),
+          })
+      );
+    },
+  });
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -61,84 +133,23 @@ const AddUnitOfMeasure = ({ isOpen, onClose, unitId = 0, onSuccess }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const addNewUnit = async ({ name, description }) => {
-    setIsLoading(true);
-    const response = await createUnitOfMeasure({
-      name,
-      description,
-    });
-    if (response.success) {
-      showSuccess(
-        t(i18nKeyContainer.products.units.form.toasts.createSuccessTitle),
-        t(i18nKeyContainer.products.units.form.toasts.createSuccessMessage, {
-          name,
-        })
-      );
-      setId(response.data.id);
-      setMode('update');
-      if (onSuccess) {
-        onSuccess();
-      }
-      onClose();
-    } else if (!response.success) {
-      showError(
-        t(i18nKeyContainer.products.units.form.toasts.createErrorTitle),
-        t(i18nKeyContainer.products.units.form.toasts.createErrorMessage, {
-          name,
-          error: response.message,
-        })
-      );
-    }
-    setIsLoading(false);
-  };
-
-  const editUnit = async (id, { name, description }) => {
-    setIsLoading(true);
-    const response = await updateUnitOfMeasure(id, {
-      name,
-      description,
-    });
-
-    if (response.success) {
-      showSuccess(
-        t(i18nKeyContainer.products.units.form.toasts.updateSuccessTitle),
-        t(i18nKeyContainer.products.units.form.toasts.updateSuccessMessage, {
-          name,
-        })
-      );
-      setFormData({
-        name: response.data.name,
-        description: response.data.description || '',
-      });
-      if (onSuccess) {
-        onSuccess();
-      }
-      onClose();
-    } else {
-      showError(
-        t(i18nKeyContainer.products.units.form.toasts.updateErrorTitle),
-        t(i18nKeyContainer.products.units.form.toasts.updateErrorMessage, {
-          error: response.message,
-        })
-      );
-    }
-    setIsLoading(false);
-  };
-
   const saveUnit = () => {
     if (!validateForm()) {
       return;
     }
 
     if (mode === 'add') {
-      addNewUnit({
+      createMutation.mutate({
         name: formData.name,
         description: formData.description,
       });
     } else if (mode === 'update') {
-      editUnit(id, {
-        name: formData.name,
-        description: formData.description,
+      updateMutation.mutate({
+        id,
+        data: {
+          name: formData.name,
+          description: formData.description,
+        },
       });
     }
   };
@@ -162,41 +173,32 @@ const AddUnitOfMeasure = ({ isOpen, onClose, unitId = 0, onSuccess }) => {
   };
 
   useEffect(() => {
-    if (isOpen && id > 0) {
-      const fetchUnit = async id => {
-        try {
-          setIsLoading(true);
-          const data = await getUnitOfMeasureById(id);
-          if (data) {
-            setFormData({
-              name: data.name,
-              description: data.description || '',
-            });
-            setMode('update');
-          }
-        } catch (error) {
-          console.error('Error fetching unit:', error);
-          showError(
-            t(i18nKeyContainer.products.units.form.toasts.loadErrorTitle),
-            t(i18nKeyContainer.products.units.form.toasts.loadErrorMessage)
-          );
-        } finally {
-          setIsLoading(false);
-        }
-      };
-      fetchUnit(id);
-    } else if (isOpen && id === 0) {
+    if (isOpen && id === 0) {
       setMode('add');
       setFormData({
         name: '',
         description: '',
       });
     }
-  }, [id, isOpen, showError, t]);
+  }, [id, isOpen]);
+
+  useEffect(() => {
+    if (unitData) {
+      setFormData({
+        name: unitData.name,
+        description: unitData.description || '',
+      });
+      setMode('update');
+    }
+  }, [unitData]);
 
   useEffect(() => {
     setId(unitId);
   }, [unitId]);
+
+  useEffect(() => {
+    setIsLoading(createMutation.isPending || updateMutation.isPending);
+  }, [createMutation.isPending, updateMutation.isPending]);
 
   if (!isOpen) return null;
 

@@ -1,6 +1,7 @@
 import { useToast } from '@shared/context/ToastContext';
 import useServerSideDataTable from '@shared/hooks/useServerSideDataTable';
 import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   deleteCustomerById,
   getCustomers,
@@ -10,6 +11,7 @@ import AddUpdateCustomer from './AddUpdateCustomer';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 const getStatusLabel = (isActive, t) =>
   isActive
@@ -73,9 +75,10 @@ export default function CustomerDataTable() {
   const { t } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [currentCustomerId, setCurrentCustomerId] = useState(0);
-  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [_viewDialogOpen, setViewDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const { showSuccess, showError } = useToast();
+  const queryClient = useQueryClient();
 
   const fetchCustomers = async ({
     page,
@@ -102,27 +105,36 @@ export default function CustomerDataTable() {
     setEditDialogOpen(true);
   };
 
-  const handleDeleteConfirm = async () => {
-    const response = await deleteCustomerById(currentCustomerId);
-    if (!response.success) {
-      showError(
-        t(i18nKeyContainer.customers.table.toasts.deleteFailedTitle),
-        t(i18nKeyContainer.customers.table.toasts.deleteFailedMessage, {
-          error: response.error,
-        })
+  const deleteMutation = useMutation({
+    mutationFn: deleteCustomerById,
+    onSuccess: async response => {
+      if (!response.success) {
+        showError(
+          t(i18nKeyContainer.customers.table.toasts.deleteFailedTitle),
+          t(i18nKeyContainer.customers.table.toasts.deleteFailedMessage, {
+            error: response.error,
+          })
+        );
+        setDeleteDialogOpen(false);
+        return;
+      }
+
+      showSuccess(
+        t(i18nKeyContainer.customers.table.toasts.deleteSuccessTitle),
+        t(i18nKeyContainer.customers.table.toasts.deleteSuccessMessage)
       );
       setDeleteDialogOpen(false);
-      return;
-    }
-    showSuccess(
-      t(i18nKeyContainer.customers.table.toasts.deleteSuccessTitle),
-      t(i18nKeyContainer.customers.table.toasts.deleteSuccessMessage)
-    );
-    setDeleteDialogOpen(false);
-    tableProps.refresh();
-  };
+      await queryClient.invalidateQueries({ queryKey: queryKeys.customers.all });
+    },
+  });
 
-  const tableProps = useServerSideDataTable(fetchCustomers);
+  const tableProps = useServerSideDataTable(fetchCustomers, {
+    queryKey: queryKeys.customers.table('catalog'),
+  });
+
+  const handleDeleteConfirm = async () => {
+    deleteMutation.mutate(currentCustomerId);
+  };
 
   return (
     <>
@@ -149,7 +161,7 @@ export default function CustomerDataTable() {
           isOpen={editDialogOpen}
           onClose={() => setEditDialogOpen(false)}
           onSuccess={() => {
-            tableProps.refresh();
+            queryClient.invalidateQueries({ queryKey: queryKeys.customers.all });
           }}
           customerId={currentCustomerId}
         />

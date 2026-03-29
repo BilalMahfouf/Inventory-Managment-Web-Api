@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 /**
  * Custom hook for server-side pagination, sorting, and filtering
@@ -11,55 +12,36 @@ const useServerSideDataTable = (
   {
     initialPageSize = 10,
     onError = error => console.error('Table fetch error:', error),
+    queryKey = ['table'],
   } = {}
 ) => {
   // Table state
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(initialPageSize);
-  const [totalRows, setTotalRows] = useState(0);
   const [sorting, setSorting] = useState([]);
   const [globalFilter, setGlobalFilter] = useState('');
-  const [error, setError] = useState(null);
+  const sortColumn = sorting.length > 0 ? sorting[0].id : null;
+  const sortOrder = sorting.length > 0 ? (sorting[0].desc ? 'desc' : 'asc') : null;
 
-  // Fetch function
-  const fetchData = async (page, size, sortingArray = [], search = null) => {
-    setLoading(true);
-    setError(null);
+  const queryResult = useQuery({
+    queryKey: [...queryKey, { page: pageIndex + 1, pageSize, sortColumn, sortOrder, search: globalFilter }],
+    queryFn: () => {
+      return fetchFunction({
+        page: pageIndex + 1,
+        pageSize,
+        sortColumn,
+        sortOrder,
+        search: globalFilter,
+      });
+    },
+    placeholderData: keepPreviousData,
+  });
 
-    // Extract sorting information from TanStack Table format
-    const sortColumn = sortingArray.length > 0 ? sortingArray[0].id : null;
-    const sortOrder =
-      sortingArray.length > 0 ? (sortingArray[0].desc ? 'desc' : 'asc') : null;
-
-    const fetchFunctionParam = {
-      page: page,
-      pageSize: size,
-      sortColumn: sortColumn,
-      sortOrder: sortOrder,
-      search: search,
-    };
-
-    try {
-      const result = await fetchFunction(fetchFunctionParam);
-
-      setData(result.item || []);
-      setTotalRows(result.totalCount || 0);
-    } catch (err) {
-      setError(err);
-      onError(err);
-      setData([]);
-      setTotalRows(0);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch data when dependencies change
   useEffect(() => {
-    fetchData(pageIndex + 1, pageSize, sorting, globalFilter);
-  }, [pageIndex, pageSize, sorting, globalFilter]);
+    if (queryResult.error) {
+      onError(queryResult.error);
+    }
+  }, [queryResult.error, onError]);
   // Handlers
   const handlePageChange = useCallback(newPageIndex => {
     setPageIndex(newPageIndex);
@@ -81,19 +63,21 @@ const useServerSideDataTable = (
   }, []);
 
   const refresh = useCallback(() => {
-    fetchData(pageIndex + 1, pageSize, sorting, globalFilter);
-  }, [pageIndex, pageSize, sorting, globalFilter]);
+    return queryResult.refetch();
+  }, [queryResult]);
+
+  const result = queryResult.data || {};
 
   return {
     // State
-    data,
-    loading,
+    data: result.item || [],
+    loading: queryResult.isLoading || queryResult.isFetching,
     pageIndex,
     pageSize,
-    totalRows,
+    totalRows: result.totalCount || 0,
     sorting,
     globalFilter,
-    error,
+    error: queryResult.error,
 
     // Handlers
     onPageChange: handlePageChange,

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { X, User, Building2, FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import Button from '@components/Buttons/Button';
@@ -12,6 +13,7 @@ import {
 import { useToast } from '@shared/context/ToastContext';
 import { getCustomerCategoriesNames } from '@features/customers/services/customerCategoryApi';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 const getInitialFormData = defaultPaymentTerms => ({
   name: '',
@@ -49,9 +51,78 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
   const [mode, setMode] = useState('add');
   const [id, setId] = useState(customerId);
   const [isLoading, setIsLoading] = useState(false);
-  const [isFetchingData, setIsFetchingData] = useState(false);
-  const [customerCategories, setCustomerCategories] = useState([]);
   const [errors, setErrors] = useState({});
+  const queryClient = useQueryClient();
+
+  const { data: customerCategoriesResponse } = useQuery({
+    queryKey: queryKeys.customers.categories(),
+    queryFn: getCustomerCategoriesNames,
+    enabled: isOpen,
+  });
+
+  const customerCategories = customerCategoriesResponse?.success
+    ? customerCategoriesResponse.data
+    : [];
+
+  const { data: customerResponse, isFetching: isFetchingData } = useQuery({
+    queryKey: queryKeys.customers.detail(id),
+    queryFn: () => getCustomerById(id),
+    enabled: isOpen && id > 0,
+  });
+
+  const createMutation = useMutation({
+    mutationFn: createCustomer,
+    onSuccess: async response => {
+      if (response.success) {
+        showSuccess(
+          t(i18nKeyContainer.customers.form.toasts.createSuccessTitle),
+          t(i18nKeyContainer.customers.form.toasts.createSuccessMessage, {
+            name: formData.name,
+          })
+        );
+        setId(response.data.id);
+        setMode('update');
+        await queryClient.invalidateQueries({ queryKey: queryKeys.customers.all });
+        if (onSuccess) {
+          onSuccess();
+        }
+        onClose();
+        return;
+      }
+
+      showError(
+        t(i18nKeyContainer.customers.form.toasts.createFailedTitle),
+        response.message ||
+          t(i18nKeyContainer.customers.form.toasts.createFailedMessage)
+      );
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: payload => updateCustomer(payload.id, payload.data),
+    onSuccess: async response => {
+      if (response.success) {
+        showSuccess(
+          t(i18nKeyContainer.customers.form.toasts.updateSuccessTitle),
+          t(i18nKeyContainer.customers.form.toasts.updateSuccessMessage, {
+            id,
+          })
+        );
+        await queryClient.invalidateQueries({ queryKey: queryKeys.customers.all });
+        if (onSuccess) {
+          onSuccess();
+        }
+        onClose();
+        return;
+      }
+
+      showError(
+        t(i18nKeyContainer.customers.form.toasts.updateFailedTitle),
+        response.message ||
+          t(i18nKeyContainer.customers.form.toasts.updateFailedMessage)
+      );
+    },
+  });
 
   // Form state for all fields
   const [formData, setFormData] = useState(() =>
@@ -157,8 +228,6 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
       return;
     }
 
-    setIsLoading(true);
-
     const customerPayload = {
       name: formData.name.trim(),
       email: formData.email.trim(),
@@ -173,51 +242,11 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
       paymentTerms: formData.paymentTerms.trim() || defaultPaymentTerms,
     };
 
-    let response;
     if (mode === 'add') {
-      response = await createCustomer(customerPayload);
-      if (response.success) {
-        showSuccess(
-          t(i18nKeyContainer.customers.form.toasts.createSuccessTitle),
-          t(i18nKeyContainer.customers.form.toasts.createSuccessMessage, {
-            name: formData.name,
-          })
-        );
-        setId(response.data.id);
-        setMode('update');
-        if (onSuccess) {
-          onSuccess();
-        }
-        onClose();
-      } else {
-        showError(
-          t(i18nKeyContainer.customers.form.toasts.createFailedTitle),
-          response.message ||
-            t(i18nKeyContainer.customers.form.toasts.createFailedMessage)
-        );
-      }
+      await createMutation.mutateAsync(customerPayload);
     } else if (mode === 'update') {
-      response = await updateCustomer(id, customerPayload);
-      if (response.success) {
-        showSuccess(
-          t(i18nKeyContainer.customers.form.toasts.updateSuccessTitle),
-          t(i18nKeyContainer.customers.form.toasts.updateSuccessMessage, {
-            id,
-          })
-        );
-        if (onSuccess) {
-          onSuccess();
-        }
-        onClose();
-      } else {
-        showError(
-          t(i18nKeyContainer.customers.form.toasts.updateFailedTitle),
-          response.message ||
-            t(i18nKeyContainer.customers.form.toasts.updateFailedMessage)
-        );
-      }
+      await updateMutation.mutateAsync({ id, data: customerPayload });
     }
-    setIsLoading(false);
   };
 
   const handleSubmit = e => {
@@ -261,59 +290,34 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
     }
   };
 
-  // Fetch customer categories
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await getCustomerCategoriesNames();
-        if (response.success) {
-          setCustomerCategories(response.data);
-        }
-      } catch (error) {
-        console.error('Error fetching customer categories:', error);
-      }
-    };
-
-    if (isOpen) {
-      fetchCategories();
+    if (customerResponse?.success && customerResponse?.data) {
+      const data = customerResponse.data;
+      setFormData({
+        name: data.name || '',
+        email: data.email || '',
+        phone: data.phone || '',
+        customerCategoryId: data.customerCategoryId || '',
+        street: data.address?.street || data.street || '',
+        city: data.address?.city || data.city || '',
+        state: data.address?.state || data.state || '',
+        zipCode: data.address?.zipCode || data.zipCode || '',
+        creditLimit: data.creditLimit?.toString() || '5000.00',
+        creditStatus: data.creditStatus || 0,
+        paymentTerms: data.paymentTerms || defaultPaymentTerms,
+      });
+      setCustomerData(data);
+      setMode('update');
+      return;
     }
-  }, [isOpen]);
 
-  // Fetch customer data for edit mode
-  useEffect(() => {
-    const fetchCustomer = async () => {
-      if (!isOpen || id <= 0) return;
-
-      setIsFetchingData(true);
-      const response = await getCustomerById(id);
-      if (response.success && response.data) {
-        const data = response.data;
-        setFormData({
-          name: data.name || '',
-          email: data.email || '',
-          phone: data.phone || '',
-          customerCategoryId: data.customerCategoryId || '',
-          street: data.address?.street || data.street || '',
-          city: data.address?.city || data.city || '',
-          state: data.address?.state || data.state || '',
-          zipCode: data.address?.zipCode || data.zipCode || '',
-          creditLimit: data.creditLimit?.toString() || '5000.00',
-          creditStatus: data.creditStatus || 0,
-          paymentTerms: data.paymentTerms || defaultPaymentTerms,
-        });
-        setCustomerData(data);
-        setMode('update');
-      } else {
-        showError(
-          t(i18nKeyContainer.customers.form.toasts.loadFailedTitle),
-          t(i18nKeyContainer.customers.form.toasts.loadFailedMessage)
-        );
-      }
-      setIsFetchingData(false);
-    };
-
-    fetchCustomer();
-  }, [id, isOpen, showError, t, defaultPaymentTerms]);
+    if (customerResponse && !customerResponse.success) {
+      showError(
+        t(i18nKeyContainer.customers.form.toasts.loadFailedTitle),
+        t(i18nKeyContainer.customers.form.toasts.loadFailedMessage)
+      );
+    }
+  }, [customerResponse, defaultPaymentTerms, showError, t]);
 
   // Reset when customerId prop changes
   useEffect(() => {
@@ -325,6 +329,10 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
       setFormData(getInitialFormData(defaultPaymentTerms));
     }
   }, [customerId, defaultPaymentTerms]);
+
+  useEffect(() => {
+    setIsLoading(createMutation.isPending || updateMutation.isPending);
+  }, [createMutation.isPending, updateMutation.isPending]);
 
   if (!isOpen) return null;
 

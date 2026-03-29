@@ -1,68 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import dashboardApi from '@features/dashboard/services/dashboardApi';
 import TodaysPerformance from './TodaysPerformance';
+import { queryKeys } from '@shared/lib/queryKeys';
+
+const fallbackPerformanceData = {
+  todaysSales: '$12,450',
+  salesChange: '+8.2%',
+  newOrders: '23',
+  ordersChange: '+12%',
+  newCustomers: '8',
+  customersChange: '+5%',
+  productsSold: '156',
+  productsSoldChange: '+15%',
+};
 
 const TodaysPerformanceContainer = ({ className = '' }) => {
-  const [performanceData, setPerformanceData] = useState({
-    todaysSales: '$0',
-    salesChange: '+0%',
-    newOrders: '0',
-    ordersChange: '+0%',
-    newCustomers: '0',
-    customersChange: '+0%',
-    productsSold: '0',
-    productsSoldChange: '+0%',
+  const { data, isLoading, isError } = useQuery({
+    queryKey: queryKeys.dashboard.todayPerformance(),
+    queryFn: dashboardApi.getTodayPerformance,
   });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchTodaysPerformance = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const data = await dashboardApi.getTodayPerformance();
-
-        // Map the API response to component props
-        // Adjust these field names based on your actual API response structure
-        setPerformanceData({
-          todaysSales: data.todayRevenues || '$0',
-          salesChange: data.salesChange || '+0%',
-          newOrders: data.todayNewOrders?.toString() || '0',
-          ordersChange: data.ordersChange || '+0%',
-          newCustomers: data.todayNewCustomers?.toString() || '0',
-          customersChange: data.customersChange || '+0%',
-          productsSold: data.todaySoldProducts?.toString() || '0',
-          productsSoldChange: data.productsSoldChange || '+0%',
-        });
-      } catch (err) {
-        console.error("Error fetching today's performance:", err);
-        setError(err.message);
-
-        // Set sample data for development/fallback
-        setPerformanceData({
-          todaysSales: '$12,450',
-          salesChange: '+8.2%',
-          newOrders: '23',
-          ordersChange: '+12%',
-          newCustomers: '8',
-          customersChange: '+5%',
-          productsSold: '156',
-          productsSoldChange: '+15%',
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTodaysPerformance();
-  }, []);
-
-  // You can handle error state here if needed
-  if (error) {
-    console.warn('Using fallback data due to error:', error);
-  }
+  const performanceData = isError
+    ? fallbackPerformanceData
+    : {
+        todaysSales: data?.todayRevenues || '$0',
+        salesChange: data?.salesChange || '+0%',
+        newOrders: data?.todayNewOrders?.toString() || '0',
+        ordersChange: data?.ordersChange || '+0%',
+        newCustomers: data?.todayNewCustomers?.toString() || '0',
+        customersChange: data?.customersChange || '+0%',
+        productsSold: data?.todaySoldProducts?.toString() || '0',
+        productsSoldChange: data?.productsSoldChange || '+0%',
+      };
 
   return (
     <TodaysPerformance
@@ -74,7 +44,7 @@ const TodaysPerformanceContainer = ({ className = '' }) => {
       customersChange={performanceData.customersChange}
       productsSold={performanceData.productsSold}
       productsSoldChange={performanceData.productsSoldChange}
-      loading={loading}
+      loading={isLoading}
       className={className}
     />
   );

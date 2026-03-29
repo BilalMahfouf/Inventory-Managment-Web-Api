@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUnitOfMeasures } from '@features/products/services/unitOfMeasureApi';
 import SimpleDataTable from '@components/DataTable/SimpleDataTable';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';
@@ -9,6 +10,7 @@ import UnitOfMeasureView from './UnitOfMeasureView';
 import { useTranslation } from 'react-i18next';
 
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 export default function UnitOfMeasureTable() {
   const { t } = useTranslation();
@@ -16,42 +18,33 @@ export default function UnitOfMeasureTable() {
   const [addEditDialogOpen, setAddEditDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [currentUnitOfMeasureId, setCurrentUnitOfMeasureId] = useState(0);
-  const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const { showError, showSuccess } = useToast();
+  const queryClient = useQueryClient();
   const columns = useMemo(() => getDefaultColumns(t), [t]);
 
-  useEffect(() => {
-    const fetchUnitOfMeasures = async () => {
-      setIsLoading(true);
-      try {
-        const responseData = await getUnitOfMeasures();
-        setData(responseData);
-        console.log('Unit of Measures data:', responseData);
-      } catch (error) {
-        console.error('Error fetching unit of measures:', error);
-        showError(t(i18nKeyContainer.products.units.table.toasts.loadError));
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const { data = [], isLoading } = useQuery({
+    queryKey: queryKeys.products.unitOfMeasure(),
+    queryFn: getUnitOfMeasures,
+  });
 
-    fetchUnitOfMeasures();
-  }, [showError, t]);
-
-  const fetchUnitOfMeasures = async () => {
-    setIsLoading(true);
-    try {
-      const responseData = await getUnitOfMeasures();
-      setData(responseData);
-    } catch (error) {
-      console.error('Error fetching unit of measures:', error);
-      showError(t(i18nKeyContainer.products.units.table.toasts.loadError));
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const deleteMutation = useMutation({
+    mutationFn: deleteUnitOfMeasure,
+    onSuccess: async () => {
+      setDeleteDialogOpen(false);
+      setCurrentUnitOfMeasureId(0);
+      showSuccess(
+        t(i18nKeyContainer.products.units.table.toasts.deleteSuccessTitle),
+        t(i18nKeyContainer.products.units.table.toasts.deleteSuccessMessage)
+      );
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.products.unitOfMeasure(),
+      });
+    },
+    onError: () => {
+      showError(t(i18nKeyContainer.products.units.table.toasts.deleteError));
+    },
+  });
 
   const handleView = row => {
     setCurrentUnitOfMeasureId(row.id);
@@ -64,20 +57,7 @@ export default function UnitOfMeasureTable() {
   };
 
   const handleDelete = () => {
-    deleteUnitOfMeasure(currentUnitOfMeasureId)
-      .then(() => {
-        setDeleteDialogOpen(false);
-        setCurrentUnitOfMeasureId(0);
-        fetchUnitOfMeasures(); // Refresh data
-        showSuccess(
-          t(i18nKeyContainer.products.units.table.toasts.deleteSuccessTitle),
-          t(i18nKeyContainer.products.units.table.toasts.deleteSuccessMessage)
-        );
-      })
-      .catch(error => {
-        console.error('Error deleting unit of measure:', error);
-        showError(t(i18nKeyContainer.products.units.table.toasts.deleteError));
-      });
+    deleteMutation.mutate(currentUnitOfMeasureId);
   };
 
   const handleAddNew = () => {
@@ -91,7 +71,9 @@ export default function UnitOfMeasureTable() {
   };
 
   const handleSuccess = () => {
-    fetchUnitOfMeasures(); // Refresh data after successful add/edit
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.products.unitOfMeasure(),
+    });
   };
 
   return (

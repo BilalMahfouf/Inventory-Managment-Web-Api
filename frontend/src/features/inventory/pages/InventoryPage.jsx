@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import InfoCard from '@/components/ui/InfoCard';
 import PageHeader from '@components/ui/PageHeader';
 import Button from '@components/Buttons/Button';
@@ -16,33 +17,23 @@ import AddLocationButton from '@features/inventory/components/locations/AddLocat
 import StockMovementHistoryTable from '@features/products/components/ProductsTables/StockMovementHistoryTable';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 export default function InventoryPage() {
   const { t, i18n } = useTranslation();
-  const [loading, setLoading] = useState(false);
-  const [totalInventoryItems, setTotalInventoryItems] = useState(0);
-  const [totalPotentialProfit, setTotalPotentialProfit] = useState(0);
-  const [lowStockCount, setLowStockCount] = useState(0);
-  const [outOfStockCount, setOutOfStockCount] = useState(0);
+  const queryClient = useQueryClient();
+  const { data: summaryResponse, isLoading: loading } = useQuery({
+    queryKey: queryKeys.inventory.summary(),
+    queryFn: getInventorySummary,
+  });
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
 
-  const handleSummaryData = async () => {
-    setLoading(true);
-    const response = await getInventorySummary();
-    if (response.success) {
-      setTotalInventoryItems(response.data.totalInventoryItems);
-      setTotalPotentialProfit(response.data.totalPotentialProfit);
-      setLowStockCount(response.data.lowStockItems);
-      setOutOfStockCount(response.data.outOfStockItems);
-      setLoading(false);
-      return;
-    }
-    setLoading(false);
-  };
-  useEffect(() => {
-    handleSummaryData();
-  }, []);
+  const summary = summaryResponse?.success ? summaryResponse.data : null;
+  const totalInventoryItems = summary?.totalInventoryItems ?? 0;
+  const totalPotentialProfit = summary?.totalPotentialProfit ?? 0;
+  const lowStockCount = summary?.lowStockItems ?? 0;
+  const outOfStockCount = summary?.outOfStockItems ?? 0;
 
   return (
     <>
@@ -183,6 +174,9 @@ export default function InventoryPage() {
         <AddUpdateInventory
           isOpen={isAddModalOpen}
           onClose={() => setIsAddModalOpen(false)}
+          onSuccess={() => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+          }}
         />
       )}
     </>

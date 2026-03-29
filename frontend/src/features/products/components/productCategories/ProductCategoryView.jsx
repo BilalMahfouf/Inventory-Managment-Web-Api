@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { getProductCategoryById } from '@features/products/services/productCategoryApi';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 /**
  * ProductCategoryView Component
@@ -37,7 +38,7 @@ import { getProductCategoryById } from '@features/products/services/productCateg
  */
 const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
   const { t, i18n } = useTranslation();
-  const [categoryData, setCategoryData] = useState({
+  const defaultCategoryData = {
     id: 0,
     name: '',
     description: '',
@@ -50,47 +51,34 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
     createdByUserName: null,
     updatedByUserId: null,
     updatedByUserName: null,
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  };
 
-  useEffect(() => {
-    const fetchProductCategory = async () => {
-      if (categoryId) {
-        setIsLoading(true);
-        try {
-          const data = await getProductCategoryById(categoryId);
-          if (data) {
-            setCategoryData({
-              id: data.id,
-              name: data.name,
-              description: data.description,
-              type: data.type,
-              parentId: data.parentId,
-              parentName: data.parentName,
-              subCategories: data.subCategories || [],
-              createdAt: data.createdAt,
-              createdByUserId: data.createdByUserId,
-              createdByUserName: data.createdByUserName,
-              updatedByUserId: data.updatedByUserId,
-              updatedByUserName: data.updatedByUserName,
-            });
-          }
-        } catch (error) {
-          console.error('Error fetching product category:', error);
-        } finally {
-          setIsLoading(false);
-        }
+  const { data, isLoading } = useQuery({
+    queryKey: [...queryKeys.products.categories(), 'detail', categoryId],
+    queryFn: () => getProductCategoryById(categoryId),
+    enabled: open && Boolean(categoryId),
+  });
+
+  const categoryData = data
+    ? {
+        id: data.id,
+        name: data.name,
+        description: data.description,
+        type: data.type,
+        parentId: data.parentId,
+        parentName: data.parentName,
+        subCategories: data.subCategories || [],
+        createdAt: data.createdAt,
+        createdByUserId: data.createdByUserId,
+        createdByUserName: data.createdByUserName,
+        updatedByUserId: data.updatedByUserId,
+        updatedByUserName: data.updatedByUserName,
       }
-    };
-    fetchProductCategory();
-  }, [categoryId]);
+    : defaultCategoryData;
 
   const isMainCategory = categoryData.type === 'MainCategory';
   const isSubCategory = categoryData.type === 'SubCategory';
   const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
-  console.log('Category Data:', categoryData);
-  console.log('parent name:', categoryData.parentName);
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='max-w-4xl max-h-[90vh] overflow-hidden flex flex-col'>

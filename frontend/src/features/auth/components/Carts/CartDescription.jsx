@@ -4,8 +4,10 @@ import PasswordInputLabel from "@features/auth/components/PasswordInputLabel";
 import Button from "@components/Buttons/Button";
 import Link from "@features/auth/components/Link";
 import {useState} from "react"; 
+import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from "react-router-dom";
 import { authService } from "@shared/services/auth/authService";
+import { queryKeys } from '@shared/lib/queryKeys';
 
 
 export default function CartDescription(){
@@ -14,11 +16,15 @@ const [email,setEmail]=useState("");
 const [password,setPassword]=useState("");
 const [error,setError]= useState("");
 const navigate = useNavigate();
+const loginMutation = useMutation({
+    mutationKey: queryKeys.auth.login(),
+    mutationFn: authService.login,
+});
 
 async function onSubmitHandler(e)
 {
     e.preventDefault();
-    const response =await  authService.login ({email:email,password:password});
+    const response =await loginMutation.mutateAsync({email:email,password:password});
     if(!response.success){
         setError(response.error);
         setPassword("");

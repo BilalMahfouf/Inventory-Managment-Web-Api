@@ -1,5 +1,6 @@
 import SimpleDataTable from '@components/DataTable/SimpleDataTable';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getLocations,
   deleteLocation,
@@ -10,6 +11,7 @@ import { useToast } from '@shared/context/ToastContext';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 const getDefaultColumns = t => [
   {
@@ -41,34 +43,48 @@ const getDefaultColumns = t => [
 
 export default function LocationDataTable() {
   const { t } = useTranslation();
-  const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [addEditDialogOpen, setAddEditDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [currentLocationId, setCurrentLocationId] = useState(0);
   const { showError, showSuccess } = useToast();
+  const queryClient = useQueryClient();
 
-  const fetchLocations = useCallback(async () => {
-    setIsLoading(true);
-    try {
+  const { data = null, isLoading } = useQuery({
+    queryKey: queryKeys.inventory.locations('list'),
+    queryFn: async () => {
       const response = await getLocations();
+      return response.success ? response.data : null;
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteLocation,
+    onSuccess: async response => {
       if (!response.success) {
-        setData(null);
+        showError(
+          t(i18nKeyContainer.inventory.locations.table.toasts.deleteFailedTitle),
+          response.message ||
+            t(
+              i18nKeyContainer.inventory.locations.form.toasts
+                .loadLocationFailedMessage
+            )
+        );
+        setDeleteDialogOpen(false);
         return;
       }
-      console.log('Locations data:', response.data);
-      setData(response.data);
-    } catch (error) {
-      console.error('Error fetching locations:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchLocations();
-  }, [fetchLocations]);
+      showSuccess(
+        t(i18nKeyContainer.inventory.locations.table.toasts.deleteSuccessTitle),
+        t(i18nKeyContainer.inventory.locations.table.toasts.deleteSuccessMessage, {
+          id: currentLocationId,
+        })
+      );
+      setDeleteDialogOpen(false);
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.inventory.locations('list'),
+      });
+    },
+  });
 
   const handleAddNew = () => {
     setCurrentLocationId(0);
@@ -90,30 +106,17 @@ export default function LocationDataTable() {
     setCurrentLocationId(0);
   };
 
-  const handleSuccess = () => {
-    fetchLocations(); // Refresh data after successful add/edit
+  const handleSuccess = async () => {
+    await queryClient.invalidateQueries({
+      queryKey: queryKeys.inventory.locations('list'),
+    });
+    await queryClient.invalidateQueries({ queryKey: queryKeys.inventory.summary() });
     setAddEditDialogOpen(false);
     setViewDialogOpen(false);
     setDeleteDialogOpen(false);
   };
   const handleDelete = async () => {
-    const response = await deleteLocation(currentLocationId);
-    if (!response.success) {
-      showError(
-        t(i18nKeyContainer.inventory.locations.table.toasts.deleteFailedTitle),
-        response.message ||
-          t(i18nKeyContainer.inventory.locations.form.toasts.loadLocationFailedMessage)
-      );
-      setDeleteDialogOpen(false);
-      return;
-    }
-    showSuccess(
-      t(i18nKeyContainer.inventory.locations.table.toasts.deleteSuccessTitle),
-      t(i18nKeyContainer.inventory.locations.table.toasts.deleteSuccessMessage, {
-        id: currentLocationId,
-      })
-    );
-    setDeleteDialogOpen(false);
+    deleteMutation.mutate(currentLocationId);
   };
 
   return (

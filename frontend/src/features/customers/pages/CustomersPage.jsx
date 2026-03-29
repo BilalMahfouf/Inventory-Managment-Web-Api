@@ -4,40 +4,27 @@ import PageHeader from '@/components/ui/PageHeader';
 import { getCustomerSummary } from '@features/customers/services/customerApi';
 import { divStyles } from '@shared/utils/uiVariables';
 import { DollarSign, User2 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { AddCustomerButton } from '@features/customers/components/customers';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 export default function CustomersPage() {
   const { t, i18n } = useTranslation();
-  const [loading, setLoading] = useState(false);
-  const [totalCustomers, setTotalCustomers] = useState(0);
-  const [totalRevenue, setTotalRevenue] = useState(0);
-  const [newCustomersLastMonth, setNewCustomersLastMonth] = useState(0);
-  const [activeCustomers, setActiveCustomers] = useState(0);
+  const { data: summaryResponse, isLoading: loading } = useQuery({
+    queryKey: queryKeys.customers.summary(),
+    queryFn: getCustomerSummary,
+  });
 
   const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
 
-  useEffect(() => {
-    const fetchCustomerSummary = async () => {
-      setLoading(true);
-      try {
-        const response = await getCustomerSummary();
-        if (response.success) {
-          setTotalCustomers(response.data.totalCustomers);
-          setTotalRevenue(response.data.totalRevenue);
-          setNewCustomersLastMonth(response.data.newCustomersLastMonth);
-          setActiveCustomers(response.data.activeCustomers);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCustomerSummary();
-  }, []);
+  const summary = summaryResponse?.success ? summaryResponse.data : null;
+  const totalCustomers = summary?.totalCustomers ?? 0;
+  const totalRevenue = summary?.totalRevenue ?? 0;
+  const newCustomersLastMonth = summary?.newCustomersLastMonth ?? 0;
+  const activeCustomers = summary?.activeCustomers ?? 0;
 
   return (
     <>

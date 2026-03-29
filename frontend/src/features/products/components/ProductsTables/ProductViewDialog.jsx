@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   Dialog,
   DialogContent,
@@ -10,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { getProductById } from '@features/products/services/productApi';
+import { queryKeys } from '@shared/lib/queryKeys';
 /**
  * ProductViewDialog Component
  *
@@ -61,7 +63,7 @@ import { getProductById } from '@features/products/services/productApi';
 const ProductViewDialog = ({ open, onOpenChange, productId }) => {
   const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState('basic');
-  const [product, setProduct] = useState({
+  const defaultProduct = {
     id: 0,
     name: '',
     sku: '',
@@ -83,6 +85,12 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
     deleteAt: null,
     deletedByUserId: null,
     deletedByUserName: null,
+  };
+
+  const { data: product = defaultProduct } = useQuery({
+    queryKey: queryKeys.products.detail(productId),
+    queryFn: () => getProductById(productId),
+    enabled: open && Boolean(productId),
   });
   // to do refactor this to be calculated on backend
   // Calculate profit metrics
@@ -109,16 +117,6 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
   ];
 
   const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      const data = await getProductById(productId);
-      if (data) {
-        setProduct(data);
-      }
-    };
-    fetchProduct();
-  }, [productId]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

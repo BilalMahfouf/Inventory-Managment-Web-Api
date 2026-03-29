@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import SimpleDataTable from '@components/DataTable/SimpleDataTable';
 import {
   deleteProductCategory,
@@ -11,28 +12,40 @@ import { useToast } from '@shared/context/ToastContext';
 import { useTranslation } from 'react-i18next';
 
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 
-export default function ProductCategoryDataTable({ refresh }) {
+export default function ProductCategoryDataTable() {
   const { t } = useTranslation();
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [addEditDialogOpen, setAddEditDialogOpen] = useState(false);
   const [currentProductCategoryId, setCurrentProductCategoryId] = useState(0);
-  const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { showSuccess, showError } = useToast();
+  const queryClient = useQueryClient();
   const columns = useMemo(() => getDefaultColumns(t), [t]);
 
-  const fetchProductCategories = async () => {
-    setIsLoading(true);
-    const responseData = await getAllProductCategories();
-    setData(responseData);
-    setIsLoading(false);
-  };
+  const { data = [], isLoading } = useQuery({
+    queryKey: queryKeys.products.categories(),
+    queryFn: getAllProductCategories,
+  });
 
-  useEffect(() => {
-    fetchProductCategories();
-  }, [refresh]);
+  const deleteMutation = useMutation({
+    mutationFn: deleteProductCategory,
+    onSuccess: async result => {
+      setDeleteDialogOpen(false);
+      if (!result.success) {
+        showError(
+          t(i18nKeyContainer.products.categories.table.toasts.deleteError, {
+            error: result.message,
+          })
+        );
+        return;
+      }
+      showSuccess(t(i18nKeyContainer.products.categories.table.toasts.deleteSuccess));
+      await queryClient.invalidateQueries({ queryKey: queryKeys.products.categories() });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.products.summary() });
+    },
+  });
 
   const handleView = row => {
     setCurrentProductCategoryId(row.id);
@@ -45,25 +58,13 @@ export default function ProductCategoryDataTable({ refresh }) {
   };
 
   const handleDelete = async () => {
-    console.log('delete is clicked');
-
-    const result = await deleteProductCategory(currentProductCategoryId);
-    setDeleteDialogOpen(false);
-    if (!result.success) {
-      showError(
-        t(i18nKeyContainer.products.categories.table.toasts.deleteError, {
-          error: result.message,
-        })
-      );
-      return;
-    }
-    showSuccess(t(i18nKeyContainer.products.categories.table.toasts.deleteSuccess));
-    await fetchProductCategories();
+    deleteMutation.mutate(currentProductCategoryId);
   };
 
-  const handleAddEditSuccess = () => {
+  const handleAddEditSuccess = async () => {
     setAddEditDialogOpen(false);
-    fetchProductCategories();
+    await queryClient.invalidateQueries({ queryKey: queryKeys.products.categories() });
+    await queryClient.invalidateQueries({ queryKey: queryKeys.products.summary() });
   };
 
   const handleAddEditClose = () => {

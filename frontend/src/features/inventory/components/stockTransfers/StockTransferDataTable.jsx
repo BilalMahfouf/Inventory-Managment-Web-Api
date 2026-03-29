@@ -5,6 +5,7 @@ import useServerSideDataTable from '@shared/hooks/useServerSideDataTable';
 import ViewStockTransfer from './view/ViewStockTransfer';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 const getLocalizedTransferStatus = (status, t) => {
   if (status === 'Completed') {
@@ -104,10 +105,12 @@ export default function StockTransferDataTable() {
     if (response.success) {
       return response.data;
     }
-    return { data: [], totalRows: 0 };
+    return { item: [], totalCount: 0 };
   };
 
-  const tableProps = useServerSideDataTable(fetchStockTransfers);
+  const tableProps = useServerSideDataTable(fetchStockTransfers, {
+    queryKey: queryKeys.inventory.stockTransfers('list'),
+  });
 
   return (
     <>

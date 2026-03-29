@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { X, FolderTree } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -12,6 +13,7 @@ import {
   getMainCategories,
 } from '@features/products/services/productCategoryApi';
 import { useToast } from '@shared/context/ToastContext';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 /**
  * AddProductCategory Component
@@ -39,7 +41,83 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
   const [id, setId] = useState(categoryId);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [mainCategories, setMainCategories] = useState([]);
+  const queryClient = useQueryClient();
+
+  const { data: mainCategories = [] } = useQuery({
+    queryKey: [...queryKeys.products.categories(), 'main-categories'],
+    queryFn: getMainCategories,
+    enabled: isOpen,
+  });
+
+  const { data: categoryData } = useQuery({
+    queryKey: [...queryKeys.products.categories(), 'detail', id],
+    queryFn: () => getProductCategoryById(id),
+    enabled: isOpen && id > 0,
+  });
+
+  const createMutation = useMutation({
+    mutationFn: createProductCategory,
+    onSuccess: async response => {
+      if (!response.success) {
+        showError(
+          t(i18nKeyContainer.products.categories.form.toasts.createErrorTitle),
+          t(i18nKeyContainer.products.categories.form.toasts.createErrorMessage, {
+            name: formData.name,
+            error: response.message,
+          })
+        );
+        return;
+      }
+
+      showSuccess(
+        t(i18nKeyContainer.products.categories.form.toasts.createSuccessTitle),
+        t(i18nKeyContainer.products.categories.form.toasts.createSuccessMessage, {
+          name: formData.name,
+        })
+      );
+      setId(response.data.id);
+      await queryClient.invalidateQueries({ queryKey: queryKeys.products.categories() });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.products.summary() });
+      if (onSuccess) {
+        onSuccess();
+      }
+      onClose();
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: payload => updateProductCategory(payload.id, payload.data),
+    onSuccess: async response => {
+      if (!response.success) {
+        showError(
+          t(i18nKeyContainer.products.categories.form.toasts.updateErrorTitle),
+          t(i18nKeyContainer.products.categories.form.toasts.updateErrorMessage, {
+            error: response.message,
+          })
+        );
+        return;
+      }
+
+      showSuccess(
+        t(i18nKeyContainer.products.categories.form.toasts.updateSuccessTitle),
+        t(i18nKeyContainer.products.categories.form.toasts.updateSuccessMessage, {
+          name: formData.name,
+        })
+      );
+      setFormData({
+        name: response.data.name,
+        description: response.data.description || '',
+        type: response.data.type,
+        parentId: response.data.parentId || null,
+      });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.products.categories() });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.products.summary() });
+      if (onSuccess) {
+        onSuccess();
+      }
+      onClose();
+    },
+  });
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -87,82 +165,13 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const addNewCategory = async ({ name, description, type, parentId }) => {
-    setIsLoading(true);
-    const response = await createProductCategory({
-      name,
-      description: description || null,
-      type,
-      parentId: type === 2 ? parentId : null,
-    });
-    if (response.success) {
-      showSuccess(
-        t(i18nKeyContainer.products.categories.form.toasts.createSuccessTitle),
-        t(i18nKeyContainer.products.categories.form.toasts.createSuccessMessage, {
-          name,
-        })
-      );
-      setId(response.data.id);
-      if (onSuccess) {
-        onSuccess();
-      }
-      onClose();
-    } else {
-      showError(
-        t(i18nKeyContainer.products.categories.form.toasts.createErrorTitle),
-        t(i18nKeyContainer.products.categories.form.toasts.createErrorMessage, {
-          name,
-          error: response.message,
-        })
-      );
-    }
-    setIsLoading(false);
-  };
-
-  const editCategory = async (id, { name, description, type, parentId }) => {
-    setIsLoading(true);
-    const response = await updateProductCategory(id, {
-      name,
-      description: description || null,
-      type,
-      parentId: parentId,
-    });
-
-    if (response.success) {
-      showSuccess(
-        t(i18nKeyContainer.products.categories.form.toasts.updateSuccessTitle),
-        t(i18nKeyContainer.products.categories.form.toasts.updateSuccessMessage, {
-          name,
-        })
-      );
-      setFormData({
-        name: response.data.name,
-        description: response.data.description || '',
-        type: response.data.type,
-        parentId: response.data.parentId || null,
-      });
-      if (onSuccess) {
-        onSuccess();
-      }
-      onClose();
-    } else {
-      showError(
-        t(i18nKeyContainer.products.categories.form.toasts.updateErrorTitle),
-        t(i18nKeyContainer.products.categories.form.toasts.updateErrorMessage, {
-          error: response.message,
-        })
-      );
-    }
-    setIsLoading(false);
-  };
-
   const saveCategory = () => {
     if (!validateForm()) {
       return;
     }
 
     if (mode === 'add') {
-      addNewCategory({
+      createMutation.mutate({
         name: formData.name,
         description: formData.description,
         type: formData.type,
@@ -170,11 +179,14 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
       });
       setMode('update');
     } else if (mode === 'update') {
-      editCategory(id, {
-        name: formData.name,
-        description: formData.description,
-        type: formData.type,
-        parentId: formData.parentId,
+      updateMutation.mutate({
+        id,
+        data: {
+          name: formData.name,
+          description: formData.description,
+          type: formData.type,
+          parentId: formData.parentId,
+        },
       });
     }
   };
@@ -199,51 +211,8 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
     }
   };
 
-  // Fetch main categories when component mounts or when type changes to SubCategory
   useEffect(() => {
-    const fetchMainCategories = async () => {
-      try {
-        const data = await getMainCategories();
-        if (data) {
-          setMainCategories(data);
-        }
-      } catch (error) {
-        console.error('Error fetching main categories:', error);
-      }
-    };
-
-    if (isOpen) {
-      fetchMainCategories();
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (isOpen && id > 0) {
-      const fetchCategory = async id => {
-        try {
-          setIsLoading(true);
-          const data = await getProductCategoryById(id);
-          if (data) {
-            setFormData({
-              name: data.name,
-              description: data.description || '',
-              type: data.type === 'MainCategory' ? 1 : 2,
-              parentId: data.parentId || null,
-            });
-            setMode('update');
-          }
-        } catch (error) {
-          console.error('Error fetching category:', error);
-          showError(
-            t(i18nKeyContainer.products.categories.form.toasts.loadErrorTitle),
-            t(i18nKeyContainer.products.categories.form.toasts.loadErrorMessage)
-          );
-        } finally {
-          setIsLoading(false);
-        }
-      };
-      fetchCategory(id);
-    } else if (isOpen && id === 0) {
+    if (isOpen && id === 0) {
       setMode('add');
       setFormData({
         name: '',
@@ -252,11 +221,27 @@ const AddProductCategory = ({ isOpen, onClose, categoryId = 0, onSuccess }) => {
         parentId: null,
       });
     }
-  }, [id, isOpen, showError, t]);
+  }, [id, isOpen]);
+
+  useEffect(() => {
+    if (categoryData) {
+      setFormData({
+        name: categoryData.name,
+        description: categoryData.description || '',
+        type: categoryData.type === 'MainCategory' ? 1 : 2,
+        parentId: categoryData.parentId || null,
+      });
+      setMode('update');
+    }
+  }, [categoryData]);
 
   useEffect(() => {
     setId(categoryId);
   }, [categoryId]);
+
+  useEffect(() => {
+    setIsLoading(createMutation.isPending || updateMutation.isPending);
+  }, [createMutation.isPending, updateMutation.isPending]);
 
   if (!isOpen) return null;
 

@@ -1,22 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Alert from './alert';
 import dashboardApi from '@features/dashboard/services/dashboardApi';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 export default function Alerts() {
-  const [alerts, setAlerts] = useState([]);
+  const { data: alerts = [] } = useQuery({
+    queryKey: queryKeys.dashboard.alerts(),
+    queryFn: dashboardApi.getInventoryAlerts,
+  });
 
-  useEffect(() => {
-    const fetchAlerts = async () => {
-      try {
-        const data = await dashboardApi.getInventoryAlerts();
-        setAlerts(data);
-      } catch (error) {
-        console.error('Error fetching alerts:', error);
-      }
-    };
-
-    fetchAlerts();
-  }, []);
   return (
     <div>
       <div className='flex flex-col gap-3'>

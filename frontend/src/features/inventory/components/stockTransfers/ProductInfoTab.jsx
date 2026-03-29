@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { Package, Search } from 'lucide-react';
 import Button from '@components/Buttons/Button';
 import { Input } from '@components/ui/input';
@@ -29,6 +30,9 @@ const ProductInfoTab = ({
   const { showSuccess, showError } = useToast();
   const [productSearchTerm, setProductSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const productSearchMutation = useMutation({
+    mutationFn: getProductById,
+  });
 
   /**
    * Handle product search
@@ -58,7 +62,7 @@ const ProductInfoTab = ({
         return;
       }
 
-      const product = await getProductById(searchId);
+      const product = await productSearchMutation.mutateAsync(searchId);
       if (product) {
         onProductSelect(product);
         showSuccess(

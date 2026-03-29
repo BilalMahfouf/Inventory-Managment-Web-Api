@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import InfoCard from '@components/ui/InfoCard';
 import {
   Clock3,
@@ -16,6 +16,7 @@ import {
 import PageHeader from '@components/ui/PageHeader';
 import Button from '@components/Buttons/Button';
 import dashboardApi from '@features/dashboard/services/dashboardApi';
+import { queryKeys } from '@shared/lib/queryKeys';
 import QuickActions from '@features/dashboard/components/quickAction/QuickActions';
 import Alerts from '@features/dashboard/components/alerts/Alerts';
 import TopSellingProducts from '@features/dashboard/components/TopSellingProducts';
@@ -26,53 +27,19 @@ import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
 export default function DashboardPage() {
   const { t } = useTranslation();
-  const [activeProducts, setActiveProducts] = useState(0);
-  const [activeCustomers, setActiveCustomers] = useState(0);
-  const [lowStockProducts, setLowStockProducts] = useState(0);
-  const [totalSalesOrders, setTotalSalesOrders] = useState(0);
-  const [totalRevenues, setTotalRevenues] = useState(0);
-  const [pendingSalesOrders, setPendingSalesOrders] = useState(0);
-  const [activeSuppliers, setActiveSuppliers] = useState(0);
-  const [completedSalesOrders, setCompletedSalesOrders] = useState(0);
+  const { data: summary, isLoading: loading } = useQuery({
+    queryKey: queryKeys.dashboard.summary(),
+    queryFn: dashboardApi.getSummary,
+  });
 
-  //const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setLoading(true);
-    console.log('use effect runs ....');
-    const fetchData = async () => {
-      try {
-        const {
-          totalProducts,
-          lowStockProducts,
-          activeCustomers,
-          totalSalesOrders,
-          totalRevenues,
-          pendingSalesOrders,
-          activeSuppliers,
-          completedSalesOrders,
-        } = await dashboardApi.getSummary();
-        setLoading(false);
-        setActiveProducts(totalProducts);
-        setActiveCustomers(activeCustomers);
-        setLowStockProducts(lowStockProducts);
-        setTotalSalesOrders(totalSalesOrders);
-        setTotalRevenues(totalRevenues);
-        setPendingSalesOrders(pendingSalesOrders);
-        setActiveSuppliers(activeSuppliers);
-        setCompletedSalesOrders(completedSalesOrders);
-      } catch (error) {
-        console.error(
-          'An error occurred while fetching dashboard data:',
-          error
-        );
-        // setError(error.message);
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const activeProducts = summary?.totalProducts ?? 0;
+  const activeCustomers = summary?.activeCustomers ?? 0;
+  const lowStockProducts = summary?.lowStockProducts ?? 0;
+  const totalSalesOrders = summary?.totalSalesOrders ?? 0;
+  const totalRevenues = summary?.totalRevenues ?? 0;
+  const pendingSalesOrders = summary?.pendingSalesOrders ?? 0;
+  const activeSuppliers = summary?.activeSuppliers ?? 0;
+  const completedSalesOrders = summary?.completedSalesOrders ?? 0;
 
   return (
     <div className=''>

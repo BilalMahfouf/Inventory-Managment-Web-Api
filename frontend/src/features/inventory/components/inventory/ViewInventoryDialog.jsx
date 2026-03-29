@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   Dialog,
   DialogContent,
@@ -9,6 +10,7 @@ import { Package, MapPin, Archive, Calendar, User } from 'lucide-react';
 import { getInventoryById } from '@features/inventory/services/inventoryApi';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 /**
  * ViewInventoryDialog Component
@@ -36,7 +38,7 @@ import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
   const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState('info');
-  const [inventoryData, setInventoryData] = useState({
+  const defaultInventoryData = {
     id: 0,
     product: {
       id: 0,
@@ -60,7 +62,18 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
     updatedAt: null,
     updatedByUserId: null,
     updatedByUserName: null,
+  };
+
+  const { data: inventoryResponse } = useQuery({
+    queryKey: queryKeys.inventory.detail(inventoryId),
+    queryFn: () => getInventoryById(inventoryId),
+    enabled: open && Boolean(inventoryId),
   });
+
+  const inventoryData =
+    inventoryResponse?.success && inventoryResponse?.data
+      ? inventoryResponse.data
+      : defaultInventoryData;
 
   // Tab configuration
   const tabs = [
@@ -97,25 +110,6 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
     if (maxLevel === 0) return 0;
     return Math.min(Math.round((quantityOnHand / maxLevel) * 100), 100);
   };
-
-  /**
-   * Fetch inventory data when dialog opens
-   */
-  useEffect(() => {
-    const fetchInventoryData = async () => {
-      if (inventoryId && open) {
-        try {
-          const response = await getInventoryById(inventoryId);
-          if (response.success) {
-            setInventoryData(response.data);
-          }
-        } catch (error) {
-          console.error('Error fetching inventory:', error);
-        }
-      }
-    };
-    fetchInventoryData();
-  }, [inventoryId, open]);
 
   /**
    * Reset to first tab when dialog closes

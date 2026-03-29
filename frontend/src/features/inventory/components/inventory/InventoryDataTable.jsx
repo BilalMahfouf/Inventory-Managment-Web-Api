@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import DataTable from '@components/DataTable/DataTable';
 import useServerSideDataTable from '@shared/hooks/useServerSideDataTable';
 import {
@@ -12,6 +13,7 @@ import ConfirmationDialog from '@components/ui/ConfirmationDialog';
 import { useToast } from '@shared/context/ToastContext';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 const getLocalizedInventoryStatus = (status, t) => {
   if (status === 'In Stock') {
@@ -100,27 +102,35 @@ export default function InventoryDataTable() {
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const { showSuccess, showError } = useToast();
+  const queryClient = useQueryClient();
 
-  const handleDelete = async () => {
-    const response = await deleteInventoryById(currentInventoryId);
-    if (response.success) {
-      setDeleteDialogOpen(false);
-      showSuccess(
-        t(i18nKeyContainer.inventory.inventoryTable.toasts.deleteSuccessTitle),
-        t(i18nKeyContainer.inventory.inventoryTable.toasts.deleteSuccessMessage, {
-          id: currentInventoryId,
+  const deleteMutation = useMutation({
+    mutationFn: deleteInventoryById,
+    onSuccess: async response => {
+      if (response.success) {
+        setDeleteDialogOpen(false);
+        showSuccess(
+          t(i18nKeyContainer.inventory.inventoryTable.toasts.deleteSuccessTitle),
+          t(i18nKeyContainer.inventory.inventoryTable.toasts.deleteSuccessMessage, {
+            id: currentInventoryId,
+          })
+        );
+        await queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+        return;
+      }
+
+      showError(
+        t(i18nKeyContainer.inventory.inventoryTable.toasts.deleteErrorTitle),
+        t(i18nKeyContainer.inventory.inventoryTable.toasts.deleteErrorMessage, {
+          error: response.error,
         })
       );
-      return;
-    }
-    showError(
-      t(i18nKeyContainer.inventory.inventoryTable.toasts.deleteErrorTitle),
-      t(i18nKeyContainer.inventory.inventoryTable.toasts.deleteErrorMessage, {
-        error: response.error,
-      })
-    );
-    setDeleteDialogOpen(false);
-    return;
+      setDeleteDialogOpen(false);
+    },
+  });
+
+  const handleDelete = async () => {
+    deleteMutation.mutate(currentInventoryId);
   };
 
   const handleView = row => {
@@ -152,7 +162,9 @@ export default function InventoryDataTable() {
     return response.data;
   };
 
-  const tableProps = useServerSideDataTable(fetchInventories);
+  const tableProps = useServerSideDataTable(fetchInventories, {
+    queryKey: queryKeys.inventory.table('catalog'),
+  });
 
   return (
     <>
@@ -187,6 +199,9 @@ export default function InventoryDataTable() {
           isOpen={editDialogOpen}
           onClose={() => setEditDialogOpen(false)}
           inventoryId={currentInventoryId}
+          onSuccess={() => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+          }}
         />
       )}
       {deleteDialogOpen && (

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { getUnitOfMeasureById } from '@features/products/services/unitOfMeasureApi';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 /**
  * UnitOfMeasureView Component
@@ -36,7 +37,7 @@ import { getUnitOfMeasureById } from '@features/products/services/unitOfMeasureA
  */
 const UnitOfMeasureView = ({ open, onOpenChange, unitId }) => {
   const { t, i18n } = useTranslation();
-  const [unitData, setUnitData] = useState({
+  const defaultUnitData = {
     id: 0,
     name: '',
     description: '',
@@ -47,23 +48,13 @@ const UnitOfMeasureView = ({ open, onOpenChange, unitId }) => {
     updatedAt: null,
     updatedByUserId: null,
     updatedByUserName: null,
-  });
+  };
 
-  useEffect(() => {
-    const fetchUnitOfMeasure = async () => {
-      if (unitId) {
-        try {
-          const data = await getUnitOfMeasureById(unitId);
-          if (data) {
-            setUnitData(data);
-          }
-        } catch (error) {
-          console.error('Error fetching unit of measure:', error);
-        }
-      }
-    };
-    fetchUnitOfMeasure();
-  }, [unitId]);
+  const { data: unitData = defaultUnitData } = useQuery({
+    queryKey: [...queryKeys.products.unitOfMeasure(), 'detail', unitId],
+    queryFn: () => getUnitOfMeasureById(unitId),
+    enabled: open && Boolean(unitId),
+  });
 
   const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
 

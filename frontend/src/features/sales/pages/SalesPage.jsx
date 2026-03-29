@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { getOrdersDahsobardSummary } from '@features/sales/services/salesOrderApi';
 import InfoCard from '@/components/ui/InfoCard';
 
@@ -7,29 +7,19 @@ import PageHeader from '@/components/ui/PageHeader';
 import Button from '@/components/Buttons/Button';
 import { AlertTriangle, Boxes, Package, Plus, XCircle } from 'lucide-react';
 import { divStyles } from '@shared/utils/uiVariables';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 export default function SalesPage() {
-  const [totalOrders, setTotalOrders] = useState(null);
-  const [pendingOrders, setPendingOrders] = useState(null);
-  const [averageOrderValue, setAverageOrderValue] = useState(null);
-  const [revenueThisMonth, setRevenueThisMonth] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { data: summaryResponse, isLoading: loading } = useQuery({
+    queryKey: queryKeys.sales.summary(),
+    queryFn: getOrdersDahsobardSummary,
+  });
 
-  useEffect(() => {
-    const getDashboardData = async () => {
-      setLoading(true);
-      const result = await getOrdersDahsobardSummary();
-      if (!result.isSuccess) {
-        return;
-      }
-      setTotalOrders(result.data.totalOrders);
-      setAverageOrderValue(result.data.averageOrderValue);
-      setPendingOrders(result.data.pendingOrders);
-      setRevenueThisMonth(result.data.revenueThisMonth);
-      setLoading(false);
-    };
-    getDashboardData();
-  }, []);
+  const summary = summaryResponse?.isSuccess ? summaryResponse.data : null;
+  const totalOrders = summary?.totalOrders ?? null;
+  const pendingOrders = summary?.pendingOrders ?? null;
+  const averageOrderValue = summary?.averageOrderValue ?? null;
+  const revenueThisMonth = summary?.revenueThisMonth ?? null;
 
   return (
     <>

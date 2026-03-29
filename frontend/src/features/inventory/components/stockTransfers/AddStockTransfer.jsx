@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { X, Package, MapPin, History as HistoryIcon } from 'lucide-react';
 import Button from '@components/Buttons/Button';
 import { cn } from '@shared/lib/utils';
@@ -11,6 +12,7 @@ import { getInventoriesByProductId } from '@features/products/services/productAp
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 /**
  * AddStockTransfer Component
@@ -33,6 +35,7 @@ import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 const AddStockTransfer = ({ isOpen, onClose, onSuccess, transferId = 0 }) => {
   const { t } = useTranslation();
   const { showSuccess, showError } = useToast();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState(0);
   const [mode, setMode] = useState('add'); // 'add' or 'view'
   const [isLoading, setIsLoading] = useState(false);
@@ -46,12 +49,79 @@ const AddStockTransfer = ({ isOpen, onClose, onSuccess, transferId = 0 }) => {
   const [quantity, setQuantity] = useState(0);
   const [notes, setNotes] = useState('');
 
-  // Locations data
-  const [locations, setLocations] = useState([]);
-
   // History/Transfer data (for view mode)
   const [transferData, setTransferData] = useState(null);
   const [error, setError] = useState({ isError: false, message: '' });
+
+  const { data: productLocationsResponse } = useQuery({
+    queryKey: [...queryKeys.inventory.stockTransfers('product-locations'), selectedProduct?.id],
+    queryFn: () => getInventoriesByProductId(selectedProduct?.id),
+    enabled: isOpen && Boolean(selectedProduct?.id),
+  });
+
+  const locations =
+    productLocationsResponse?.success && Array.isArray(productLocationsResponse?.data)
+      ? productLocationsResponse.data.map(e => ({
+          id: e.locationId,
+          name: e.locationName,
+        }))
+      : [];
+
+  const createTransferMutation = useMutation({
+    mutationFn: createStockTransfer,
+    onSuccess: async result => {
+      if (result.success) {
+        showSuccess(
+          t(
+            i18nKeyContainer.inventory.stockTransfers.form.toasts
+              .transferCreateSuccessTitle
+          ),
+          t(
+            i18nKeyContainer.inventory.stockTransfers.form.toasts
+              .transferCreateSuccessMessage,
+            {
+              from: locations.find(l => l.id === parseInt(fromLocationId))?.name,
+              to: locations.find(l => l.id === parseInt(toLocationId))?.name,
+            }
+          )
+        );
+
+        if (onSuccess) {
+          onSuccess(result.data);
+        }
+
+        await queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+        await queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
+        handleClose();
+        return;
+      }
+
+      showError(
+        t(
+          i18nKeyContainer.inventory.stockTransfers.form.toasts
+            .transferCreateFailedTitle
+        ),
+        result.error ||
+          t(
+            i18nKeyContainer.inventory.stockTransfers.form.toasts
+              .transferCreateFailedMessage
+          )
+      );
+    },
+    onError: mutationError => {
+      showError(
+        t(
+          i18nKeyContainer.inventory.stockTransfers.form.toasts
+            .transferCreateFailedTitle
+        ),
+        mutationError.message ||
+          t(
+            i18nKeyContainer.inventory.stockTransfers.form.toasts
+              .transferCreateFailedMessage
+          )
+      );
+    },
+  });
 
   // Tabs configuration
   const tabs = [
@@ -137,56 +207,7 @@ const AddStockTransfer = ({ isOpen, onClose, onSuccess, transferId = 0 }) => {
         quantity: parseFloat(quantity),
       };
 
-      const result = await createStockTransfer(transferRequest);
-
-      if (result.success) {
-        showSuccess(
-          t(
-            i18nKeyContainer.inventory.stockTransfers.form.toasts
-              .transferCreateSuccessTitle
-          ),
-          t(
-            i18nKeyContainer.inventory.stockTransfers.form.toasts
-              .transferCreateSuccessMessage,
-            {
-              from: locations.find(l => l.id === parseInt(fromLocationId))?.name,
-              to: locations.find(l => l.id === parseInt(toLocationId))?.name,
-            }
-          )
-        );
-
-        // Call onSuccess callback if provided
-        if (onSuccess) {
-          onSuccess(result.data);
-        }
-
-        handleClose();
-      } else {
-        showError(
-          t(
-            i18nKeyContainer.inventory.stockTransfers.form.toasts
-              .transferCreateFailedTitle
-          ),
-          result.error ||
-            t(
-              i18nKeyContainer.inventory.stockTransfers.form.toasts
-                .transferCreateFailedMessage
-            )
-        );
-      }
-    } catch (error) {
-      console.error('Transfer creation error:', error);
-      showError(
-        t(
-          i18nKeyContainer.inventory.stockTransfers.form.toasts
-            .transferCreateFailedTitle
-        ),
-        error.message ||
-          t(
-            i18nKeyContainer.inventory.stockTransfers.form.toasts
-              .transferCreateFailedMessage
-          )
-      );
+      await createTransferMutation.mutateAsync(transferRequest);
     } finally {
       setIsLoading(false);
     }
@@ -220,52 +241,38 @@ const AddStockTransfer = ({ isOpen, onClose, onSuccess, transferId = 0 }) => {
     handleClose();
   };
 
-  /**
-   * Load locations on component mount
-   */
   useEffect(() => {
-    const fetchLocations = async () => {
-      try {
-        const response = await getInventoriesByProductId(selectedProduct?.id);
-        if (response.success) {
-          if (response.data.length < 2) {
-            console.log('location lenght is less then 2 ');
-            setError({
-              isError: true,
-              message: t(
-                i18nKeyContainer.inventory.stockTransfers.form.toasts
-                  .productSingleLocationError
-              ),
-            });
-            return;
-          }
-          const locations = response.data.map(e => {
-            return {
-              id: e.locationId,
-              name: e.locationName,
-            };
-          });
-          setLocations(locations);
-          setError({ isError: false, message: '' });
-          return;
-        } else {
-          setError({
-            isError: true,
-            message: t(
-              i18nKeyContainer.inventory.stockTransfers.form.toasts
-                .productNoInventoryError
-            ),
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching locations:', error);
-      }
-    };
-
-    if (selectedProduct) {
-      fetchLocations();
+    if (!selectedProduct) {
+      setError({ isError: false, message: '' });
+      return;
     }
-  }, [selectedProduct]);
+
+    if (productLocationsResponse?.success) {
+      if (productLocationsResponse.data.length < 2) {
+        setError({
+          isError: true,
+          message: t(
+            i18nKeyContainer.inventory.stockTransfers.form.toasts
+              .productSingleLocationError
+          ),
+        });
+        return;
+      }
+
+      setError({ isError: false, message: '' });
+      return;
+    }
+
+    if (productLocationsResponse && !productLocationsResponse.success) {
+      setError({
+        isError: true,
+        message: t(
+          i18nKeyContainer.inventory.stockTransfers.form.toasts
+            .productNoInventoryError
+        ),
+      });
+    }
+  }, [selectedProduct, productLocationsResponse, t]);
 
   /**
    * Load transfer data if viewing existing transfer

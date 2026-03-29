@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { queryKeys } from '@shared/lib/queryKeys';
 
 export default function StockMovementHistoryTable() {
   const { t } = useTranslation();
@@ -26,7 +27,9 @@ export default function StockMovementHistoryTable() {
     return response;
   };
 
-  const tableProps = useServerSideDataTable(fetchData);
+  const tableProps = useServerSideDataTable(fetchData, {
+    queryKey: queryKeys.products.stockMovements('history'),
+  });
   const columns = useMemo(() => getDefaultColumns(t), [t]);
 
   return (
