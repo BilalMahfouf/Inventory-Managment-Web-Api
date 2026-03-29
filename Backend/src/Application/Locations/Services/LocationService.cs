@@ -8,7 +8,7 @@ using Domain.Shared.Results;
 using Application.Shared.Services;
 using Domain.Shared.Abstractions;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -81,7 +81,7 @@ namespace Application.Locations.Services
         {
             if (id <= 0)
             {
-                return Result<LocationReadResponse>.InvalidId();
+                return Result<LocationReadResponse>.Failure(Error.InvalidId());
             }
             try
             {
@@ -91,7 +91,7 @@ namespace Application.Locations.Services
                 , includeProperties: "CreatedByUser,DeletedByUser");
                 if (location is null)
                 {
-                    return Result<LocationReadResponse>.NotFound(nameof(location));
+                    return Result<LocationReadResponse>.Failure(Error.NotFound(nameof(location)));
                 }
                 var response = Map(location);
                 return Result<LocationReadResponse>.Success(response);
@@ -114,7 +114,7 @@ namespace Application.Locations.Services
                 var errors = string.Join("; ", validationResult.Errors
                     .Select(e => e.ErrorMessage));
                 return Result<LocationReadResponse>
-                    .Failure(errors, ErrorType.BadRequest);
+                    .Failure(errors, ErrorType.Validation);
             }
             try
             {
@@ -145,7 +145,7 @@ namespace Application.Locations.Services
         {
             if (id <= 0)
             {
-                return Result.InvalidId();
+                return Result.Failure(Error.InvalidId());
             }
             try
             {
@@ -153,13 +153,13 @@ namespace Application.Locations.Services
                 && !e.IsDeleted, cancellationToken);
                 if (location is null)
                 {
-                    return Result.NotFound(nameof(location));
+                    return Result.Failure(Error.NotFound(nameof(location)));
                 }
                 if(location.IsActive == isActive)
                 {
                     string status = isActive ? "active" : "inactive";
                     string errorMessage = $"Location is already {status}";
-                    return Result.Failure(errorMessage, ErrorType.Conflict);
+                    return Result.Failure(Error.Conflict(errorMessage));
                 }
                 location.IsActive = isActive;
                 //location.UpdatedAt = DateTime.UtcNow;
@@ -170,7 +170,7 @@ namespace Application.Locations.Services
             }
             catch (Exception ex)
             {
-                return Result.Exception(nameof(_UpdateLocationStatus), ex);
+                return Result.Failure(Error.Exception(nameof(_UpdateLocationStatus), ex));
             }
         }
         public async Task<Result> ActivateAsync(int id
@@ -185,7 +185,7 @@ namespace Application.Locations.Services
         {
             if (id <= 0)
             {
-                return Result<LocationReadResponse>.InvalidId();
+                return Result<LocationReadResponse>.Failure(Error.InvalidId());
             }
             var validationResult = await _updateValidator.ValidateAsync(request
                 , cancellationToken);
@@ -194,7 +194,7 @@ namespace Application.Locations.Services
                 var errors = string.Join("; ", validationResult.Errors
                     .Select(e => e.ErrorMessage));
                 return Result<LocationReadResponse>
-                    .Failure(errors, ErrorType.BadRequest);
+                    .Failure(errors, ErrorType.Validation);
             }
             try
             {
@@ -202,7 +202,7 @@ namespace Application.Locations.Services
                 && !e.IsDeleted, cancellationToken);
                 if (location is null)
                 {
-                    return Result<LocationReadResponse>.NotFound(nameof(location));
+                    return Result<LocationReadResponse>.Failure(Error.NotFound(nameof(location)));
                 }
                 location.Name = request.Name;
                 location.Address = request.Address;

@@ -5,7 +5,7 @@ using Application.Inventories;
 using Application.Shared.Paging;
 using Domain.Shared.Results;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Infrastructure.Persistence;
 using MailKit.Search;
 using Microsoft.EntityFrameworkCore;
@@ -146,7 +146,7 @@ public class InventoryQueries : IInventoryQueries
         }
         catch (Exception ex)
         {
-            return Result<object>.Exception(nameof(GetInventorySummaryAsync), ex);
+            return Result<object>.Failure(Error.Exception(nameof(GetInventorySummaryAsync), ex));
         }
     }
 
@@ -156,7 +156,7 @@ public class InventoryQueries : IInventoryQueries
     {
         if (id <= 0)
         {
-            return Result<object>.InvalidId();
+            return Result<object>.Failure(Error.InvalidId());
         }
         try
         {
@@ -187,13 +187,13 @@ public class InventoryQueries : IInventoryQueries
                 }).FirstOrDefaultAsync(cancellationToken);
             if (inventory is null)
             {
-                return Result<object>.NotFound(nameof(inventory));
+                return Result<object>.Failure(Error.NotFound(nameof(inventory)));
             }
             return Result<object>.Success(inventory);
         }
         catch (Exception ex)
         {
-            return Result<object>.Exception(nameof(GetByIdAsync), ex);
+            return Result<object>.Failure(Error.Exception(nameof(GetByIdAsync), ex));
         }
     }
 
@@ -275,7 +275,7 @@ public class InventoryQueries : IInventoryQueries
     {
         if (productId <= 0 || locationId <= 0)
         {
-            return Result<LowStockNotificationDetails>.InvalidId();
+            return Result<LowStockNotificationDetails>.Failure(Error.InvalidId());
         }
         try
         {
@@ -289,13 +289,13 @@ public class InventoryQueries : IInventoryQueries
                 .FirstOrDefaultAsync();
             if (inventory is null)
             {
-                return Result<LowStockNotificationDetails>.NotFound("Inventory Item");
+                return Result<LowStockNotificationDetails>.Failure(Error.NotFound("Inventory Item"));
             }
             return Result<LowStockNotificationDetails>.Success(inventory);
         }
         catch (Exception ex)
         {
-            return Result<LowStockNotificationDetails>.Exception(nameof(GetLowStockMessageDetailsAsync), ex);
+            return Result<LowStockNotificationDetails>.Failure(Error.Exception(nameof(GetLowStockMessageDetailsAsync), ex));
         }
 
     }

@@ -7,7 +7,7 @@
 //using Application.Users.Validators;
 //using Domain.Shared.Results;
 //using Domain.Shared.Entities;
-//using Domain.Shared.Enums;
+//using Domain.Shared.Errors;
 //using Moq;
 //using System;
 //using System.Collections.Generic;
@@ -52,7 +52,7 @@
 //            var service = CreateService();
 //            var result = await service.ActivateAsync(0, CancellationToken.None);
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
 //        }
 
 //        [Fact]
@@ -66,7 +66,7 @@
 //            )).ReturnsAsync((Users)null);
 //            var result = await service.ActivateAsync(1, CancellationToken.None);
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
 //        }
 
 //        [Fact]
@@ -100,7 +100,7 @@
 //            var result = await service.AddAsync(request, CancellationToken.None);
 
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
 //        }
 
 //        [Fact]
@@ -140,7 +140,7 @@
 //            var result = await service.ChangePasswordAsync(request, CancellationToken.None);
 
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
 //        }
 
 //        [Fact]
@@ -160,7 +160,7 @@
 //            var result = await service.ChangePasswordAsync(request, CancellationToken.None);
 
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
 //        }
 
 //        [Fact]
@@ -182,7 +182,7 @@
 //            var result = await service.ChangePasswordAsync(request, CancellationToken.None);
 
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
 //        }
 
 //        [Fact]
@@ -214,7 +214,7 @@
 //            var service = CreateService();
 //            var result = await service.DeleteAsync(0, CancellationToken.None);
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
 //        }
 
 //        [Fact]
@@ -230,7 +230,7 @@
 //            var result = await service.DeleteAsync(1, CancellationToken.None);
 
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
 //        }
 
 //        [Fact]
@@ -257,7 +257,7 @@
 //            var service = CreateService();
 //            var result = await service.DesActivateAsync(0, CancellationToken.None);
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
 //        }
 
 //        [Fact]
@@ -273,7 +273,7 @@
 //            var result = await service.DesActivateAsync(1, CancellationToken.None);
 
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
 //        }
 
 //        [Fact]
@@ -300,7 +300,7 @@
 //            var service = CreateService();
 //            var result = await service.FindByIdAsync(0, CancellationToken.None);
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
 //        }
 
 //        [Fact]
@@ -316,7 +316,7 @@
 //            var result = await service.FindByIdAsync(1, CancellationToken.None);
 
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
 //        }
 
 //        [Fact]
@@ -350,7 +350,7 @@
 //            var result = await service.GetAllAsync(CancellationToken.None);
 
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
 //        }
 
 //        [Fact]
@@ -382,7 +382,7 @@
 //            var request = new UserUpdateRequest();
 //            var result = await service.UpdateAsync(0, request, CancellationToken.None);
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
 //        }
 
 //        [Fact]
@@ -398,7 +398,7 @@
 //            var result = await service.UpdateAsync(1, request, CancellationToken.None);
 
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
 //        }
 
 //        [Fact]
@@ -417,7 +417,7 @@
 //            var result = await service.UpdateAsync(1, request, CancellationToken.None);
 
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
 //        }
 
 //        [Fact]

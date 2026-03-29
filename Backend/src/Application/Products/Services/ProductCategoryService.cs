@@ -9,7 +9,7 @@ using Application.Products.Validators;
 using Domain.Shared.Results;
 using Application.Shared.Services;
 using Domain.Products.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -73,17 +73,15 @@ IProductCategoryQueries query)
             if (!result.IsValid)
             {
                 var errorMessage = string.Join(";", result.Errors.Select(e => e.ErrorMessage));
-                return Result<ProductCategoryReadResponse>.Failure(errorMessage
-                    , ErrorType.BadRequest);
+                return Result<ProductCategoryReadResponse>.Failure(Error.Validation(errorMessage));
             }
             if (request.ParentId != null)
             {
                 if (!(await _repository.IsExistAsync(e => e.ParentId
                 == request.ParentId, cancellationToken)))
                 {
-                    return Result<ProductCategoryReadResponse>.Failure
-                        ($"parentId {request.ParentId}don't exist"
-                        , ErrorType.NotFound);
+                    return Result<ProductCategoryReadResponse>
+                        .NotFound($"parentId {request.ParentId}");
                 }
             }
 
@@ -101,8 +99,7 @@ IProductCategoryQueries query)
         }
         catch (Exception ex)
         {
-            return Result<ProductCategoryReadResponse>.Failure($"Error:{ex.Message}"
-                , ErrorType.InternalServerError);
+            return Result<ProductCategoryReadResponse>.Failure($"Error:{ex.Message}", ErrorType.Failure);
         }
     }
 
@@ -114,8 +111,7 @@ IProductCategoryQueries query)
         }
         catch (Exception ex)
         {
-            return Result.Failure($"Error:{ex.Message}"
-                , ErrorType.InternalServerError);
+            return Result.Failure($"Error:{ex.Message}", ErrorType.Failure);
         }
     }
 
@@ -126,21 +122,20 @@ IProductCategoryQueries query)
         {
             if (id <= 0)
             {
-                return Result<ProductCategoryReadResponse>.InvalidId();
+                return Result<ProductCategoryReadResponse>.Failure(Error.InvalidId());
             }
             var category = await _repository.FindAsync(e => e.Id == id
             , cancellationToken, "Parent,CreatedByUser,UpdatedByUser,DeletedByUser");
             if (category is null)
             {
-                return Result<ProductCategoryReadResponse>.NotFound(nameof(category));
+                return Result<ProductCategoryReadResponse>.Failure(Error.NotFound(nameof(category)));
             }
             var result = Map(category);
             return Result<ProductCategoryReadResponse>.Success(result);
         }
         catch (Exception ex)
         {
-            return Result<ProductCategoryReadResponse>.Failure($"Error:{ex.Message}"
-                , ErrorType.InternalServerError);
+            return Result<ProductCategoryReadResponse>.Failure($"Error:{ex.Message}");
         }
     }
 
@@ -168,7 +163,7 @@ IProductCategoryQueries query)
         {
             return Result<IReadOnlyCollection<ProductCategoryReadResponse>>
                 .Failure($"Error:{ex.Message}"
-                , ErrorType.InternalServerError);
+                , ErrorType.Failure);
         }
     }
 
@@ -212,7 +207,7 @@ IProductCategoryQueries query)
         {
             return Result<IReadOnlyCollection<ProductCategoryChildrenReadResponse>>
                 .Failure($"Error:{ex.Message}"
-                , ErrorType.InternalServerError);
+                , ErrorType.Failure);
         }
     }
 
@@ -269,7 +264,7 @@ IProductCategoryQueries query)
         catch (Exception ex)
         {
             return Result<IReadOnlyCollection<ProductCategoryTreeReadResponse>>
-                .Failure($"Error:{ex.Message}", ErrorType.InternalServerError);
+                .Failure($"Error:{ex.Message}", ErrorType.Failure);
         }
     }
     private ProductCategoryTreeReadResponse MapTree(ProductCategory parent
@@ -306,7 +301,7 @@ IProductCategoryQueries query)
         {
             if (id <= 0)
             {
-                return Result<ProductCategoryDetailsResponse>.InvalidId();
+                return Result<ProductCategoryDetailsResponse>.Failure(Error.InvalidId());
             }
             var result = _validator.Validate(request);
             if (!result.IsValid)
@@ -314,13 +309,13 @@ IProductCategoryQueries query)
                 var errorMessage = string.Join(";", result.Errors.
                     Select(e => e.ErrorMessage));
                 return Result<ProductCategoryDetailsResponse>
-                    .Failure(errorMessage, ErrorType.BadRequest);
+                    .Failure(errorMessage, ErrorType.Validation);
             }
             var category = await _repository.FindAsync(e => e.Id == id
             , cancellationToken);
             if (category is null)
             {
-                return Result<ProductCategoryDetailsResponse>.NotFound(nameof(category));
+                return Result<ProductCategoryDetailsResponse>.Failure(Error.NotFound(nameof(category)));
             }
             category.ParentId = request.ParentId;
             category.Name = request.Name;
@@ -334,8 +329,7 @@ IProductCategoryQueries query)
         }
         catch (Exception ex)
         {
-            return Result<ProductCategoryDetailsResponse>.Failure($"Error:{ex.Message}"
-                , ErrorType.InternalServerError);
+            return Result<ProductCategoryDetailsResponse>.Failure($"Error:{ex.Message}");
         }
     }
 

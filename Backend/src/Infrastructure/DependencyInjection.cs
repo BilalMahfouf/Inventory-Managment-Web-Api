@@ -51,7 +51,7 @@ namespace Infrastructure
                 options.LifeTime = byte.Parse(Environment.GetEnvironmentVariable("JWT_ACCESS_TOKEN_LIFETIME_MINUTES") ?? "15");
             });
 
-            services.AddSingleton<InsertOutboxMessagesInterceptors>();
+            services.AddScoped<InsertOutboxMessagesInterceptors>();
             var connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
             services.AddDbContext<InventoryManagmentDBContext>((sp, options) => options
             .UseSqlServer(connectionString)

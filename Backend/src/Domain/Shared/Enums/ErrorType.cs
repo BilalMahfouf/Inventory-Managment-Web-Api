@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Domain.Shared.Errors;
 
-namespace Domain.Shared.Enums;
-    public enum ErrorType
-    {
-        NotFound=1,
-        BadRequest,
-        InternalServerError,
-        Conflict,
-        Unauthorized
-    }
+public enum ErrorType
+{
+    None = 1,
+    Validation = 400,
+    BadRequest = Validation,
+    NotFound = 404,
+    Unauthorized = 401,
+    Conflict = 409,
+    Failure = 500,
+    InternalServerError = Failure
+}

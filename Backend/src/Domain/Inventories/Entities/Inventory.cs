@@ -3,7 +3,7 @@ using Domain.Shared.Results;
 using Domain.Shared.Abstractions;
 using Domain.Shared.Entities;
 using Domain.Products.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Domain.Shared.Exceptions;
 using System;
 using System.Collections.Generic;

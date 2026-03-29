@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Application.Authentication.DTOs.Login
 {
-    public record LoginResponse(string Token,string RefreshToken);
+    public record LoginResponse(string Token, string RefreshToken);
 }

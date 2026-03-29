@@ -2,7 +2,7 @@
 using Domain.Shared.Results;
 using Application.Sales.RequestResponse;
 using Domain.Products.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Domain.Shared.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -41,7 +41,7 @@ public sealed class SalesOrderService
                     "Inventories");
                 if (product is null)
                 {
-                    return Result<int>.NotFound(nameof(product));
+                    return Result<int>.Failure(Error.NotFound(nameof(product)));
                 }
 
                 items.Add(new Domain.Sales.Entities.SalesOrderItemRequest()
@@ -52,9 +52,7 @@ public sealed class SalesOrderService
             }
             if (items is null || !items.Any())
             {
-                return Result<int>.Failure(
-                    "Sales order must have at least one item.",
-                    ErrorType.NotFound);
+                return Result<int>.Failure("Sales order must have at least one item.", ErrorType.NotFound);
             }
             var order = SalesOrder.Create(
                 request.CustomerId,
@@ -64,8 +62,7 @@ public sealed class SalesOrderService
             if (order is null)
             {
                 return Result<int>.Failure(
-                    "Failed to create sales order.",
-                    ErrorType.InternalServerError);
+                    "Failed to create sales order.");
             }
             // to do make this in the background job
 
@@ -110,7 +107,7 @@ public sealed class SalesOrderService
         }
         catch (Exception ex)
         {
-            return Result<int>.Exception(nameof(CreateSalesOrderAsync), ex);
+            return Result<int>.Failure(Error.Exception(nameof(CreateSalesOrderAsync), ex));
         }
     }
 
@@ -123,7 +120,7 @@ public sealed class SalesOrderService
             cancellationToken, includeProperties: nameof(SalesOrder.Reservations));
         if (order is null)
         {
-            return Result.NotFound($"Order with Id{salesOrderId}");
+            return Result.Failure(Error.NotFound($"Order with Id{salesOrderId}"));
         }
         foreach (var reservation in order.Reservations)
         {

@@ -50,8 +50,10 @@ namespace Infrastructure.Services.Email
             }
             catch(Exception ex)
             {
-                return Result.Failure($"Error happened while sending email : {ex.Message}"
-                    , Domain.Shared.Enums.ErrorType.InternalServerError);
+                return Result.Failure(
+                    Error.Failure(
+                        "Email.SendFailed",
+                        $"Error happened while sending email : {ex.Message}"));
             }
         }
     }

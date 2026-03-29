@@ -5,7 +5,7 @@
 //using Domain.Shared.Results;
 //using Application.Services.Inventories;
 //using Domain.Shared.Entities;
-//using Domain.Shared.Enums;
+//using Domain.Shared.Errors;
 //using FluentValidation;
 //using FluentValidation.Results;
 //using Moq;
@@ -118,8 +118,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("Inventories", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("Inventories", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -139,8 +139,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("Inventories", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("Inventories", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -160,9 +160,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in GetAllAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in GetAllAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -259,8 +259,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 
 //            _inventoryRepositoryMock.Verify(r => r.FindAsync(
 //                It.IsAny<Expression<Func<Inventory, bool>>>(),
@@ -280,8 +280,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 
 //            _inventoryRepositoryMock.Verify(r => r.FindAsync(
 //                It.IsAny<Expression<Func<Inventory, bool>>>(),
@@ -309,8 +309,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("Inventory", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("Inventory", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -332,9 +332,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in FindAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in FindAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -477,10 +477,10 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Contains("ProductId must be greater than 0.", result.ErrorMessage);
-//            Assert.Contains("LocationId must be greater than 0.", result.ErrorMessage);
-//            Assert.Contains("QuantityOnHand must be non-negative.", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Contains("ProductId must be greater than 0.", result.Error.Description);
+//            Assert.Contains("LocationId must be greater than 0.", result.Error.Description);
+//            Assert.Contains("QuantityOnHand must be non-negative.", result.Error.Description);
 
 //            _inventoryRepositoryMock.Verify(r => r.IsExistAsync(It.IsAny<Expression<Func<Inventory, bool>>>(), It.IsAny<CancellationToken>()), Times.Never);
 //            _inventoryRepositoryMock.Verify(r => r.Add(It.IsAny<Inventory>()), Times.Never);
@@ -516,9 +516,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.Conflict, result.ErrorType);
-//            Assert.Contains("Inventory with the same ProductId", result.ErrorMessage);
-//            Assert.Contains("LocationId already exists", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Conflict, result.Error.Type);
+//            Assert.Contains("Inventory with the same ProductId", result.Error.Description);
+//            Assert.Contains("LocationId already exists", result.Error.Description);
 
 //            _inventoryRepositoryMock.Verify(r => r.Add(It.IsAny<Inventory>()), Times.Never);
 //            _uowMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
@@ -547,9 +547,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in CreateAsync", result.ErrorMessage);
-//            Assert.Contains("Validation error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in CreateAsync", result.Error.Description);
+//            Assert.Contains("Validation error", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -585,9 +585,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in CreateAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in CreateAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -721,8 +721,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 
 //            _updateValidatorMock.Verify(v => v.ValidateAsync(It.IsAny<InventoryUpdateRequest>(), It.IsAny<CancellationToken>()), Times.Never);
 //        }
@@ -745,8 +745,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 
 //            _updateValidatorMock.Verify(v => v.ValidateAsync(It.IsAny<InventoryUpdateRequest>(), It.IsAny<CancellationToken>()), Times.Never);
 //        }
@@ -780,10 +780,10 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Contains("QuantityOnHand must be non-negative.", result.ErrorMessage);
-//            Assert.Contains("ReorderLevel must be non-negative.", result.ErrorMessage);
-//            Assert.Contains("MaxLevel must be greater than ReorderLevel.", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Contains("QuantityOnHand must be non-negative.", result.Error.Description);
+//            Assert.Contains("ReorderLevel must be non-negative.", result.Error.Description);
+//            Assert.Contains("MaxLevel must be greater than ReorderLevel.", result.Error.Description);
 
 //            _inventoryRepositoryMock.Verify(r => r.FindAsync(It.IsAny<Expression<Func<Inventory, bool>>>(), It.IsAny<CancellationToken>(), It.IsAny<string>()), Times.Never);
 //        }
@@ -817,8 +817,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("Inventory", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("Inventory", result.Error.Description);
 
 //            _inventoryRepositoryMock.Verify(r => r.Update(It.IsAny<Inventory>()), Times.Never);
 //            _uowMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
@@ -853,9 +853,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in UpdateAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in UpdateAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        #endregion
@@ -909,8 +909,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 
 //            _inventoryRepositoryMock.Verify(r => r.FindAsync(It.IsAny<Expression<Func<Inventory, bool>>>(), It.IsAny<CancellationToken>(), It.IsAny<string>()), Times.Never);
 //        }
@@ -926,8 +926,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 
 //            _inventoryRepositoryMock.Verify(r => r.FindAsync(It.IsAny<Expression<Func<Inventory, bool>>>(), It.IsAny<CancellationToken>(), It.IsAny<string>()), Times.Never);
 //        }
@@ -951,8 +951,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("Inventory", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("Inventory", result.Error.Description);
 
 //            _inventoryRepositoryMock.Verify(r => r.Delete(It.IsAny<Inventory>()), Times.Never);
 //            _uowMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
@@ -977,9 +977,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in DeleteAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in DeleteAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        #endregion
@@ -1069,8 +1069,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("Inventories with low stock", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("Inventories with low stock", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -1090,8 +1090,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("Inventories with low stock", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("Inventories with low stock", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -1111,9 +1111,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in GetInventoryLowStockAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in GetInventoryLowStockAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -1212,9 +1212,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in GetInventoryValuationAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in GetInventoryValuationAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        #endregion
@@ -1275,9 +1275,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in GetInventoryValuationAsync", result.ErrorMessage); // Note: Original code has wrong method name in exception
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in GetInventoryValuationAsync", result.Error.Description); // Note: Original code has wrong method name in exception
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        #endregion

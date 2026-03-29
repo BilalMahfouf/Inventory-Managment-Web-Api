@@ -8,7 +8,7 @@
 //using Domain.Shared.Results;
 //using Application.Locations.Services;
 //using Domain.Shared.Entities;
-//using Domain.Shared.Enums;
+//using Domain.Shared.Errors;
 //using FluentValidation;
 //using FluentValidation.Results;
 //using Moq;
@@ -123,8 +123,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("locations", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("locations", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -144,8 +144,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("locations", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("locations", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -165,9 +165,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in GetAllAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in GetAllAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -267,8 +267,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 
 //            _repositoryMock.Verify(r => r.FindAsync(
 //                It.IsAny<Expression<Func<Location, bool>>>(),
@@ -288,8 +288,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 
 //            _repositoryMock.Verify(r => r.FindAsync(
 //                It.IsAny<Expression<Func<Location, bool>>>(),
@@ -317,8 +317,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("location", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("location", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -340,9 +340,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in FindAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in FindAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -464,8 +464,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Contains("Name is required.", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Contains("Name is required.", result.Error.Description);
 
 //            _uowMock.Verify(u => u.Locations.Add(It.IsAny<Location>()), Times.Never);
 //            _uowMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
@@ -499,11 +499,11 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Contains("Name is required.", result.ErrorMessage);
-//            Assert.Contains("Address is required.", result.ErrorMessage);
-//            Assert.Contains("LocationTypeId must be greater than 0.", result.ErrorMessage);
-//            Assert.Contains(";", result.ErrorMessage); // Multiple errors separated by semicolon
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Contains("Name is required.", result.Error.Description);
+//            Assert.Contains("Address is required.", result.Error.Description);
+//            Assert.Contains("LocationTypeId must be greater than 0.", result.Error.Description);
+//            Assert.Contains(";", result.Error.Description); // Multiple errors separated by semicolon
 //        }
 
 //        [Fact]
@@ -527,9 +527,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in CreateAsync", result.ErrorMessage);
-//            Assert.Contains("Validation error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in CreateAsync", result.Error.Description);
+//            Assert.Contains("Validation error", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -559,9 +559,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in CreateAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in CreateAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -671,12 +671,12 @@
 
 //            // Assert
 //            Assert.False(activateResult.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, activateResult.ErrorType);
-//            Assert.Equal("Invalid Id", activateResult.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, activateResult.Error.Type);
+//            Assert.Equal("Invalid Id", activateResult.Error.Description);
 
 //            Assert.False(deactivateResult.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, deactivateResult.ErrorType);
-//            Assert.Equal("Invalid Id", deactivateResult.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, deactivateResult.Error.Type);
+//            Assert.Equal("Invalid Id", deactivateResult.Error.Description);
 //        }
 
 //        [Fact]
@@ -698,8 +698,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("location", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("location", result.Error.Description);
 //        }
 
 //        [Theory]
@@ -738,8 +738,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.Conflict, result.ErrorType);
-//            Assert.Contains($"Location is already {statusText}", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Conflict, result.Error.Type);
+//            Assert.Contains($"Location is already {statusText}", result.Error.Description);
 
 //            _repositoryMock.Verify(r => r.Update(It.IsAny<Location>()), Times.Never);
 //            _uowMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
@@ -764,9 +764,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in _UpdateLocationStatus", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in _UpdateLocationStatus", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -803,9 +803,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in _UpdateLocationStatus", result.ErrorMessage);
-//            Assert.Contains("Save error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in _UpdateLocationStatus", result.Error.Description);
+//            Assert.Contains("Save error", result.Error.Description);
 //        }
 
 //        #endregion
@@ -892,8 +892,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 
 //            _updateValidatorMock.Verify(v => v.ValidateAsync(It.IsAny<LocationUpdateRequest>(), It.IsAny<CancellationToken>()), Times.Never);
 //        }
@@ -918,8 +918,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 
 //            _updateValidatorMock.Verify(v => v.ValidateAsync(It.IsAny<LocationUpdateRequest>(), It.IsAny<CancellationToken>()), Times.Never);
 //        }
@@ -953,8 +953,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Contains("Name is required.", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Contains("Name is required.", result.Error.Description);
 
 //            _repositoryMock.Verify(r => r.FindAsync(It.IsAny<Expression<Func<Location, bool>>>(), It.IsAny<CancellationToken>(), It.IsAny<string>()), Times.Never);
 //        }
@@ -990,8 +990,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("location", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("location", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -1025,9 +1025,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in UpdateAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in UpdateAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        #endregion
@@ -1106,8 +1106,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -1121,8 +1121,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -1148,8 +1148,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("inventories", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("inventories", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -1174,8 +1174,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("inventories", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("inventories", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -1200,9 +1200,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in GetLocationInventoriesAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in GetLocationInventoriesAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -1264,8 +1264,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -1279,8 +1279,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -1302,8 +1302,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("Location", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("Location", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -1383,8 +1383,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Contains("Location is already deleted", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Contains("Location is already deleted", result.Error.Description);
 
 //            _repositoryMock.Verify(r => r.Update(It.IsAny<Location>()), Times.Never);
 //            _uowMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
@@ -1547,7 +1547,7 @@
 
 //            // Assert - since empty list, it should return NotFound, but we still verify the call was made
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
             
 //            // Verify that the expression filters by LocationId = 5
 //            inventoryRepositoryMock.Verify(r => r.GetAllAsync(

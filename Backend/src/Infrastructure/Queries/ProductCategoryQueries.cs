@@ -1,7 +1,7 @@
 ﻿using Application.Products.Contracts;
 using Application.Products.DTOs.Response.Categories;
 using Domain.Shared.Results;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -32,7 +32,7 @@ public class ProductCategoryQueries : IProductCategoryQueries
                 .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted, cancellationToken);
             if (category is null)
             {
-                return Result<ProductCategoryDetailsResponse>.NotFound(nameof(category));
+                return Result<ProductCategoryDetailsResponse>.Failure(Error.NotFound(nameof(category)));
             }
 
             if (category.Type == ProductCategoryType.SubCategory)
@@ -76,7 +76,7 @@ public class ProductCategoryQueries : IProductCategoryQueries
         }
         catch (Exception ex)
         {
-            return Result<ProductCategoryDetailsResponse>.Exception(nameof(GetCategoryByIdAsync), ex);
+            return Result<ProductCategoryDetailsResponse>.Failure(Error.Exception(nameof(GetCategoryByIdAsync), ex));
         }
 
     }

@@ -5,7 +5,7 @@ using Application.UnitOfMeasures.DTOs;
 using Domain.Shared.Results;
 using Application.Shared.Services;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -79,7 +79,7 @@ namespace Application.UnitOfMeasures.Services
             {
                 return Result<IReadOnlyCollection<UnitOfMeasureReadResponse>>
                     .Failure($"Error:{ex.Message}"
-                    , ErrorType.InternalServerError);
+                    , ErrorType.Failure);
             }
         }
 
@@ -88,7 +88,7 @@ namespace Application.UnitOfMeasures.Services
         {
             if (id <= 0)
             {
-                return Result<UnitOfMeasureReadResponse>.InvalidId();
+                return Result<UnitOfMeasureReadResponse>.Failure(Error.InvalidId());
             }
             try
             {
@@ -105,8 +105,7 @@ namespace Application.UnitOfMeasures.Services
             catch (Exception ex)
             {
                 return Result<UnitOfMeasureReadResponse>
-                    .Failure($"Error:{ex.Message}"
-                    , ErrorType.InternalServerError);
+                    .Failure($"Error:{ex.Message}");
             }
         }
 
@@ -120,7 +119,7 @@ namespace Application.UnitOfMeasures.Services
                 var errors = string.Join("; "
                     , validationResult.Errors.Select(e => e.ErrorMessage));
                 return Result<UnitOfMeasureReadResponse>
-                    .Failure(errors, ErrorType.BadRequest);
+                    .Failure(errors, ErrorType.Validation);
             }
             try
             {
@@ -148,7 +147,7 @@ namespace Application.UnitOfMeasures.Services
             {
                 return Result<UnitOfMeasureReadResponse>
                     .Failure($"Error:{ex.Message}"
-                    , ErrorType.InternalServerError);
+                    , ErrorType.Failure);
             }
         }
 
@@ -158,7 +157,7 @@ namespace Application.UnitOfMeasures.Services
         {
             if (id <= 0)
             {
-                return Result<UnitOfMeasureReadResponse>.InvalidId();
+                return Result<UnitOfMeasureReadResponse>.Failure(Error.InvalidId());
             }
             var validationResult = _validator.Validate(request);
             if (!validationResult.IsValid)
@@ -166,7 +165,7 @@ namespace Application.UnitOfMeasures.Services
                 var errors = string.Join("; "
                     , validationResult.Errors.Select(e => e.ErrorMessage));
                 return Result<UnitOfMeasureReadResponse>
-                    .Failure(errors, ErrorType.BadRequest);
+                    .Failure(errors, ErrorType.Validation);
             }
             try
             {
@@ -181,7 +180,7 @@ namespace Application.UnitOfMeasures.Services
                 {
                     string errorMessage = $"{nameof(UnitOfMeasure)} is deleted";
                     return Result<UnitOfMeasureReadResponse>
-                        .Failure(errorMessage, ErrorType.BadRequest);
+                        .Failure(errorMessage, ErrorType.Validation);
                 }
                 // check if another entity with the same name exists
                 var isExist = await _repository.IsExistAsync(u => u.Name == request.Name
@@ -204,8 +203,7 @@ namespace Application.UnitOfMeasures.Services
             catch (Exception ex)
             {
                 return Result<UnitOfMeasureReadResponse>
-                    .Failure($"Error:{ex.Message}"
-                    , ErrorType.InternalServerError);
+                    .Failure($"Error:{ex.Message}");
             }
         }
 

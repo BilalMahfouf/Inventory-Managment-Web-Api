@@ -5,7 +5,7 @@ using Application.Locations.DTOs.Response;
 using Domain.Shared.Results;
 using Application.Shared.Services;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -55,7 +55,7 @@ namespace Application.Locations.Services
                 if (!validationResult.IsValid)
                 {
                     var errors = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
-                    return Result<LocationTypeReadResponse>.Failure(errors, ErrorType.BadRequest);
+                    return Result<LocationTypeReadResponse>.Failure(Error.Validation(errors));
                 }
                 var locationType = new LocationType()
                 {
@@ -106,7 +106,7 @@ namespace Application.Locations.Services
             {
                 if (id <= 0)
                 {
-                    return Result<LocationTypeReadResponse>.InvalidId();
+                    return Result<LocationTypeReadResponse>.Failure(Error.InvalidId());
                 }
                 var locationType = await _uow.LocationTypes
                     .FindAsync(lt => lt.Id == id && !lt.IsDeleted
@@ -114,7 +114,7 @@ namespace Application.Locations.Services
                     , cancellationToken: cancellationToken);
                 if (locationType == null)
                 {
-                    return Result<LocationTypeReadResponse>.NotFound("LocationType");
+                    return Result<LocationTypeReadResponse>.Failure(Error.NotFound("LocationType"));
                 }
                 var response = MapToResponse(locationType);
                 return Result<LocationTypeReadResponse>.Success(response);

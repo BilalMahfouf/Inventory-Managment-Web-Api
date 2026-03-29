@@ -29,7 +29,8 @@ namespace Application
             this IServiceCollection services)
         {
             // fluent validation DI
-            services.AddValidatorsFromAssembly(typeof(UserCreateRequestValidator).Assembly);
+            services.AddValidatorsFromAssembly(typeof(UserCreateRequestValidator).Assembly
+                , ServiceLifetime.Scoped);
             services.AddScoped<UserRequestValidatorContainer>();
             services.AddScoped<ProductValidatorContainer>();
 

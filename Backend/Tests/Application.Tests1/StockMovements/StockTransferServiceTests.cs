@@ -5,7 +5,7 @@ using Domain.Shared.Results;
 using Application.StockMovements.Services;
 using Domain.Shared.Entities;
 using Domain.Products.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Domain.Shared.Exceptions;
 using Domain.Inventories;
 using Moq;
@@ -55,7 +55,7 @@ public class StockTransferServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.NotFound, result.ErrorType);
+        Assert.Equal(ErrorType.NotFound, result.Error.Type);
     }
 
     [Fact]
@@ -93,7 +93,7 @@ public class StockTransferServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.NotFound, result.ErrorType);
+        Assert.Equal(ErrorType.NotFound, result.Error.Type);
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class StockTransferServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.Conflict, result.ErrorType);
+        Assert.Equal(ErrorType.Conflict, result.Error.Type);
     }
 
     [Fact]
@@ -149,7 +149,7 @@ public class StockTransferServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     #endregion

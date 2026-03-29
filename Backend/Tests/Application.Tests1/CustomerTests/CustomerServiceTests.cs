@@ -5,7 +5,7 @@ using Application.Customers;
 using Application.Customers.Dtos;
 using Domain.Shared.Results;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Domain.Shared.Exceptions;
 using Domain.Shared.ValueObjects;
 using FluentValidation;
@@ -67,8 +67,8 @@ public class CustomerServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-        Assert.Contains("Name is required", result.ErrorMessage);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
+        Assert.Contains("Name is required", result.Error.Description);
     }
 
     [Fact]
@@ -100,8 +100,8 @@ public class CustomerServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.NotFound, result.ErrorType);
-        Assert.Contains("CustomerCategory", result.ErrorMessage);
+        Assert.Equal(ErrorType.NotFound, result.Error.Type);
+        Assert.Contains("CustomerCategory", result.Error.Description);
     }
 
     [Fact]
@@ -192,7 +192,7 @@ public class CustomerServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.Conflict, result.ErrorType);
+        Assert.Equal(ErrorType.Conflict, result.Error.Type);
     }
 
     [Fact]
@@ -224,7 +224,7 @@ public class CustomerServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     #endregion
@@ -247,7 +247,7 @@ public class CustomerServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -266,7 +266,7 @@ public class CustomerServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -291,7 +291,7 @@ public class CustomerServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.NotFound, result.ErrorType);
+        Assert.Equal(ErrorType.NotFound, result.Error.Type);
     }
 
     [Fact]
@@ -316,7 +316,7 @@ public class CustomerServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.Conflict, result.ErrorType);
+        Assert.Equal(ErrorType.Conflict, result.Error.Type);
     }
 
     [Fact]
@@ -341,7 +341,7 @@ public class CustomerServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     #endregion

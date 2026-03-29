@@ -7,7 +7,7 @@ using Application.Customers.Dtos;
 using Domain.Shared.Results;
 using Application.Shared.Services;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Domain.Shared.Exceptions;
 using Domain.Shared.ValueObjects;
 using FluentValidation;
@@ -46,16 +46,14 @@ public class CustomerService : DeleteService<Customer>
             {
                 var errorMessage = string.Join(";"
                         , validationResult.Errors.Select(e => e.ErrorMessage));
-                return Result<CustomerReadResponse>.Failure(
-                    errorMessage,
-                    ErrorType.BadRequest);
+                return Result<CustomerReadResponse>.Failure(Error.Validation(errorMessage));
             }
             var customerCategory = await _uow.CustomerCategories
                 .FindAsync(e => e.Id == request.CustomerCategoryId, cancellationToken);
             if (customerCategory is null)
             {
-                return Result<CustomerReadResponse>.NotFound(
-                    $"CustomerCategory with Id {request.CustomerCategoryId}");
+                return Result<CustomerReadResponse>.Failure(
+                    Error.NotFound($"CustomerCategory with Id {request.CustomerCategoryId}"));
             }
 
             var address = Address.Create(
@@ -74,15 +72,12 @@ public class CustomerService : DeleteService<Customer>
         }
         catch (DomainException ex)
         {
-            return Result<CustomerReadResponse>.Failure(
-                ex.Message,
-                ErrorType.Conflict);
+            return Result<CustomerReadResponse>.Failure(Error.Conflict(ex.Message));
         }
         catch (Exception ex)
         {
-            return Result<CustomerReadResponse>.Exception(
-                nameof(AddAsync),
-                ex);
+            return Result<CustomerReadResponse>.Failure(
+                Error.Exception(nameof(AddAsync), ex));
 
         }
     }
@@ -93,7 +88,7 @@ public class CustomerService : DeleteService<Customer>
     {
         if(id <= 0)
         {
-            return Result<int>.InvalidId();
+            return Result<int>.Failure(Error.InvalidId());
         }
         try
         {
@@ -101,7 +96,7 @@ public class CustomerService : DeleteService<Customer>
                 .FindAsync(e => e.Id == id && !e.IsDeleted, cancellationToken);
             if (customer is null)
             {
-                return Result<int>.NotFound(nameof(customer)); 
+                return Result<int>.Failure(Error.NotFound(nameof(customer))); 
             }
             var address = Address.Create(
                 request.Street,
@@ -122,15 +117,12 @@ public class CustomerService : DeleteService<Customer>
         }
         catch(DomainException ex)
         {
-            return Result<int>.Failure(
-                ex.Message,
-                ErrorType.Conflict);
+            return Result<int>.Failure(Error.Conflict(ex.Message));
         }
         catch (Exception ex)
         {
-            return Result<int>.Exception(
-                nameof(UpdateAsync),
-                ex);
+            return Result<int>.Failure(
+                Error.Exception(nameof(UpdateAsync), ex));
         }
     }
     

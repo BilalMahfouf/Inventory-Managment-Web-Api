@@ -1,7 +1,7 @@
 ﻿using Application.Dashboard.Contracts;
 using Application.Shared.Contracts;
 using Domain.Shared.Results;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,7 +64,7 @@ namespace Application.Dashboard.Services
             }
             catch (Exception ex)
             {
-                return Result<object>.Exception(nameof(GetDashboardSummaryAsync), ex);
+                return Result<object>.Failure(Error.Exception(nameof(GetDashboardSummaryAsync), ex));
             }
         }
 
@@ -106,8 +106,7 @@ namespace Application.Dashboard.Services
         {
             if (numberOfProducts <= 0)
             {
-                return Result<IEnumerable<object>>.Failure("invalid number of products"
-                    , ErrorType.BadRequest);
+                return Result<IEnumerable<object>>.Failure("invalid number of products");
             }
             try
             {
@@ -136,7 +135,7 @@ namespace Application.Dashboard.Services
                     .GetTodayPerformanceAsync(cancellationToken);
                 if (result is null)
                 {
-                    return Result<object>.NotFound("today performance data ");
+                    return Result<object>.Failure(Error.NotFound("today performance data "));
                 }
                 return Result<object>.Success(result);
 
@@ -144,7 +143,7 @@ namespace Application.Dashboard.Services
             }
             catch (Exception ex)
             {
-                return Result<object>.Exception(nameof(GetTodayPerformanceAsync), ex);
+                return Result<object>.Failure(Error.Exception(nameof(GetTodayPerformanceAsync), ex));
 
             }
 

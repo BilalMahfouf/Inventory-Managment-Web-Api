@@ -5,7 +5,7 @@ using Application.Images.DTOs;
 using Domain.Shared.Results;
 using Application.Images.Services;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Moq;
 using System.Linq.Expressions;
 using Xunit;
@@ -101,9 +101,9 @@ namespace Application.Tests.ImagesTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-            Assert.Contains("Exception in AddImageAsync", result.ErrorMessage);
-            Assert.Contains("Storage error", result.ErrorMessage);
+            Assert.Equal(ErrorType.Failure, result.Error.Type);
+            Assert.Contains("Exception in AddImageAsync", result.Error.Description);
+            Assert.Contains("Storage error", result.Error.Description);
         }
 
         [Fact]
@@ -140,9 +140,9 @@ namespace Application.Tests.ImagesTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-            Assert.Contains("Exception in AddImageAsync", result.ErrorMessage);
-            //Assert.Contains("Database error", result.ErrorMessage);
+            Assert.Equal(ErrorType.Failure, result.Error.Type);
+            Assert.Contains("Exception in AddImageAsync", result.Error.Description);
+            //Assert.Contains("Database error", result.Error.Description);
         }
 
         #endregion
@@ -208,8 +208,8 @@ namespace Application.Tests.ImagesTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-            Assert.Contains("image nor found", result.ErrorMessage);
+            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+            Assert.Contains("image nor found", result.Error.Description);
         }
 
         [Fact]
@@ -245,8 +245,8 @@ namespace Application.Tests.ImagesTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-            Assert.Contains("stream nor found", result.ErrorMessage);
+            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+            Assert.Contains("stream nor found", result.Error.Description);
         }
 
         [Fact]
@@ -267,9 +267,9 @@ namespace Application.Tests.ImagesTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-            Assert.Contains("Exception in GetImageAsync", result.ErrorMessage);
-            Assert.Contains("Database error", result.ErrorMessage);
+            Assert.Equal(ErrorType.Failure, result.Error.Type);
+            Assert.Contains("Exception in GetImageAsync", result.Error.Description);
+            Assert.Contains("Database error", result.Error.Description);
         }
 
         [Fact]
@@ -305,9 +305,9 @@ namespace Application.Tests.ImagesTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-            Assert.Contains("Exception in GetImageAsync", result.ErrorMessage);
-            Assert.Contains("Storage error", result.ErrorMessage);
+            Assert.Equal(ErrorType.Failure, result.Error.Type);
+            Assert.Contains("Exception in GetImageAsync", result.Error.Description);
+            Assert.Contains("Storage error", result.Error.Description);
         }
 
         #endregion
@@ -325,8 +325,8 @@ namespace Application.Tests.ImagesTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-            Assert.Equal("Invalid Id", result.ErrorMessage);
+            Assert.Equal(ErrorType.Validation, result.Error.Type);
+            Assert.Equal("Invalid Id", result.Error.Description);
         }
 
         [Fact]
@@ -340,8 +340,8 @@ namespace Application.Tests.ImagesTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-            Assert.Equal("Invalid Id", result.ErrorMessage);
+            Assert.Equal(ErrorType.Validation, result.Error.Type);
+            Assert.Equal("Invalid Id", result.Error.Description);
         }
 
         [Fact]
@@ -362,8 +362,8 @@ namespace Application.Tests.ImagesTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-            Assert.Contains("image nor found", result.ErrorMessage);
+            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+            Assert.Contains("image nor found", result.Error.Description);
         }
 
         [Fact]
@@ -426,9 +426,9 @@ namespace Application.Tests.ImagesTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-            Assert.Contains("Exception in DeleteImageAsync", result.ErrorMessage);
-            Assert.Contains("Database error", result.ErrorMessage);
+            Assert.Equal(ErrorType.Failure, result.Error.Type);
+            Assert.Contains("Exception in DeleteImageAsync", result.Error.Description);
+            Assert.Contains("Database error", result.Error.Description);
         }
 
         [Fact]
@@ -464,9 +464,9 @@ namespace Application.Tests.ImagesTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-            Assert.Contains("Exception in DeleteImageAsync", result.ErrorMessage);
-            Assert.Contains("Storage error", result.ErrorMessage);
+            Assert.Equal(ErrorType.Failure, result.Error.Type);
+            Assert.Contains("Exception in DeleteImageAsync", result.Error.Description);
+            Assert.Contains("Storage error", result.Error.Description);
         }
 
         #endregion

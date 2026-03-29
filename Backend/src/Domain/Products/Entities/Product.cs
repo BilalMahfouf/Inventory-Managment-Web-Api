@@ -2,7 +2,7 @@
 using Domain.Shared.Results;
 using Domain;
 using Domain.Shared.Abstractions;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Domain.Shared.Exceptions;
 using Domain.Inventories;
 using System;
@@ -99,8 +99,7 @@ public partial class Product : ISoftDeletable, IModifiableEntity, IBaseEntity
         // Here you can add any validation or business logic before creating the product
         if (unitPrice < cost)
         {
-            return Result<Product>.Failure("Unit price cannot be less than cost."
-                , ErrorType.Conflict);
+            return Result<Product>.Failure(DomainErrors.Products.InvalidPricing);
         }
 
         var product = new Product(
@@ -124,8 +123,7 @@ public partial class Product : ISoftDeletable, IModifiableEntity, IBaseEntity
         EnsureProductIsActive();
         if (unitPrice < cost)
         {
-            return Result.Failure("Unit price cannot be less than cost."
-                , ErrorType.Conflict);
+            return Result.Failure(DomainErrors.Products.InvalidPricing);
         }
         this.Name = name;
         this.Description = description;

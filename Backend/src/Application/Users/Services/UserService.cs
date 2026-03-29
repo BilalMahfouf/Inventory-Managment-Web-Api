@@ -5,7 +5,7 @@ using Application.Users.DTOs.Response;
 using Application.Users.Validators;
 using Domain.Shared.Results;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -69,13 +69,13 @@ namespace Application.Users.Services
             {
                 if (id <= 0)
                 {
-                    return Result.InvalidId();
+                    return Result.Failure(Error.InvalidId());
                 }
                 var user = await _userRepository.FindAsync(u => u.Id == id
                 , cancellationToken);
                 if (user is null)
                 {
-                    return Result.NotFound(nameof(user));
+                    return Result.Failure(Error.NotFound(nameof(user)));
                 }
                 user.Activate();
                 user.UpdatedByUserId = _currentUserService.UserId;
@@ -85,8 +85,7 @@ namespace Application.Users.Services
             }
             catch (Exception ex)
             {
-                return Result.Failure($"Error:{ex.Message}"
-                    , ErrorType.InternalServerError);
+                return Result.Failure($"Error:{ex.Message}");
             }
         }
 
@@ -100,7 +99,7 @@ namespace Application.Users.Services
                 {
                     string errorMessage = string.Join("; ", result.Errors
                         .Select(e => e.ErrorMessage));
-                    return Result<UserReadResponse>.Failure(errorMessage, ErrorType.BadRequest);
+                    return Result<UserReadResponse>.Failure(Error.Validation(errorMessage));
                 }
                 var newUser = new User()
                 {
@@ -122,8 +121,7 @@ namespace Application.Users.Services
             }
             catch (Exception ex)
             {
-                return Result<UserReadResponse>.Failure($"Error:{ex.Message}"
-                    , ErrorType.InternalServerError);
+                return Result<UserReadResponse>.Failure($"Error:{ex.Message}", ErrorType.Failure);
             }
         }
 
@@ -137,18 +135,17 @@ namespace Application.Users.Services
                 if (!result.IsValid)
                 {
                     var errorMessage = string.Join(";", result.Errors.Select(e => e.ErrorMessage));
-                    return Result.Failure(errorMessage,
-                        ErrorType.BadRequest);
+                    return Result.Failure(Error.Validation(errorMessage));
                 }
                 var user = await _userRepository.FindAsync
                     (u => u.Id == _currentUserService.UserId, cancellationToken);
                 if (user is null)
                 {
-                    return Result.NotFound(nameof(user));
+                    return Result.Failure(Error.NotFound(nameof(user)));
                 }
                 if (!_hasher.VerifyPassword(user.PasswordHash, request.OldPassword))
                 {
-                    return Result.Failure("Wrong old password", ErrorType.BadRequest);
+                    return Result.Failure(Error.Validation("Wrong old password"));
                 }
                 user.PasswordHash = _hasher.HashPassword(request.NewPassword);
                 user.UpdatedAt = DateTime.UtcNow;
@@ -160,8 +157,7 @@ namespace Application.Users.Services
             }
             catch (Exception ex)
             {
-                return Result.Failure($"Error: {ex.Message}"
-                    , ErrorType.InternalServerError);
+                return Result.Failure($"Error: {ex.Message}");
             }
         }
 
@@ -171,7 +167,7 @@ namespace Application.Users.Services
         {
            if(id <= 0)
             {
-                return Result.InvalidId();
+                return Result.Failure(Error.InvalidId());
             }
            try
             {
@@ -179,7 +175,7 @@ namespace Application.Users.Services
                 , cancellationToken);
                 if (user is null)
                 {
-                    return Result.NotFound(nameof(user));
+                    return Result.Failure(Error.NotFound(nameof(user)));
                 }
                 user.IsDeleted = true;
                 user.DeletedAt = DateTime.UtcNow;
@@ -190,8 +186,7 @@ namespace Application.Users.Services
             }
             catch (Exception ex)
             {
-                return Result.Failure($"Error: {ex.Message}"
-                    , ErrorType.InternalServerError);
+                return Result.Failure($"Error: {ex.Message}");
             }
         }
 
@@ -202,13 +197,13 @@ namespace Application.Users.Services
             {
                 if (id <= 0)
                 {
-                    return Result.InvalidId();
+                    return Result.Failure(Error.InvalidId());
                 }
                 var user = await _userRepository.FindAsync(u => u.Id == id
                 , cancellationToken);
                 if (user is null)
                 {
-                    return Result.NotFound(nameof(user));
+                    return Result.Failure(Error.NotFound(nameof(user)));
                 }
                 user.DesActivate();
                 user.UpdatedByUserId = _currentUserService.UserId;
@@ -218,8 +213,7 @@ namespace Application.Users.Services
             }
             catch (Exception ex)
             {
-                return Result.Failure($"Error:{ex.Message}"
-                    , ErrorType.InternalServerError);
+                return Result.Failure($"Error:{ex.Message}");
             }
         }
 
@@ -228,7 +222,7 @@ namespace Application.Users.Services
         {
            if(id  <= 0)
             {
-                return Result<UserReadResponse>.InvalidId();
+                return Result<UserReadResponse>.Failure(Error.InvalidId());
             }
             try
             {
@@ -236,14 +230,13 @@ namespace Application.Users.Services
                  , cancellationToken, "Role,CreatedByUser,UpdatedByUser,DeletedByUser");
                 if (user is null)
                 {
-                    return Result<UserReadResponse>.NotFound(nameof(user));
+                    return Result<UserReadResponse>.Failure(Error.NotFound(nameof(user)));
                 }
                 return Result<UserReadResponse>.Success(Map(user));
             }
             catch (Exception ex)
             {
-                return Result<UserReadResponse>.Failure($"Error:{ex.Message}"
-                    , ErrorType.InternalServerError);
+                return Result<UserReadResponse>.Failure($"Error:{ex.Message}");
             }
 
         }
@@ -270,7 +263,7 @@ namespace Application.Users.Services
             {
                 return Result<IEnumerable<UserReadResponse>>
                     .Failure($"Error:{ex.Message}"
-                    , ErrorType.InternalServerError);
+                    , ErrorType.Failure);
             }
         }
 
@@ -279,7 +272,7 @@ namespace Application.Users.Services
         {
             if(id <= 0)
             {
-                return Result.InvalidId();
+                return Result.Failure(Error.InvalidId());
             }
             try
             {
@@ -287,13 +280,13 @@ namespace Application.Users.Services
                 if (!result.IsValid)
                 {
                     var errorMessage = string.Join(";", result.Errors.Select(e => e.ErrorMessage));
-                    return Result.Failure(errorMessage, ErrorType.BadRequest);
+                    return Result.Failure(Error.Validation(errorMessage));
                 }
                 var user = await _userRepository.FindAsync(u => u.Id == id
                 , cancellationToken);
                 if (user is null)
                 {
-                    return Result.NotFound(nameof(user));
+                    return Result.Failure(Error.NotFound(nameof(user)));
                 }
                 user.UserName = request.UserName;
                 user.FirstName = request.FirstName;
@@ -307,8 +300,7 @@ namespace Application.Users.Services
             }
             catch (Exception ex)
             {
-                return Result<UserReadResponse>.Failure($"Error:{ex.Message}"
-                    , ErrorType.InternalServerError);
+                return Result<UserReadResponse>.Failure($"Error:{ex.Message}");
             }
         }
     }

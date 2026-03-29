@@ -4,7 +4,9 @@
 using DotNetEnv;
 using Application;
 using Infrastructure;
+using Carter;
 using Scalar.AspNetCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +14,12 @@ Env.Load();
 builder.Configuration.AddEnvironmentVariables();
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddCarter(configurator: c =>
+{
+    // Validators in this project depend on DbContext (scoped),
+    // so Carter must not register them as singleton.
+    c.WithDefaultValidatorLifetime(ServiceLifetime.Scoped);
+});
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -48,7 +55,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapCarter();
 
 app.UseCors();
 

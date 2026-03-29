@@ -1,6 +1,6 @@
 ﻿#nullable enable
 using Domain.Shared.Abstractions;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Domain.Shared.Exceptions;
 using Domain.Shared.ValueObjects;
 using System;

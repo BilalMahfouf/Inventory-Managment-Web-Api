@@ -10,7 +10,7 @@ using Application.Images.Services;
 using Application.Products.Services;
 using Domain.Shared.Entities;
 using Domain.Products.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
@@ -127,9 +127,9 @@ namespace Application.Tests.ProductTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-            Assert.Contains("Product ID is required", result.ErrorMessage);
-            Assert.Contains("File name is required", result.ErrorMessage);
+            Assert.Equal(ErrorType.Validation, result.Error.Type);
+            Assert.Contains("Product ID is required", result.Error.Description);
+            Assert.Contains("File name is required", result.Error.Description);
 
             _imageStorageServiceMock.Verify(s => s.UploadAsync(
                 It.IsAny<Stream>(),
@@ -171,8 +171,8 @@ namespace Application.Tests.ProductTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-            Assert.Contains("Exception in AddImageAsync", result.ErrorMessage);
+            Assert.Equal(ErrorType.Failure, result.Error.Type);
+            Assert.Contains("Exception in AddImageAsync", result.Error.Description);
 
             _uowMock.Verify(u => u.ProductImages.Add(It.IsAny<ProductImage>()), Times.Never);
         }
@@ -200,9 +200,9 @@ namespace Application.Tests.ProductTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-            Assert.Contains("Exception in AddProductImageAsync", result.ErrorMessage);
-            Assert.Contains("Validation error", result.ErrorMessage);
+            Assert.Equal(ErrorType.Failure, result.Error.Type);
+            Assert.Contains("Exception in AddProductImageAsync", result.Error.Description);
+            Assert.Contains("Validation error", result.Error.Description);
         }
 
         #endregion
@@ -220,8 +220,8 @@ namespace Application.Tests.ProductTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-            Assert.Equal("Invalid Id", result.ErrorMessage);
+            Assert.Equal(ErrorType.Validation, result.Error.Type);
+            Assert.Equal("Invalid Id", result.Error.Description);
         }
 
         [Fact]
@@ -235,8 +235,8 @@ namespace Application.Tests.ProductTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-            Assert.Equal("Invalid Id", result.ErrorMessage);
+            Assert.Equal(ErrorType.Validation, result.Error.Type);
+            Assert.Equal("Invalid Id", result.Error.Description);
         }
 
         [Fact]
@@ -258,8 +258,8 @@ namespace Application.Tests.ProductTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-            Assert.Contains("ProductImage", result.ErrorMessage);
+            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+            Assert.Contains("ProductImage", result.Error.Description);
         }
 
         [Fact]
@@ -340,9 +340,9 @@ namespace Application.Tests.ProductTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-            Assert.Contains("Exception in DeleteProductImageAsync", result.ErrorMessage);
-            Assert.Contains("Database error", result.ErrorMessage);
+            Assert.Equal(ErrorType.Failure, result.Error.Type);
+            Assert.Contains("Exception in DeleteProductImageAsync", result.Error.Description);
+            Assert.Contains("Database error", result.Error.Description);
         }
 
         #endregion
@@ -360,8 +360,8 @@ namespace Application.Tests.ProductTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-            Assert.Equal("Invalid Id", result.ErrorMessage);
+            Assert.Equal(ErrorType.Validation, result.Error.Type);
+            Assert.Equal("Invalid Id", result.Error.Description);
         }
 
         [Fact]
@@ -375,8 +375,8 @@ namespace Application.Tests.ProductTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-            Assert.Equal("Invalid Id", result.ErrorMessage);
+            Assert.Equal(ErrorType.Validation, result.Error.Type);
+            Assert.Equal("Invalid Id", result.Error.Description);
         }
 
         [Fact]
@@ -476,9 +476,9 @@ namespace Application.Tests.ProductTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-            Assert.Contains("Exception in GetProductImages", result.ErrorMessage);
-            Assert.Contains("Database error", result.ErrorMessage);
+            Assert.Equal(ErrorType.Failure, result.Error.Type);
+            Assert.Contains("Exception in GetProductImages", result.Error.Description);
+            Assert.Contains("Database error", result.Error.Description);
         }
 
         #endregion
@@ -496,8 +496,8 @@ namespace Application.Tests.ProductTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-            Assert.Equal("Invalid Id", result.ErrorMessage);
+            Assert.Equal(ErrorType.Validation, result.Error.Type);
+            Assert.Equal("Invalid Id", result.Error.Description);
         }
 
         [Fact]
@@ -511,8 +511,8 @@ namespace Application.Tests.ProductTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-            Assert.Equal("Invalid Id", result.ErrorMessage);
+            Assert.Equal(ErrorType.Validation, result.Error.Type);
+            Assert.Equal("Invalid Id", result.Error.Description);
         }
 
         [Fact]
@@ -534,8 +534,8 @@ namespace Application.Tests.ProductTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-            Assert.Contains("productImage", result.ErrorMessage);
+            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+            Assert.Contains("productImage", result.Error.Description);
         }
 
         [Fact]
@@ -646,9 +646,9 @@ namespace Application.Tests.ProductTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-            Assert.Contains("Exception in SetProductImagePrimaryAsync", result.ErrorMessage);
-            Assert.Contains("Database error", result.ErrorMessage);
+            Assert.Equal(ErrorType.Failure, result.Error.Type);
+            Assert.Contains("Exception in SetProductImagePrimaryAsync", result.Error.Description);
+            Assert.Contains("Database error", result.Error.Description);
         }
 
         #endregion

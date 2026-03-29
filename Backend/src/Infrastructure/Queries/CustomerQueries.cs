@@ -2,7 +2,7 @@
 using Application.Customers.Dtos;
 using Application.Shared.Paging;
 using Domain.Shared.Results;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -145,7 +145,7 @@ internal class CustomerQueries : ICustomerQueries
     {
         if (id <= 0)
         {
-            return Result<CustomerReadResponse>.InvalidId();
+            return Result<CustomerReadResponse>.Failure(Error.InvalidId());
         }
         try
         {
@@ -175,16 +175,14 @@ internal class CustomerQueries : ICustomerQueries
                 }).FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
             if (customer is null)
             {
-                return Result<CustomerReadResponse>.NotFound($"Customer with Id {id}");
+                return Result<CustomerReadResponse>.Failure(Error.NotFound($"Customer with Id {id}"));
             }
             return Result<CustomerReadResponse>.Success(customer);
         }
         catch (Exception ex)
         {
-            return Result<CustomerReadResponse>.Exception(
-                nameof(GetByIdAsync),
-                nameof(CustomerQueries),
-                ex);
+            return Result<CustomerReadResponse>.Failure(
+                Error.Exception(nameof(GetByIdAsync), nameof(CustomerQueries), ex));
         }
     }
 
@@ -213,9 +211,8 @@ internal class CustomerQueries : ICustomerQueries
         }
         catch (Exception ex)
         {
-            return Result<object>.Exception(
-                nameof(GetCustomerSummary),
-                ex);
+            return Result<object>.Failure(
+                Error.Exception(nameof(GetCustomerSummary), ex));
         }
     }
 }

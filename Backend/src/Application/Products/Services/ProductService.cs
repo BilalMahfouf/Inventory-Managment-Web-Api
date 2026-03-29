@@ -12,7 +12,7 @@ using Application.Shared.Paging;
 using Domain.Shared.Results;
 using Application.Shared.Services;
 using Domain.Products.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Domain.Shared.Exceptions;
 using Domain.Inventories;
 using System;
@@ -119,7 +119,7 @@ IProductQueries query)
     {
         if (id <= 0)
         {
-            return Result.InvalidId();
+            return Result.Failure(Error.InvalidId());
         }
         try
         {
@@ -127,13 +127,12 @@ IProductQueries query)
              , cancellationToken);
             if (product is null)
             {
-                return Result.NotFound("Product");
+                return Result.Failure(Error.NotFound("Product"));
             }
             if (product.IsActive == isActive)
             {
                 string status = isActive ? "active" : "inactive";
-                return Result.Failure($"Product is already {status}"
-                    , ErrorType.Conflict);
+                return Result.Failure($"Product is already {status}", ErrorType.Conflict);
             }
             product.IsActive = isActive;
             product.UpdatedAt = DateTime.UtcNow;
@@ -145,7 +144,7 @@ IProductQueries query)
         }
         catch (Exception ex)
         {
-            return Result.Exception(nameof(_UpdateProductStatus), ex);
+            return Result.Failure(Error.Exception(nameof(_UpdateProductStatus), ex));
         }
     }
     public async Task<Result> ActivateAsync(int id
@@ -165,16 +164,14 @@ IProductQueries query)
             {
                 var errorMessage = string.Join(";"
                     , result.Errors.Select(e => e.ErrorMessage));
-                return Result<ProductReadResponse>.Failure(errorMessage
-                    , ErrorType.BadRequest);
+                return Result<ProductReadResponse>.Failure(errorMessage, ErrorType.Validation);
             }
             // this is business rules 
             var existingProduct = await _productRepository.IsExistAsync
                 (p => p.Sku == request.SKU, cancellationToken);
             if (existingProduct)
             {
-                return Result<ProductReadResponse>.Failure("SKU already exists"
-                    , ErrorType.Conflict);
+                return Result<ProductReadResponse>.Failure(Error.Conflict("SKU already exists"));
             }
             var productResult = Product.Create(
                 sku: request.SKU,
@@ -188,8 +185,8 @@ IProductQueries query)
             if (!productResult.IsSuccess)
             {
                 return Result<ProductReadResponse>
-                    .Failure(productResult.ErrorMessage!
-                    , productResult.ErrorType);
+                    .Failure(productResult.Error.Description!
+                    , productResult.Error.Type);
             }
             var inventory = Inventory.Create(
                 product: productResult.Value!,
@@ -208,12 +205,11 @@ IProductQueries query)
         }
         catch(DomainException dex)
         {
-            return Result<ProductReadResponse>.Failure(dex.Message
-                , ErrorType.Conflict);
+            return Result<ProductReadResponse>.Failure(Error.Conflict(dex.Message));
         }
         catch (Exception ex)
         {
-            return Result<ProductReadResponse>.Exception(nameof(CreateAsync), ex);
+            return Result<ProductReadResponse>.Failure(Error.Exception(nameof(CreateAsync), ex));
 
         }
     }
@@ -272,7 +268,7 @@ IProductQueries query)
     {
         if (id <= 0)
         {
-            return Result<ProductReadResponse>.InvalidId();
+            return Result<ProductReadResponse>.Failure(Error.InvalidId());
         }
         try
         {
@@ -282,22 +278,21 @@ IProductQueries query)
                 var errorMessage = string.Join(";"
                     , result.Errors.Select(e => e.ErrorMessage));
 
-                return Result<ProductReadResponse>.Failure(errorMessage
-                    , ErrorType.BadRequest);
+                return Result<ProductReadResponse>.Failure(errorMessage, ErrorType.Validation);
             }
 
             var product = await _productRepository.FindAsync(p => p.Id == id
             && (!p.IsDeleted), cancellationToken);
             if (product is null)
             {
-                return Result<ProductReadResponse>.NotFound("Product");
+                return Result<ProductReadResponse>.Failure(Error.NotFound("Product"));
             }
             var inventory = await _uow.Inventories.FindAsync(
                 e => e.ProductId == id && e.LocationId == request.LocationId,
                 cancellationToken);
             if (inventory is null)
             {
-                return Result<ProductReadResponse>.NotFound(nameof(inventory));
+                return Result<ProductReadResponse>.Failure(Error.NotFound(nameof(inventory)));
             }
             var productResult = product.Update(
                 request.Name,
@@ -307,8 +302,8 @@ IProductQueries query)
                 request.CostPrice);
             if (!productResult.IsSuccess)
             {
-                return Result<ProductReadResponse>.Failure(productResult.ErrorMessage!
-                    , productResult.ErrorType);
+                return Result<ProductReadResponse>.Failure(productResult.Error.Description!
+                    , productResult.Error.Type);
             }
              inventory.UpdateInventoryLevels(
                  request.QuantityOnHand,
@@ -324,12 +319,11 @@ IProductQueries query)
         }
         catch(DomainException ex)
         {
-            return Result<ProductReadResponse>.Failure(ex.Message
-                , ErrorType.Conflict);
+            return Result<ProductReadResponse>.Failure(ex.Message, ErrorType.Conflict);
         }
         catch (Exception ex)
         {
-            return Result<ProductReadResponse>.Exception(nameof(UpdateAsync), ex);
+            return Result<ProductReadResponse>.Failure(Error.Exception(nameof(UpdateAsync), ex));
         }
     }
 

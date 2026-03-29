@@ -1,9 +1,8 @@
-﻿using Application.Shared.Contracts;
-using Application.Users.Contracts;
+﻿using Application.Users.Contracts;
 using Application.Shared.Contracts;
 using Domain.Shared.Results;
 using Domain.Shared.Abstractions;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Domain.Shared.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -32,7 +31,7 @@ namespace Application.Shared.Services
         {
             if (id <= 0)
             {
-                return Result.InvalidId();
+                return Result.Failure(Error.InvalidId());
             }
             try
             {
@@ -40,12 +39,12 @@ namespace Application.Shared.Services
             , cancellationToken);
                 if (entity is null)
                 {
-                    return Result.NotFound(typeof(TEntity).Name);
+                    return Result.Failure(Error.NotFound(typeof(TEntity).Name));
                 }
                 if (entity.IsDeleted)
                 {
                     string errorMessage = $"{typeof(TEntity).Name} is already deleted";
-                    return Result.Failure(errorMessage, ErrorType.BadRequest);
+                    return Result.Failure(Error.Validation(errorMessage));
                 }
                 entity.IsDeleted = true;
                 entity.DeletedAt = DateTime.UtcNow;
@@ -56,8 +55,7 @@ namespace Application.Shared.Services
             }
             catch (Exception ex)
             {
-                return Result.Failure($"Error:{ex.Message}"
-                    , ErrorType.InternalServerError);
+                return Result.Failure($"Error:{ex.Message}");
             }
         }
         public virtual async Task<Result> SoftDeleteAsync(TEntity entity
@@ -74,13 +72,11 @@ namespace Application.Shared.Services
             }
             catch (DomainException ex)
             {
-                return Result.Failure($"Domain Error:{ex.Message}"
-                    , ErrorType.Conflict);
+                return Result.Failure(Error.Conflict($"Domain Error:{ex.Message}"));
             }
             catch (Exception ex)
             {
-                return Result.Failure($"Error:{ex.Message}"
-                    , ErrorType.InternalServerError);
+                return Result.Failure($"Error:{ex.Message}");
             }
         }
 

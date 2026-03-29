@@ -6,7 +6,7 @@
 //using Domain.Shared.Results;
 //using Application.StockMovements.Services;
 //using Domain.Shared.Entities;
-//using Domain.Shared.Enums;
+//using Domain.Shared.Errors;
 //using FluentValidation;
 //using FluentValidation.Results;
 //using Moq;
@@ -211,8 +211,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("stockMovementTypes", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("stockMovementTypes", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -232,8 +232,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("stockMovementTypes", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("stockMovementTypes", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -253,9 +253,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in GetAllAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in GetAllAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        #endregion
@@ -313,8 +313,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 
 //            _repositoryMock.Verify(r => r.FindAsync(
 //                It.IsAny<Expression<Func<StockMovementType, bool>>>(),
@@ -342,8 +342,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("Stock Movement Type", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("Stock Movement Type", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -365,9 +365,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in FindAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in FindAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        #endregion
@@ -461,8 +461,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Contains("Name is required.", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Contains("Name is required.", result.Error.Description);
 
 //            _repositoryMock.Verify(r => r.Add(It.IsAny<StockMovementType>()), Times.Never);
 //            _uowMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
@@ -495,10 +495,10 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Contains("Name is required.", result.ErrorMessage);
-//            Assert.Contains("Direction must be 1 (IN), 2 (OUT) or 3 (ADJUST).", result.ErrorMessage);
-//            Assert.Contains(";", result.ErrorMessage); // Multiple errors separated by semicolon
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Contains("Name is required.", result.Error.Description);
+//            Assert.Contains("Direction must be 1 (IN), 2 (OUT) or 3 (ADJUST).", result.Error.Description);
+//            Assert.Contains(";", result.Error.Description); // Multiple errors separated by semicolon
 //        }
 
 //        [Fact]
@@ -548,9 +548,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in AddAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in AddAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -586,9 +586,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in FindAsync", result.ErrorMessage); // FindAsync has its own exception handling
-//            Assert.Contains("Find error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in FindAsync", result.Error.Description); // FindAsync has its own exception handling
+//            Assert.Contains("Find error", result.Error.Description);
 //        }
 
 //        #endregion
@@ -697,8 +697,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 
 //            _validatorMock.Verify(v => v.ValidateAsync(It.IsAny<StockMovementTypeRequest>(), It.IsAny<CancellationToken>()), Times.Never);
 //        }
@@ -730,8 +730,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Contains("Name is required.", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Contains("Name is required.", result.Error.Description);
 
 //            _repositoryMock.Verify(r => r.IsExistAsync(It.IsAny<Expression<Func<StockMovementType, bool>>>(), It.IsAny<CancellationToken>()), Times.Never);
 //        }
@@ -765,8 +765,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.Conflict, result.ErrorType);
-//            Assert.Contains("Stock Movement Type with the same name already exists", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Conflict, result.Error.Type);
+//            Assert.Contains("Stock Movement Type with the same name already exists", result.Error.Description);
 
 //            _repositoryMock.Verify(r => r.FindAsync(It.IsAny<Expression<Func<StockMovementType, bool>>>(), It.IsAny<CancellationToken>(), It.IsAny<string>()), Times.Never);
 //        }
@@ -805,8 +805,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("Stock Movement Type", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("Stock Movement Type", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -837,9 +837,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in UpdateAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in UpdateAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -876,9 +876,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in UpdateAsync", result.ErrorMessage);
-//            Assert.Contains("Database error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in UpdateAsync", result.Error.Description);
+//            Assert.Contains("Database error", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -930,9 +930,9 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-//            Assert.Contains("Exception in UpdateAsync", result.ErrorMessage);
-//            Assert.Contains("Save error", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Failure, result.Error.Type);
+//            Assert.Contains("Exception in UpdateAsync", result.Error.Description);
+//            Assert.Contains("Save error", result.Error.Description);
 //        }
 
 //        #endregion
@@ -952,8 +952,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Equal("Invalid Id", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Equal("Invalid Id", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -975,8 +975,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.NotFound, result.ErrorType);
-//            Assert.Contains("StockMovementType", result.ErrorMessage);
+//            Assert.Equal(ErrorType.NotFound, result.Error.Type);
+//            Assert.Contains("StockMovementType", result.Error.Description);
 //        }
 
 //        [Fact]
@@ -1052,8 +1052,8 @@
 
 //            // Assert
 //            Assert.False(result.IsSuccess);
-//            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-//            Assert.Contains("StockMovementType is already deleted", result.ErrorMessage);
+//            Assert.Equal(ErrorType.Validation, result.Error.Type);
+//            Assert.Contains("StockMovementType is already deleted", result.Error.Description);
 
 //            _repositoryMock.Verify(r => r.Update(It.IsAny<StockMovementType>()), Times.Never);
 //            _uowMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);

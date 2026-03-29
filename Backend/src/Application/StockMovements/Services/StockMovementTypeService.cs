@@ -5,7 +5,7 @@ using Application.StockMovements.DTOs.Response;
 using Domain.Shared.Results;
 using Application.Shared.Services;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -76,7 +76,7 @@ namespace Application.StockMovements.Services
         {
             if (id <= 0)
             {
-                return Result<StockMovementTypeReadResponse>.InvalidId();
+                return Result<StockMovementTypeReadResponse>.Failure(Error.InvalidId());
             }
             try
             {
@@ -108,7 +108,7 @@ namespace Application.StockMovements.Services
             {
                 var errors = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
                 return Result<StockMovementTypeReadResponse>
-                    .Failure(errors, ErrorType.BadRequest);
+                    .Failure(errors, ErrorType.Validation);
             }
             try
             {
@@ -137,7 +137,7 @@ namespace Application.StockMovements.Services
         {
             if (id <= 0)
             {
-                return Result<StockMovementTypeReadResponse>.InvalidId();
+                return Result<StockMovementTypeReadResponse>.Failure(Error.InvalidId());
             }
             var validationResult = await _validator.ValidateAsync(request
                 , cancellationToken);
@@ -145,7 +145,7 @@ namespace Application.StockMovements.Services
             {
                 var errors = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
                 return Result<StockMovementTypeReadResponse>
-                    .Failure(errors, ErrorType.BadRequest);
+                    .Failure(errors, ErrorType.Validation);
             }
             try
             {
@@ -155,8 +155,7 @@ namespace Application.StockMovements.Services
                 if (isExists)
                 {
                     return Result<StockMovementTypeReadResponse>
-                        .Failure("Stock Movement Type with the same name already exists"
-                        , ErrorType.Conflict);
+                        .Failure("Stock Movement Type with the same name already exists", ErrorType.Conflict);
                 }
                 var existingSmt = await _uow.StockMovementTypes.FindAsync(e => e.Id == id
                     , cancellationToken: cancellationToken);

@@ -8,7 +8,7 @@ using Domain.Shared.Results;
 using Application.Shared.Services;
 using Application.Users.Services;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
@@ -55,7 +55,7 @@ namespace Application.Tests.UserTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.NotFound, result.ErrorType);
+            Assert.Equal(ErrorType.NotFound, result.Error.Type);
         }
 
         [Fact]
@@ -101,8 +101,8 @@ namespace Application.Tests.UserTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-            Assert.Contains("Test exception", result.ErrorMessage);
+            Assert.Equal(ErrorType.Failure, result.Error.Type);
+            Assert.Contains("Test exception", result.Error.Description);
         }
 
         [Fact]
@@ -116,7 +116,7 @@ namespace Application.Tests.UserTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+            Assert.Equal(ErrorType.Validation, result.Error.Type);
         }
 
         [Fact]
@@ -135,7 +135,7 @@ namespace Application.Tests.UserTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.NotFound, result.ErrorType);
+            Assert.Equal(ErrorType.NotFound, result.Error.Type);
         }
 
         [Fact]
@@ -184,8 +184,8 @@ namespace Application.Tests.UserTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-            Assert.Contains("Test exception", result.ErrorMessage);
+            Assert.Equal(ErrorType.Failure, result.Error.Type);
+            Assert.Contains("Test exception", result.Error.Description);
         }
 
         [Fact]
@@ -204,8 +204,8 @@ namespace Application.Tests.UserTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-            Assert.Contains("Name is required", result.ErrorMessage);
+            Assert.Equal(ErrorType.Validation, result.Error.Type);
+            Assert.Contains("Name is required", result.Error.Description);
         }
 
         [Fact]
@@ -265,8 +265,8 @@ namespace Application.Tests.UserTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-            Assert.Contains("Test exception", result.ErrorMessage);
+            Assert.Equal(ErrorType.Failure, result.Error.Type);
+            Assert.Contains("Test exception", result.Error.Description);
         }
 
         [Fact]
@@ -285,8 +285,8 @@ namespace Application.Tests.UserTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-            Assert.Contains("Name is required", result.ErrorMessage);
+            Assert.Equal(ErrorType.Validation, result.Error.Type);
+            Assert.Contains("Name is required", result.Error.Description);
         }
 
         [Fact]
@@ -309,7 +309,7 @@ namespace Application.Tests.UserTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.NotFound, result.ErrorType);
+            Assert.Equal(ErrorType.NotFound, result.Error.Type);
         }
 
         [Fact]
@@ -367,8 +367,8 @@ namespace Application.Tests.UserTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
-            Assert.Contains("Test exception", result.ErrorMessage);
+            Assert.Equal(ErrorType.Failure, result.Error.Type);
+            Assert.Contains("Test exception", result.Error.Description);
         }
 
         [Fact]
@@ -382,7 +382,7 @@ namespace Application.Tests.UserTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+            Assert.Equal(ErrorType.Validation, result.Error.Type);
         }
 
         [Fact]
@@ -401,7 +401,7 @@ namespace Application.Tests.UserTests
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorType.NotFound, result.ErrorType);
+            Assert.Equal(ErrorType.NotFound, result.Error.Type);
         }
 
         [Fact]

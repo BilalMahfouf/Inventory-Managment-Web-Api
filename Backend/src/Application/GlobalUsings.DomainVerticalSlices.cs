@@ -1,6 +1,6 @@
 global using Domain.Shared.Abstractions;
 global using Domain.Shared.Entities;
-global using Domain.Shared.Enums;
+global using Domain.Shared.Errors;
 global using Domain.Shared.Events;
 global using Domain.Shared.Exceptions;
 global using Domain.Shared.Results;

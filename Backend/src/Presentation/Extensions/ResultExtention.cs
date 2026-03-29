@@ -1,5 +1,5 @@
 ﻿using Domain.Shared.Results;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
@@ -73,19 +73,42 @@ namespace Presentation.Extensions
         /// <param name="result">The failed operation result.</param>
         /// <returns>
         /// <see cref="NotFoundObjectResult"/> for <see cref="ErrorType.NotFound"/>,
-        /// <see cref="BadRequestObjectResult"/> for <see cref="ErrorType.BadRequest"/>,
+        /// <see cref="BadRequestObjectResult"/> for <see cref="ErrorType.Validation"/>,
         /// <see cref="ConflictObjectResult"/> for <see cref="ErrorType.Conflict"/>,
         /// or <see cref="ObjectResult"/> with 500 status code for other errors.
         /// </returns>
         private static ActionResult HandleError(Result result)
         {
-            return result.ErrorType switch
+            var statusCode = result.Error.Type switch
             {
-                ErrorType.NotFound => new NotFoundObjectResult(result.ErrorMessage),
-                ErrorType.BadRequest => new BadRequestObjectResult(result.ErrorMessage),
-                ErrorType.Conflict => new ConflictObjectResult(result.ErrorMessage),
-                ErrorType.Unauthorized => new UnauthorizedObjectResult(result.ErrorMessage),
-                _ => new ObjectResult(result.ErrorMessage) { StatusCode = 500 }
+                ErrorType.NotFound => StatusCodes.Status404NotFound,
+                ErrorType.Validation => StatusCodes.Status400BadRequest,
+                ErrorType.Conflict => StatusCodes.Status409Conflict,
+                ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
+                _ => StatusCodes.Status500InternalServerError
+            };
+
+            var type = result.Error.Type switch
+            {
+                ErrorType.Validation => "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+                ErrorType.Unauthorized => "https://tools.ietf.org/html/rfc7235#section-3.1",
+                ErrorType.NotFound => "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                ErrorType.Conflict => "https://tools.ietf.org/html/rfc7231#section-6.5.8",
+                _ => "https://tools.ietf.org/html/rfc7231#section-6.6.1"
+            };
+
+            var details = new ProblemDetails
+            {
+                Title = result.Error.Code,
+                Detail = result.Error.Description,
+                Type = type,
+                Status = statusCode
+            };
+            details.Extensions["errors"] = new[] { result.Error.Code, result.Error.Description };
+
+            return new ObjectResult(details)
+            {
+                StatusCode = statusCode
             };
         }
     }

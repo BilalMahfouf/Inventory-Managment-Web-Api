@@ -8,8 +8,9 @@ using Application.Shared.DTOs;
 using Application.Shared.Helpers;
 using Application.Users.Contracts;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Domain.Shared.Results;
+using Domain.Users;
 
 namespace Application.Authentication.Services
 {
@@ -62,14 +63,12 @@ namespace Application.Authentication.Services
                 {
                     return Result<string>.Success(token);
                 }
-                return Result<string>.Failure("Can't create this user session"
-                    , ErrorType.Conflict);
+                return Result<string>.Failure("Can't create this user session", ErrorType.Conflict);
             }
             catch (Exception ex)
             {
 
-                return Result<string>.Failure($"an Error happened when saving changes to db: {ex.Message}",
-                    ErrorType.InternalServerError);
+                return Result<string>.Failure($"an Error happened when saving changes to db: {ex.Message}");
             }
         }
         public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request
@@ -83,16 +82,16 @@ namespace Application.Authentication.Services
                     , _passwordHasher);
                 if(!result.IsSuccess)
                 {
-                    return Result<LoginResponse>.Failure(result.ErrorMessage!
-                        , result.ErrorType);
+                    return Result<LoginResponse>.Failure(result.Error.Description!
+                        , result.Error.Type);
                 }
                 var user = result.Value!;
                 var token = _jwtProvider.GenerateToken(user);
                 var refreshToken = await CreateRefreshToken(user.Id,cancellationToken);
                 if(!refreshToken.IsSuccess)
                 {
-                    return Result<LoginResponse>.Failure(refreshToken.ErrorMessage!
-                        , refreshToken.ErrorType);
+                    return Result<LoginResponse>.Failure(refreshToken.Error.Description!
+                        , refreshToken.Error.Type);
                 }
 
                 var loginResponse = new LoginResponse(token, refreshToken.Value!);
@@ -102,8 +101,7 @@ namespace Application.Authentication.Services
             {
                 Console.WriteLine($"An error happened in the Login method:{ex.Message}");
                 // todo  log the error
-                return Result<LoginResponse>.Failure("Error in the login method"
-                    , ErrorType.InternalServerError);
+                return Result<LoginResponse>.Failure("Error in the login method");
             }
         }
 
@@ -115,16 +113,14 @@ namespace Application.Authentication.Services
             {
                 if(string.IsNullOrWhiteSpace(request.refreshToken))
                 {
-                    return Result<LoginResponse>.Failure("Invalid token"
-                        , ErrorType.BadRequest);
+                    return Result<LoginResponse>.Failure("Invalid token", ErrorType.Validation);
                 }
                 var refreshToken = await _userSessionRepository
                 .FindAsync(r => r.Token == request.refreshToken
                 , cancellationToken, "User");
                 if (refreshToken is null || refreshToken.ExpiresAt < DateTime.UtcNow)
                 {
-                    return Result<LoginResponse>.Failure("expired refresh Token"
-                        , ErrorType.BadRequest);
+                    return Result<LoginResponse>.Failure(Error.Validation("expired refresh Token"));
                 }
                 var accessToken = _jwtProvider.GenerateToken(refreshToken.User);
                 refreshToken.Token = _jwtProvider.GenerateRefreshToken();
@@ -138,8 +134,7 @@ namespace Application.Authentication.Services
             }
             catch (Exception ex)
             {
-                return Result<LoginResponse>.Failure($"Error:{ex.Message}"
-                    ,ErrorType.InternalServerError);
+                return Result<LoginResponse>.Failure($"Error:{ex.Message}", ErrorType.Failure);
             }
         }
 
@@ -150,15 +145,15 @@ namespace Application.Authentication.Services
             {
                 var user =await _userRepository.FindAsync(u => u.Email == request.Email,
                     cancellationToken, "UserSessions");
-                if (user is null)
-                {
-                    return Result<string>.NotFound(nameof(user));
+                    if (user is null)
+                    {
+                        return Result<string>.Failure(UserErrors.UserNotFound(request.Email));
                 }
                 if (!user.UserSessions.Any(u => u.Token == request.Token &&
                 u.ExpiresAt > DateTime.UtcNow
                 && u.TokenType == (byte)TokenType.ResetPassword))  
                 {
-                    return Result<string>.Failure("Wrong credentials", ErrorType.Unauthorized);
+                    return Result<string>.Failure(UserErrors.InvalidCredentials);
                 }
                 var newPasswordHash=_passwordHasher.HashPassword(request.Password);
                 user.PasswordHash = newPasswordHash;
@@ -176,8 +171,7 @@ namespace Application.Authentication.Services
             catch(Exception ex)
             {
                 // to do log error
-                return Result<string>.Failure($"Error while resetting the password: {ex.Message}"
-                    , ErrorType.InternalServerError);
+                return Result<string>.Failure($"Error while resetting the password: {ex.Message}");
             }
         }
 
@@ -190,7 +184,7 @@ namespace Application.Authentication.Services
                 ,cancellationToken);
                 if (user is null)
                 {
-                    return Result<string>.NotFound(nameof(user));
+                    return Result<string>.Failure(UserErrors.UserNotFound(request.Email));
                 }
                 var token = _jwtProvider.GenerateToken(user);
                 var userSession = new UserSession()
@@ -215,8 +209,7 @@ namespace Application.Authentication.Services
             }
             catch(Exception ex)
             {
-                return Result<string>.Failure($"Error:{ex.Message}",
-                    ErrorType.InternalServerError);
+                return Result<string>.Failure($"Error:{ex.Message}");
             }
 
         }
@@ -230,24 +223,23 @@ namespace Application.Authentication.Services
                , cancellationToken, "ConfirmEmailTokens");
                 if (user is null)
                 {
-                    return Result<string>.NotFound(nameof(user));
+                    return Result<string>.Failure(Error.NotFound(nameof(user)));
                 }
                 if (user.EmailConfirmed)
                 {
-                    return Result<string>.Failure("Email Already Confirmed"
-                        , ErrorType.BadRequest);
+                    return Result<string>.Failure("Email Already Confirmed", ErrorType.Validation);
                 }
                 var confirmEmailToken = user.ConfirmEmailTokens.FirstOrDefault
                      (e => e.UserId == user.Id);
                 if (confirmEmailToken is null)
                 {
-                    return Result<string>.NotFound(nameof(confirmEmailToken));
+                    return Result<string>.Failure(Error.NotFound(nameof(confirmEmailToken)));
                 }
 
                 if (!user.ConfirmEmailTokens.Any(e => e.Token == request.Token
                 && (!e.IsLocked) && e.ExpiredAt > DateTime.UtcNow)) 
                 {
-                    return Result<string>.Failure("Invalid Token", ErrorType.BadRequest);
+                    return Result<string>.Failure("Invalid Token");
                 }
                 user.ConfirmEmail();
                 _userRepository.Update(user);
@@ -261,8 +253,7 @@ namespace Application.Authentication.Services
             catch(Exception ex)
             {
                 // log error
-                return Result<string>.Failure($"Error:{ex.Message}"
-                    , ErrorType.InternalServerError);
+                return Result<string>.Failure($"Error:{ex.Message}", ErrorType.Failure);
             }
             
         }
@@ -277,12 +268,11 @@ namespace Application.Authentication.Services
                 ,cancellationToken);
                 if (user is null)
                 {
-                    return Result<string>.NotFound(nameof(user));
+                    return Result<string>.Failure(Error.NotFound(nameof(user)));
                 }
                 if (user.EmailConfirmed)
                 {
-                    return Result<string>.Failure("User already has confirmed email"
-                        , ErrorType.BadRequest);
+                    return Result<string>.Failure("User already has confirmed email", ErrorType.Validation);
                 }
                 var token = Utility.GenerateGuid();
                 var confirmEmailToken = new ConfirmEmailToken()
@@ -309,8 +299,7 @@ namespace Application.Authentication.Services
             catch(Exception ex)
             {
                 // log error 
-                return Result<string>.Failure($"Error:{ex.Message}"
-                    , ErrorType.InternalServerError);
+                return Result<string>.Failure($"Error:{ex.Message}");
             }
 
             

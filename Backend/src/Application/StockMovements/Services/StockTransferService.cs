@@ -2,7 +2,7 @@
 using Application.StockMovements.DTOs.Request;
 using Domain.Shared.Results;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Domain.Shared.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -37,7 +37,7 @@ public sealed class StockTransferService
                     cancellationToken, "Product");
             if (fromInventory is null)
             {
-                return Result<int>.NotFound(" From Inventory");
+                return Result<int>.Failure(Error.NotFound("From Inventory"));
             }
 
             var toInventory = await _uow.Inventories
@@ -46,7 +46,7 @@ public sealed class StockTransferService
                     cancellationToken, "Product");
             if (toInventory is null)
             {
-                return Result<int>.NotFound(" To Inventory");
+                return Result<int>.Failure(Error.NotFound(" To Inventory"));
             }
             fromInventory.UpdateStock(-request.Quantity, StockMovementTypeEnum.TransferOut);
             toInventory.UpdateStock(request.Quantity, StockMovementTypeEnum.TransferIn);
@@ -70,7 +70,7 @@ public sealed class StockTransferService
         }
         catch (Exception ex)
         {
-            return Result<int>.Exception(nameof(TransferStockAsync), ex);
+            return Result<int>.Failure(Error.Exception(nameof(TransferStockAsync), ex));
         }
     }
 }

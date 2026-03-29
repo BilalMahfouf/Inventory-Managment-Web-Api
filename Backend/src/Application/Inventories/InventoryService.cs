@@ -6,7 +6,7 @@ using Application.Inventories.DTOs.Request;
 using Application.Shared.Helpers;
 using Domain.Shared.Results;
 using Application.Shared.Services;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Domain.Shared.Exceptions;
 using Domain.Inventories;
 using FluentValidation;
@@ -69,7 +69,7 @@ namespace Application.Inventories
             {
                 if (id <= 0)
                 {
-                    return Result<InventoryBaseReadResponse>.InvalidId();
+                    return Result<InventoryBaseReadResponse>.Failure(Error.InvalidId());
                 }
                 var inventory = await _uow.Inventories.FindAsync(
                     predicate: i => i.Id == id,
@@ -104,7 +104,7 @@ namespace Application.Inventories
                     var errors = string.Join("; ", validationResult.Errors
                         .Select(e => e.ErrorMessage));
                     return Result<InventoryBaseReadResponse>
-                        .Failure(errors, ErrorType.BadRequest);
+                        .Failure(errors, ErrorType.Validation);
                 }
                 var isExist = await _uow.Inventories
                     .IsExistAsync(i => i.ProductId == request.ProductId
@@ -113,9 +113,7 @@ namespace Application.Inventories
                 if (isExist)
                 {
                     return Result<InventoryBaseReadResponse>
-                        .Failure(@"Inventory with the same ProductId 
-                        and LocationId already exists"
-                        , ErrorType.Conflict);
+                        .Failure(@"Inventory with the same ProductId and LocationId already exists", ErrorType.Conflict);
                 }
                 var product = await _uow.Products
                     .FindAsync(p => p.Id == request.ProductId
@@ -157,7 +155,7 @@ namespace Application.Inventories
             {
                 if (id <= 0)
                 {
-                    return Result<InventoryBaseReadResponse>.InvalidId();
+                    return Result<InventoryBaseReadResponse>.Failure(Error.InvalidId());
                 }
                 var validationResult = await _updateValidator
                     .ValidateAsync(request, cancellationToken);
@@ -166,7 +164,7 @@ namespace Application.Inventories
                     var errors = string.Join("; ", validationResult.Errors
                         .Select(e => e.ErrorMessage));
                     return Result<InventoryBaseReadResponse>
-                        .Failure(errors, ErrorType.BadRequest);
+                        .Failure(errors, ErrorType.Validation);
                 }
                 var existingInventory = await _uow.Inventories
                     .FindAsync(i => i.Id == id,
@@ -190,7 +188,7 @@ namespace Application.Inventories
             catch (DomainException ex)
             {
                 return Result<InventoryBaseReadResponse>
-                        .Failure(ex.Message, ErrorType.Conflict);
+                        .Failure(ex.Message);
             }
             catch (Exception ex)
             {
@@ -206,13 +204,13 @@ namespace Application.Inventories
             {
                 if (id <= 0)
                 {
-                    return Result.InvalidId();
+                    return Result.Failure(Error.InvalidId());
                 }
                 var existingInventory = await _uow.Inventories
                     .FindAsync(i => i.Id == id, cancellationToken: cancellationToken);
                 if (existingInventory is null)
                 {
-                    return Result.NotFound("Inventory");
+                    return Result.Failure(Error.NotFound("Inventory"));
                 }
                 _uow.Inventories.Delete(existingInventory);
                 await _uow.SaveChangesAsync(cancellationToken);
@@ -220,7 +218,7 @@ namespace Application.Inventories
             }
             catch (Exception ex)
             {
-                return Result.Exception(nameof(DeleteAsync), ex);
+                return Result.Failure(Error.Exception(nameof(DeleteAsync), ex));
             }
         }
 
@@ -294,7 +292,7 @@ namespace Application.Inventories
                                cancellationToken: cancellationToken);
                 if (inventory is null)
                 {
-                    return Result.NotFound("Inventory");
+                    return Result.Failure(Error.NotFound("Inventory"));
                 }
                 inventory.Delete();
                 return await SoftDeleteAsync(inventory, cancellationToken);
@@ -303,11 +301,11 @@ namespace Application.Inventories
             }
             catch (DomainException ex)
             {
-                return Result.Failure(ex.Message, ErrorType.Conflict);
+                return Result.Failure(Error.Conflict(ex.Message));
             }
             catch (Exception ex)
             {
-                return Result.Exception(nameof(DeleteByIdAsync), ex);
+                return Result.Failure(Error.Exception(nameof(DeleteByIdAsync), ex));
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿using Application.Sales;
 using Domain.Shared.Results;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Domain.Sales;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Base;

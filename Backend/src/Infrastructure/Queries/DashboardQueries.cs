@@ -1,6 +1,6 @@
 ﻿using Application.Dashboard.Contracts;
 using Domain.Shared.Results;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -58,12 +58,12 @@ public sealed class DashboardQueries : IDashboardQueries
                 TodayRevenues = totalRevenues
             };
             if (result is null)
-                return Result<object>.NotFound("today performance");
+                return Result<object>.Failure(Error.NotFound("today performance"));
             return Result<object>.Success(result);
         }
         catch (Exception ex)
         {
-            return Result<object>.Exception(nameof(GetTodayPerformanceAsync), ex);
+            return Result<object>.Failure(Error.Exception(nameof(GetTodayPerformanceAsync), ex));
         }
     }
 }

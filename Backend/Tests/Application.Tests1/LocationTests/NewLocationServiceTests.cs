@@ -6,7 +6,7 @@ using Domain.Shared.Results;
 using Application.Locations.Services;
 using Domain.Shared.Entities;
 using Domain.Products.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Domain.Shared.Exceptions;
 using Domain.Inventories;
 using FluentValidation;
@@ -86,7 +86,7 @@ public class NewLocationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.NotFound, result.ErrorType);
+        Assert.Equal(ErrorType.NotFound, result.Error.Type);
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class NewLocationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     #endregion
@@ -124,7 +124,7 @@ public class NewLocationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -138,7 +138,7 @@ public class NewLocationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -158,7 +158,7 @@ public class NewLocationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.NotFound, result.ErrorType);
+        Assert.Equal(ErrorType.NotFound, result.Error.Type);
     }
 
     [Fact]
@@ -207,7 +207,7 @@ public class NewLocationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     #endregion
@@ -234,7 +234,7 @@ public class NewLocationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -292,7 +292,7 @@ public class NewLocationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     #endregion
@@ -311,7 +311,7 @@ public class NewLocationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -334,7 +334,7 @@ public class NewLocationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -360,7 +360,7 @@ public class NewLocationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.NotFound, result.ErrorType);
+        Assert.Equal(ErrorType.NotFound, result.Error.Type);
     }
 
     [Fact]
@@ -422,7 +422,7 @@ public class NewLocationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     #endregion
@@ -440,7 +440,7 @@ public class NewLocationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -460,7 +460,7 @@ public class NewLocationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.NotFound, result.ErrorType);
+        Assert.Equal(ErrorType.NotFound, result.Error.Type);
     }
 
     [Fact]
@@ -488,7 +488,7 @@ public class NewLocationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.Conflict, result.ErrorType);
+        Assert.Equal(ErrorType.Conflict, result.Error.Type);
     }
 
     [Fact]

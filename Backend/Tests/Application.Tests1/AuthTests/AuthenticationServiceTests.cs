@@ -8,7 +8,7 @@ using Application.Shared.DTOs;
 using Domain.Shared.Results;
 using Application.Authentication.Services;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Moq;
 using System.Linq.Expressions;
 using Xunit;
@@ -99,7 +99,7 @@ public class AuthenticationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     #endregion
@@ -119,7 +119,7 @@ public class AuthenticationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -135,7 +135,7 @@ public class AuthenticationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -157,7 +157,7 @@ public class AuthenticationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -188,7 +188,7 @@ public class AuthenticationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -245,7 +245,7 @@ public class AuthenticationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     #endregion
@@ -271,7 +271,7 @@ public class AuthenticationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.NotFound, result.ErrorType);
+        Assert.Equal(ErrorType.NotFound, result.Error.Type);
     }
 
     [Fact]
@@ -300,7 +300,7 @@ public class AuthenticationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.Unauthorized, result.ErrorType);
+        Assert.Equal(ErrorType.Unauthorized, result.Error.Type);
     }
 
     [Fact]
@@ -367,7 +367,7 @@ public class AuthenticationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     #endregion
@@ -393,7 +393,7 @@ public class AuthenticationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.NotFound, result.ErrorType);
+        Assert.Equal(ErrorType.NotFound, result.Error.Type);
     }
 
     [Fact]
@@ -452,7 +452,7 @@ public class AuthenticationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.NotFound, result.ErrorType);
+        Assert.Equal(ErrorType.NotFound, result.Error.Type);
     }
 
     [Fact]
@@ -481,8 +481,8 @@ public class AuthenticationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
-        Assert.Contains("Already Confirmed", result.ErrorMessage);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
+        Assert.Contains("Already Confirmed", result.Error.Description);
     }
 
     [Fact]
@@ -504,7 +504,7 @@ public class AuthenticationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     #endregion
@@ -530,7 +530,7 @@ public class AuthenticationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.NotFound, result.ErrorType);
+        Assert.Equal(ErrorType.NotFound, result.Error.Type);
     }
 
     [Fact]
@@ -559,7 +559,7 @@ public class AuthenticationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -614,7 +614,7 @@ public class AuthenticationServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     #endregion

@@ -2,7 +2,7 @@
 using Domain.Shared.Results;
 using Application.Sales.Queries;
 using Application.Sales.RequestResponse;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -135,7 +135,7 @@ internal class SalesOrderQueries : ISalesOrderQueries
             }).FirstOrDefaultAsync(cancellationToken);
         if(order is null)
         {
-            return Result<SalesOrderReadResponse>.NotFound("Sales Order");
+            return Result<SalesOrderReadResponse>.Failure(Error.NotFound("Sales Order"));
         }
         return Result<SalesOrderReadResponse>.Success(order);
     }

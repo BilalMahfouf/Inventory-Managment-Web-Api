@@ -4,7 +4,7 @@ using Application.UnitOfMeasures.DTOs;
 using Domain.Shared.Results;
 using Application.UnitOfMeasures.Services;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Domain.Shared.Exceptions;
 using FluentValidation;
 using FluentValidation.Results;
@@ -79,7 +79,7 @@ public class UnitOfMeasureServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.NotFound, result.ErrorType);
+        Assert.Equal(ErrorType.NotFound, result.Error.Type);
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class UnitOfMeasureServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     #endregion
@@ -117,7 +117,7 @@ public class UnitOfMeasureServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -131,7 +131,7 @@ public class UnitOfMeasureServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -151,7 +151,7 @@ public class UnitOfMeasureServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.NotFound, result.ErrorType);
+        Assert.Equal(ErrorType.NotFound, result.Error.Type);
     }
 
     [Fact]
@@ -200,7 +200,7 @@ public class UnitOfMeasureServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     #endregion
@@ -226,7 +226,7 @@ public class UnitOfMeasureServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -250,7 +250,7 @@ public class UnitOfMeasureServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.Conflict, result.ErrorType);
+        Assert.Equal(ErrorType.Conflict, result.Error.Type);
     }
 
     [Fact]
@@ -274,7 +274,7 @@ public class UnitOfMeasureServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     #endregion
@@ -293,7 +293,7 @@ public class UnitOfMeasureServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -315,7 +315,7 @@ public class UnitOfMeasureServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.BadRequest, result.ErrorType);
+        Assert.Equal(ErrorType.Validation, result.Error.Type);
     }
 
     [Fact]
@@ -340,7 +340,7 @@ public class UnitOfMeasureServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.NotFound, result.ErrorType);
+        Assert.Equal(ErrorType.NotFound, result.Error.Type);
     }
 
     [Fact]
@@ -377,7 +377,7 @@ public class UnitOfMeasureServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.Conflict, result.ErrorType);
+        Assert.Equal(ErrorType.Conflict, result.Error.Type);
     }
 
     [Fact]
@@ -402,7 +402,7 @@ public class UnitOfMeasureServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     #endregion

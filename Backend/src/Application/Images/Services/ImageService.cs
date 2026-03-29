@@ -62,7 +62,7 @@ namespace Application.Images.Services
             }
             catch(Exception ex)
             {
-                return Result<Image>.Exception(nameof(AddImageAsync), ex);
+                return Result<Image>.Failure(Error.Exception(nameof(AddImageAsync), ex));
             }
         }
 
@@ -76,13 +76,13 @@ namespace Application.Images.Services
                 , cancellationToken);
                 if(image is null)
                 {
-                    return Result<ImageDownloadResponse>.NotFound(nameof(image));
+                    return Result<ImageDownloadResponse>.Failure(Error.NotFound(nameof(image)));
                 }
                 var stream = await _imageStorageService.GetAsync(
                     image.StoragePath, cancellationToken);
                 if (stream is null)
                 {
-                    return Result<ImageDownloadResponse>.NotFound(nameof(stream));
+                    return Result<ImageDownloadResponse>.Failure(Error.NotFound(nameof(stream)));
                 }
                 var response = new ImageDownloadResponse()
                 {
@@ -94,7 +94,7 @@ namespace Application.Images.Services
             }
             catch(Exception ex)
             {
-                return Result<ImageDownloadResponse>.Exception(nameof(GetImageAsync), ex);
+                return Result<ImageDownloadResponse>.Failure(Error.Exception(nameof(GetImageAsync), ex));
             }
         }
 
@@ -103,7 +103,7 @@ namespace Application.Images.Services
         {
             if(id <= 0)
             {
-                return Result.InvalidId();
+                return Result.Failure(Error.InvalidId());
             }
             try
             {
@@ -111,7 +111,7 @@ namespace Application.Images.Services
                 , cancellationToken);
                 if(image is null)
                 {
-                    return Result.NotFound(nameof(image));
+                    return Result.Failure(Error.NotFound(nameof(image)));
                 }
                 await _imageStorageService.DeleteAsync(image.StoragePath
                     , cancellationToken);
@@ -121,7 +121,7 @@ namespace Application.Images.Services
             }
             catch(Exception ex)
             {
-                return Result.Exception(nameof(DeleteImageAsync), ex);
+                return Result.Failure(Error.Exception(nameof(DeleteImageAsync), ex));
             }
         }
 

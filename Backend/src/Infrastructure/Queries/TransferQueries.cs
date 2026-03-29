@@ -25,7 +25,7 @@ internal class TransferQueries : ITransferQueries
     {
         if (id <= 0)
         {
-            return Result<object>.InvalidId();
+            return Result<object>.Failure(Error.InvalidId());
         }
         try
         {
@@ -51,13 +51,13 @@ internal class TransferQueries : ITransferQueries
                 }).FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
             if (transfer is null)
             {
-                return Result<object>.NotFound($"Transfer with id {id}");
+                return Result<object>.Failure(Error.NotFound($"Transfer with id {id}"));
             }
             return Result<object>.Success(transfer);
         }
         catch (Exception ex)
         {
-            return Result<object>.Exception(nameof(GetByIdAsync), ex);
+            return Result<object>.Failure(Error.Exception(nameof(GetByIdAsync), ex));
         }
     }
 }

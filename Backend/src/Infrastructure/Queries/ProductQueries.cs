@@ -42,13 +42,13 @@ public class ProductQueries : IProductQueries
             };
             if (result is null)
             {
-                return Result<object>.NotFound("no summary data is found");
+                return Result<object>.Failure(Error.NotFound("no summary data is found"));
             }
             return Result<object>.Success(result);
         }
         catch (Exception ex)
         {
-            return Result<object>.Exception(nameof(GetProductDashboardSummaryAsync), ex);
+            return Result<object>.Failure(Error.Exception(nameof(GetProductDashboardSummaryAsync), ex));
         }
     }
     public async Task<Result<PagedList<ProductTableResponse>>> GetAllAsync(
@@ -261,13 +261,13 @@ public class ProductQueries : IProductQueries
            
            if (product is null)
             {
-                return Result<ProductReadResponse>.NotFound($"Product with id {id}");
+                return Result<ProductReadResponse>.Failure(Error.NotFound($"Product with id {id}"));
             }
             return Result<ProductReadResponse>.Success(product);  
         }
         catch(Exception ex)
         {
-            return Result<ProductReadResponse>.Exception(nameof(GetByIdAsync), ex);
+            return Result<ProductReadResponse>.Failure(Error.Exception(nameof(GetByIdAsync), ex));
         }
     }
 

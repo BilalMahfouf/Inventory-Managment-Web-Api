@@ -1,7 +1,7 @@
 ﻿#nullable enable
 using Domain.Shared.Abstractions;
 using Domain.Products.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Domain.Inventories;
 using System;
 using System.Collections.Generic;

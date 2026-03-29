@@ -1,12 +1,11 @@
 ﻿using Application.Shared.Contracts;
 using Application.Users.Contracts;
-using Application.Shared.Contracts;
 using Application.Users.DTOs.Request;
 using Application.Users.DTOs.Response;
 using Domain.Shared.Results;
 using Application.Shared.Services;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -76,24 +75,24 @@ IValidator<UserRoleRequest> validator)
             catch (Exception ex)
             {
                 return Result<IReadOnlyCollection<UserRoleReadResponse>>
-                    .Failure($"Error:{ex.Message}", ErrorType.InternalServerError);
+                    .Failure($"Error:{ex.Message}", ErrorType.Failure);
             }
         }
 
         public async Task<Result<UserRoleReadResponse>> FindAsync(int id
-            ,CancellationToken cancellationToken)
+            , CancellationToken cancellationToken)
         {
             if (id <= 0)
             {
-                return Result<UserRoleReadResponse>.InvalidId();
+                return Result<UserRoleReadResponse>.Failure(Error.InvalidId());
             }
             try
             {
                 var role = await _repository.FindAsync(u => u.Id == id
                 , cancellationToken, "CreatedByUser,UpdatedByUser,DeletedByUser");
-                if(role is null)
+                if (role is null)
                 {
-                    return Result<UserRoleReadResponse>.NotFound("user role");
+                    return Result<UserRoleReadResponse>.Failure(Error.NotFound("user role"));
                 }
                 var result = Map(role);
                 return Result<UserRoleReadResponse>.Success(result);
@@ -101,7 +100,7 @@ IValidator<UserRoleRequest> validator)
             catch (Exception ex)
             {
                 return Result<UserRoleReadResponse>
-                    .Failure($"Error:{ex.Message}", ErrorType.InternalServerError);
+                    .Failure($"Error:{ex.Message}");
             }
         }
         public async Task<Result<UserRoleReadResponse>> AddAsync(UserRoleRequest
@@ -114,8 +113,7 @@ IValidator<UserRoleRequest> validator)
                 {
                     var errorMessage = string.Join(";",
                         result.Errors.Select(e => e.ErrorMessage));
-                    return Result<UserRoleReadResponse>.Failure(errorMessage
-                        , ErrorType.BadRequest);
+                    return Result<UserRoleReadResponse>.Failure(Error.Validation(errorMessage));
                 }
                 var role = new UserRole()
                 {
@@ -133,11 +131,11 @@ IValidator<UserRoleRequest> validator)
             catch (Exception ex)
             {
                 return Result<UserRoleReadResponse>
-                    .Failure($"Error:{ex.Message}", ErrorType.InternalServerError);
+                    .Failure($"Error:{ex.Message}");
             }
         }
 
-        public async Task<Result> UpdateAsync(int id,UserRoleRequest request
+        public async Task<Result> UpdateAsync(int id, UserRoleRequest request
             , CancellationToken cancellationToken)
         {
             try
@@ -147,20 +145,19 @@ IValidator<UserRoleRequest> validator)
                 {
                     var errorMessage = string.Join(";",
                         result.Errors.Select(e => e.ErrorMessage));
-                    return Result<UserRoleReadResponse>.Failure(errorMessage
-                        , ErrorType.BadRequest);
+                    return Result<UserRoleReadResponse>.Failure(Error.Validation(errorMessage));
                 }
-                var role =await _repository.FindAsync(r => r.Id == id
+                var role = await _repository.FindAsync(r => r.Id == id
                 , cancellationToken);
-                if(role is null )
+                if (role is null)
                 {
-                    return Result.NotFound("user role");
+                    return Result.Failure(Error.NotFound("user role"));
                 }
-                role.Name= request.Name;
-                role.Description= request.Description;
+                role.Name = request.Name;
+                role.Description = request.Description;
                 role.UpdatedAt = DateTime.UtcNow;
-                role.UpdatedByUserId=_currentUserService.UserId;
-               
+                role.UpdatedByUserId = _currentUserService.UserId;
+
                 _repository.Update(role);
                 await _uow.SaveChangesAsync(cancellationToken);
                 return Result.Success;
@@ -169,7 +166,7 @@ IValidator<UserRoleRequest> validator)
             catch (Exception ex)
             {
                 return Result<UserRoleReadResponse>
-                    .Failure($"Error:{ex.Message}", ErrorType.InternalServerError);
+                    .Failure($"Error:{ex.Message}");
             }
         }
     }

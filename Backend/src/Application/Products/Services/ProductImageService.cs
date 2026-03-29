@@ -8,7 +8,7 @@ using Application.Images.DTOs;
 using Domain.Shared.Results;
 using Application.Images.Services;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -47,8 +47,7 @@ namespace Application.Products.Services
                 {
                     var errorMessage = string.Join(", ", result
                         .Errors.Select(e => e.ErrorMessage));
-                    return Result<ProductImageReadResponse>.Failure(errorMessage
-                        , ErrorType.BadRequest);
+                    return Result<ProductImageReadResponse>.Failure(Error.Validation(errorMessage));
                 }
                 var imageRequest = new Application.Images.DTOs.ImageUploadRequest()
                 {
@@ -66,8 +65,8 @@ namespace Application.Products.Services
                 if (!imageResult.IsSuccess || imageResult.Value is null)
                 {
                     return Result<ProductImageReadResponse>.Failure(
-                         imageResult.ErrorMessage!
-                        , imageResult.ErrorType);
+                         imageResult.Error.Description!
+                        , imageResult.Error.Type);
                 }
                 var productImage = new ProductImage()
                 {
@@ -90,9 +89,8 @@ namespace Application.Products.Services
             }
             catch(Exception ex)
             {
-                return Result<ProductImageReadResponse>.Exception(
-                    nameof(AddProductImageAsync)
-                    , ex);
+                return Result<ProductImageReadResponse>.Failure(
+                    Error.Exception(nameof(AddProductImageAsync), ex));
             }
 
 
@@ -104,7 +102,7 @@ namespace Application.Products.Services
         {
             if(id <= 0)
             {
-                return Result.InvalidId();
+                return Result.Failure(Error.InvalidId());
             }
             try
             {
@@ -112,13 +110,13 @@ namespace Application.Products.Services
             , cancellationToken);
                 if (ProductImage is null)
                 {
-                    return Result.NotFound(nameof(ProductImage));
+                    return Result.Failure(Error.NotFound(nameof(ProductImage)));
                 }
                 var imageResult = await _imageService.DeleteImageAsync(id, cancellationToken);
                 if (!imageResult.IsSuccess)
                 {
-                    return Result.Failure(imageResult.ErrorMessage!
-                        , imageResult.ErrorType);
+                    return Result.Failure(imageResult.Error.Description!
+                        , imageResult.Error.Type);
                 }
                 
                 _uow.ProductImages.Delete(ProductImage);
@@ -128,7 +126,7 @@ namespace Application.Products.Services
             }
             catch(Exception ex)
             {
-                return Result.Exception(nameof(DeleteProductImageAsync), ex);
+                return Result.Failure(Error.Exception(nameof(DeleteProductImageAsync), ex));
             }
         }
 
@@ -169,7 +167,7 @@ namespace Application.Products.Services
         {
             if (id <= 0)
             {
-                return Result.InvalidId();
+                return Result.Failure(Error.InvalidId());
             }
             try
             {
@@ -178,7 +176,7 @@ namespace Application.Products.Services
                     e => e.Id == id, cancellationToken);
                 if (productImage is null)
                 {
-                    return Result.NotFound(nameof(productImage));
+                    return Result.Failure(Error.NotFound(nameof(productImage)));
                 }
 
                 var PrimaryProductImage = await _uow.ProductImages.FindAsync(
@@ -195,7 +193,7 @@ namespace Application.Products.Services
             }
             catch(Exception ex)
             {
-                return Result.Exception(nameof(SetProductImagePrimaryAsync),ex);
+                return Result.Failure(Error.Exception(nameof(SetProductImagePrimaryAsync), ex));
             }
 
         }

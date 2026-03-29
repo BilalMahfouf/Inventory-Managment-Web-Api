@@ -70,3 +70,5 @@ global using Application.Shared.Helpers;
 global using Application.Shared.Paging;
 global using Application.Shared.Services;
 global using Application.Shared.Validation;
+
+global using Presentation.Contracts;

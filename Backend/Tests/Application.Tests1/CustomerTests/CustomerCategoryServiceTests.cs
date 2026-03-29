@@ -2,7 +2,7 @@ using Application.Shared.Contracts;
 using Application.Customers;
 using Domain.Shared.Results;
 using Domain.Shared.Entities;
-using Domain.Shared.Enums;
+using Domain.Shared.Errors;
 using Moq;
 using Xunit;
 
@@ -39,7 +39,7 @@ public class CustomerCategoryServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.NotFound, result.ErrorType);
+        Assert.Equal(ErrorType.NotFound, result.Error.Type);
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class CustomerCategoryServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorType.InternalServerError, result.ErrorType);
+        Assert.Equal(ErrorType.Failure, result.Error.Type);
     }
 
     [Fact]
