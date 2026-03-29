@@ -33,9 +33,9 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         builder =>
         {
-            builder.WithOrigins("http://localhost:5173")
+            builder.WithOrigins("http://localhost:5173", "https://localhost:5173")
                 .AllowAnyHeader()
-                .WithMethods("GET", "POST")
+                .AllowAnyMethod()
                 .AllowCredentials();
         });
 });
@@ -49,6 +49,8 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+
+app.UseCors();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
@@ -57,7 +59,6 @@ app.UseAuthorization();
 
 app.MapCarter();
 
-app.UseCors();
 
 app.MapSignalRHubs();
 

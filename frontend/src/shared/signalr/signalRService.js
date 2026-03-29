@@ -4,7 +4,24 @@ import {
   LogLevel,
 } from '@microsoft/signalr';
 
-const API_URL = 'https://localhost:7230';
+const DEFAULT_BACKEND_ORIGIN = 'https://localhost:7443';
+
+function normalizeBackendOrigin(origin) {
+  if (typeof origin !== 'string') {
+    return DEFAULT_BACKEND_ORIGIN;
+  }
+
+  const trimmed = origin.trim();
+  if (!trimmed) {
+    return DEFAULT_BACKEND_ORIGIN;
+  }
+
+  return trimmed.replace(/\/+$/, '');
+}
+
+const BACKEND_ORIGIN = normalizeBackendOrigin(
+  import.meta.env.VITE_API_ORIGIN
+);
 
 let connection = null;
 
@@ -14,7 +31,7 @@ async function getSignalRConnectionAndStart() {
     return connection;
   }
   connection = new HubConnectionBuilder()
-    .withUrl(`${API_URL}/hubs/notification`)
+    .withUrl(`${BACKEND_ORIGIN}/hubs/notification`, { withCredentials: true })
     .withAutomaticReconnect()
     .configureLogging(LogLevel.Information)
     .build();

@@ -11,6 +11,7 @@ const VARIANTS = {
 export default function Button({
   children,
   variant = 'primary',
+  type = 'button',
   disabled = false,
   loading = false,
   onClick = () => {},
@@ -22,10 +23,10 @@ export default function Button({
 
   return (
     <button
+      type={type}
       onClick={e => {
         if (!isDisabled) {
           onClick(e);
-          console.log('button is clicked');
         }
       }}
       className={`

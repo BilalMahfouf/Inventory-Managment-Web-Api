@@ -18,7 +18,6 @@ const navigate = useNavigate();
 async function onSubmitHandler(e)
 {
     e.preventDefault();
-    console.log("onSubmitHandler is clicked");
     const response =await  authService.login ({email:email,password:password});
     if(!response.success){
         setError(response.error);
@@ -39,10 +38,10 @@ async function onSubmitHandler(e)
              rightIconReplacment={EyeOff} onChange={e=>setPassword(e.target.value)} 
                 error={error} />
 
-            <Link content="forget password" to="https://preview--swift-inventory-canvas.lovable.app/forgot-password#" />           
+            <Link content="forget password" to="/forgot-password" />
 
             <Button children="Login" type="submit" className="w-[400px]" />
-            <Button children="Contact Support" variant="secondary" className="w-[400px]" />
+            <Button children="Contact Support" type="button" variant="secondary" className="w-[400px]" />
             </form>
             </div>
     )

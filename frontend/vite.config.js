@@ -5,20 +5,6 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
-  server: {
-    proxy: {
-      '/hubs': {
-        target: 'http://localhost:7443', // ASP.NET signalR hub
-        ws: true,
-        changeOrigin: true,
-      },
-      '/api': {
-        target: 'https://localhost:7443', //  ASP.NET backend
-        changeOrigin: true,
-        secure: false,
-      },
-    },
-  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

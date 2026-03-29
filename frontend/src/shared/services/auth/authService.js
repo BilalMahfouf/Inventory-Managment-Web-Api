@@ -1,9 +1,6 @@
 import {
   api,
-  setTokens,
-  getAccessToken,
-  clearTokens,
-  refreshAccessToken,
+  tokenManager,
   extractErrorMessage,
   extractAccessToken,
 } from '@shared/services/api/api';
@@ -24,7 +21,7 @@ async function _login(request) {
       };
     }
 
-    setTokens(token);
+    tokenManager.setAccessToken(token);
     return { success: true, data };
   } catch (error) {
     return {
@@ -35,10 +32,10 @@ async function _login(request) {
 }
 
 const authService = {
-  getAccessToken: () => getAccessToken(),
+  getAccessToken: () => tokenManager.getAccessToken(),
 
   setTokens: newAccessToken => {
-    setTokens(newAccessToken);
+    tokenManager.setAccessToken(newAccessToken);
   },
 
   login: async request => await _login(request),
@@ -47,13 +44,14 @@ const authService = {
     try {
       await api.post(`${API_URL}/logout`, {}, { skipAuthRefresh: true });
     } finally {
-      clearTokens();
+      tokenManager.clearAccessToken();
+      window.location.assign('/');
     }
   },
 
   refreshToken: async () => {
     try {
-      const newToken = await refreshAccessToken();
+      const newToken = await tokenManager.refreshAccessToken();
       return { success: true, data: newToken };
     } catch (error) {
       return {
