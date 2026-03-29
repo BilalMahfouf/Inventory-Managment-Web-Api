@@ -19,6 +19,7 @@ import { getStockTransferById } from '@features/inventory/services/stockTransfer
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { formatAppDate } from '@shared/utils/dateFormatter';
 
 /**
  * ViewStockTransfer Component
@@ -144,6 +145,7 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
   }
 
   const statusInfo = getStatusInfo(transfer.status);
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -421,18 +423,11 @@ const ViewStockTransfer = ({ open, onOpenChange, transferId }) => {
                       {t(i18nKeyContainer.inventory.stockTransfers.view.fields.dateTime)}
                     </label>
                     <p className='text-blue-900 text-sm'>
-                      {transfer.createdAt
-                        ? new Date(transfer.createdAt).toLocaleString(
-                            i18n.resolvedLanguage || i18n.language || 'en',
-                            {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            }
-                          )
-                        : '-'}
+                      {formatAppDate(transfer.createdAt, {
+                        locale: activeLocale,
+                        withTime: true,
+                        fallback: '-',
+                      })}
                     </p>
                   </div>
                   <div>

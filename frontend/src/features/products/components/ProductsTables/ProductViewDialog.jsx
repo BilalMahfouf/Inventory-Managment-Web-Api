@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { getProductById } from '@features/products/services/productApi';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { formatAppDate } from '@shared/utils/dateFormatter';
 /**
  * ProductViewDialog Component
  *
@@ -329,9 +330,11 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                       {t(i18nKeyContainer.products.productView.fields.createdAt)}
                     </label>
                     <p className='text-gray-900'>
-                      {product.createdAt
-                        ? new Date(product.createdAt).toLocaleString(activeLocale)
-                        : t(i18nKeyContainer.products.shared.hyphen)}
+                      {formatAppDate(product.createdAt, {
+                        locale: activeLocale,
+                        withTime: true,
+                        fallback: t(i18nKeyContainer.products.shared.hyphen),
+                      })}
                     </p>
                   </div>
                   <div>
@@ -364,9 +367,11 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                       {t(i18nKeyContainer.products.productView.fields.updatedAt)}
                     </label>
                     <p className='text-gray-900'>
-                      {product.updatedAt
-                        ? new Date(product.updatedAt).toLocaleString(activeLocale)
-                        : t(i18nKeyContainer.products.shared.hyphen)}
+                      {formatAppDate(product.updatedAt, {
+                        locale: activeLocale,
+                        withTime: true,
+                        fallback: t(i18nKeyContainer.products.shared.hyphen),
+                      })}
                     </p>
                   </div>
                   <div>
@@ -452,9 +457,11 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                           {t(i18nKeyContainer.products.productView.fields.deletedAt)}
                         </label>
                         <p className='text-red-900 text-sm'>
-                          {product.deleteAt
-                            ? new Date(product.deleteAt).toLocaleString(activeLocale)
-                            : t(i18nKeyContainer.products.shared.hyphen)}
+                          {formatAppDate(product.deleteAt, {
+                            locale: activeLocale,
+                            withTime: true,
+                            fallback: t(i18nKeyContainer.products.shared.hyphen),
+                          })}
                         </p>
                       </div>
                       <div>

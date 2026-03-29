@@ -10,6 +10,7 @@ import { getLocationById } from '@features/inventory/services/locationApi';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { formatAppDate } from '@shared/utils/dateFormatter';
 
 /**
  * ViewLocation Component
@@ -62,6 +63,7 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
     locationResponse?.success && locationResponse?.data
       ? locationResponse.data
       : defaultLocationData;
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -184,18 +186,11 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
                         {t(i18nKeyContainer.inventory.locations.view.fields.dateTime)}
                       </label>
                       <p className='text-blue-900 text-sm'>
-                        {locationData.createdAt
-                          ? new Date(locationData.createdAt).toLocaleString(
-                              i18n.resolvedLanguage || i18n.language || 'en',
-                              {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              }
-                            )
-                          : '-'}
+                        {formatAppDate(locationData.createdAt, {
+                          locale: activeLocale,
+                          withTime: true,
+                          fallback: '-',
+                        })}
                       </p>
                     </div>
                     <div>
@@ -230,18 +225,11 @@ const ViewLocation = ({ open, onOpenChange, locationId }) => {
                           {t(i18nKeyContainer.inventory.locations.view.fields.dateTime)}
                         </label>
                         <p className='text-red-900 text-sm'>
-                          {locationData.deleteAt
-                            ? new Date(locationData.deleteAt).toLocaleString(
-                                i18n.resolvedLanguage || i18n.language || 'en',
-                                {
-                                  year: 'numeric',
-                                  month: 'long',
-                                  day: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                }
-                              )
-                            : '-'}
+                          {formatAppDate(locationData.deleteAt, {
+                            locale: activeLocale,
+                            withTime: true,
+                            fallback: '-',
+                          })}
                         </p>
                       </div>
                       <div>

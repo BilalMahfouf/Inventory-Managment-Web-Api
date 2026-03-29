@@ -6,6 +6,7 @@ import ViewStockTransfer from './view/ViewStockTransfer';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { formatAppDate } from '@shared/utils/dateFormatter';
 
 const getLocalizedTransferStatus = (status, t) => {
   if (status === 'Completed') {
@@ -73,7 +74,7 @@ const getDefaultColumns = t => [
   {
     accessorKey: 'createdAt',
     header: t(i18nKeyContainer.inventory.stockTransfers.table.columns.createdAt),
-    cell: ({ getValue }) => new Date(getValue()).toLocaleDateString(),
+    cell: ({ getValue }) => formatAppDate(getValue()),
   },
 ];
 

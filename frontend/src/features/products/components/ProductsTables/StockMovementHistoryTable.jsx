@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { formatAppDate } from '@shared/utils/dateFormatter';
 
 export default function StockMovementHistoryTable() {
   const { t } = useTranslation();
@@ -104,7 +105,7 @@ const getDefaultColumns = t => [
   {
     accessorKey: 'createdAt',
     header: t(i18nKeyContainer.products.stockMovements.columns.date),
-    cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+    cell: ({ row }) => formatAppDate(row.original.createdAt),
   },
   {
     accessorKey: 'product',

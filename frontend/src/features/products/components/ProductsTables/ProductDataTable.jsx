@@ -11,6 +11,7 @@ import { useToast } from '@shared/context/ToastContext';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { formatAppDate } from '@shared/utils/dateFormatter';
 export default function ProductDataTable() {
   const { t } = useTranslation();
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
@@ -196,6 +197,6 @@ const getDefaultColumns = t => [
   {
     accessorKey: 'createdAt',
     header: t(i18nKeyContainer.products.productTable.columns.createdAt),
-    cell: ({ getValue }) => new Date(getValue()).toLocaleDateString(),
+    cell: ({ getValue }) => formatAppDate(getValue()),
   },
 ];

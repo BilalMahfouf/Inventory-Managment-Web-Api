@@ -11,6 +11,7 @@ import { getInventoryById } from '@features/inventory/services/inventoryApi';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { formatAppDate } from '@shared/utils/dateFormatter';
 
 /**
  * ViewInventoryDialog Component
@@ -74,6 +75,7 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
     inventoryResponse?.success && inventoryResponse?.data
       ? inventoryResponse.data
       : defaultInventoryData;
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
 
   // Tab configuration
   const tabs = [
@@ -410,18 +412,11 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                         {t(i18nKeyContainer.inventory.inventoryView.fields.dateTime)}
                       </label>
                       <p className='text-blue-900 text-sm'>
-                        {inventoryData.createdAt
-                          ? new Date(inventoryData.createdAt).toLocaleString(
-                              i18n.resolvedLanguage || i18n.language || 'en',
-                              {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              }
-                            )
-                          : '-'}
+                        {formatAppDate(inventoryData.createdAt, {
+                          locale: activeLocale,
+                          withTime: true,
+                          fallback: '-',
+                        })}
                       </p>
                     </div>
                     <div>
@@ -455,16 +450,14 @@ const ViewInventoryDialog = ({ open, onOpenChange, inventoryId }) => {
                       </label>
                       <p className='text-purple-900 text-sm'>
                         {inventoryData.updatedAt
-                          ? new Date(inventoryData.updatedAt).toLocaleString(
-                              i18n.resolvedLanguage || i18n.language || 'en',
-                              {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              }
-                            )
+                          ? formatAppDate(inventoryData.updatedAt, {
+                              locale: activeLocale,
+                              withTime: true,
+                              fallback: t(
+                                i18nKeyContainer.inventory.inventoryView.placeholders
+                                  .neverUpdated
+                              ),
+                            })
                           : t(
                               i18nKeyContainer.inventory.inventoryView.placeholders
                                 .neverUpdated

@@ -9,6 +9,7 @@ import PageHeader from '@components/ui/PageHeader';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
 import { divStyles } from '@shared/utils/uiVariables';
+import { formatAppDate } from '@shared/utils/dateFormatter';
 import { getCustomerCategoryById } from '@features/customers/services/customerCategoryApi';
 
 const InfoRow = ({ label, value }) => (
@@ -45,16 +46,11 @@ export default function ViewCustomerCategory() {
   });
 
   const formattedDate = useMemo(() => {
-    if (!data?.createdOnUtc) {
-      return t(i18nKeyContainer.customers.shared.notAvailable);
-    }
-
-    const date = new Date(data.createdOnUtc);
-    if (Number.isNaN(date.getTime())) {
-      return t(i18nKeyContainer.customers.shared.notAvailable);
-    }
-
-    return date.toLocaleString(activeLocale);
+    return formatAppDate(data?.createdOnUtc, {
+      locale: activeLocale,
+      withTime: true,
+      fallback: t(i18nKeyContainer.customers.shared.notAvailable),
+    });
   }, [activeLocale, data?.createdOnUtc, t]);
 
   if (!isValidId) {

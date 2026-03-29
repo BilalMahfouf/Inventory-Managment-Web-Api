@@ -3,6 +3,7 @@ import { History, Clock, User, TrendingUp } from 'lucide-react';
 import Button from '@components/Buttons/Button';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { formatAppDate } from '@shared/utils/dateFormatter';
 
 /**
  * HistoryTab Component
@@ -28,6 +29,7 @@ const HistoryTab = ({
   mode = 'add',
 }) => {
   const { t, i18n } = useTranslation();
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
   // Get status color class
   const getStatusColor = status => {
     switch (status) {
@@ -73,18 +75,12 @@ const HistoryTab = ({
     return status.replace(/([A-Z])/g, ' $1').trim();
   };
 
-  // Format date
-  const formatDate = dateString => {
-    if (!dateString) return t(i18nKeyContainer.inventory.shared.notAvailable);
-    const date = new Date(dateString);
-    return date.toLocaleString(i18n.resolvedLanguage || i18n.language || 'en', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+  const formatDate = dateString =>
+    formatAppDate(dateString, {
+      locale: activeLocale,
+      withTime: true,
+      fallback: t(i18nKeyContainer.inventory.shared.notAvailable),
     });
-  };
 
   // If in add mode, show informational message
   if (mode === 'add' || !transferData) {

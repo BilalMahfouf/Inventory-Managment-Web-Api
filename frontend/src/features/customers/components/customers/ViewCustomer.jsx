@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { formatAppDate } from '@shared/utils/dateFormatter';
 
 /**
  * ViewCustomer Component
@@ -156,9 +157,11 @@ const ViewCustomer = ({ customer, loading }) => {
           <InfoRow
             label={t(i18nKeyContainer.customers.view.fields.createdAt)}
             value={
-              customer.createdAt
-                ? new Date(customer.createdAt).toLocaleString(activeLocale)
-                : t(i18nKeyContainer.customers.shared.notAvailable)
+              formatAppDate(customer.createdAt, {
+                locale: activeLocale,
+                withTime: true,
+                fallback: t(i18nKeyContainer.customers.shared.notAvailable),
+              })
             }
             icon={Calendar}
           />

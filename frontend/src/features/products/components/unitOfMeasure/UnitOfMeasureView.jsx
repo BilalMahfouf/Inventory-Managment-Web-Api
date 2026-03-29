@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { getUnitOfMeasureById } from '@features/products/services/unitOfMeasureApi';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { formatAppDate } from '@shared/utils/dateFormatter';
 
 /**
  * UnitOfMeasureView Component
@@ -146,15 +147,11 @@ const UnitOfMeasureView = ({ open, onOpenChange, unitId }) => {
                     {t(i18nKeyContainer.products.units.view.fields.dateTime)}
                   </label>
                   <p className='text-blue-900 text-sm'>
-                    {unitData.createdAt
-                      ? new Date(unitData.createdAt).toLocaleString(activeLocale, {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })
-                      : t(i18nKeyContainer.products.shared.hyphen)}
+                    {formatAppDate(unitData.createdAt, {
+                      locale: activeLocale,
+                      withTime: true,
+                      fallback: t(i18nKeyContainer.products.shared.hyphen),
+                    })}
                   </p>
                 </div>
                 <div>
@@ -180,15 +177,11 @@ const UnitOfMeasureView = ({ open, onOpenChange, unitId }) => {
                     {t(i18nKeyContainer.products.units.view.fields.dateTime)}
                   </label>
                   <p className='text-purple-900 text-sm'>
-                    {unitData.updatedAt
-                      ? new Date(unitData.updatedAt).toLocaleString(activeLocale, {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })
-                      : t(i18nKeyContainer.products.units.view.placeholders.neverUpdated)}
+                    {formatAppDate(unitData.updatedAt, {
+                      locale: activeLocale,
+                      withTime: true,
+                      fallback: t(i18nKeyContainer.products.units.view.placeholders.neverUpdated),
+                    })}
                   </p>
                 </div>
                 <div>

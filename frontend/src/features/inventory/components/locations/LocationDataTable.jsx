@@ -12,6 +12,7 @@ import ConfirmationDialog from '@components/ui/ConfirmationDialog';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { formatAppDate } from '@shared/utils/dateFormatter';
 
 const getDefaultColumns = t => [
   {
@@ -33,7 +34,7 @@ const getDefaultColumns = t => [
   {
     accessorKey: 'createdAt',
     header: t(i18nKeyContainer.inventory.locations.table.columns.createdAt),
-    cell: ({ getValue }) => new Date(getValue()).toLocaleDateString(),
+    cell: ({ getValue }) => formatAppDate(getValue()),
   },
   {
     accessorKey: 'createdByUserName',

@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { getProductCategoryById } from '@features/products/services/productCategoryApi';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { formatAppDate } from '@shared/utils/dateFormatter';
 
 /**
  * ProductCategoryView Component
@@ -266,18 +267,11 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
                         {t(i18nKeyContainer.products.categories.view.fields.dateTime)}
                       </label>
                       <p className='text-blue-900 text-sm'>
-                        {categoryData.createdAt
-                          ? new Date(categoryData.createdAt).toLocaleString(
-                              activeLocale,
-                              {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              }
-                            )
-                          : t(i18nKeyContainer.products.shared.hyphen)}
+                        {formatAppDate(categoryData.createdAt, {
+                          locale: activeLocale,
+                          withTime: true,
+                          fallback: t(i18nKeyContainer.products.shared.hyphen),
+                        })}
                       </p>
                     </div>
                     <div>
@@ -307,16 +301,14 @@ const ProductCategoryView = ({ open, onOpenChange, categoryId }) => {
                       </label>
                       <p className='text-purple-900 text-sm'>
                         {categoryData.updatedByUserId
-                          ? new Date(categoryData.updatedAt).toLocaleString(
-                              activeLocale,
-                              {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              }
-                            )
+                          ? formatAppDate(categoryData.updatedAt, {
+                              locale: activeLocale,
+                              withTime: true,
+                              fallback: t(
+                                i18nKeyContainer.products.categories.view
+                                  .placeholders.neverUpdated
+                              ),
+                            })
                           : t(
                               i18nKeyContainer.products.categories.view
                                 .placeholders.neverUpdated

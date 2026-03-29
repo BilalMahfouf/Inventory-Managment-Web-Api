@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { formatAppDate } from '@shared/utils/dateFormatter';
 
 export default function ProductCategoryDataTable() {
   const { t } = useTranslation();
@@ -133,7 +134,7 @@ const getDefaultColumns = t => [
   {
     accessorKey: 'createdAt',
     header: t(i18nKeyContainer.products.categories.table.columns.createdAt),
-    cell: ({ getValue }) => new Date(getValue()).toLocaleDateString(),
+    cell: ({ getValue }) => formatAppDate(getValue()),
   },
   {
     accessorKey: 'createdByUserName',

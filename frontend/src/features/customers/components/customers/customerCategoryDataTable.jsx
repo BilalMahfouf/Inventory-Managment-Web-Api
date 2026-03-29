@@ -8,6 +8,7 @@ import ConfirmationDialog from '@components/ui/ConfirmationDialog';
 import { useToast } from '@shared/context/ToastContext';
 import { queryKeys } from '@shared/lib/queryKeys';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { formatAppDate } from '@shared/utils/dateFormatter';
 import {
   deleteCustomerCategory,
   getAllCustomerCategories,
@@ -64,16 +65,10 @@ const getColumns = (t, locale) => [
     cell: ({ getValue }) => {
       const value = getValue();
 
-      if (!value) {
-        return t(i18nKeyContainer.customers.shared.notAvailable);
-      }
-
-      const date = new Date(value);
-      if (Number.isNaN(date.getTime())) {
-        return t(i18nKeyContainer.customers.shared.notAvailable);
-      }
-
-      return date.toLocaleDateString(locale);
+      return formatAppDate(value, {
+        locale,
+        fallback: t(i18nKeyContainer.customers.shared.notAvailable),
+      });
     },
   },
 ];
