@@ -1,21 +1,66 @@
+import { useState } from 'react';
 import CustomerDataTable from '@features/customers/components/customers/CustomerDataTable';
 import InfoCard from '@/components/ui/InfoCard';
 import PageHeader from '@/components/ui/PageHeader';
 import Button from '@components/Buttons/Button';
 import { getCustomerSummary } from '@features/customers/services/customerApi';
 import { divStyles } from '@shared/utils/uiVariables';
-import { ArrowRight, DollarSign, User2 } from 'lucide-react';
+import { DollarSign, Plus, User2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
-import { AddCustomerButton } from '@features/customers/components/customers';
+import {
+  AddCustomerButton,
+  AddUpdateCustomerCategory,
+  CustomerCategoryDataTable,
+  ViewCustomerCategory,
+} from '@features/customers/components/customers';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
-import { useNavigate } from 'react-router-dom';
 
 export default function CustomersPage() {
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
+  const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false);
+  const [isCategoryViewOpen, setIsCategoryViewOpen] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState(0);
+
+  const getCategoryId = category => {
+    const rawId = category?.id ?? 0;
+    const parsedId = Number.parseInt(String(rawId), 10);
+    return Number.isInteger(parsedId) && parsedId > 0 ? parsedId : 0;
+  };
+
+  const handleOpenAddCategory = () => {
+    setSelectedCategoryId(0);
+    setIsCategoryFormOpen(true);
+  };
+
+  const handleOpenViewCategory = category => {
+    const id = getCategoryId(category);
+    if (!id) {
+      return;
+    }
+
+    setSelectedCategoryId(id);
+    setIsCategoryViewOpen(true);
+  };
+
+  const handleOpenEditCategory = category => {
+    const id = getCategoryId(category);
+    if (!id) {
+      return;
+    }
+
+    setSelectedCategoryId(id);
+    setIsCategoryFormOpen(true);
+  };
+
+  const handleEditFromView = id => {
+    setIsCategoryViewOpen(false);
+    setSelectedCategoryId(id);
+    setIsCategoryFormOpen(true);
+  };
+
   const { data: summaryResponse, isLoading: loading } = useQuery({
     queryKey: queryKeys.customers.summary(),
     queryFn: getCustomerSummary,
@@ -125,20 +170,14 @@ export default function CustomersPage() {
                 <h3 className='text-2xl font-semibold leading-none tracking-tight'>
                   {t(i18nKeyContainer.customers.page.sections.customerCategories)}
                 </h3>
-              </div>
-              <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
-                <p>
-                  {t(i18nKeyContainer.customers.page.placeholders.customerCategories)}
-                </p>
-                <Button
-                  LeftIcon={ArrowRight}
-                  onClick={() => {
-                    navigate('/customers/categories');
-                  }}
-                >
-                  {t(i18nKeyContainer.customers.page.actions.manageCustomerCategories)}
+                <Button LeftIcon={Plus} onClick={handleOpenAddCategory}>
+                  {t(i18nKeyContainer.customers.categoryManagement.page.addButton)}
                 </Button>
               </div>
+              <CustomerCategoryDataTable
+                onViewCategory={handleOpenViewCategory}
+                onEditCategory={handleOpenEditCategory}
+              />
             </TabPanel>
             <TabPanel>
               <div className='mb-9 flex items-center justify-between'>
@@ -153,6 +192,24 @@ export default function CustomersPage() {
           </div>
         </Tabs>
       </div>
+
+      {isCategoryFormOpen && (
+        <AddUpdateCustomerCategory
+          isOpen={isCategoryFormOpen}
+          onClose={() => setIsCategoryFormOpen(false)}
+          categoryId={selectedCategoryId}
+          onSuccess={() => {}}
+        />
+      )}
+
+      {isCategoryViewOpen && (
+        <ViewCustomerCategory
+          isOpen={isCategoryViewOpen}
+          onClose={() => setIsCategoryViewOpen(false)}
+          categoryId={selectedCategoryId}
+          onEdit={handleEditFromView}
+        />
+      )}
     </>
   );
 }

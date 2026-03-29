@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import SimpleDataTable from '@components/DataTable/SimpleDataTable';
@@ -73,10 +72,12 @@ const getColumns = (t, locale) => [
   },
 ];
 
-export default function CustomerCategoryDataTable() {
+export default function CustomerCategoryDataTable({
+  onViewCategory = null,
+  onEditCategory = null,
+}) {
   const { t, i18n } = useTranslation();
   const { showSuccess, showError } = useToast();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -164,12 +165,8 @@ export default function CustomerCategoryDataTable() {
         actionsColumnHeader={t(
           i18nKeyContainer.customers.categoryManagement.table.columns.actions
         )}
-        onView={row => {
-          navigate(`/customers/categories/${row.id}`);
-        }}
-        onEdit={row => {
-          navigate(`/customers/categories/${row.id}/edit`);
-        }}
+        onView={onViewCategory}
+        onEdit={onEditCategory}
         onDelete={row => {
           setCurrentCategory(row);
           setDeleteDialogOpen(true);
