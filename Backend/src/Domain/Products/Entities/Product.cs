@@ -110,6 +110,8 @@ public partial class Product : ISoftDeletable, IModifiableEntity, IBaseEntity
             unitOfMeasureId,
             unitPrice,
             cost);
+        product.IsActive = true;
+
         return Result<Product>.Success(product);
     }
 
