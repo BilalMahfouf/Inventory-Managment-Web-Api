@@ -91,7 +91,7 @@ async function createProduct({
       reorderLevel,
       maxLevel,
     });
-    return data;
+    return data?.data ?? data;
   } catch (error) {
     const errorMessage = extractErrorMessage(error, 'Failed to create product');
     console.error('Failed to create product:', errorMessage);

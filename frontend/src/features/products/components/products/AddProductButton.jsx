@@ -15,7 +15,6 @@ export default function AddProductButton() {
         children={t(i18nKeyContainer.products.page.addProduct)}
         onClick={() => {
           setIsAddModalOpen(true);
-          console.log(`is Add Modal Open: ${isAddModalOpen}`);
         }}
       />
       <AddProduct

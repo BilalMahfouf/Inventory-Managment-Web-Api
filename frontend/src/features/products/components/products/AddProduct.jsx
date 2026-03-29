@@ -16,6 +16,26 @@ import {
 } from '@features/products/services/productApi';
 import { useToast } from '@shared/context/ToastContext';
 import { queryKeys } from '@shared/lib/queryKeys';
+
+const getInitialFormData = () => ({
+  // Basic Info
+  productName: '',
+  sku: '',
+  category: 0,
+  description: '',
+  status: 'active',
+
+  // Pricing
+  costPrice: 0,
+  sellingPrice: 0,
+
+  // Inventory
+  currentStock: 0,
+  minimumStock: 0,
+  maximumStock: 0,
+  unitOfMeasurement: 0,
+  storageLocation: 0,
+});
 /**
  * AddProduct Component
  *
@@ -32,25 +52,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
   const [activeTab, setActiveTab] = useState(0);
   const { showSuccess, showError } = useToast();
   const queryClient = useQueryClient();
-  const [formData, setFormData] = useState({
-    // Basic Info
-    productName: '',
-    sku: '',
-    category: 0,
-    description: '',
-    status: 'active',
-
-    // Pricing
-    costPrice: 0,
-    sellingPrice: 0,
-
-    // Inventory
-    currentStock: 0,
-    minimumStock: 0,
-    maximumStock: 0,
-    unitOfMeasurement: 0,
-    storageLocation: 0,
-  });
+  const [formData, setFormData] = useState(getInitialFormData);
   const [mode, setMode] = useState('add'); // 'add' or 'update'
   const [productLocations, setProductLocations] = useState([]);
   const tabs = [
@@ -78,6 +80,14 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
   const [id, setId] = useState(productId);
   const [isLoading, setIsLoading] = useState(false);
 
+  const resetAddState = () => {
+    setFormData(getInitialFormData());
+    setProductLocations([]);
+    setActiveTab(0);
+    setId(0);
+    setMode('add');
+  };
+
   const { data: categories = [] } = useQuery({
     queryKey: queryKeys.products.categories(),
     queryFn: getProductCategories,
@@ -104,22 +114,19 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
 
   const createProductMutation = useMutation({
     mutationFn: createProduct,
-    onSuccess: async data => {
-      if (data) {
+    onSuccess: async response => {
+      const createdProduct = response?.data ?? response;
+
+      if (createdProduct) {
         showSuccess(
           t(i18nKeyContainer.products.addProductForm.toasts.createSuccessTitle),
           t(i18nKeyContainer.products.addProductForm.toasts.createSuccessMessage, {
-            name: data.name,
+            name: createdProduct.name || formData.productName,
           })
         );
-        onClose();
 
-        const locations = data.inventories.map(i => {
-          return { id: i.locationId, name: i.locationName };
-        });
-        setProductLocations(locations);
-        setId(data.id);
-        setMode('update');
+        resetAddState();
+        onClose();
 
         await queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
         await queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
@@ -277,39 +284,29 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
     });
   };
   const saveProduct = async () => {
+    const normalizedPayload = {
+      sku: formData.sku.trim(),
+      name: formData.productName.trim(),
+      description: formData.description.trim(),
+      categoryId: Number(formData.category) || 0,
+      unitOfMeasureId: Number(formData.unitOfMeasurement) || 0,
+      unitPrice: Number(formData.sellingPrice) || 0,
+      costPrice: Number(formData.costPrice) || 0,
+      locationId: Number(formData.storageLocation) || 0,
+      quantityOnHand: Number(formData.currentStock) || 0,
+      reorderLevel: Number(formData.minimumStock) || 0,
+      maxLevel: Number(formData.maximumStock) || 0,
+    };
+
     if (mode === 'add') {
-      await addNewProduct({
-        sku: formData.sku,
-        name: formData.productName,
-        description: formData.description,
-        categoryId: formData.category,
-        unitOfMeasureId: formData.unitOfMeasurement,
-        unitPrice: formData.sellingPrice,
-        costPrice: formData.costPrice,
-        locationId: formData.storageLocation,
-        quantityOnHand: formData.currentStock,
-        reorderLevel: formData.minimumStock,
-        maxLevel: formData.maximumStock,
-      });
+      await addNewProduct(normalizedPayload);
     }
     if (mode === 'update') {
-      console.log('data: ', formData);
-      console.log('sku:', formData.sku);
       await editProduct({
         id: id,
-        name: formData.productName,
-        description: formData.description,
-        categoryId: formData.category,
-        unitOfMeasureId: formData.unitOfMeasurement,
-        unitPrice: formData.sellingPrice,
-        costPrice: formData.costPrice,
-        locationId: formData.storageLocation,
-        quantityOnHand: formData.currentStock,
-        reorderLevel: formData.minimumStock,
-        maxLevel: formData.maximumStock,
+        ...normalizedPayload,
       });
     }
-    setMode('update');
   };
   const handleSubmit = async () => {
     setIsLoading(true);
@@ -321,26 +318,32 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
   };
 
   const handleCancel = () => {
-    setFormData({
-      productName: '',
-      sku: '',
-      category: 0,
-      description: '',
-      status: 'active',
-      costPrice: 0,
-      sellingPrice: 0,
-      currentStock: 0,
-      minimumStock: 0,
-      maximumStock: 0,
-      unitOfMeasurement: 0,
-      storageLocation: 0,
-    });
-    setActiveTab(0);
-    setProductLocations([]);
+    if ((Number(productId) || 0) === 0) {
+      resetAddState();
+    } else {
+      setActiveTab(0);
+    }
     if (onClose) {
       onClose();
     }
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const nextProductId = Number(productId) || 0;
+    setId(nextProductId);
+    setActiveTab(0);
+
+    if (nextProductId > 0) {
+      setMode('update');
+      return;
+    }
+
+    resetAddState();
+  }, [isOpen, productId]);
 
   useEffect(() => {
     if (!productResponse || id <= 0) {
@@ -369,6 +372,13 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
   }, [id, productResponse]);
 
   const locations = mode === 'add' ? baseLocations : productLocations;
+  const isSubmitDisabled =
+    isLoading ||
+    !formData.productName.trim() ||
+    !formData.sku.trim() ||
+    !formData.category ||
+    !formData.unitOfMeasurement ||
+    !formData.storageLocation;
 
   if (!isOpen) return null;
 
@@ -468,7 +478,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
                   <select
                     value={formData.category}
                     onChange={e =>
-                      handleInputChange('category', e.target.value)
+                      handleInputChange('category', Number(e.target.value) || 0)
                     }
                     className='w-full h-12 px-3 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-blue-600'
                   >
@@ -680,7 +690,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
                   <select
                     value={formData.unitOfMeasurement}
                     onChange={e =>
-                      handleInputChange('unitOfMeasurement', e.target.value)
+                      handleInputChange('unitOfMeasurement', Number(e.target.value) || 0)
                     }
                     className='w-full h-12 px-3 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-blue-600'
                   >
@@ -699,7 +709,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
                   <select
                     value={formData.storageLocation}
                     onChange={e =>
-                      handleInputChange('storageLocation', e.target.value)
+                      handleInputChange('storageLocation', Number(e.target.value) || 0)
                     }
                     className='w-full h-12 px-3 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-blue-600'
                   >
@@ -800,13 +810,7 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
           <Button
             onClick={handleSubmit}
             // loading={isLoading}
-            disabled={
-              !formData.productName ||
-              !formData.sku ||
-              !formData.category ||
-              !formData.unitOfMeasurement ||
-              !formData.storageLocation
-            }
+            disabled={isSubmitDisabled}
             className='cursor-pointer'
           >
             {mode === 'add'
