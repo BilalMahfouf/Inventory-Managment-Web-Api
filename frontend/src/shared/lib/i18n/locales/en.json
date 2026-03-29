@@ -502,13 +502,7 @@
         "active": "Active",
         "inactive": "Inactive"
       },
-      "creditStatus": {
-        "active": "Active",
-        "onHold": "On Hold",
-        "suspended": "Suspended"
-      },
       "defaults": {
-        "paymentTerms": "Net 30",
         "customerCategory": "Retail",
         "createdBy": "admin@system.com"
       }
@@ -529,6 +523,9 @@
       "placeholders": {
         "customerCategories": "Customer Categories will be here!",
         "customerContacts": "Customer Contacts will be here!"
+      },
+      "actions": {
+        "manageCustomerCategories": "Manage Categories"
       }
     },
     "cards": {
@@ -564,13 +561,11 @@
       },
       "tabs": {
         "basicInfo": "Basic Info",
-        "business": "Business",
         "summary": "Summary"
       },
       "sections": {
         "personalDetails": "Personal Details",
-        "address": "Address",
-        "businessDetails": "Business Details"
+        "address": "Address"
       },
       "fields": {
         "fullName": "Full Name",
@@ -580,10 +575,7 @@
         "street": "Street",
         "city": "City",
         "state": "State",
-        "zipCode": "Zip Code",
-        "creditLimit": "Credit Limit",
-        "creditStatus": "Credit Status",
-        "paymentTerms": "Payment Terms"
+        "zipCode": "Zip Code"
       },
       "placeholders": {
         "fullName": "Enter customer full name",
@@ -593,9 +585,7 @@
         "street": "Enter street address",
         "city": "Enter city",
         "state": "Enter state",
-        "zipCode": "Enter zip code",
-        "creditLimit": "5000.00",
-        "paymentTerms": "e.g., Net 30"
+        "zipCode": "Enter zip code"
       },
       "validation": {
         "fullNameRequired": "Full name is required",
@@ -606,8 +596,7 @@
         "streetRequired": "Street address is required",
         "cityRequired": "City is required",
         "stateRequired": "State is required",
-        "zipCodeRequired": "Zip code is required",
-        "creditLimitPositive": "Credit limit must be a positive number"
+        "zipCodeRequired": "Zip code is required"
       },
       "actions": {
         "previous": "Previous",
@@ -660,7 +649,6 @@
       "sections": {
         "generalInformation": "General Information",
         "address": "Address",
-        "businessInformation": "Business Information",
         "systemInformation": "System Information"
       },
       "fields": {
@@ -674,14 +662,127 @@
         "city": "City",
         "state": "State",
         "zipCode": "Zip Code",
-        "creditLimit": "Credit Limit",
-        "paymentTerms": "Payment Terms",
-        "creditStatus": "Credit Status",
         "createdAt": "Created At",
         "createdBy": "Created By"
       },
       "labels": {
         "customerCode": "CUST-{{id}}"
+      }
+    },
+    "categoryManagement": {
+      "page": {
+        "title": "Customer Categories",
+        "description": "Manage reusable categories for customer profiles.",
+        "addButton": "Add Category",
+        "sectionTitle": "Category Catalog"
+      },
+      "table": {
+        "searchPlaceholder": "Search categories...",
+        "columns": {
+          "name": "Name",
+          "type": "Type",
+          "description": "Description",
+          "createdAt": "Created At",
+          "actions": "Actions"
+        },
+        "type": {
+          "individual": "Individual",
+          "business": "Business"
+        },
+        "fallback": {
+          "noDescription": "No description"
+        },
+        "dialogs": {
+          "deleteTitle": "Delete Category",
+          "deleteMessage": "This action cannot be undone.",
+          "confirmDelete": "Delete Category",
+          "cancelDelete": "Cancel"
+        },
+        "toasts": {
+          "loadFailedTitle": "Load Failed",
+          "loadFailedMessage": "Failed to load customer categories.",
+          "deleteSuccessTitle": "Category Deleted",
+          "deleteSuccessMessage": "Customer category deleted successfully.",
+          "deleteFailedTitle": "Delete Failed",
+          "deleteFailedMessage": "Failed to delete customer category."
+        }
+      },
+      "form": {
+        "title": {
+          "add": "Add Customer Category",
+          "edit": "Update Customer Category"
+        },
+        "subtitle": {
+          "add": "Create a new category that can be assigned to customers.",
+          "edit": "Update category details and save changes."
+        },
+        "sections": {
+          "general": "Category Details"
+        },
+        "fields": {
+          "name": "Category Name",
+          "type": "Category Type",
+          "description": "Description"
+        },
+        "placeholders": {
+          "name": "Enter category name",
+          "description": "Add a short description (optional)"
+        },
+        "options": {
+          "individual": "Individual",
+          "business": "Business"
+        },
+        "validation": {
+          "nameRequired": "Category name is required",
+          "nameTooLong": "Category name cannot exceed 100 characters",
+          "descriptionTooLong": "Description cannot exceed 500 characters"
+        },
+        "actions": {
+          "backToList": "Back to Categories",
+          "cancel": "Cancel",
+          "create": "Create Category",
+          "saveChanges": "Save Changes",
+          "creating": "Creating...",
+          "saving": "Saving..."
+        },
+        "toasts": {
+          "loadFailedMessage": "Failed to load category details.",
+          "createSuccessTitle": "Category Created",
+          "createSuccessMessage": "{{name}} has been created successfully.",
+          "createFailedTitle": "Create Failed",
+          "createFailedMessage": "Could not create customer category.",
+          "updateSuccessTitle": "Category Updated",
+          "updateSuccessMessage": "{{name}} has been updated successfully.",
+          "updateFailedTitle": "Update Failed",
+          "updateFailedMessage": "Could not update customer category."
+        },
+        "invalidRouteTitle": "Invalid Category Route",
+        "invalidRouteDescription": "The provided category identifier is not valid.",
+        "loadErrorTitle": "Unable to Load Category"
+      },
+      "view": {
+        "title": "Customer Category Details",
+        "subtitle": "Category #{{id}}",
+        "invalidId": "The category identifier is invalid.",
+        "notFound": "Customer category was not found.",
+        "actions": {
+          "backToList": "Back to Categories",
+          "editCategory": "Edit Category"
+        },
+        "sections": {
+          "general": "General Information",
+          "system": "System Information"
+        },
+        "fields": {
+          "id": "ID",
+          "name": "Name",
+          "type": "Type",
+          "description": "Description",
+          "createdAt": "Created At"
+        },
+        "fallback": {
+          "description": "No description available"
+        }
       }
     }
   },

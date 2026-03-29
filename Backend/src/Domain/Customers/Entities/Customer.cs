@@ -24,10 +24,6 @@ public  class Customer : IBaseEntity, ISoftDeletable
 
     public bool IsActive { get; private set; }
 
-    public decimal CreditLimit { get; private set; }
-
-    public string? PaymentTerms { get; private set; }
-
     public CustomerCreditStatus CreditStatus { get; private set; }
 
     public DateTime CreatedAt { get; set; }
@@ -54,9 +50,7 @@ public  class Customer : IBaseEntity, ISoftDeletable
         int? customerCategoryId,
         string email,
         string phone,
-        Address address,
-        decimal creditLimit,
-        string? paymentTerms
+        Address address
         )
     {
         Name = name;
@@ -65,8 +59,6 @@ public  class Customer : IBaseEntity, ISoftDeletable
         Phone = phone;
         Address = address;
         IsActive = true;
-        CreditLimit = creditLimit;
-        PaymentTerms = paymentTerms;
         CreditStatus = CustomerCreditStatus.Active;
     }
     public static Customer Create(
@@ -74,22 +66,14 @@ public  class Customer : IBaseEntity, ISoftDeletable
         int? customerCategoryId,
         string email,
         string phone,
-        Address address,
-        decimal creditLimit,
-        string? paymentTerms)
+        Address address)
     {
-        if (creditLimit < 0)
-        {
-            throw new DomainException("Credit limit can't be negative ");
-        }
         return new Customer(
             name,
             customerCategoryId,
             email,
             phone,
-            address,
-            creditLimit,
-            paymentTerms);
+            address);
     }
 
     public void Update(
@@ -97,20 +81,12 @@ public  class Customer : IBaseEntity, ISoftDeletable
         int? customerCategoryId,
         string email,
         string phone,
-        Address address,
-        decimal creditLimit,
-        string? paymentTerms)
+        Address address)
     {
-        if (creditLimit < 0)
-        {
-            throw new DomainException("Credit limit can't be negative ");
-        }
         Name = name;
         CustomerCategoryId = customerCategoryId;
         Phone = phone;
         Address = address;
-        CreditLimit = creditLimit;
-        PaymentTerms = paymentTerms;
         UpdateEmail(email);
     }
 

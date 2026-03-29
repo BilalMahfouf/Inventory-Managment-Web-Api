@@ -125,9 +125,7 @@ public class CustomerServiceTests
         var customerCategory = new CustomerCategory
         {
             Id = 1,
-            Name = "Retail",
-            DefaultCreditLimit = 5000,
-            DefaultPaymentTerms = "Net 30"
+            Name = "Retail"
         };
 
         var customerReadResponse = new CustomerReadResponse

@@ -502,13 +502,7 @@
         "active": "نشط",
         "inactive": "غير نشط"
       },
-      "creditStatus": {
-        "active": "نشط",
-        "onHold": "قيد الانتظار",
-        "suspended": "موقوف"
-      },
       "defaults": {
-        "paymentTerms": "Net 30",
         "customerCategory": "تجزئة",
         "createdBy": "admin@system.com"
       }
@@ -529,6 +523,9 @@
       "placeholders": {
         "customerCategories": "ستظهر فئات العملاء هنا!",
         "customerContacts": "ستظهر جهات اتصال العملاء هنا!"
+      },
+      "actions": {
+        "manageCustomerCategories": "إدارة الفئات"
       }
     },
     "cards": {
@@ -564,13 +561,11 @@
       },
       "tabs": {
         "basicInfo": "معلومات أساسية",
-        "business": "الأعمال",
         "summary": "الملخص"
       },
       "sections": {
         "personalDetails": "البيانات الشخصية",
-        "address": "العنوان",
-        "businessDetails": "بيانات الأعمال"
+        "address": "العنوان"
       },
       "fields": {
         "fullName": "الاسم الكامل",
@@ -580,10 +575,7 @@
         "street": "الشارع",
         "city": "المدينة",
         "state": "المنطقة",
-        "zipCode": "الرمز البريدي",
-        "creditLimit": "حد الائتمان",
-        "creditStatus": "حالة الائتمان",
-        "paymentTerms": "شروط الدفع"
+        "zipCode": "الرمز البريدي"
       },
       "placeholders": {
         "fullName": "أدخل الاسم الكامل للعميل",
@@ -593,9 +585,7 @@
         "street": "أدخل عنوان الشارع",
         "city": "أدخل المدينة",
         "state": "أدخل المنطقة",
-        "zipCode": "أدخل الرمز البريدي",
-        "creditLimit": "5000.00",
-        "paymentTerms": "مثل: Net 30"
+        "zipCode": "أدخل الرمز البريدي"
       },
       "validation": {
         "fullNameRequired": "الاسم الكامل مطلوب",
@@ -606,8 +596,7 @@
         "streetRequired": "عنوان الشارع مطلوب",
         "cityRequired": "المدينة مطلوبة",
         "stateRequired": "المنطقة مطلوبة",
-        "zipCodeRequired": "الرمز البريدي مطلوب",
-        "creditLimitPositive": "يجب أن يكون حد الائتمان رقمًا موجبًا"
+        "zipCodeRequired": "الرمز البريدي مطلوب"
       },
       "actions": {
         "previous": "السابق",
@@ -660,7 +649,6 @@
       "sections": {
         "generalInformation": "معلومات عامة",
         "address": "العنوان",
-        "businessInformation": "معلومات الأعمال",
         "systemInformation": "معلومات النظام"
       },
       "fields": {
@@ -674,14 +662,127 @@
         "city": "المدينة",
         "state": "المنطقة",
         "zipCode": "الرمز البريدي",
-        "creditLimit": "حد الائتمان",
-        "paymentTerms": "شروط الدفع",
-        "creditStatus": "حالة الائتمان",
         "createdAt": "تاريخ الإنشاء",
         "createdBy": "تم الإنشاء بواسطة"
       },
       "labels": {
         "customerCode": "CUST-{{id}}"
+      }
+    },
+    "categoryManagement": {
+      "page": {
+        "title": "فئات العملاء",
+        "description": "إدارة الفئات القابلة لإعادة الاستخدام في ملفات العملاء.",
+        "addButton": "إضافة فئة",
+        "sectionTitle": "كتالوج الفئات"
+      },
+      "table": {
+        "searchPlaceholder": "ابحث عن الفئات...",
+        "columns": {
+          "name": "الاسم",
+          "type": "النوع",
+          "description": "الوصف",
+          "createdAt": "تاريخ الإنشاء",
+          "actions": "الإجراءات"
+        },
+        "type": {
+          "individual": "فردي",
+          "business": "تجاري"
+        },
+        "fallback": {
+          "noDescription": "لا يوجد وصف"
+        },
+        "dialogs": {
+          "deleteTitle": "حذف الفئة",
+          "deleteMessage": "لا يمكن التراجع عن هذا الإجراء.",
+          "confirmDelete": "حذف الفئة",
+          "cancelDelete": "إلغاء"
+        },
+        "toasts": {
+          "loadFailedTitle": "فشل التحميل",
+          "loadFailedMessage": "تعذر تحميل فئات العملاء.",
+          "deleteSuccessTitle": "تم حذف الفئة",
+          "deleteSuccessMessage": "تم حذف فئة العميل بنجاح.",
+          "deleteFailedTitle": "فشل الحذف",
+          "deleteFailedMessage": "تعذر حذف فئة العميل."
+        }
+      },
+      "form": {
+        "title": {
+          "add": "إضافة فئة عميل",
+          "edit": "تحديث فئة عميل"
+        },
+        "subtitle": {
+          "add": "أنشئ فئة جديدة يمكن إسنادها للعملاء.",
+          "edit": "حدّث تفاصيل الفئة ثم احفظ التغييرات."
+        },
+        "sections": {
+          "general": "تفاصيل الفئة"
+        },
+        "fields": {
+          "name": "اسم الفئة",
+          "type": "نوع الفئة",
+          "description": "الوصف"
+        },
+        "placeholders": {
+          "name": "أدخل اسم الفئة",
+          "description": "أضف وصفًا مختصرًا (اختياري)"
+        },
+        "options": {
+          "individual": "فردي",
+          "business": "تجاري"
+        },
+        "validation": {
+          "nameRequired": "اسم الفئة مطلوب",
+          "nameTooLong": "لا يمكن أن يتجاوز اسم الفئة 100 حرف",
+          "descriptionTooLong": "لا يمكن أن يتجاوز الوصف 500 حرف"
+        },
+        "actions": {
+          "backToList": "العودة إلى الفئات",
+          "cancel": "إلغاء",
+          "create": "إنشاء الفئة",
+          "saveChanges": "حفظ التغييرات",
+          "creating": "جارٍ الإنشاء...",
+          "saving": "جارٍ الحفظ..."
+        },
+        "toasts": {
+          "loadFailedMessage": "تعذر تحميل تفاصيل الفئة.",
+          "createSuccessTitle": "تم إنشاء الفئة",
+          "createSuccessMessage": "تم إنشاء {{name}} بنجاح.",
+          "createFailedTitle": "فشل الإنشاء",
+          "createFailedMessage": "تعذر إنشاء فئة العميل.",
+          "updateSuccessTitle": "تم تحديث الفئة",
+          "updateSuccessMessage": "تم تحديث {{name}} بنجاح.",
+          "updateFailedTitle": "فشل التحديث",
+          "updateFailedMessage": "تعذر تحديث فئة العميل."
+        },
+        "invalidRouteTitle": "مسار فئة غير صالح",
+        "invalidRouteDescription": "معرّف الفئة المقدم غير صالح.",
+        "loadErrorTitle": "تعذر تحميل الفئة"
+      },
+      "view": {
+        "title": "تفاصيل فئة العميل",
+        "subtitle": "الفئة رقم {{id}}",
+        "invalidId": "معرّف الفئة غير صالح.",
+        "notFound": "لم يتم العثور على فئة العميل.",
+        "actions": {
+          "backToList": "العودة إلى الفئات",
+          "editCategory": "تعديل الفئة"
+        },
+        "sections": {
+          "general": "معلومات عامة",
+          "system": "معلومات النظام"
+        },
+        "fields": {
+          "id": "المعرّف",
+          "name": "الاسم",
+          "type": "النوع",
+          "description": "الوصف",
+          "createdAt": "تاريخ الإنشاء"
+        },
+        "fallback": {
+          "description": "لا يوجد وصف متاح"
+        }
       }
     }
   },

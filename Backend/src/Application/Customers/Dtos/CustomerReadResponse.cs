@@ -22,11 +22,5 @@ public sealed record CustomerReadResponse : BaseReadResponse
     public string State { get; init; } = string.Empty;
     public string ZipCode { get; init; } = string.Empty;
 
-
-    public decimal CreditLimit { get; init; }
     public string CreditStatus { get; init; } = string.Empty;
-    public string PaymentTerm { get; init; } = string.Empty;
-
-    
-
 }

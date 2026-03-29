@@ -1,8 +1,10 @@
 using Application.Shared.Contracts;
 using Application.Customers;
+using Application.Users.Contracts;
 using Domain.Shared.Results;
 using Domain.Shared.Entities;
 using Domain.Shared.Errors;
+using FluentValidation;
 using Moq;
 using Xunit;
 
@@ -12,12 +14,19 @@ public class CustomerCategoryServiceTests
 {
     private readonly Mock<IUnitOfWork> _uowMock = new();
     private readonly Mock<IBaseRepository<CustomerCategory>> _customerCategoryRepositoryMock = new();
+    private readonly Mock<IValidator<CreateCustomerCategoryRequest>> _createValidatorMock = new();
+    private readonly Mock<IValidator<UpdateCustomerCategoryCommand>> _updateValidatorMock = new();
+    private readonly Mock<ICurrentUserService> _currentUserServiceMock = new();
 
     private CustomerCategoryService CreateService()
     {
         _uowMock.SetupGet(u => u.CustomerCategories).Returns(_customerCategoryRepositoryMock.Object);
 
-        return new CustomerCategoryService(_uowMock.Object);
+        return new CustomerCategoryService(
+            _uowMock.Object,
+            _createValidatorMock.Object,
+            _updateValidatorMock.Object,
+            _currentUserServiceMock.Object);
     }
 
     #region GetCategoriesNamesAsync Tests

@@ -15,10 +15,6 @@ public partial class CustomerCategory : IBaseEntity, ISoftDeletable
 
     public bool IsIndividual { get; set; }
 
-    public decimal DefaultCreditLimit { get; set; }
-
-    public string? DefaultPaymentTerms { get; set; }
-
     public DateTime CreatedAt { get; set; }
 
     public int CreatedByUserId { get; set; }
@@ -32,4 +28,27 @@ public partial class CustomerCategory : IBaseEntity, ISoftDeletable
     public virtual User CreatedByUser { get; set; } = null!;
 
     public virtual User? DeletedByUser { get; set; }
+
+    public static CustomerCategory Create(
+        string name,
+        bool isIndividual,
+        string? description)
+    {
+        CustomerCategory category = new CustomerCategory()
+        {
+            Name = name,
+            IsIndividual = isIndividual,
+            Description = description
+        };
+        return category;
+    }
+    public void Update(
+        string name,
+        bool isIndividual,
+        string? description)
+    {
+        Name = name;
+        IsIndividual = isIndividual;
+        Description = description;
+    }
 }

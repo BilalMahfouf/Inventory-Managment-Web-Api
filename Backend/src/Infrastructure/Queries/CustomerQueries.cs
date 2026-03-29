@@ -166,9 +166,7 @@ internal class CustomerQueries : ICustomerQueries
                     State = e.Address.State,
                     ZipCode = e.Address.ZipCode,
 
-                    CreditLimit = e.CreditLimit,
                     CreditStatus = e.CreditStatus.ToString(),
-                    PaymentTerm = e.PaymentTerms!,
                     CreatedAt = e.CreatedAt,
                     CreatedByUserId = e.CreatedByUserId,
                     CreatedByUserName = e.CreatedByUser.UserName

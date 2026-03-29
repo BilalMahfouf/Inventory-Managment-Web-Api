@@ -11,11 +11,8 @@ public sealed record UpdateCustomerRequest
     public int? CustomerCategoryId { get; init; }
     public string Email { get; init; } = null!;
     public string Phone { get; init; } = null!;
-public string Street { get; init; } = null!;
+    public string Street { get; init; } = null!;
     public string City { get; init; } = null!;
     public string State { get; init; } = null!;
     public string ZipCode { get; init; } = null!;
-    public decimal CreditLimit { get; init; }
-    public string? PaymentTerms { get; init; }
-
 }

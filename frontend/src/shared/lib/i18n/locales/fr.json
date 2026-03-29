@@ -502,13 +502,7 @@
         "active": "Actif",
         "inactive": "Inactif"
       },
-      "creditStatus": {
-        "active": "Actif",
-        "onHold": "En attente",
-        "suspended": "Suspendu"
-      },
       "defaults": {
-        "paymentTerms": "Net 30",
         "customerCategory": "Détail",
         "createdBy": "admin@system.com"
       }
@@ -529,6 +523,9 @@
       "placeholders": {
         "customerCategories": "Les catégories de clients seront affichées ici !",
         "customerContacts": "Les contacts clients seront affichés ici !"
+      },
+      "actions": {
+        "manageCustomerCategories": "Gérer les catégories"
       }
     },
     "cards": {
@@ -564,13 +561,11 @@
       },
       "tabs": {
         "basicInfo": "Infos de base",
-        "business": "Entreprise",
         "summary": "Résumé"
       },
       "sections": {
         "personalDetails": "Informations personnelles",
-        "address": "Adresse",
-        "businessDetails": "Informations commerciales"
+        "address": "Adresse"
       },
       "fields": {
         "fullName": "Nom complet",
@@ -580,10 +575,7 @@
         "street": "Rue",
         "city": "Ville",
         "state": "Région",
-        "zipCode": "Code postal",
-        "creditLimit": "Limite de crédit",
-        "creditStatus": "Statut du crédit",
-        "paymentTerms": "Conditions de paiement"
+        "zipCode": "Code postal"
       },
       "placeholders": {
         "fullName": "Saisir le nom complet du client",
@@ -593,9 +585,7 @@
         "street": "Saisir l'adresse",
         "city": "Saisir la ville",
         "state": "Saisir la région",
-        "zipCode": "Saisir le code postal",
-        "creditLimit": "5000.00",
-        "paymentTerms": "ex. Net 30"
+        "zipCode": "Saisir le code postal"
       },
       "validation": {
         "fullNameRequired": "Le nom complet est requis",
@@ -606,8 +596,7 @@
         "streetRequired": "L'adresse est requise",
         "cityRequired": "La ville est requise",
         "stateRequired": "La région est requise",
-        "zipCodeRequired": "Le code postal est requis",
-        "creditLimitPositive": "La limite de crédit doit être un nombre positif"
+        "zipCodeRequired": "Le code postal est requis"
       },
       "actions": {
         "previous": "Précédent",
@@ -660,7 +649,6 @@
       "sections": {
         "generalInformation": "Informations générales",
         "address": "Adresse",
-        "businessInformation": "Informations commerciales",
         "systemInformation": "Informations système"
       },
       "fields": {
@@ -674,14 +662,127 @@
         "city": "Ville",
         "state": "Région",
         "zipCode": "Code postal",
-        "creditLimit": "Limite de crédit",
-        "paymentTerms": "Conditions de paiement",
-        "creditStatus": "Statut du crédit",
         "createdAt": "Créé le",
         "createdBy": "Créé par"
       },
       "labels": {
         "customerCode": "CUST-{{id}}"
+      }
+    },
+    "categoryManagement": {
+      "page": {
+        "title": "Catégories clients",
+        "description": "Gérez les catégories réutilisables pour les profils clients.",
+        "addButton": "Ajouter une catégorie",
+        "sectionTitle": "Catalogue des catégories"
+      },
+      "table": {
+        "searchPlaceholder": "Rechercher des catégories...",
+        "columns": {
+          "name": "Nom",
+          "type": "Type",
+          "description": "Description",
+          "createdAt": "Créé le",
+          "actions": "Actions"
+        },
+        "type": {
+          "individual": "Particulier",
+          "business": "Entreprise"
+        },
+        "fallback": {
+          "noDescription": "Aucune description"
+        },
+        "dialogs": {
+          "deleteTitle": "Supprimer la catégorie",
+          "deleteMessage": "Cette action est irréversible.",
+          "confirmDelete": "Supprimer la catégorie",
+          "cancelDelete": "Annuler"
+        },
+        "toasts": {
+          "loadFailedTitle": "Échec du chargement",
+          "loadFailedMessage": "Impossible de charger les catégories clients.",
+          "deleteSuccessTitle": "Catégorie supprimée",
+          "deleteSuccessMessage": "La catégorie client a été supprimée avec succès.",
+          "deleteFailedTitle": "Échec de suppression",
+          "deleteFailedMessage": "Impossible de supprimer la catégorie client."
+        }
+      },
+      "form": {
+        "title": {
+          "add": "Ajouter une catégorie client",
+          "edit": "Mettre à jour la catégorie client"
+        },
+        "subtitle": {
+          "add": "Créez une nouvelle catégorie pouvant être assignée aux clients.",
+          "edit": "Mettez à jour les détails de la catégorie et enregistrez."
+        },
+        "sections": {
+          "general": "Détails de la catégorie"
+        },
+        "fields": {
+          "name": "Nom de la catégorie",
+          "type": "Type de catégorie",
+          "description": "Description"
+        },
+        "placeholders": {
+          "name": "Saisir le nom de la catégorie",
+          "description": "Ajouter une courte description (optionnel)"
+        },
+        "options": {
+          "individual": "Particulier",
+          "business": "Entreprise"
+        },
+        "validation": {
+          "nameRequired": "Le nom de la catégorie est requis",
+          "nameTooLong": "Le nom ne peut pas dépasser 100 caractères",
+          "descriptionTooLong": "La description ne peut pas dépasser 500 caractères"
+        },
+        "actions": {
+          "backToList": "Retour aux catégories",
+          "cancel": "Annuler",
+          "create": "Créer la catégorie",
+          "saveChanges": "Enregistrer les modifications",
+          "creating": "Création...",
+          "saving": "Enregistrement..."
+        },
+        "toasts": {
+          "loadFailedMessage": "Impossible de charger les détails de la catégorie.",
+          "createSuccessTitle": "Catégorie créée",
+          "createSuccessMessage": "{{name}} a été créée avec succès.",
+          "createFailedTitle": "Échec de création",
+          "createFailedMessage": "Impossible de créer la catégorie client.",
+          "updateSuccessTitle": "Catégorie mise à jour",
+          "updateSuccessMessage": "{{name}} a été mise à jour avec succès.",
+          "updateFailedTitle": "Échec de mise à jour",
+          "updateFailedMessage": "Impossible de mettre à jour la catégorie client."
+        },
+        "invalidRouteTitle": "Route de catégorie invalide",
+        "invalidRouteDescription": "L'identifiant de catégorie fourni est invalide.",
+        "loadErrorTitle": "Impossible de charger la catégorie"
+      },
+      "view": {
+        "title": "Détails de la catégorie client",
+        "subtitle": "Catégorie n°{{id}}",
+        "invalidId": "L'identifiant de catégorie est invalide.",
+        "notFound": "La catégorie client est introuvable.",
+        "actions": {
+          "backToList": "Retour aux catégories",
+          "editCategory": "Modifier la catégorie"
+        },
+        "sections": {
+          "general": "Informations générales",
+          "system": "Informations système"
+        },
+        "fields": {
+          "id": "ID",
+          "name": "Nom",
+          "type": "Type",
+          "description": "Description",
+          "createdAt": "Créé le"
+        },
+        "fallback": {
+          "description": "Aucune description disponible"
+        }
       }
     }
   },

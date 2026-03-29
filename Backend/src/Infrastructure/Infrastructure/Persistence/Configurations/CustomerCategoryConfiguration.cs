@@ -18,10 +18,6 @@ namespace Infrastructure.Persistence.Configurations
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.DefaultCreditLimit)
-                .HasDefaultValue(1000m)
-                .HasColumnType("decimal(12, 2)");
-            entity.Property(e => e.DefaultPaymentTerms).HasDefaultValue("Net 30");
             entity.Property(e => e.DeletedAt).HasColumnType("datetime");
             entity.Property(e => e.Description).HasMaxLength(255);
             entity.Property(e => e.Name).HasMaxLength(100);

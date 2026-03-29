@@ -27,9 +27,6 @@ namespace Infrastructure.Persistence.Configurations
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.CreditLimit)
-                .HasDefaultValue(1000m)
-                .HasColumnType("decimal(12, 2)");
             entity.Property(e => e.CreditStatus)
             .HasConversion<byte>();
 
@@ -37,7 +34,6 @@ namespace Infrastructure.Persistence.Configurations
             entity.Property(e => e.Email).HasMaxLength(255);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.Name).HasMaxLength(255);
-            entity.Property(e => e.PaymentTerms).HasDefaultValue("Net 30");
             entity.Property(e => e.Phone).HasMaxLength(20);
 
             entity.HasOne(d => d.CustomerCategory).WithMany()

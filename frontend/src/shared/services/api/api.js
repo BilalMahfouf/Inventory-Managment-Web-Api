@@ -6,7 +6,6 @@ const AUTH_LOGOUT_URL = '/auth/logout';
 const DEFAULT_BACKEND_ORIGIN = 'https://localhost:7443';
 const PUBLIC_ROUTE_PREFIXES = [
   '/auth',
-  '/customer-categories',
   '/location-type',
   '/stock-movement-types',
 ];

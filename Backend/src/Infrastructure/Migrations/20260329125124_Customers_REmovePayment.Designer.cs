@@ -5,6 +5,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,9 +13,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(InventoryManagmentDBContext))]
-    partial class InventoryManagmentDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260329125124_Customers_REmovePayment")]
+    partial class Customers_REmovePayment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1146,7 +1149,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("StatusUpdateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("StockMovemntId")
+                    b.Property<int?>("StockMovemntId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -2238,8 +2241,7 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.Inventories.Entities.StockMovement", null)
                         .WithMany()
-                        .HasForeignKey("StockMovemntId")
-                        .IsRequired();
+                        .HasForeignKey("StockMovemntId");
                 });
 
             modelBuilder.Entity("Domain.Shared.Entities.AuditLog", b =>

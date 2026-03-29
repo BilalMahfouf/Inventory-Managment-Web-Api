@@ -512,13 +512,7 @@ const i18nKeyContainer = {
         active: 'customers.shared.status.active',
         inactive: 'customers.shared.status.inactive',
       },
-      creditStatus: {
-        active: 'customers.shared.creditStatus.active',
-        onHold: 'customers.shared.creditStatus.onHold',
-        suspended: 'customers.shared.creditStatus.suspended',
-      },
       defaults: {
-        paymentTerms: 'customers.shared.defaults.paymentTerms',
         customerCategory: 'customers.shared.defaults.customerCategory',
         createdBy: 'customers.shared.defaults.createdBy',
       },
@@ -539,6 +533,10 @@ const i18nKeyContainer = {
       placeholders: {
         customerCategories: 'customers.page.placeholders.customerCategories',
         customerContacts: 'customers.page.placeholders.customerContacts',
+      },
+      actions: {
+        manageCustomerCategories:
+          'customers.page.actions.manageCustomerCategories',
       },
     },
     cards: {
@@ -574,13 +572,11 @@ const i18nKeyContainer = {
       },
       tabs: {
         basicInfo: 'customers.form.tabs.basicInfo',
-        business: 'customers.form.tabs.business',
         summary: 'customers.form.tabs.summary',
       },
       sections: {
         personalDetails: 'customers.form.sections.personalDetails',
         address: 'customers.form.sections.address',
-        businessDetails: 'customers.form.sections.businessDetails',
       },
       fields: {
         fullName: 'customers.form.fields.fullName',
@@ -591,9 +587,6 @@ const i18nKeyContainer = {
         city: 'customers.form.fields.city',
         state: 'customers.form.fields.state',
         zipCode: 'customers.form.fields.zipCode',
-        creditLimit: 'customers.form.fields.creditLimit',
-        creditStatus: 'customers.form.fields.creditStatus',
-        paymentTerms: 'customers.form.fields.paymentTerms',
       },
       placeholders: {
         fullName: 'customers.form.placeholders.fullName',
@@ -604,8 +597,6 @@ const i18nKeyContainer = {
         city: 'customers.form.placeholders.city',
         state: 'customers.form.placeholders.state',
         zipCode: 'customers.form.placeholders.zipCode',
-        creditLimit: 'customers.form.placeholders.creditLimit',
-        paymentTerms: 'customers.form.placeholders.paymentTerms',
       },
       validation: {
         fullNameRequired: 'customers.form.validation.fullNameRequired',
@@ -617,7 +608,6 @@ const i18nKeyContainer = {
         cityRequired: 'customers.form.validation.cityRequired',
         stateRequired: 'customers.form.validation.stateRequired',
         zipCodeRequired: 'customers.form.validation.zipCodeRequired',
-        creditLimitPositive: 'customers.form.validation.creditLimitPositive',
       },
       actions: {
         previous: 'customers.form.actions.previous',
@@ -670,7 +660,6 @@ const i18nKeyContainer = {
       sections: {
         generalInformation: 'customers.view.sections.generalInformation',
         address: 'customers.view.sections.address',
-        businessInformation: 'customers.view.sections.businessInformation',
         systemInformation: 'customers.view.sections.systemInformation',
       },
       fields: {
@@ -684,14 +673,152 @@ const i18nKeyContainer = {
         city: 'customers.view.fields.city',
         state: 'customers.view.fields.state',
         zipCode: 'customers.view.fields.zipCode',
-        creditLimit: 'customers.view.fields.creditLimit',
-        paymentTerms: 'customers.view.fields.paymentTerms',
-        creditStatus: 'customers.view.fields.creditStatus',
         createdAt: 'customers.view.fields.createdAt',
         createdBy: 'customers.view.fields.createdBy',
       },
       labels: {
         customerCode: 'customers.view.labels.customerCode',
+      },
+    },
+    categoryManagement: {
+      page: {
+        title: 'customers.categoryManagement.page.title',
+        description: 'customers.categoryManagement.page.description',
+        addButton: 'customers.categoryManagement.page.addButton',
+        sectionTitle: 'customers.categoryManagement.page.sectionTitle',
+      },
+      table: {
+        searchPlaceholder:
+          'customers.categoryManagement.table.searchPlaceholder',
+        columns: {
+          name: 'customers.categoryManagement.table.columns.name',
+          type: 'customers.categoryManagement.table.columns.type',
+          description:
+            'customers.categoryManagement.table.columns.description',
+          createdAt: 'customers.categoryManagement.table.columns.createdAt',
+          actions: 'customers.categoryManagement.table.columns.actions',
+        },
+        type: {
+          individual: 'customers.categoryManagement.table.type.individual',
+          business: 'customers.categoryManagement.table.type.business',
+        },
+        fallback: {
+          noDescription:
+            'customers.categoryManagement.table.fallback.noDescription',
+        },
+        dialogs: {
+          deleteTitle: 'customers.categoryManagement.table.dialogs.deleteTitle',
+          deleteMessage:
+            'customers.categoryManagement.table.dialogs.deleteMessage',
+          confirmDelete:
+            'customers.categoryManagement.table.dialogs.confirmDelete',
+          cancelDelete: 'customers.categoryManagement.table.dialogs.cancelDelete',
+        },
+        toasts: {
+          loadFailedTitle:
+            'customers.categoryManagement.table.toasts.loadFailedTitle',
+          loadFailedMessage:
+            'customers.categoryManagement.table.toasts.loadFailedMessage',
+          deleteSuccessTitle:
+            'customers.categoryManagement.table.toasts.deleteSuccessTitle',
+          deleteSuccessMessage:
+            'customers.categoryManagement.table.toasts.deleteSuccessMessage',
+          deleteFailedTitle:
+            'customers.categoryManagement.table.toasts.deleteFailedTitle',
+          deleteFailedMessage:
+            'customers.categoryManagement.table.toasts.deleteFailedMessage',
+        },
+      },
+      form: {
+        title: {
+          add: 'customers.categoryManagement.form.title.add',
+          edit: 'customers.categoryManagement.form.title.edit',
+        },
+        subtitle: {
+          add: 'customers.categoryManagement.form.subtitle.add',
+          edit: 'customers.categoryManagement.form.subtitle.edit',
+        },
+        sections: {
+          general: 'customers.categoryManagement.form.sections.general',
+        },
+        fields: {
+          name: 'customers.categoryManagement.form.fields.name',
+          type: 'customers.categoryManagement.form.fields.type',
+          description: 'customers.categoryManagement.form.fields.description',
+        },
+        placeholders: {
+          name: 'customers.categoryManagement.form.placeholders.name',
+          description:
+            'customers.categoryManagement.form.placeholders.description',
+        },
+        options: {
+          individual: 'customers.categoryManagement.form.options.individual',
+          business: 'customers.categoryManagement.form.options.business',
+        },
+        validation: {
+          nameRequired:
+            'customers.categoryManagement.form.validation.nameRequired',
+          nameTooLong: 'customers.categoryManagement.form.validation.nameTooLong',
+          descriptionTooLong:
+            'customers.categoryManagement.form.validation.descriptionTooLong',
+        },
+        actions: {
+          backToList: 'customers.categoryManagement.form.actions.backToList',
+          cancel: 'customers.categoryManagement.form.actions.cancel',
+          create: 'customers.categoryManagement.form.actions.create',
+          saveChanges: 'customers.categoryManagement.form.actions.saveChanges',
+          creating: 'customers.categoryManagement.form.actions.creating',
+          saving: 'customers.categoryManagement.form.actions.saving',
+        },
+        toasts: {
+          loadFailedMessage:
+            'customers.categoryManagement.form.toasts.loadFailedMessage',
+          createSuccessTitle:
+            'customers.categoryManagement.form.toasts.createSuccessTitle',
+          createSuccessMessage:
+            'customers.categoryManagement.form.toasts.createSuccessMessage',
+          createFailedTitle:
+            'customers.categoryManagement.form.toasts.createFailedTitle',
+          createFailedMessage:
+            'customers.categoryManagement.form.toasts.createFailedMessage',
+          updateSuccessTitle:
+            'customers.categoryManagement.form.toasts.updateSuccessTitle',
+          updateSuccessMessage:
+            'customers.categoryManagement.form.toasts.updateSuccessMessage',
+          updateFailedTitle:
+            'customers.categoryManagement.form.toasts.updateFailedTitle',
+          updateFailedMessage:
+            'customers.categoryManagement.form.toasts.updateFailedMessage',
+        },
+        invalidRouteTitle:
+          'customers.categoryManagement.form.invalidRouteTitle',
+        invalidRouteDescription:
+          'customers.categoryManagement.form.invalidRouteDescription',
+        loadErrorTitle: 'customers.categoryManagement.form.loadErrorTitle',
+      },
+      view: {
+        title: 'customers.categoryManagement.view.title',
+        subtitle: 'customers.categoryManagement.view.subtitle',
+        invalidId: 'customers.categoryManagement.view.invalidId',
+        notFound: 'customers.categoryManagement.view.notFound',
+        actions: {
+          backToList: 'customers.categoryManagement.view.actions.backToList',
+          editCategory: 'customers.categoryManagement.view.actions.editCategory',
+        },
+        sections: {
+          general: 'customers.categoryManagement.view.sections.general',
+          system: 'customers.categoryManagement.view.sections.system',
+        },
+        fields: {
+          id: 'customers.categoryManagement.view.fields.id',
+          name: 'customers.categoryManagement.view.fields.name',
+          type: 'customers.categoryManagement.view.fields.type',
+          description: 'customers.categoryManagement.view.fields.description',
+          createdAt: 'customers.categoryManagement.view.fields.createdAt',
+        },
+        fallback: {
+          description: 'customers.categoryManagement.view.fallback.description',
+        },
       },
     },
   },

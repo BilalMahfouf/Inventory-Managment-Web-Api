@@ -8,6 +8,9 @@ import ProductsPage from '@features/products/pages/ProductsPage';
 import InventoryPage from '@features/inventory/pages/InventoryPage';
 import SalesPage from '@features/sales/pages/SalesPage';
 import CustomersPage from '@features/customers/pages/CustomersPage';
+import CustomerCategoriesPage from '@features/customers/pages/CustomerCategoriesPage';
+import AddUpdateCustomerCategoryPage from '@features/customers/pages/AddUpdateCustomerCategoryPage';
+import ViewCustomerCategoryPage from '@features/customers/pages/ViewCustomerCategoryPage';
 import SettingsPage from '@features/settings/pages/SettingsPage';
 import NotFoundPage from '@shared/pages/NotFoundPage';
 
@@ -49,6 +52,22 @@ export const router = createBrowserRouter([
           {
             path: '/customers',
             element: <CustomersPage />,
+          },
+          {
+            path: '/customers/categories',
+            element: <CustomerCategoriesPage />,
+          },
+          {
+            path: '/customers/categories/new',
+            element: <AddUpdateCustomerCategoryPage />,
+          },
+          {
+            path: '/customers/categories/:id',
+            element: <ViewCustomerCategoryPage />,
+          },
+          {
+            path: '/customers/categories/:id/edit',
+            element: <AddUpdateCustomerCategoryPage />,
           },
           {
             path: '/settings',

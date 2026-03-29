@@ -1,8 +1,6 @@
 ﻿using Application.Products.Contracts;
 using Application.Shared.Contracts;
 using Application.Users.Contracts;
-using Application.Shared.Contracts;
-using Application.Customers.Dtos;
 using Application.Customers.Dtos;
 using Domain.Shared.Results;
 using Application.Shared.Services;
@@ -63,9 +61,7 @@ public class CustomerService : DeleteService<Customer>
                 request.CustomerCategoryId,
                 request.Email,
                 request.Phone,
-                address,
-                customerCategory.DefaultCreditLimit,
-                customerCategory.DefaultPaymentTerms);
+                address);
             _uow.Customers.Add(customer);
             await _uow.SaveChangesAsync(cancellationToken);
             return await _query.GetByIdAsync(customer.Id, cancellationToken);
@@ -108,9 +104,7 @@ public class CustomerService : DeleteService<Customer>
                 request.CustomerCategoryId,
                 request.Email,
                 request.Phone,
-                address,
-                request.CreditLimit,
-                request.PaymentTerms);
+                address);
             _uow.Customers.Update(customer);
             await _uow.SaveChangesAsync(cancellationToken);
             return Result<int>.Success(customer.Id);

@@ -4,9 +4,7 @@ import {
   Mail,
   Phone,
   MapPin,
-  CreditCard,
   Calendar,
-  DollarSign,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
@@ -80,33 +78,6 @@ const ViewCustomer = ({ customer, loading }) => {
     </span>
   );
 
-  const CreditStatusBadge = ({ status }) => {
-    const statusConfig = {
-      0: {
-        label: t(i18nKeyContainer.customers.shared.creditStatus.active),
-        color: 'bg-green-100 text-green-800',
-      },
-      1: {
-        label: t(i18nKeyContainer.customers.shared.creditStatus.onHold),
-        color: 'bg-yellow-100 text-yellow-800',
-      },
-      2: {
-        label: t(i18nKeyContainer.customers.shared.creditStatus.suspended),
-        color: 'bg-red-100 text-red-800',
-      },
-    };
-
-    const config = statusConfig[status] || statusConfig[0];
-
-    return (
-      <span
-        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}
-      >
-        {config.label}
-      </span>
-    );
-  };
-
   return (
     <div className='space-y-6'>
       {/* General Information */}
@@ -176,37 +147,6 @@ const ViewCustomer = ({ customer, loading }) => {
             label={t(i18nKeyContainer.customers.view.fields.zipCode)}
             value={customer.address?.zipCode || customer.zipCode}
           />
-        </div>
-      </InfoSection>
-
-      {/* Business Information */}
-      <InfoSection title={t(i18nKeyContainer.customers.view.sections.businessInformation)}>
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-          <InfoRow
-            label={t(i18nKeyContainer.customers.view.fields.creditLimit)}
-            value={`${t(i18nKeyContainer.customers.shared.currencySymbol)}${Number(customer.creditLimit || 0).toLocaleString(activeLocale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-            icon={DollarSign}
-          />
-          <InfoRow
-            label={t(i18nKeyContainer.customers.view.fields.paymentTerms)}
-            value={
-              customer.paymentTerms ||
-              t(i18nKeyContainer.customers.shared.defaults.paymentTerms)
-            }
-          />
-          <div className='flex items-start gap-3'>
-            <div className='mt-0.5'>
-              <CreditCard className='h-4 w-4 text-gray-400' />
-            </div>
-            <div className='flex-1 min-w-0'>
-              <p className='text-xs font-medium text-gray-500 uppercase tracking-wide'>
-                {t(i18nKeyContainer.customers.view.fields.creditStatus)}
-              </p>
-              <div className='mt-1'>
-                <CreditStatusBadge status={customer.creditStatus} />
-              </div>
-            </div>
-          </div>
         </div>
       </InfoSection>
 

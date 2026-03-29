@@ -29,6 +29,12 @@ export const queryKeys = {
     summary: () => [...queryKeys.customers.all, 'summary'],
     detail: customerId => [...queryKeys.customers.all, 'detail', customerId],
     categories: () => [...queryKeys.customers.all, 'categories'],
+    customerCategories: {
+      all: () => [...queryKeys.customers.all, 'customer-categories'],
+      table: params => [...queryKeys.customers.customerCategories.all(), 'table', params],
+      detail: categoryId => [...queryKeys.customers.customerCategories.all(), 'detail', categoryId],
+      names: () => [...queryKeys.customers.customerCategories.all(), 'names'],
+    },
   },
   sales: {
     all: ['sales'],

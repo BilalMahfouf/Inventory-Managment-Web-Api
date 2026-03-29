@@ -1,18 +1,21 @@
 import CustomerDataTable from '@features/customers/components/customers/CustomerDataTable';
 import InfoCard from '@/components/ui/InfoCard';
 import PageHeader from '@/components/ui/PageHeader';
+import Button from '@components/Buttons/Button';
 import { getCustomerSummary } from '@features/customers/services/customerApi';
 import { divStyles } from '@shared/utils/uiVariables';
-import { DollarSign, User2 } from 'lucide-react';
+import { ArrowRight, DollarSign, User2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { AddCustomerButton } from '@features/customers/components/customers';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { useNavigate } from 'react-router-dom';
 
 export default function CustomersPage() {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const { data: summaryResponse, isLoading: loading } = useQuery({
     queryKey: queryKeys.customers.summary(),
     queryFn: getCustomerSummary,
@@ -123,8 +126,18 @@ export default function CustomersPage() {
                   {t(i18nKeyContainer.customers.page.sections.customerCategories)}
                 </h3>
               </div>
-              <div>
-                {t(i18nKeyContainer.customers.page.placeholders.customerCategories)}
+              <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
+                <p>
+                  {t(i18nKeyContainer.customers.page.placeholders.customerCategories)}
+                </p>
+                <Button
+                  LeftIcon={ArrowRight}
+                  onClick={() => {
+                    navigate('/customers/categories');
+                  }}
+                >
+                  {t(i18nKeyContainer.customers.page.actions.manageCustomerCategories)}
+                </Button>
               </div>
             </TabPanel>
             <TabPanel>

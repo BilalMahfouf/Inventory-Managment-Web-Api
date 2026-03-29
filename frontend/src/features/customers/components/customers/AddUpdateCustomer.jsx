@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { X, User, Building2, FileText } from 'lucide-react';
+import { X, User, FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import Button from '@components/Buttons/Button';
 import { Input } from '@components/ui/input';
@@ -15,7 +15,7 @@ import { getCustomerCategoriesNames } from '@features/customers/services/custome
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
 
-const getInitialFormData = defaultPaymentTerms => ({
+const getInitialFormData = () => ({
   name: '',
   email: '',
   phone: '',
@@ -24,16 +24,13 @@ const getInitialFormData = defaultPaymentTerms => ({
   city: '',
   state: '',
   zipCode: '',
-  creditLimit: '5000.00',
-  creditStatus: 0,
-  paymentTerms: defaultPaymentTerms,
 });
 
 /**
  * AddUpdateCustomer Component
  *
- * A comprehensive multi-step dialog for creating and editing customers.
- * Features three tabs: Basic Info, Business, and Summary (view-only, update mode only).
+ * A dialog for creating and editing customers.
+ * Features basic information editing and a summary view (update mode only).
  *
  * @param {Object} props - Component props
  * @param {boolean} props.isOpen - Controls dialog visibility
@@ -44,9 +41,6 @@ const getInitialFormData = defaultPaymentTerms => ({
 const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
   const { t } = useTranslation();
   const { showSuccess, showError } = useToast();
-  const defaultPaymentTerms = t(
-    i18nKeyContainer.customers.shared.defaults.paymentTerms
-  );
   const [activeTab, setActiveTab] = useState('basic');
   const [mode, setMode] = useState('add');
   const [id, setId] = useState(customerId);
@@ -55,7 +49,7 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
   const queryClient = useQueryClient();
 
   const { data: customerCategoriesResponse } = useQuery({
-    queryKey: queryKeys.customers.categories(),
+    queryKey: queryKeys.customers.customerCategories.names(),
     queryFn: getCustomerCategoriesNames,
     enabled: isOpen,
   });
@@ -126,7 +120,7 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
 
   // Form state for all fields
   const [formData, setFormData] = useState(() =>
-    getInitialFormData(defaultPaymentTerms)
+    getInitialFormData()
   );
 
   // Full customer data for view (Summary tab)
@@ -137,11 +131,6 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
       id: 'basic',
       label: t(i18nKeyContainer.customers.form.tabs.basicInfo),
       icon: User,
-    },
-    {
-      id: 'business',
-      label: t(i18nKeyContainer.customers.form.tabs.business),
-      icon: Building2,
     },
     ...(mode === 'update'
       ? [
@@ -202,24 +191,8 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const validateBusinessInfo = () => {
-    const newErrors = {};
-    const creditLimit = parseFloat(formData.creditLimit);
-    if (isNaN(creditLimit) || creditLimit < 0) {
-      newErrors.creditLimit = t(
-        i18nKeyContainer.customers.form.validation.creditLimitPositive
-      );
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const saveCustomer = async () => {
-    // Validate all fields
-    const isBasicValid = validateBasicInfo();
-    const isBusinessValid = validateBusinessInfo();
-
-    if (!isBasicValid || !isBusinessValid) {
+    if (!validateBasicInfo()) {
       showError(
         t(i18nKeyContainer.customers.form.toasts.validationErrorTitle),
         t(i18nKeyContainer.customers.form.toasts.validationErrorMessage)
@@ -237,9 +210,6 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
       city: formData.city.trim(),
       state: formData.state.trim(),
       zipCode: formData.zipCode.trim(),
-      creditLimit: parseFloat(formData.creditLimit),
-      creditStatus: parseInt(formData.creditStatus),
-      paymentTerms: formData.paymentTerms.trim() || defaultPaymentTerms,
     };
 
     if (mode === 'add') {
@@ -255,7 +225,7 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
   };
 
   const handleCancel = () => {
-    setFormData(getInitialFormData(defaultPaymentTerms));
+    setFormData(getInitialFormData());
     setErrors({});
     setMode('add');
     setId(0);
@@ -269,10 +239,6 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
   const handleNextTab = () => {
     if (activeTab === 'basic') {
       if (validateBasicInfo()) {
-        setActiveTab('business');
-      }
-    } else if (activeTab === 'business') {
-      if (validateBusinessInfo()) {
         if (mode === 'update') {
           setActiveTab('summary');
         } else {
@@ -283,10 +249,8 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
   };
 
   const handlePreviousTab = () => {
-    if (activeTab === 'business') {
+    if (activeTab === 'summary') {
       setActiveTab('basic');
-    } else if (activeTab === 'summary') {
-      setActiveTab('business');
     }
   };
 
@@ -302,9 +266,6 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
         city: data.address?.city || data.city || '',
         state: data.address?.state || data.state || '',
         zipCode: data.address?.zipCode || data.zipCode || '',
-        creditLimit: data.creditLimit?.toString() || '5000.00',
-        creditStatus: data.creditStatus || 0,
-        paymentTerms: data.paymentTerms || defaultPaymentTerms,
       });
       setCustomerData(data);
       setMode('update');
@@ -317,7 +278,7 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
         t(i18nKeyContainer.customers.form.toasts.loadFailedMessage)
       );
     }
-  }, [customerResponse, defaultPaymentTerms, showError, t]);
+  }, [customerResponse, showError, t]);
 
   // Reset when customerId prop changes
   useEffect(() => {
@@ -326,9 +287,9 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
       setMode('add');
       setActiveTab('basic');
       setCustomerData(null);
-      setFormData(getInitialFormData(defaultPaymentTerms));
+      setFormData(getInitialFormData());
     }
-  }, [customerId, defaultPaymentTerms]);
+  }, [customerId]);
 
   useEffect(() => {
     setIsLoading(createMutation.isPending || updateMutation.isPending);
@@ -636,91 +597,6 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
                   </div>
                 )}
 
-                {/* Business Tab */}
-                {activeTab === 'business' && (
-                  <div className='space-y-6'>
-                    <div>
-                      <h3 className='text-lg font-semibold text-gray-900 mb-4'>
-                        {t(i18nKeyContainer.customers.form.sections.businessDetails)}
-                      </h3>
-                      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                        <div>
-                          <label className='block text-sm font-medium text-gray-700 mb-1.5'>
-                            {t(i18nKeyContainer.customers.form.fields.creditLimit)}{' '}
-                            <span className='text-red-500'>
-                              {t(i18nKeyContainer.customers.shared.required)}
-                            </span>
-                          </label>
-                          <div className='relative'>
-                            <span className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500'>
-                              {t(i18nKeyContainer.customers.shared.currencySymbol)}
-                            </span>
-                            <Input
-                              type='number'
-                              step='0.01'
-                              placeholder={t(
-                                i18nKeyContainer.customers.form.placeholders.creditLimit
-                              )}
-                              value={formData.creditLimit}
-                              onChange={e =>
-                                handleInputChange('creditLimit', e.target.value)
-                              }
-                              className={`h-11 pl-7 ${errors.creditLimit ? 'border-red-500' : ''}`}
-                              disabled={isLoading}
-                            />
-                          </div>
-                          {errors.creditLimit && (
-                            <p className='text-red-500 text-sm mt-1'>
-                              {errors.creditLimit}
-                            </p>
-                          )}
-                        </div>
-
-                        <div>
-                          <label className='block text-sm font-medium text-gray-700 mb-1.5'>
-                            {t(i18nKeyContainer.customers.form.fields.creditStatus)}
-                          </label>
-                          <select
-                            value={formData.creditStatus}
-                            onChange={e =>
-                              handleInputChange('creditStatus', e.target.value)
-                            }
-                            className='w-full h-11 px-3 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-blue-600'
-                            disabled={isLoading}
-                          >
-                            <option value={0}>
-                              {t(i18nKeyContainer.customers.shared.creditStatus.active)}
-                            </option>
-                            <option value={1}>
-                              {t(i18nKeyContainer.customers.shared.creditStatus.onHold)}
-                            </option>
-                            <option value={2}>
-                              {t(i18nKeyContainer.customers.shared.creditStatus.suspended)}
-                            </option>
-                          </select>
-                        </div>
-
-                        <div className='md:col-span-2'>
-                          <label className='block text-sm font-medium text-gray-700 mb-1.5'>
-                            {t(i18nKeyContainer.customers.form.fields.paymentTerms)}
-                          </label>
-                          <Input
-                            placeholder={t(
-                              i18nKeyContainer.customers.form.placeholders.paymentTerms
-                            )}
-                            value={formData.paymentTerms}
-                            onChange={e =>
-                              handleInputChange('paymentTerms', e.target.value)
-                            }
-                            className='h-11'
-                            disabled={isLoading}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
                 {/* Summary Tab (Update mode only) */}
                 {activeTab === 'summary' && mode === 'update' && (
                   <ViewCustomer
@@ -734,7 +610,7 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
 
           {/* Footer */}
           <div className='flex items-center justify-end gap-3 p-6 border-t bg-gray-50 flex-shrink-0'>
-            {activeTab !== 'basic' && (
+            {activeTab === 'summary' && (
               <Button
                 type='button'
                 variant='secondary'
@@ -763,10 +639,10 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
               >
                 {t(i18nKeyContainer.customers.form.actions.close)}
               </Button>
-            ) : activeTab === 'business' && mode === 'add' ? (
+            ) : mode === 'add' ? (
               <Button
                 type='button'
-                onClick={handleNextTab}
+                onClick={saveCustomer}
                 disabled={isLoading}
                 loading={isLoading}
                 className='cursor-pointer'
@@ -775,7 +651,7 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
                   ? t(i18nKeyContainer.customers.form.actions.saving)
                   : t(i18nKeyContainer.customers.form.actions.saveCustomer)}
               </Button>
-            ) : activeTab === 'business' && mode === 'update' ? (
+            ) : (
               <>
                 <Button
                   type='button'
@@ -797,15 +673,6 @@ const AddUpdateCustomer = ({ isOpen, onClose, customerId = 0, onSuccess }) => {
                   {t(i18nKeyContainer.customers.form.actions.next)}
                 </Button>
               </>
-            ) : (
-              <Button
-                type='button'
-                onClick={handleNextTab}
-                disabled={isLoading}
-                className='cursor-pointer'
-              >
-                {t(i18nKeyContainer.customers.form.actions.next)}
-              </Button>
             )}
           </div>
         </form>
