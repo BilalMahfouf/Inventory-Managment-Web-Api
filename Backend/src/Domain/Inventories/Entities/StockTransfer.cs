@@ -8,10 +8,8 @@ using System.Collections.Generic;
 
 namespace Domain.Inventories.Entities;
 
-public class StockTransfer : IBaseEntity, IEntity
+public class StockTransfer : Entity
 {
-    public int Id { get; private set; }
-
     public int ProductId { get; private set; }
 
     public int FromLocationId { get; private set; }
@@ -21,9 +19,6 @@ public class StockTransfer : IBaseEntity, IEntity
     public decimal Quantity { get; private set; }
 
     public TransferStatus TransferStatus { get; private set; }
-
-    public DateTime CreatedAt { get; set; }
-
     public int CreatedByUserId { get; set; }
 
     public virtual User CreatedByUser { get; private set; } = null!;

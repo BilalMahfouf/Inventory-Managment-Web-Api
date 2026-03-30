@@ -144,7 +144,7 @@ IProductCategoryQueries query)
     {
         try
         {
-            var categories = await _repository.GetAllAsync(e=>!e.IsDeleted, cancellationToken
+            var categories = await _repository.GetAllAsync(e => true, cancellationToken
                 , "Parent,CreatedByUser,UpdatedByUser,DeletedByUser");
             if (categories is null || !categories.Any())
             {
@@ -339,7 +339,7 @@ IProductCategoryQueries query)
         try
         {
             var categories = await _repository.GetAllAsync(
-                e => !e.IsDeleted,
+                e => true,
              cancellationToken);
             if (categories is null || !categories.Any())
             {

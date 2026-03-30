@@ -34,7 +34,7 @@ public class InsertOutboxMessagesInterceptors : SaveChangesInterceptor
     private void InsertOutboxMessage(DbContext context)
     {
         var outboxMessages = context.ChangeTracker
-                       .Entries<AggregateRoot>()
+                       .Entries<Entity>()
                        .Select(entry => entry.Entity)
                        .SelectMany(e =>
                        {

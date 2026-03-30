@@ -5,10 +5,8 @@ using System.Collections.Generic;
 
 namespace Domain.Users.Entities;
 
-public partial class User : ISoftDeletable, IModifiableEntity
+public partial class User : Entity, IModifiableEntity
 {
-    public int Id { get; set; }
-
     public string Email { get; set; } = null!;
 
     public string PasswordHash { get; set; } = null!;
@@ -20,9 +18,6 @@ public partial class User : ISoftDeletable, IModifiableEntity
     public string UserName { get; set; } = null!;
 
     public int RoleId { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
     public int? CreatedByUserId { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
@@ -30,13 +25,6 @@ public partial class User : ISoftDeletable, IModifiableEntity
     public int? UpdatedByUserId { get; set; }
 
     public bool IsActive { get; set; }
-
-    public bool IsDeleted { get; set; }
-
-    public DateTime? DeletedAt { get; set; }
-
-    public int? DeletedByUserId { get; set; }
-
     public bool EmailConfirmed { get; set; }
     public virtual User? CreatedByUser { get; set; }
     public virtual User? DeletedByUser { get; set; }

@@ -36,7 +36,7 @@ public sealed class SalesOrderService
             foreach (var item in request.Items)
             {
                 var product = await _uow.Products
-                    .FindAsync(e => e.Id == item.ProductId && !e.IsDeleted,
+                    .FindAsync(e => e.Id == item.ProductId,
                     cancellationToken,
                     "Inventories");
                 if (product is null)

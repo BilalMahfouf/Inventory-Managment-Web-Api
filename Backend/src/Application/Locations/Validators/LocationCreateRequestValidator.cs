@@ -20,7 +20,7 @@ namespace Application.Locations.Validators
                 .MustAsync(async (name, cancellation) =>
                 {
                     var existingLocation = await uow.Locations.IsExistAsync(
-                        e=>e.Name==name && !e.IsDeleted);
+                        e=>e.Name==name);
                     return !existingLocation;
                 }).WithMessage("A location with the same name already exists.");
 
@@ -35,7 +35,7 @@ namespace Application.Locations.Validators
                 .MustAsync(async (locationTypeId, cancellation) =>
                 {
                     var locationType = await uow.LocationTypes.IsExistAsync(
-                        e => e.Id == locationTypeId && !e.IsDeleted);
+                        e => e.Id == locationTypeId);
                     return locationType;
                 }).WithMessage("LocationTypeId does not exist.");
 

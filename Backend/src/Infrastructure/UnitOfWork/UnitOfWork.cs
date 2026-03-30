@@ -119,7 +119,8 @@ namespace Infrastructure.UOW
             var modifiedEntities = _context.ChangeTracker
             .Entries()
             .Where(e => e.Entity is IModifiableEntity && e.State == EntityState.Modified)
-            .Select(e => e.Entity as IModifiableEntity);
+            .Select(e => e.Entity)
+            .OfType<IModifiableEntity>();
 
 
 
@@ -133,12 +134,31 @@ namespace Infrastructure.UOW
         {
             var addedEntities = _context.ChangeTracker
             .Entries()
-            .Where(e => e.Entity is IBaseEntity && e.State == EntityState.Added)
-            .Select(e => e.Entity as IBaseEntity);
+            .Where(e => e.Entity is Entity && e.State == EntityState.Added)
+            .Select(e => e.Entity as Entity);
+
             foreach (var entity in addedEntities)
             {
+                if (entity is null)
+                {
+                    continue;
+                }
+
                 entity.CreatedAt = DateTime.UtcNow;
-                entity.CreatedByUserId = _currentUserService.UserId;
+                var createdByProperty = entity.GetType().GetProperty("CreatedByUserId");
+                if (createdByProperty is null || !createdByProperty.CanWrite)
+                {
+                    continue;
+                }
+
+                if (createdByProperty.PropertyType == typeof(int))
+                {
+                    createdByProperty.SetValue(entity, _currentUserService.UserId);
+                }
+                else if (createdByProperty.PropertyType == typeof(int?))
+                {
+                    createdByProperty.SetValue(entity, (int?)_currentUserService.UserId);
+                }
             }
         }
     }

@@ -5,10 +5,8 @@ using System.Collections.Generic;
 
 namespace Domain.Shared.Entities;
 
-public partial class AuditLog : IEntity
+public partial class AuditLog : Entity
 {
-    public int Id { get; set; }
-
     public int UserId { get; set; }
 
     public string? Action { get; set; }
@@ -22,9 +20,6 @@ public partial class AuditLog : IEntity
     public string? NewValues { get; set; }
 
     public DateTime? Timestamp { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
     public int CreatedByUserId { get; set; }
 
     public virtual User CreatedByUser { get; set; } = null!;

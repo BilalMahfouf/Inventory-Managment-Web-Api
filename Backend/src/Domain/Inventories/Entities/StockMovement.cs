@@ -8,10 +8,8 @@ using System.Collections.Generic;
 
 namespace Domain.Inventories.Entities;
 
-public partial class StockMovement : IBaseEntity
+public partial class StockMovement : Entity
 {
-    public int Id { get; set; }
-
     public int ProductId { get; set; }
 
     public int InventoryId { get; set; }
@@ -21,9 +19,6 @@ public partial class StockMovement : IBaseEntity
     public decimal Quantity { get; set; }
 
     public StockMovementStatus StockMovmentStatus { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
     public int CreatedByUserId { get; set; }
 
     public string? Notes { get; set; }
@@ -35,7 +30,6 @@ public partial class StockMovement : IBaseEntity
     public virtual StockMovementType MovementType { get; set; } = null!;
 
     public virtual Product Product { get; set; } = null!;
-
 
     public StockMovement()
     {

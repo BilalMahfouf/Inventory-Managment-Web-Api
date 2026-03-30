@@ -11,11 +11,8 @@ using System.ComponentModel;
 
 namespace Domain.Inventories.Entities;
 
-public class Inventory : AggregateRoot,
-    IBaseEntity, IModifiableEntity, ISoftDeletable
+public class Inventory : Entity, IModifiableEntity
 {
-    public int Id { get; set; }
-
     public int ProductId { get; set; }
 
     public int LocationId { get; set; }
@@ -26,17 +23,11 @@ public class Inventory : AggregateRoot,
     public decimal ReorderLevel { get; set; }
 
     public decimal MaxLevel { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
     public int CreatedByUserId { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
 
     public int? UpdatedByUserId { get; set; }
-    public bool IsDeleted { get; set; }
-    public DateTime? DeletedAt { get; set; }
-    public int? DeletedByUserId { get; set; }
     public User? DeletedByUser { get; set; }
 
     public virtual User CreatedByUser { get; set; } = null!;
@@ -49,8 +40,6 @@ public class Inventory : AggregateRoot,
 
     private List<StockMovement> stockMovements = new();
     public IReadOnlyCollection<StockMovement> StockMovements => stockMovements.AsReadOnly();
-
-
 
     public Inventory()
     {
@@ -114,7 +103,6 @@ public class Inventory : AggregateRoot,
         return inventory;
     }
 
-
     public void UpdateStock(decimal newQuantity)
     {
         if (newQuantity < 0)
@@ -154,7 +142,6 @@ public class Inventory : AggregateRoot,
                 LocationId,
                 QuantityOnHand));
         }
-
 
     }
 
@@ -200,9 +187,7 @@ public class Inventory : AggregateRoot,
                 QuantityOnHand));
         }
 
-
     }
-
 
     private void EnsureQuantityIsLessThanMaxLevel(decimal quantity)
     {

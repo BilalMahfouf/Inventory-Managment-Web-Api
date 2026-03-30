@@ -16,15 +16,5 @@ namespace Infrastructure.Repositories.Customers
         public CustomerRepository(InventoryManagmentDBContext context) : base(context)
         {
         }
-
-        //public Task<int> GetActiveCustomersAsync(CancellationToken cancellationToken = default)
-        //{
-        //    return _dbSet.CountAsync(c => c.IsActive && !c.IsDeleted, cancellationToken);
-        //}
-
-        //public async Task<int> GetAllCustomersAsync(CancellationToken cancellationToken = default)
-        //{
-        //    return await _dbSet.CountAsync(c => !c.IsDeleted, cancellationToken);
-        //}
     }
 }

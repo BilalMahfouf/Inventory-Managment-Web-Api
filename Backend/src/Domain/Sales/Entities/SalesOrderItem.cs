@@ -7,10 +7,8 @@ using System.Collections.Generic;
 
 namespace Domain.Sales.Entities;
 
-public class SalesOrderItem : IBaseEntity
+public class SalesOrderItem : Entity
 {
-    public int Id { get; private set; }
-
     public int SalesOrderId { get; private set; }
 
     public int ProductId { get; private set; }
@@ -26,10 +24,6 @@ public class SalesOrderItem : IBaseEntity
         get => OrderedQuantity * UnitCost;
         private set { }
     }
-
-
-    public DateTime CreatedAt { get; set; }
-
     public int CreatedByUserId { get; set; }
 
     public User CreatedByUser { get;private set; } = null!;
@@ -51,6 +45,5 @@ public class SalesOrderItem : IBaseEntity
         OrderedQuantity = orderedQuantity;
         UnitCost = unitCost;
     }
-
 
 }

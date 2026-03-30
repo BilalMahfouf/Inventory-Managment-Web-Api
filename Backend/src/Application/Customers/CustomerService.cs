@@ -89,7 +89,7 @@ public class CustomerService : DeleteService<Customer>
         try
         {
             var customer = await _uow.Customers
-                .FindAsync(e => e.Id == id && !e.IsDeleted, cancellationToken);
+                .FindAsync(e => e.Id == id, cancellationToken);
             if (customer is null)
             {
                 return Result<int>.Failure(Error.NotFound(nameof(customer))); 

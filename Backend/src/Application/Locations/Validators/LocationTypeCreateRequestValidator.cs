@@ -20,7 +20,7 @@ namespace Application.Locations.Validators
                 .MustAsync(async(name, cancellationToken) =>
                 {
                     var existing = await uow.LocationTypes
-                        .FindAsync(lt => lt.Name == name && !lt.IsDeleted, cancellationToken);
+                        .FindAsync(lt => lt.Name == name, cancellationToken);
                     return existing is null;
                 }).WithMessage("Name must be unique.");
 

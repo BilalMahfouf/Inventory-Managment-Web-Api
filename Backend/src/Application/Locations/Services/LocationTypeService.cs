@@ -83,7 +83,7 @@ namespace Application.Locations.Services
             try
             {
                 var locationTypes = await _uow.LocationTypes
-                    .GetAllAsync(lt => !lt.IsDeleted
+                    .GetAllAsync(lt => true
                     , includeProperties: "CreatedByUser,DeletedByUser"
                     , cancellationToken: cancellationToken);
                 var response = locationTypes
@@ -109,7 +109,7 @@ namespace Application.Locations.Services
                     return Result<LocationTypeReadResponse>.Failure(Error.InvalidId());
                 }
                 var locationType = await _uow.LocationTypes
-                    .FindAsync(lt => lt.Id == id && !lt.IsDeleted
+                    .FindAsync(lt => lt.Id == id
                     , includeProperties: "CreatedByUser,DeletedByUser"
                     , cancellationToken: cancellationToken);
                 if (locationType == null)

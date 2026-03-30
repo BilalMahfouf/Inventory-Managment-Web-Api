@@ -7,10 +7,8 @@ using System.Collections.Generic;
 
 namespace Domain.Inventories.Entities;
 
-public partial class AlertRule : IEntity
+public partial class AlertRule : Entity
 {
-    public int Id { get; set; }
-
     public int ProductId { get; set; }
 
     public int LocationId { get; set; }
@@ -20,9 +18,6 @@ public partial class AlertRule : IEntity
     public int Threshold { get; set; }
 
     public bool IsActive { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
     public virtual AlertType AlertTypeNavigation { get; set; } = null!;
 
     public virtual Location Location { get; set; } = null!;

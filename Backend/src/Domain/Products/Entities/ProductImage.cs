@@ -6,16 +6,12 @@ using System.Collections.Generic;
 
 namespace Domain.Products.Entities;
 
-public partial class ProductImage : IBaseEntity
+public partial class ProductImage : Entity
 {
-    public int Id { get; set; }
-
     public int ProductId { get; set; }
 
     public int? ImageId { get; set; }
     public bool IsPrimary { get; set; }
-
-    public DateTime CreatedAt { get; set; }
     public int CreatedByUserId { get; set; }
 
     public virtual Image Image { get; set; } = null!;

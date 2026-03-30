@@ -241,7 +241,7 @@ IProductQueries query)
                 .Select(p => MapToReadResponse(p)).ToList().AsReadOnly();
 
             var totalCount = await _productRepository.GetCountAsync(
-                filter: p => !p.IsDeleted, cancellationToken: cancellationToken);
+                filter: null, cancellationToken: cancellationToken);
             var result = new PagedList<ProductReadResponse>()
             {
                 Item = response,
@@ -281,8 +281,8 @@ IProductQueries query)
                 return Result<ProductReadResponse>.Failure(errorMessage, ErrorType.Validation);
             }
 
-            var product = await _productRepository.FindAsync(p => p.Id == id
-            && (!p.IsDeleted), cancellationToken);
+            var product = await _productRepository.FindAsync(p => p.Id == id,
+                cancellationToken);
             if (product is null)
             {
                 return Result<ProductReadResponse>.Failure(Error.NotFound("Product"));

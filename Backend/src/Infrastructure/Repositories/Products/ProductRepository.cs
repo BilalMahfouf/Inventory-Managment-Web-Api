@@ -17,13 +17,5 @@ namespace Infrastructure.Repositories.Products
         public ProductRepository(InventoryManagmentDBContext context) : base(context)
         {
         }
-        //public async Task<int> GetAllProductsAsync(CancellationToken cancellationToken = default)
-        //{
-        //    return await _dbSet.CountAsync(p=>!p.IsDeleted,cancellationToken);
-        //}
-        //public async Task<int> GetActiveProductsAsync(CancellationToken cancellationToken = default)
-        //{
-        //    return await _dbSet.CountAsync(p => p.IsActive && !p.IsDeleted, cancellationToken);
-        //}
     }
 }

@@ -14,6 +14,8 @@ using Infrastructure.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 #nullable enable
 
 namespace Infrastructure.Persistence;
@@ -115,7 +117,25 @@ public partial class InventoryManagmentDBContext : DbContext
         modelBuilder.ApplyConfiguration(new OutboxMessagesConfiguration());
         modelBuilder.ApplyConfiguration(new SalesOrderReservationConfiguration());
 
+        ApplySoftDeleteQueryFilter(modelBuilder);
+
         OnModelCreatingPartial(modelBuilder);
+    }
+
+    private static void ApplySoftDeleteQueryFilter(ModelBuilder modelBuilder)
+    {
+        var entityTypes = modelBuilder.Model.GetEntityTypes()
+            .Where(e => typeof(Entity).IsAssignableFrom(e.ClrType));
+
+        foreach (var entityType in entityTypes)
+        {
+            var parameter = Expression.Parameter(entityType.ClrType, "e");
+            var isDeletedProperty = Expression.Property(parameter, nameof(Entity.IsDeleted));
+            var compareExpression = Expression.Equal(isDeletedProperty, Expression.Constant(false));
+            var lambda = Expression.Lambda(compareExpression, parameter);
+
+            modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
+        }
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

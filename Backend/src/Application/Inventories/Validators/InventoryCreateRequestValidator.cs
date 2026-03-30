@@ -19,7 +19,7 @@ namespace Application.Inventories.Validators
                 .MustAsync(async (productId, ct) =>
                 {
                     var isExist = await uow.Products
-                    .IsExistAsync(p => p.Id == productId && !p.IsDeleted && p.IsActive
+                    .IsExistAsync(p => p.Id == productId && p.IsActive
                     , ct);
                     return isExist;
                 }).WithMessage("ProductId does not exist or it's not active");
@@ -29,7 +29,7 @@ namespace Application.Inventories.Validators
                 .MustAsync(async (locationId, ct) =>
                 {
                     var isExist = await uow.Locations
-                    .IsExistAsync(l => l.Id == locationId && !l.IsDeleted && l.IsActive
+                    .IsExistAsync(l => l.Id == locationId && l.IsActive
                     , ct);
                     return isExist;
                 }).WithMessage("LocationId does not exist or it's not active");

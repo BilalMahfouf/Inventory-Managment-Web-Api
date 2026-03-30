@@ -7,14 +7,12 @@ using System.Threading.Tasks;
 
 namespace Domain.Shared.Entities;
 
-    public class Image : IBaseEntity, IEntity
+    public class Image : Entity
     {
-        public int Id { get; set; }
         public string FileName { get; set; } = null!;
         public string StoragePath { get; set; } = null!;
         public string MimeType { get; set; } = null!;
         public long SizeInBytes { get; set; }
-        public DateTime CreatedAt { get; set; }
         public int CreatedByUserId { get; set; }
         
       

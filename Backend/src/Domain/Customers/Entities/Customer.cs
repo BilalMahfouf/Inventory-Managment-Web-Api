@@ -9,10 +9,8 @@ using System.Runtime.InteropServices;
 
 namespace Domain.Customers.Entities;
 
-public  class Customer : IBaseEntity, ISoftDeletable
+public  class Customer : Entity
 {
-    public int Id { get; private set; }
-
     public string Name { get; private set; } = null!;
     public int? CustomerCategoryId { get; private set; }
 
@@ -25,19 +23,8 @@ public  class Customer : IBaseEntity, ISoftDeletable
     public bool IsActive { get; private set; }
 
     public CustomerCreditStatus CreditStatus { get; private set; }
-
-    public DateTime CreatedAt { get; set; }
-
     public int CreatedByUserId { get; set; }
-
-    public bool IsDeleted { get; set; }
-
-    public DateTime? DeletedAt { get; set; }
-
-    public int? DeletedByUserId { get; set; }
-
     public virtual User CreatedByUser { get; set; } = null!;
-
 
     public virtual User? DeletedByUser { get; set; }
     public CustomerCategory? CustomerCategory { get; set; } = null!;

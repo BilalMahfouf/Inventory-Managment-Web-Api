@@ -58,7 +58,7 @@ namespace Application.UnitOfMeasures.Services
             try
             {
                 var unitOfMeasures = await _repository.GetAllAsync(
-                    e => !e.IsDeleted
+                    e => true
                     , cancellationToken
                     , "CreatedByUser,UpdatedByUser,DeletedByUser");
                 if (unitOfMeasures is null || !unitOfMeasures.Any())
@@ -213,7 +213,7 @@ namespace Application.UnitOfMeasures.Services
             try
             {
                 var unitsNames = await _repository.GetAllAsync(
-                    e => !e.IsDeleted, cancellationToken: cancellationToken);
+                    e => true, cancellationToken: cancellationToken);
                 if (unitsNames is null || !unitsNames.Any())
                 {
                     return Result<IEnumerable<object>>.NotFound("Units of Measure");

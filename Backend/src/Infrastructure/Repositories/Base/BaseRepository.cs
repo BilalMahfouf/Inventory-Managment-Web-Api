@@ -45,7 +45,7 @@ namespace Infrastructure.Repositories.Base
         }
 
         public async Task<IEnumerable<TEntity>> GetAllAsync(
-            Expression<Func<TEntity, bool>> filter = null
+            Expression<Func<TEntity, bool>>? filter = null
             , CancellationToken cancellationToken = default
             , string includeProperties = ""
             )

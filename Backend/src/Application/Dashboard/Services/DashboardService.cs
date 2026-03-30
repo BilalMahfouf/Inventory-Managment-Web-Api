@@ -28,11 +28,11 @@ namespace Application.Dashboard.Services
             try
             {
                 var TotalProducts = await _uow.Products.GetCountAsync
-                    (p => !p.IsDeleted, cancellationToken);
+                    (null, cancellationToken);
                 var LowStockProducts = await _uow.Inventories.GetCountAsync
                     (i => i.QuantityOnHand <= i.ReorderLevel, cancellationToken);
                 var ActiveCustomers = await _uow.Customers.GetCountAsync(
-                    c => c.IsActive && !c.IsDeleted, cancellationToken);
+                    c => c.IsActive, cancellationToken);
                 var TotalSalesOrders = await _uow.SalesOrders.GetCountAsync(null
                     , cancellationToken);
                 var TotalRevenues = await _uow.SalesOrderItems
@@ -47,7 +47,7 @@ namespace Application.Dashboard.Services
                     , cancellationToken);
 
                 var ActiveSuppliers = await _uow.Suppliers.GetCountAsync(
-                    s => s.IsActive && !s.IsDeleted, cancellationToken);
+                    s => s.IsActive, cancellationToken);
 
                 var result = new
                 {

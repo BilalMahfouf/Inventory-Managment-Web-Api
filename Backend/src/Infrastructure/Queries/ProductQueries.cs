@@ -69,7 +69,6 @@ public class ProductQueries : IProductQueries
             }
 
             var productsQuery = _context.Products.AsQueryable();
-            productsQuery = productsQuery.Where(p=>!p.IsDeleted);
 
             if (!string.IsNullOrWhiteSpace(request.search))
             {
@@ -217,7 +216,7 @@ public class ProductQueries : IProductQueries
     {
         try
         {
-            var product = await _context.Products.Where(e => e.Id == id && !e.IsDeleted)
+            var product = await _context.Products.Where(e => e.Id == id)
                 .Include(e => e.Inventories)
                 .ThenInclude(e => e.Location)
                 .Select(product => new ProductReadResponse

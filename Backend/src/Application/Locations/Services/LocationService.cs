@@ -57,7 +57,7 @@ namespace Application.Locations.Services
             try
             {
                 var locations = await _repository.GetAllAsync(
-                   e=>!e.IsDeleted ,
+                   e => true,
                     cancellationToken: cancellationToken
                     , includeProperties: "CreatedByUser,DeletedByUser,LocationType");
                 if(locations is null || !locations.Any())
@@ -85,8 +85,7 @@ namespace Application.Locations.Services
             }
             try
             {
-                var location = await _repository.FindAsync(e => e.Id == id 
-                && !e.IsDeleted
+                var location = await _repository.FindAsync(e => e.Id == id
                 , cancellationToken
                 , includeProperties: "CreatedByUser,DeletedByUser");
                 if (location is null)
@@ -150,7 +149,7 @@ namespace Application.Locations.Services
             try
             {
                 var location = await _repository.FindAsync(e => e.Id == id
-                && !e.IsDeleted, cancellationToken);
+                , cancellationToken);
                 if (location is null)
                 {
                     return Result.Failure(Error.NotFound(nameof(location)));
@@ -199,7 +198,7 @@ namespace Application.Locations.Services
             try
             {
                 var location = await _repository.FindAsync(e => e.Id == id
-                && !e.IsDeleted, cancellationToken);
+                , cancellationToken);
                 if (location is null)
                 {
                     return Result<LocationReadResponse>.Failure(Error.NotFound(nameof(location)));
@@ -257,7 +256,7 @@ namespace Application.Locations.Services
             try
             {
                 var locations = await _repository.GetAllAsync(
-                    e => !e.IsDeleted
+                    e => true
                     , cancellationToken: cancellationToken);
                 if (locations is null || !locations.Any())
                 {

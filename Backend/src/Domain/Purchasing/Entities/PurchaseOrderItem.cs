@@ -6,10 +6,8 @@ using System.Collections.Generic;
 
 namespace Domain.Purchasing.Entities;
 
-public partial class PurchaseOrderItem : IBaseEntity
+public partial class PurchaseOrderItem : Entity
 {
-    public int Id { get; set; }
-
     public int PurchaseOrderId { get; set; }
 
     public int ProductId { get; set; }
@@ -21,9 +19,6 @@ public partial class PurchaseOrderItem : IBaseEntity
     public decimal UnitCost { get; set; }
 
     public decimal LineAmount { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
     public int CreatedByUserId { get; set; }
 
     public virtual User CreatedByUser { get; set; } = null!;

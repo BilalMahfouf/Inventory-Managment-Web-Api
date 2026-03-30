@@ -6,9 +6,8 @@ using System.Text;
 
 namespace Domain.Sales.Entities;
 
-public sealed class SalesOrderReservation : IBaseEntity
+public sealed class SalesOrderReservation : Entity
 {
-    public int Id { get; private set; }
     public int OrderId { get; private set; }
     public int StockMovemntId { get; private set; }
     public int ProductId { get; private set; }
@@ -16,7 +15,6 @@ public sealed class SalesOrderReservation : IBaseEntity
     public decimal Quantity { get; private set; }
     public SalesOrderResevationStatus Status { get; private set; }
     public DateTime? StatusUpdateAt { get; private set; }
-    public DateTime CreatedAt { get; set; }
     public int CreatedByUserId { get; set; }
 
     private SalesOrderReservation()

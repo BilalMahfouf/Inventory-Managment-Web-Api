@@ -10,9 +10,8 @@ using System.Collections.Generic;
 
 namespace Domain.Products.Entities;
 
-public partial class Product : ISoftDeletable, IModifiableEntity, IBaseEntity
+public partial class Product   : Entity, IModifiableEntity
 {
-    public int Id { get; set; }
 
     public string Sku { get; set; } = null!;
 
@@ -30,20 +29,11 @@ public partial class Product : ISoftDeletable, IModifiableEntity, IBaseEntity
 
     public bool IsActive { get; set; }
 
-    public DateTime CreatedAt { get; set; }
-
     public int CreatedByUserId { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
 
     public int? UpdatedByUserId { get; set; }
-
-    public bool IsDeleted { get; set; }
-
-    public DateTime? DeletedAt { get; set; }
-
-    public int? DeletedByUserId { get; set; }
-
 
     public virtual ProductCategory Category { get; set; } = null!;
 

@@ -5,10 +5,8 @@ using System.Collections.Generic;
 
 namespace Domain.Suppliers.Entities;
 
-public partial class SupplierContact : IBaseEntity, ISoftDeletable
+public partial class SupplierContact : Entity
 {
-    public int Id { get; set; }
-
     public int SupplierId { get; set; }
 
     public string ContactName { get; set; } = null!;
@@ -24,17 +22,7 @@ public partial class SupplierContact : IBaseEntity, ISoftDeletable
     public string ContactType { get; set; } = null!;
 
     public bool IsActive { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
     public int CreatedByUserId { get; set; }
-
-    public bool IsDeleted { get; set; }
-
-    public DateTime? DeletedAt { get; set; }
-
-    public int? DeletedByUserId { get; set; }
-
     public virtual User CreatedByUser { get; set; } = null!;
 
     public virtual User? DeletedByUser { get; set; }

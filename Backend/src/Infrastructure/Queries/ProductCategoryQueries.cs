@@ -29,7 +29,7 @@ public class ProductCategoryQueries : IProductCategoryQueries
         {
             var category = await _context.ProductCategories.Include(e => e.Parent)
                 .Include(e => e.CreatedByUser).Include(e => e.UpdatedByUser)
-                .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted, cancellationToken);
+                .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
             if (category is null)
             {
                 return Result<ProductCategoryDetailsResponse>.Failure(Error.NotFound(nameof(category)));
@@ -64,7 +64,7 @@ public class ProductCategoryQueries : IProductCategoryQueries
                 UpdatedByUserId = category.UpdatedByUserId,
                 UpdatedByUserName = category.UpdatedByUser?.UserName,
                 SubCategories = await _context.ProductCategories
-      .Where(e => e.ParentId == category.Id && !e.IsDeleted)
+      .Where(e => e.ParentId == category.Id)
       .Select(e => new
       {
           SubCategoryId = e.Id,
@@ -87,7 +87,7 @@ public class ProductCategoryQueries : IProductCategoryQueries
         try
         {
             var categories = await _context.ProductCategories
-                .Where(e => e.Type == ProductCategoryType.MainCategory && !e.IsDeleted)
+                .Where(e => e.Type == ProductCategoryType.MainCategory)
                 .Select(e => new
                 {
                     e.Id,

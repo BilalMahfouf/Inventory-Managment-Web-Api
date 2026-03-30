@@ -29,16 +29,13 @@ internal class CustomerQueries : ICustomerQueries
     {
         try
         {
-            var count = await _context.Customers.CountAsync(
-                e => !e.IsDeleted,
-                cancellationToken);
+            var count = await _context.Customers.CountAsync(cancellationToken);
             if (count <= 0)
             {
                 return Result<PagedList<CustomerTableReadResponse>>
                     .NotFound("Customers");
             }
             var customerQuery = _context.Customers.AsQueryable();
-            customerQuery = customerQuery.Where(c => !c.IsDeleted);
             if (!string.IsNullOrWhiteSpace(request.search))
             {
                 // use this for performance 

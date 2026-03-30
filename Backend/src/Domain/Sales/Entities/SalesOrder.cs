@@ -11,10 +11,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Sales.Entities;
 
-public class SalesOrder : AggregateRoot, IBaseEntity
+public class SalesOrder : Entity
 {
-    public int Id { get; private set; }
-
     public int CustomerId { get; private set; }
 
     public DateTime OrderDate { get; private set; }
@@ -28,9 +26,6 @@ public class SalesOrder : AggregateRoot, IBaseEntity
     }
 
     public string? Description { get; private set; }
-
-    public DateTime CreatedAt { get; set; }
-
     public int CreatedByUserId { get; set; }
 
     public User CreatedByUser { get; private set; } = null!;
@@ -202,8 +197,5 @@ public class SalesOrder : AggregateRoot, IBaseEntity
             prevStatus)
             );
     }
-
-
-
 
 }

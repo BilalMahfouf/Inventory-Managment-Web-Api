@@ -12,7 +12,7 @@ namespace Application.Shared.Contracts
     public interface IBaseRepository<TEntity> where TEntity : class
     {
         Task<IEnumerable<TEntity>> GetAllAsync(
-            Expression<Func<TEntity, bool>> filter = null,
+            Expression<Func<TEntity, bool>>? filter = null,
             CancellationToken cancellationToken = default ,string includeProperties = "");
         Task<TEntity?> FindAsync(Expression<Func<TEntity, bool>> predicate
            , CancellationToken cancellationToken = default, string includeProperties = "");
