@@ -1,24 +1,27 @@
 ﻿using Domain.Shared.Events;
-using Domain.Shared.Errors;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Domain.Sales;
 
 public sealed record SalesOrderCreatedDomainEvent(
     int SalesOrderId,
-    int CustomerId,
-    SalesOrderStatus status,
+    int? CustomerId,
+    SalesOrderStatus Status,
     DateTime OrderDate,
-    decimal TotalAmount
-    ) : DomainEvent;
+    decimal TotalAmount) : DomainEvent;
+
+public sealed record SalesOrderConfirmedDomainEvent(
+    int SalesOrderId) : DomainEvent;
+
+public sealed record SalesOrderShippedDomainEvent(
+    int SalesOrderId,
+    string? TrackingNumber) : DomainEvent;
 
 public sealed record SalesOrderCancelledDomainEvent(
     int SalesOrderId,
-    SalesOrderStatus prevStatus
-    ) : DomainEvent;
+    SalesOrderStatus PreviousStatus) : DomainEvent;
 
 public sealed record SalesOrderCompletedDomainEvent(
-    int SalesOrderId
-    ) : DomainEvent;
+    int SalesOrderId) : DomainEvent;
+
+public sealed record SalesOrderReturnedDomainEvent(
+    int SalesOrderId) : DomainEvent;

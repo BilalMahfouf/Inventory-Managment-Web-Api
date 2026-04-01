@@ -2,8 +2,6 @@
 using Domain.Sales;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
 
 #nullable disable
 
@@ -20,7 +18,10 @@ namespace Infrastructure.Infrastructure.Persistence.Configurations.Sales
                 .HasColumnType("datetime");
             entity.Property(e => e.OrderDate).HasColumnType("datetime");
             entity.Property(e => e.SalesStatus).HasDefaultValue(SalesOrderStatus.Pending);
-            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.PaymentStatus).HasDefaultValue(PaymentStatus.Unpaid);
+            entity.Property(e => e.IsWalkIn).HasDefaultValue(false);
+            entity.Property(e => e.ShippingAddress).HasMaxLength(500);
+            entity.Property(e => e.TrackingNumber).HasMaxLength(150);
 
             entity.HasOne(d => d.CreatedByUser).WithMany()
                 .HasForeignKey(d => d.CreatedByUserId)
@@ -29,7 +30,7 @@ namespace Infrastructure.Infrastructure.Persistence.Configurations.Sales
 
             entity.HasOne(d => d.Customer).WithMany()
                 .HasForeignKey(d => d.CustomerId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_SalesOrders_Customers");
 
 

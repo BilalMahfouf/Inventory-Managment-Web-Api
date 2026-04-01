@@ -44,7 +44,7 @@ namespace Application.Authentication.Services
             _confirmEmailRepository = confirmEmailRepository;
         }
         private async Task<Result<string>> CreateRefreshToken(int userId
-            ,CancellationToken cancellationToken)
+            , CancellationToken cancellationToken)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace Application.Authentication.Services
                     CreatedAt = DateTime.UtcNow,
                     ExpiresAt = DateTime.UtcNow.AddDays(7),
                     Token = token,
-                    TokenType=(byte)TokenType.Refresh
+                    TokenType = (byte)TokenType.Refresh
                 };
                 _userSessionRepository.Add(userSession);
                 var result = await _uow.SaveChangesAsync(cancellationToken);
@@ -74,30 +74,29 @@ namespace Application.Authentication.Services
         public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request
             , CancellationToken cancellationToken = default)
         {
-            
+
             try
             {
                 // validate user credentials and return Result<User>
                 var result = await request.ValidateRequest(_userRepository
                     , _passwordHasher);
-                if(!result.IsSuccess)
+                if (!result.IsSuccess)
                 {
                     return Result<LoginResponse>.Failure(result.Error.Description!
                         , result.Error.Type);
                 }
                 var user = result.Value!;
                 var token = _jwtProvider.GenerateToken(user);
-                var refreshToken = await CreateRefreshToken(user.Id,cancellationToken);
-                if(!refreshToken.IsSuccess)
+                var refreshToken = await CreateRefreshToken(user.Id, cancellationToken);
+                if (!refreshToken.IsSuccess)
                 {
                     return Result<LoginResponse>.Failure(refreshToken.Error.Description!
                         , refreshToken.Error.Type);
                 }
-
                 var loginResponse = new LoginResponse(token, refreshToken.Value!);
                 return Result<LoginResponse>.Success(loginResponse);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"An error happened in the Login method:{ex.Message}");
                 // todo  log the error
@@ -106,12 +105,12 @@ namespace Application.Authentication.Services
         }
 
         public async Task<Result<LoginResponse>> RefreshTokenAsync
-            (RefreshTokenRequest request, CancellationToken cancellationToken=default)
+            (RefreshTokenRequest request, CancellationToken cancellationToken = default)
         {
-            
+
             try
             {
-                if(string.IsNullOrWhiteSpace(request.refreshToken))
+                if (string.IsNullOrWhiteSpace(request.refreshToken))
                 {
                     return Result<LoginResponse>.Failure("Invalid token", ErrorType.Validation);
                 }
@@ -139,23 +138,23 @@ namespace Application.Authentication.Services
         }
 
         public async Task<Result<string>> ResetPasswordAsync(ResetPasswordRequest request
-            ,CancellationToken cancellationToken=default)
+            , CancellationToken cancellationToken = default)
         {
             try
             {
-                var user =await _userRepository.FindAsync(u => u.Email == request.Email,
+                var user = await _userRepository.FindAsync(u => u.Email == request.Email,
                     cancellationToken, "UserSessions");
-                    if (user is null)
-                    {
-                        return Result<string>.Failure(UserErrors.UserNotFound(request.Email));
+                if (user is null)
+                {
+                    return Result<string>.Failure(UserErrors.UserNotFound(request.Email));
                 }
                 if (!user.UserSessions.Any(u => u.Token == request.Token &&
                 u.ExpiresAt > DateTime.UtcNow
-                && u.TokenType == (byte)TokenType.ResetPassword))  
+                && u.TokenType == (byte)TokenType.ResetPassword))
                 {
                     return Result<string>.Failure(UserErrors.InvalidCredentials);
                 }
-                var newPasswordHash=_passwordHasher.HashPassword(request.Password);
+                var newPasswordHash = _passwordHasher.HashPassword(request.Password);
                 user.PasswordHash = newPasswordHash;
                 user.UpdatedAt = DateTime.UtcNow;
                 user.UpdatedByUserId = user.Id;
@@ -168,7 +167,7 @@ namespace Application.Authentication.Services
                 return Result<string>.Success("Password changed successfully");
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // to do log error
                 return Result<string>.Failure($"Error while resetting the password: {ex.Message}");
@@ -176,12 +175,12 @@ namespace Application.Authentication.Services
         }
 
         public async Task<Result<string>> ForgetPasswordAsync(
-            ForgetPasswordRequest request,CancellationToken cancellationToken=default)
+            ForgetPasswordRequest request, CancellationToken cancellationToken = default)
         {
             try
             {
-                var user =await _userRepository.FindAsync(u => u.Email == request.Email
-                ,cancellationToken);
+                var user = await _userRepository.FindAsync(u => u.Email == request.Email
+                , cancellationToken);
                 if (user is null)
                 {
                     return Result<string>.Failure(UserErrors.UserNotFound(request.Email));
@@ -207,7 +206,7 @@ namespace Application.Authentication.Services
                 await _emailService.SendEmailAsync(message, cancellationToken);
                 return Result<string>.Success("Check your email");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Result<string>.Failure($"Error:{ex.Message}");
             }
@@ -237,7 +236,7 @@ namespace Application.Authentication.Services
                 }
 
                 if (!user.ConfirmEmailTokens.Any(e => e.Token == request.Token
-                && (!e.IsLocked) && e.ExpiredAt > DateTime.UtcNow)) 
+                && (!e.IsLocked) && e.ExpiredAt > DateTime.UtcNow))
                 {
                     return Result<string>.Failure("Invalid Token");
                 }
@@ -250,14 +249,14 @@ namespace Application.Authentication.Services
                 await _uow.SaveChangesAsync(cancellationToken);
                 return Result<string>.Success("Email confirmed Successfully");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // log error
                 return Result<string>.Failure($"Error:{ex.Message}", ErrorType.Failure);
             }
-            
+
         }
-       
+
         public async Task<Result<string>> SendConfirmEmailAsync(
                SendConfirmEmailRequest request
              , CancellationToken cancellationToken)
@@ -265,7 +264,7 @@ namespace Application.Authentication.Services
             try
             {
                 var user = await _userRepository.FindAsync(u => u.Email == request.Email
-                ,cancellationToken);
+                , cancellationToken);
                 if (user is null)
                 {
                     return Result<string>.Failure(Error.NotFound(nameof(user)));
@@ -296,13 +295,13 @@ namespace Application.Authentication.Services
                 await _emailService.SendEmailAsync(message, cancellationToken);
                 return Result<string>.Success("Check your email");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // log error 
                 return Result<string>.Failure($"Error:{ex.Message}");
             }
 
-            
+
         }
     }
 }

@@ -1,201 +1,306 @@
-﻿#nullable enable
-using Domain;
+#nullable enable
+using Domain.Inventories.Enums;
 using Domain.Shared.Abstractions;
 using Domain.Shared.Entities;
-using Domain.Products.Entities;
-using Domain.Shared.Errors;
 using Domain.Shared.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Sales.Entities;
 
 public class SalesOrder : Entity
 {
-    public int CustomerId { get; private set; }
+    public int? CustomerId { get; private set; }
 
     public DateTime OrderDate { get; private set; }
     public SalesOrderStatus SalesStatus { get; private set; }
     public DateTime? SalesStatusUpdatedAt { get; private set; }
 
-    public decimal TotalAmount
-    {
-        get => _items.Sum(i => i.LineAmount);
-        private set { }
-    }
+    public PaymentStatus PaymentStatus { get; private set; }
+
+    public decimal TotalAmount => _items.Sum(i => i.LineAmount);
 
     public string? Description { get; private set; }
+    public string? ShippingAddress { get; private set; }
+    public string? TrackingNumber { get; private set; }
+    public bool IsWalkIn { get; private set; }
+
     public int CreatedByUserId { get; set; }
 
     public User CreatedByUser { get; private set; } = null!;
 
-    public Customer Customer { get; private set; } = null!;
+    public Customer? Customer { get; private set; }
 
-    private List<SalesOrderItem> _items = new();
+    private readonly List<SalesOrderItem> _items = new();
     public IReadOnlyCollection<SalesOrderItem> Items => _items.AsReadOnly();
 
-    private List<SalesOrderReservation> _reservations = new();
-    public IReadOnlyCollection<SalesOrderReservation> Reservations => _reservations.AsReadOnly();
-    
     private SalesOrder()
     {
     }
+
     private SalesOrder(
-        int customerId,
-        string? description = null
-        )
+        int? customerId,
+        bool isWalkIn,
+        string? description,
+        string? shippingAddress)
     {
         CustomerId = customerId;
+        IsWalkIn = isWalkIn;
         Description = description;
+        ShippingAddress = shippingAddress;
+        PaymentStatus = PaymentStatus.Unpaid;
     }
 
-    /// <summary>
-    /// note: to use this method, make sure that each
-    /// <see cref="Product"/> has its <see cref="Product.Inventories"/>" lodoaded
-    /// </summary>
-    /// <param name="customerId"></param>
-    /// <param name="items"></param>
-    /// <param name="salesStatus"></param>
-    /// <param name="description"></param>
-    /// <returns></returns>
-    /// <exception cref="DomainException"></exception>
     public static SalesOrder Create(
-        int customerId,
+        int? customerId,
         List<SalesOrderItemRequest> items,
-        SalesOrderStatus salesStatus = SalesOrderStatus.Pending,
-        string? description = null
-        )
+        string? description = null,
+        string? shippingAddress = null)
     {
-        if (salesStatus is SalesOrderStatus.Cancelled)
+        if (customerId is null)
         {
-            throw new DomainException(
-                "New orders cannot be created with Cancelled status.");
+            throw new DomainException("Customer is required for non walk-in orders.");
         }
-        var order = new SalesOrder(
-            customerId,
-            description);
 
-        order.OrderDate = DateTime.UtcNow;
-        order.SalesStatus = salesStatus;
+        if (items is null || items.Count == 0)
+        {
+            throw new DomainException("Sales order must have at least one item.");
+        }
+
+        var order = new SalesOrder(customerId, false, description, shippingAddress)
+        {
+            OrderDate = DateTime.UtcNow,
+            SalesStatus = SalesOrderStatus.Pending,
+        };
+
         foreach (var item in items)
         {
-            order.AddItem(item.Product, item.Quantity);
+            order.AddItemWithStockDeduction(item);
         }
+
         order.RaiseDomainEvent(new SalesOrderCreatedDomainEvent(
-             order.Id,
-             order.CustomerId,
-             order.SalesStatus,
-             order.OrderDate,
-             order.TotalAmount)
-             );
+            order.Id,
+            order.CustomerId,
+            order.SalesStatus,
+            order.OrderDate,
+            order.TotalAmount));
 
         return order;
     }
-    private void AddItem(
-        Product product,
-        decimal quantity)
+
+    public static SalesOrder CreateWalkIn(
+        List<SalesOrderItemRequest> items,
+        string? description = null)
     {
-        if (this.SalesStatus is not SalesOrderStatus.Pending)
+        if (items is null || items.Count == 0)
         {
-            throw new DomainException(
-                "Items can only be added to orders in Pending status.");
-        }
-        var quantityAvailable = product.Inventories.Sum(i => i.QuantityOnHand);
-        if (quantity > quantityAvailable)
-        {
-            throw new DomainException(
-                "We do not have enough inventory to fulfill this order." +
-                $"Only {quantityAvailable} are left for the Product {product.Name}");
-
+            throw new DomainException("Sales order must have at least one item.");
         }
 
-        var item = new SalesOrderItem(
-            product.Id,
-            quantity,
-            product.UnitPrice);
-        _items.Add(item);
+        var order = new SalesOrder(null, true, description, null)
+        {
+            OrderDate = DateTime.UtcNow,
+            SalesStatus = SalesOrderStatus.Completed,
+            SalesStatusUpdatedAt = DateTime.UtcNow,
+        };
+
+        foreach (var item in items)
+        {
+            order.AddItemWithStockDeduction(item);
+        }
+
+        order.RaiseDomainEvent(new SalesOrderCreatedDomainEvent(
+            order.Id,
+            order.CustomerId,
+            order.SalesStatus,
+            order.OrderDate,
+            order.TotalAmount));
+
+        return order;
     }
 
-    public void AddReservation(
-        int inventoryId,
-        int productId,
-        decimal quantity)
+    public void UpdatePendingDetails(
+        int? customerId,
+        string? description,
+        string? shippingAddress)
     {
-        if(this.SalesStatus is not SalesOrderStatus.Pending)
+        EnsurePendingForItemMutation();
+
+        if (IsWalkIn && customerId is not null)
         {
-            throw new DomainException(
-                "Reservations can only be added to orders in Pending status.");
+            throw new DomainException("Walk-in orders cannot be assigned to a customer.");
         }
-        var reservation = new SalesOrderReservation(
-            this.Id,
-            productId,
-            inventoryId,
-            SalesOrderResevationStatus.Pending,
-            quantity);
-        _reservations.Add(reservation);
+
+        CustomerId = customerId;
+        Description = description;
+        ShippingAddress = shippingAddress;
     }
 
     public void AddItem(SalesOrderItem item)
     {
-        if (SalesStatus is not SalesOrderStatus.Pending)
-        {
-            throw new DomainException(
-                "Items can only be added to orders in Pending status.");
-        }
+        EnsurePendingForItemMutation();
         _items.Add(item);
-        TotalAmount += item.LineAmount;
     }
-    public void RemoveItem(SalesOrderItem item)
+
+    public void AddItem(Inventory inventory, decimal quantity)
     {
-        if (SalesStatus is not SalesOrderStatus.Pending)
+        EnsurePendingForItemMutation();
+
+        if (quantity <= 0)
         {
-            throw new DomainException(
-                "Items can only be added to orders in Pending status.");
+            throw new DomainException("Quantity must be greater than zero.");
         }
 
-        if (_items.Any(i => i != item))
+        _items.Add(new SalesOrderItem(
+            inventory.ProductId,
+            inventory.Id,
+            inventory.LocationId,
+            quantity,
+            inventory.Product.UnitPrice));
+    }
+
+    public void RemoveItem(SalesOrderItem item)
+    {
+        EnsurePendingForItemMutation();
+
+        if (!_items.Any(i => i == item))
         {
             throw new DomainException("Item not found in the order.");
         }
-        if (_items.Remove(item))
+
+        if (!_items.Remove(item))
         {
-            TotalAmount -= item.LineAmount;
-            return;
+            throw new DomainException("Failed to remove item from the order.");
         }
-        throw new DomainException("Failed to remove item from the order.");
     }
 
-    public void CompleteOrder()
+    public void Confirm()
     {
         if (SalesStatus != SalesOrderStatus.Pending)
         {
-            throw new DomainException("Only pending orders can be completed.");
+            throw new DomainException("Only pending orders can be confirmed.");
         }
+
+        SalesStatus = SalesOrderStatus.Confirmed;
+        SalesStatusUpdatedAt = DateTime.UtcNow;
+
+        RaiseDomainEvent(new SalesOrderConfirmedDomainEvent(Id));
+    }
+
+    public void MarkInTransit()
+    {
+        if (SalesStatus != SalesOrderStatus.Confirmed)
+        {
+            throw new DomainException("Only confirmed orders can be moved to in transit.");
+        }
+
+        SalesStatus = SalesOrderStatus.InTransit;
+        SalesStatusUpdatedAt = DateTime.UtcNow;
+    }
+
+    public void MarkShipped(string? trackingNumber)
+    {
+        if (SalesStatus != SalesOrderStatus.InTransit)
+        {
+            throw new DomainException("Only in-transit orders can be marked as shipped.");
+        }
+
+        TrackingNumber = trackingNumber;
+        SalesStatus = SalesOrderStatus.Shipped;
+        SalesStatusUpdatedAt = DateTime.UtcNow;
+
+        RaiseDomainEvent(new SalesOrderShippedDomainEvent(Id, trackingNumber));
+    }
+
+    public void Complete()
+    {
+        if (SalesStatus != SalesOrderStatus.Shipped)
+        {
+            throw new DomainException("Only shipped orders can be completed.");
+        }
+
         SalesStatus = SalesOrderStatus.Completed;
         SalesStatusUpdatedAt = DateTime.UtcNow;
 
-        this.RaiseDomainEvent(new SalesOrderCompletedDomainEvent(
-            this.Id)
-            );
+        RaiseDomainEvent(new SalesOrderCompletedDomainEvent(Id));
     }
 
-   
-
-    public void CancelOrder()
+    public void Cancel()
     {
-        if(SalesStatus is SalesOrderStatus.Cancelled)
+        if (SalesStatus is not (SalesOrderStatus.Pending or SalesOrderStatus.Confirmed or SalesOrderStatus.InTransit))
         {
-            throw new DomainException("Order is already cancelled.");
+            throw new DomainException("Only pending, confirmed, or in-transit orders can be cancelled.");
         }
-        var prevStatus = SalesStatus;
+
+        foreach (var item in _items)
+        {
+            if (item.Inventory is null)
+            {
+                throw new DomainException("Cannot restore stock without loaded inventory.");
+            }
+
+            item.Inventory.IncreaseStock(
+                item.OrderedQuantity,
+                StockMovementTypeEnum.SalesOrder,
+                $"Sales order {Id} cancellation");
+        }
+
+        var previousStatus = SalesStatus;
         SalesStatus = SalesOrderStatus.Cancelled;
         SalesStatusUpdatedAt = DateTime.UtcNow;
 
-        this.RaiseDomainEvent(new SalesOrderCancelledDomainEvent(
-            this.Id,
-            prevStatus)
-            );
+        RaiseDomainEvent(new SalesOrderCancelledDomainEvent(Id, previousStatus));
     }
 
+    public void Return()
+    {
+        if (SalesStatus != SalesOrderStatus.Completed)
+        {
+            throw new DomainException("Only completed orders can be returned.");
+        }
+
+        SalesStatus = SalesOrderStatus.Returned;
+        SalesStatusUpdatedAt = DateTime.UtcNow;
+
+        RaiseDomainEvent(new SalesOrderReturnedDomainEvent(Id));
+    }
+
+    private void AddItemWithStockDeduction(SalesOrderItemRequest request)
+    {
+        if (request.Quantity <= 0)
+        {
+            throw new DomainException("Quantity must be greater than zero.");
+        }
+
+        var inventory = request.Inventory;
+        if (inventory is null)
+        {
+            throw new DomainException("Inventory must be provided for each order item.");
+        }
+
+        if (inventory.Id != request.InventoryId)
+        {
+            throw new DomainException("Inventory mismatch for order item.");
+        }
+
+        inventory.DecreaseStock(
+            request.Quantity,
+            StockMovementTypeEnum.SalesOrder,
+            $"Sales order {Id}");
+
+        var item = new SalesOrderItem(
+            inventory.ProductId,
+            inventory.Id,
+            inventory.LocationId,
+            request.Quantity,
+            inventory.Product.UnitPrice);
+
+        _items.Add(item);
+    }
+
+    private void EnsurePendingForItemMutation()
+    {
+        if (SalesStatus != SalesOrderStatus.Pending)
+        {
+            throw new DomainException("Only pending orders can modify items.");
+        }
+    }
 }

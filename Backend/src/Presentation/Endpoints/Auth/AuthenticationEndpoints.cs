@@ -30,7 +30,6 @@ public sealed class AuthenticationEndpoints : ICarterModule
                         HttpOnly = true,
                         Secure = true,
                         SameSite = SameSiteMode.None,
-                        Path = "/api/auth",
                         Expires = DateTimeOffset.UtcNow.AddDays(7)
                     });
 
@@ -69,12 +68,12 @@ public sealed class AuthenticationEndpoints : ICarterModule
                 if (response.IsSuccess)
                 {
                     httpContextAccessor.HttpContext.Response
-                    .Cookies.Append("refreshToken", response.Value!.RefreshToken, new CookieOptions
+                    .Cookies.Append("refreshToken", response.Value!.RefreshToken,
+                    new CookieOptions
                     {
                         HttpOnly = true,
                         Secure = true,
                         SameSite = SameSiteMode.None,
-                        Path = "/api/auth",
                         Expires = DateTimeOffset.UtcNow.AddDays(7)
                     });
                     return Results.Ok(new LoginTokenResponse(response.Value.Token));

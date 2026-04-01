@@ -60,7 +60,6 @@ namespace Infrastructure.UOW
         public IBaseRepository<UserRole> UserRoles { get; }
         public IUserSessionRepository UserSessions { get; }
         public IBaseRepository<ConfirmEmailToken> ConfirmEmailTokens { get; }
-        public IBaseRepository<SalesOrderReservation> SalesOrderReservations { get; }
         public UnitOfWork(InventoryManagmentDBContext context
             , ICurrentUserService currentUserService)
         {
@@ -96,8 +95,6 @@ namespace Infrastructure.UOW
             UserSessions = new UserSessionRepository(_context);
             ConfirmEmailTokens = new BaseRepository<ConfirmEmailToken>(_context);
             _currentUserService = currentUserService;
-
-            SalesOrderReservations = new BaseRepository<SalesOrderReservation>(_context);
         }
 
 

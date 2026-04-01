@@ -29,7 +29,6 @@ public partial class InventoryManagmentDBContext : DbContext
 
     public virtual DbSet<AlertRule> AlertRules { get; set; }
 
-    public virtual DbSet<SalesOrderReservation> SalesOrderReservations { get; set; }
     public virtual DbSet<AlertType> AlertTypes { get; set; }
 
     public virtual DbSet<AuditLog> AuditLogs { get; set; }
@@ -115,8 +114,6 @@ public partial class InventoryManagmentDBContext : DbContext
         modelBuilder.ApplyConfiguration(new Configurations.UserRoleConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.UserSessionConfiguration());
         modelBuilder.ApplyConfiguration(new OutboxMessagesConfiguration());
-        modelBuilder.ApplyConfiguration(new SalesOrderReservationConfiguration());
-
         ApplySoftDeleteQueryFilter(modelBuilder);
 
         OnModelCreatingPartial(modelBuilder);

@@ -1,8 +1,6 @@
 ﻿using Domain.Sales;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
 
 #nullable disable
 
@@ -15,6 +13,8 @@ namespace Infrastructure.Infrastructure.Persistence.Configurations.Sales
             entity.HasIndex(e => new { e.SalesOrderId, e.ProductId }, "IX_SalesOrderItems_Order_Product");
 
             entity.HasIndex(e => e.ProductId, "IX_SalesOrderItems_ProductId");
+
+            entity.HasIndex(e => e.InventoryId, "IX_SalesOrderItems_InventoryId");
 
             entity.HasIndex(e => e.SalesOrderId, "IX_SalesOrderItems_SalesOrderId");
 
@@ -35,6 +35,11 @@ namespace Infrastructure.Infrastructure.Persistence.Configurations.Sales
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SalesOrderItems_Products");
+
+            entity.HasOne(d => d.Inventory).WithMany()
+                .HasForeignKey(d => d.InventoryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SalesOrderItems_Inventory");
 
             entity.HasOne(d => d.SalesOrder).WithMany(d=>d.Items)
                 .HasForeignKey(d => d.SalesOrderId)

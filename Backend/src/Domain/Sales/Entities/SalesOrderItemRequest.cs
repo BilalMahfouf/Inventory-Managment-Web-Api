@@ -1,13 +1,12 @@
 ﻿using Domain.Products.Entities;
-using System;
-using System.Collections.Generic;
-using System.Reflection.Metadata;
-using System.Text;
+using Domain.Inventories.Entities;
 
 namespace Domain.Sales.Entities;
 
 public sealed record SalesOrderItemRequest()
 {
+    public int InventoryId { get; set; }
+    public Inventory Inventory { get; set; } = null!;
     public Product Product { get; set; } = null!;
     public decimal Quantity { get; set; }
 }

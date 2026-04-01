@@ -1,14 +1,11 @@
-﻿using Application.Shared.Paging;
-using Domain.Shared.Results;
 using Application.Sales.Queries;
 using Application.Sales.RequestResponse;
+using Application.Shared.Paging;
 using Domain.Shared.Errors;
+using Domain.Shared.Results;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace Infrastructure.Queries;
 
@@ -21,122 +18,130 @@ internal class SalesOrderQueries : ISalesOrderQueries
         _context = context;
     }
 
-    public async Task<Result<object>> GetDahsboardSummaryAsync(
+    public async Task<Result<PagedList<SalesOrderTableResponse>>> GetSalesOrdersAsync(
+        GetSalesOrdersRequest request,
         CancellationToken cancellationToken = default)
     {
-        var totalOrders = await _context.SalesOrders.CountAsync(cancellationToken);
-        var pendingOrders = await _context.SalesOrders
-            .CountAsync(e => e.SalesStatus == SalesOrderStatus.Pending
-            , cancellationToken);
+        var page = request.PageNumber is null || request.PageNumber <= 0 ? 1 : request.PageNumber.Value;
+        var pageSize = request.PageSize is null || request.PageSize <= 0 ? 10 : request.PageSize.Value;
 
-        var averageOrderValue = await _context.SalesOrders
-            .AverageAsync(e => e.TotalAmount, cancellationToken);
+        var query = _context.SalesOrders.AsNoTracking();
 
-        var revenueThisMonth = await _context.SalesOrders
-            .Where(e => e.OrderDate >= DateTime.UtcNow.AddMonths(-1))
-            .SumAsync(e => e.TotalAmount, cancellationToken);
-        var dashboardSummary = new
+        if (request.Status is not null)
         {
-            TotalOrders = totalOrders,
-            PendingOrders = pendingOrders,
-            AverageOrderValue = averageOrderValue,
-            RevenueThisMonth = revenueThisMonth
-        };
-        return Result<object>.Success(dashboardSummary);
-    }
-
-    public async Task<Result<PagedList<SalesOrderTableResponse>>> GetOrdersTableAsync(TableRequest request, CancellationToken cancellationToken = default)
-    {
-        var count = await _context.SalesOrders.CountAsync(cancellationToken);
-        if (count is 0)
-        {
-            return Result<PagedList<SalesOrderTableResponse>>.NotFound("Sales Orders");
+            query = query.Where(e => e.SalesStatus == request.Status.Value);
         }
-        var query = _context.SalesOrders
-            .Select(so => new SalesOrderTableResponse
-            {
-                Id = so.Id,
-                CustomerName = so.Customer.Name,
-                CustomerEmail = so.Customer.Email,
-                OrderDate = so.OrderDate,
-                TotalAmount = so.TotalAmount,
-                Items = so.Items.Count(),
-                Status = so.SalesStatus.ToString()
-            });
-        if (!string.IsNullOrWhiteSpace(request.search))
+
+        if (request.CustomerId is not null)
         {
-            query = query.Where(r =>
-                r.CustomerName.Contains(request.search) ||
-                r.CustomerEmail.Contains(request.search) ||
-                r.Status.Contains(request.search));
+            query = query.Where(e => e.CustomerId == request.CustomerId.Value);
         }
+
+        if (request.DateFrom is not null)
+        {
+            var fromDate = request.DateFrom.Value.Date;
+            query = query.Where(e => e.OrderDate >= fromDate);
+        }
+
+        if (request.DateTo is not null)
+        {
+            var nextDate = request.DateTo.Value.Date.AddDays(1);
+            query = query.Where(e => e.OrderDate < nextDate);
+        }
+
+        var projectedQuery = query.Select(so => new SalesOrderTableResponse
+        {
+            Id = so.Id,
+            CustomerId = so.CustomerId,
+            CustomerName = so.Customer != null ? so.Customer.Name : "Walk-in",
+            CustomerEmail = so.Customer != null ? so.Customer.Email : null,
+            IsWalkIn = so.IsWalkIn,
+            OrderDate = so.OrderDate,
+            TotalAmount = so.Items.Sum(i => i.LineAmount),
+            Items = so.Items.Count(),
+            Status = so.SalesStatus.ToString(),
+            PaymentStatus = so.PaymentStatus.ToString(),
+        });
+
         Expression<Func<SalesOrderTableResponse, object>> orderSelector =
             request.SortColumn?.ToLower() switch
             {
-                "customername" => r => r.CustomerName,
-                "customeremail" => r => r.CustomerEmail,
+                "customername" => r => r.CustomerName!,
                 "orderdate" => r => r.OrderDate,
                 "totalamount" => r => r.TotalAmount,
                 "items" => r => r.Items,
                 "status" => r => r.Status,
-                _ => r => r.Id
+                "paymentstatus" => r => r.PaymentStatus,
+                _ => r => r.Id,
             };
-        if (request.SortOrder is "desc")
-        {
-            query = query.OrderByDescending(orderSelector);
-        }
-        else
-        {
-            query = query.OrderBy(orderSelector);
-        }
-        query = query
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize);
 
-        var data = await query.ToListAsync(cancellationToken);
-        if (data is null || !data.Any())
+        projectedQuery = request.SortOrder?.ToLower() == "desc"
+            ? projectedQuery.OrderByDescending(orderSelector)
+            : projectedQuery.OrderBy(orderSelector);
+
+        var count = await projectedQuery.CountAsync(cancellationToken);
+        if (count == 0)
         {
             return Result<PagedList<SalesOrderTableResponse>>.NotFound("Sales Orders");
         }
+
+        var data = await projectedQuery
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
         var result = new PagedList<SalesOrderTableResponse>
         {
             Item = data,
             TotalCount = count,
-            Page = request.Page,
-            PageSize = request.PageSize
+            Page = page,
+            PageSize = pageSize,
         };
+
         return Result<PagedList<SalesOrderTableResponse>>.Success(result);
     }
 
     public async Task<Result<SalesOrderReadResponse>> GetSalesOrderByIdAsync(
-        int id,
+        int orderId,
         CancellationToken cancellationToken)
     {
         var order = await _context.SalesOrders
-            .Where(e => e.Id == id)
+            .AsNoTracking()
+            .Where(e => e.Id == orderId)
             .Select(e => new SalesOrderReadResponse
             {
                 Id = e.Id,
                 CustomerId = e.CustomerId,
-                CustomerName = e.Customer.Name,
-                CustomerEmail = e.Customer.Email,
+                CustomerName = e.Customer != null ? e.Customer.Name : "Walk-in",
+                CustomerEmail = e.Customer != null ? e.Customer.Email : null,
+                IsWalkIn = e.IsWalkIn,
                 OrderDate = e.OrderDate,
-                TotalAmount = e.TotalAmount,
+                TotalAmount = e.Items.Sum(i => i.LineAmount),
                 SalesStatus = e.SalesStatus.ToString(),
+                PaymentStatus = e.PaymentStatus.ToString(),
+                Description = e.Description,
+                ShippingAddress = e.ShippingAddress,
+                TrackingNumber = e.TrackingNumber,
                 Items = e.Items.Select(i => new SalesOrderItemResponse
                 {
-                    Id= i.Id,
+                    Id = i.Id,
                     ProductId = i.ProductId,
+                    InventoryId = i.InventoryId,
+                    LocationId = i.LocationId,
+                    LocationName = i.Inventory.Location.Name,
                     ProductName = i.Product.Name,
                     Quantity = i.OrderedQuantity,
-                    UnitPrice = i.Product.UnitPrice,
+                    UnitPrice = i.UnitCost,
                     TotalPrice = i.LineAmount,
-                })
-            }).FirstOrDefaultAsync(cancellationToken);
-        if(order is null)
+                }),
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (order is null)
         {
             return Result<SalesOrderReadResponse>.Failure(Error.NotFound("Sales Order"));
         }
+
         return Result<SalesOrderReadResponse>.Success(order);
     }
 }

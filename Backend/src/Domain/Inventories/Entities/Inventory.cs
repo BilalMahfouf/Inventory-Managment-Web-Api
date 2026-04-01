@@ -189,6 +189,7 @@ public class Inventory : Entity, IModifiableEntity
 
     }
 
+
     private void EnsureQuantityIsLessThanMaxLevel(decimal quantity)
     {
         if (quantity > MaxLevel)
@@ -227,7 +228,8 @@ public class Inventory : Entity, IModifiableEntity
         IsDeleted = true;
     }
 
-    public void CompleteReservation(decimal quantity)
+    public void CompleteReservation(
+        decimal quantity)
     {
         if (quantity > QuantityReserved)
         {
@@ -235,5 +237,70 @@ public class Inventory : Entity, IModifiableEntity
                 "Cannot complete reservation for more than reserved quantity");
         }
         QuantityReserved -= quantity;
+    }
+
+    /// <summary>
+    /// To use this method you need to include the 
+    /// <see cref="Product"/> navigation property when retrieving the Inventory entity.
+    /// </summary>
+    /// <param name="quantity"></param>
+    /// <param name="movementType"></param>
+    /// <param name="notes"></param>
+    public void IncreaseStock(
+        decimal quantity,
+        StockMovementTypeEnum movementType = StockMovementTypeEnum.StockIncreaseAdjustment,
+        string? notes = null)
+    {
+        var newQuantityOnHand = QuantityOnHand + quantity;
+        EnsureQuantityIsLessThanMaxLevel(newQuantityOnHand);
+        this.Product.EnsureProductIsActive();
+
+        QuantityOnHand = newQuantityOnHand;
+        var stockMovement = StockMovement.Create(
+            Product,
+            this,
+            movementType,
+            quantity,
+            notes
+            );
+        if (movementType is StockMovementTypeEnum.StockIncreaseAdjustment)
+        {
+            stockMovement.MarkAsCompleted();
+        }
+
+        this.AddStockMovement(stockMovement);
+    }
+    /// <summary>
+    /// To use this method you need to include the 
+    /// <see cref="Product"/> navigation property when retrieving the Inventory entity.
+    /// </summary>
+    /// <param name="quantity"></param>
+    /// <param name="movementType"></param>
+    /// <param name="notes"></param>
+    public void DecreaseStock(
+        decimal quantity,
+        StockMovementTypeEnum movementType = StockMovementTypeEnum.StockDecreaseAdjustment,
+        string? notes = null)
+    {
+        this.Product.EnsureProductIsActive();
+
+        var newQuantityOnHand = QuantityOnHand - quantity;
+        if (newQuantityOnHand < 0)
+        {
+            throw new DomainException("Stock quantity cannot be negative");
+        }
+        QuantityOnHand = newQuantityOnHand;
+        var stockMovement = StockMovement.Create(
+            Product,
+            this,
+            movementType,
+            quantity,
+            notes
+            );
+        if (movementType is StockMovementTypeEnum.StockDecreaseAdjustment)
+        {
+            stockMovement.MarkAsCompleted();
+        }
+        this.AddStockMovement(stockMovement);
     }
 }

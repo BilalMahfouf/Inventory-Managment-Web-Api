@@ -35,8 +35,6 @@ namespace Application.Shared.Contracts
         public IBaseRepository<PurchaseOrderItem> PurchaseOrderItems { get; }
         public IBaseRepository<SalesOrder> SalesOrders { get; }
 
-        public IBaseRepository<SalesOrderReservation> SalesOrderReservations { get; }
-
         public ISalesOrderItemRepository SalesOrderItems{ get; }
         public IBaseRepository<StockMovement> StockMovements { get; }
         public IBaseRepository<StockMovementType> StockMovementTypes { get; }
