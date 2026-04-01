@@ -7,6 +7,10 @@ import DashboardPage from '@features/dashboard/pages/DashboardPage';
 import ProductsPage from '@features/products/pages/ProductsPage';
 import InventoryPage from '@features/inventory/pages/InventoryPage';
 import SalesPage from '@features/sales/pages/SalesPage';
+import OrdersPage from '@features/sales/pages/OrdersPage';
+import CreateOrderPage from '@features/sales/pages/CreateOrderPage';
+import OrderDetailPage from '@features/sales/pages/OrderDetailPage';
+import EditOrderPage from '@features/sales/pages/EditOrderPage';
 import CustomersPage from '@features/customers/pages/CustomersPage';
 import SettingsPage from '@features/settings/pages/SettingsPage';
 import NotFoundPage from '@shared/pages/NotFoundPage';
@@ -45,6 +49,22 @@ export const router = createBrowserRouter([
           {
             path: '/sales',
             element: <SalesPage />,
+          },
+          {
+            path: '/orders',
+            element: <OrdersPage />,
+          },
+          {
+            path: '/orders/new',
+            element: <CreateOrderPage />,
+          },
+          {
+            path: '/orders/:id',
+            element: <OrderDetailPage />,
+          },
+          {
+            path: '/orders/:id/edit',
+            element: <EditOrderPage />,
           },
           {
             path: '/customers',

@@ -1294,5 +1294,191 @@
         }
       }
     }
+  },
+  "sales": {
+    "shared": {
+      "loading": "جاري التحميل...",
+      "close": "إغلاق",
+      "cancel": "إلغاء",
+      "save": "حفظ",
+      "saveChanges": "حفظ التغييرات",
+      "create": "إنشاء",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "view": "عرض",
+      "back": "رجوع",
+      "confirm": "تأكيد",
+      "search": "بحث",
+      "noResults": "لم يتم العثور على نتائج",
+      "required": "*",
+      "optional": "(اختياري)"
+    },
+    "orders": {
+      "page": {
+        "title": "طلبات البيع",
+        "description": "إدارة طلبات البيع، تتبع الشحنات، ومعالجة المرتجعات.",
+        "newOrder": "طلب جديد",
+        "viewAllOrders": "عرض جميع الطلبات"
+      },
+      "cards": {
+        "totalOrders": {
+          "title": "إجمالي الطلبات",
+          "description": "جميع الطلبات"
+        },
+        "pendingOrders": {
+          "title": "الطلبات المعلقة",
+          "description": "بانتظار المعالجة"
+        },
+        "completedOrders": {
+          "title": "الطلبات المكتملة",
+          "description": "تم تنفيذها بنجاح"
+        },
+        "totalRevenue": {
+          "title": "إجمالي الإيرادات",
+          "description": "الإيرادات الكلية"
+        }
+      },
+      "status": {
+        "pending": "معلق",
+        "confirmed": "مؤكد",
+        "intransit": "قيد النقل",
+        "shipped": "تم الشحن",
+        "completed": "مكتمل",
+        "cancelled": "ملغي",
+        "returned": "مرتجع"
+      },
+      "paymentStatus": {
+        "unpaid": "غير مدفوع",
+        "partiallypaid": "مدفوع جزئياً",
+        "paid": "مدفوع"
+      },
+      "table": {
+        "columns": {
+          "orderNumber": "رقم الطلب",
+          "customer": "العميل",
+          "date": "التاريخ",
+          "items": "العناصر",
+          "total": "المجموع",
+          "status": "الحالة",
+          "paymentStatus": "الدفع",
+          "actions": "الإجراءات"
+        },
+        "walkIn": "عميل مباشر",
+        "emptyState": {
+          "title": "لا توجد طلبات تطابق الفلاتر",
+          "description": "حاول تعديل الفلاتر أو نطاق التاريخ.",
+          "noFiltersTitle": "لا توجد طلبات بعد",
+          "noFiltersDescription": "أنشئ أول طلب بيع للبدء."
+        },
+        "filters": {
+          "status": "الحالة",
+          "customer": "العميل",
+          "dateFrom": "من تاريخ",
+          "dateTo": "إلى تاريخ",
+          "allStatuses": "جميع الحالات",
+          "allCustomers": "جميع العملاء",
+          "clearFilters": "مسح الفلاتر"
+        }
+      },
+      "actions": {
+        "confirm": "تأكيد الطلب",
+        "markInTransit": "تحديد قيد النقل",
+        "ship": "شحن الطلب",
+        "complete": "إكمال الطلب",
+        "cancel": "إلغاء الطلب",
+        "return": "إرجاع الطلب",
+        "edit": "تعديل",
+        "view": "عرض"
+      },
+      "confirmDialog": {
+        "confirmTitle": "تأكيد الطلب",
+        "confirmMessage": "هل أنت متأكد من تأكيد هذا الطلب؟ سيتم تغيير الحالة إلى مؤكد.",
+        "transitTitle": "تحديد قيد النقل",
+        "transitMessage": "هل أنت متأكد من تحديد هذا الطلب كقيد النقل؟",
+        "shipTitle": "شحن الطلب",
+        "shipMessage": "هل أنت متأكد من تحديد هذا الطلب كمشحون؟",
+        "trackingNumber": "رقم التتبع",
+        "trackingNumberPlaceholder": "أدخل رقم التتبع (اختياري)",
+        "completeTitle": "إكمال الطلب",
+        "completeMessage": "هل أنت متأكد من إكمال هذا الطلب؟ هذا الإجراء ينهي الطلب.",
+        "cancelTitle": "إلغاء الطلب",
+        "cancelMessage": "هل أنت متأكد من إلغاء هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء وسيتم استعادة المخزون.",
+        "returnTitle": "إرجاع الطلب",
+        "returnMessage": "هل أنت متأكد من معالجة إرجاع لهذا الطلب؟ سيتم استعادة المخزون."
+      },
+      "create": {
+        "title": "إنشاء طلب بيع",
+        "walkInToggle": "بيع مباشر",
+        "walkInDescription": "لا يلزم سجل عميل. سيتم إكمال الطلب فوراً.",
+        "selectCustomer": "العميل",
+        "selectCustomerPlaceholder": "اختر عميلاً...",
+        "notes": "ملاحظات الطلب",
+        "notesPlaceholder": "أضف أي ملاحظات حول هذا الطلب...",
+        "orderSummary": "ملخص الطلب",
+        "subtotal": "المجموع الفرعي",
+        "total": "المجموع",
+        "createOrder": "إنشاء الطلب",
+        "completeSale": "إتمام البيع",
+        "creating": "جاري الإنشاء..."
+      },
+      "items": {
+        "title": "عناصر الطلب",
+        "addItem": "إضافة عنصر",
+        "product": "المنتج",
+        "selectProduct": "اختر منتجاً...",
+        "location": "الموقع",
+        "selectLocation": "اختر موقعاً...",
+        "quantity": "الكمية",
+        "unitPrice": "سعر الوحدة",
+        "subtotal": "المجموع الفرعي",
+        "remove": "إزالة",
+        "availableStock": "متوفر: {{count}} وحدة",
+        "noStock": "لا يوجد مخزون متاح",
+        "selectProductFirst": "اختر منتجاً أولاً",
+        "duplicateWarning": "هذا المنتج والموقع موجودان بالفعل",
+        "noItems": "لم تتم إضافة عناصر",
+        "noItemsDescription": "أضف عنصراً واحداً على الأقل لإنشاء طلب."
+      },
+      "detail": {
+        "title": "الطلب #{{orderNumber}}",
+        "orderInfo": "معلومات الطلب",
+        "customer": "العميل",
+        "orderDate": "تاريخ الطلب",
+        "status": "الحالة",
+        "paymentStatus": "حالة الدفع",
+        "notes": "ملاحظات",
+        "noNotes": "لا توجد ملاحظات لهذا الطلب",
+        "lineItems": "العناصر",
+        "orderTotal": "إجمالي الطلب",
+        "notFound": "الطلب غير موجود",
+        "notFoundDescription": "الطلب الذي تبحث عنه غير موجود أو تمت إزالته."
+      },
+      "edit": {
+        "title": "تعديل الطلب #{{orderNumber}}",
+        "onlyPendingCanEdit": "يمكن تعديل الطلبات المعلقة فقط.",
+        "saveChanges": "حفظ التغييرات",
+        "saving": "جاري الحفظ..."
+      },
+      "toasts": {
+        "createSuccess": "تم إنشاء الطلب بنجاح",
+        "createError": "فشل في إنشاء الطلب",
+        "updateSuccess": "تم تحديث الطلب بنجاح",
+        "updateError": "فشل في تحديث الطلب",
+        "confirmSuccess": "تم تأكيد الطلب بنجاح",
+        "confirmError": "فشل في تأكيد الطلب",
+        "transitSuccess": "تم تحديد الطلب كقيد النقل",
+        "transitError": "فشل في تحديث حالة الطلب",
+        "shipSuccess": "تم شحن الطلب بنجاح",
+        "shipError": "فشل في شحن الطلب",
+        "completeSuccess": "تم إكمال الطلب بنجاح",
+        "completeError": "فشل في إكمال الطلب",
+        "cancelSuccess": "تم إلغاء الطلب بنجاح",
+        "cancelError": "فشل في إلغاء الطلب",
+        "returnSuccess": "تم إرجاع الطلب بنجاح",
+        "returnError": "فشل في معالجة الإرجاع",
+        "validationError": "خطأ في التحقق",
+        "atLeastOneItem": "يرجى إضافة عنصر واحد على الأقل إلى الطلب"
+      }
+    }
   }
 }

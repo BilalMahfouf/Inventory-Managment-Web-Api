@@ -1294,5 +1294,191 @@
         }
       }
     }
+  },
+  "sales": {
+    "shared": {
+      "loading": "Loading...",
+      "close": "Close",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saveChanges": "Save Changes",
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete",
+      "view": "View",
+      "back": "Back",
+      "confirm": "Confirm",
+      "search": "Search",
+      "noResults": "No results found",
+      "required": "*",
+      "optional": "(Optional)"
+    },
+    "orders": {
+      "page": {
+        "title": "Sales Orders",
+        "description": "Manage your sales orders, track shipments, and process returns.",
+        "newOrder": "New Order",
+        "viewAllOrders": "View All Orders"
+      },
+      "cards": {
+        "totalOrders": {
+          "title": "Total Orders",
+          "description": "all time orders"
+        },
+        "pendingOrders": {
+          "title": "Pending Orders",
+          "description": "awaiting processing"
+        },
+        "completedOrders": {
+          "title": "Completed Orders",
+          "description": "successfully fulfilled"
+        },
+        "totalRevenue": {
+          "title": "Total Revenue",
+          "description": "lifetime revenue"
+        }
+      },
+      "status": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "intransit": "In Transit",
+        "shipped": "Shipped",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "returned": "Returned"
+      },
+      "paymentStatus": {
+        "unpaid": "Unpaid",
+        "partiallypaid": "Partially Paid",
+        "paid": "Paid"
+      },
+      "table": {
+        "columns": {
+          "orderNumber": "Order #",
+          "customer": "Customer",
+          "date": "Date",
+          "items": "Items",
+          "total": "Total",
+          "status": "Status",
+          "paymentStatus": "Payment",
+          "actions": "Actions"
+        },
+        "walkIn": "Walk-in",
+        "emptyState": {
+          "title": "No orders match your filters",
+          "description": "Try adjusting your filters or date range.",
+          "noFiltersTitle": "No orders yet",
+          "noFiltersDescription": "Create your first sales order to get started."
+        },
+        "filters": {
+          "status": "Status",
+          "customer": "Customer",
+          "dateFrom": "From Date",
+          "dateTo": "To Date",
+          "allStatuses": "All Statuses",
+          "allCustomers": "All Customers",
+          "clearFilters": "Clear Filters"
+        }
+      },
+      "actions": {
+        "confirm": "Confirm Order",
+        "markInTransit": "Mark In Transit",
+        "ship": "Ship Order",
+        "complete": "Complete Order",
+        "cancel": "Cancel Order",
+        "return": "Return Order",
+        "edit": "Edit",
+        "view": "View"
+      },
+      "confirmDialog": {
+        "confirmTitle": "Confirm Order",
+        "confirmMessage": "Are you sure you want to confirm this order? This will move the order to the Confirmed status.",
+        "transitTitle": "Mark In Transit",
+        "transitMessage": "Are you sure you want to mark this order as in transit? This indicates the order is on its way.",
+        "shipTitle": "Ship Order",
+        "shipMessage": "Are you sure you want to mark this order as shipped?",
+        "trackingNumber": "Tracking Number",
+        "trackingNumberPlaceholder": "Enter tracking number (optional)",
+        "completeTitle": "Complete Order",
+        "completeMessage": "Are you sure you want to complete this order? This action finalizes the order.",
+        "cancelTitle": "Cancel Order",
+        "cancelMessage": "Are you sure you want to cancel this order? This action cannot be undone and will restore inventory.",
+        "returnTitle": "Return Order",
+        "returnMessage": "Are you sure you want to process a return for this order? This will restore inventory and update the order status."
+      },
+      "create": {
+        "title": "Create Sales Order",
+        "walkInToggle": "Walk-in Sale",
+        "walkInDescription": "No customer record required. Order will be completed immediately.",
+        "selectCustomer": "Customer",
+        "selectCustomerPlaceholder": "Select a customer...",
+        "notes": "Order Notes",
+        "notesPlaceholder": "Add any notes about this order...",
+        "orderSummary": "Order Summary",
+        "subtotal": "Subtotal",
+        "total": "Total",
+        "createOrder": "Create Order",
+        "completeSale": "Complete Sale",
+        "creating": "Creating..."
+      },
+      "items": {
+        "title": "Order Items",
+        "addItem": "Add Item",
+        "product": "Product",
+        "selectProduct": "Select product...",
+        "location": "Location",
+        "selectLocation": "Select location...",
+        "quantity": "Qty",
+        "unitPrice": "Unit Price",
+        "subtotal": "Subtotal",
+        "remove": "Remove",
+        "availableStock": "Available: {{count}} units",
+        "noStock": "No stock available",
+        "selectProductFirst": "Select a product first",
+        "duplicateWarning": "This product and location combination already exists",
+        "noItems": "No items added",
+        "noItemsDescription": "Add at least one item to create an order."
+      },
+      "detail": {
+        "title": "Order #{{orderNumber}}",
+        "orderInfo": "Order Information",
+        "customer": "Customer",
+        "orderDate": "Order Date",
+        "status": "Status",
+        "paymentStatus": "Payment Status",
+        "notes": "Notes",
+        "noNotes": "No notes for this order",
+        "lineItems": "Line Items",
+        "orderTotal": "Order Total",
+        "notFound": "Order Not Found",
+        "notFoundDescription": "The order you're looking for doesn't exist or has been removed."
+      },
+      "edit": {
+        "title": "Edit Order #{{orderNumber}}",
+        "onlyPendingCanEdit": "Only orders with Pending status can be edited.",
+        "saveChanges": "Save Changes",
+        "saving": "Saving..."
+      },
+      "toasts": {
+        "createSuccess": "Order created successfully",
+        "createError": "Failed to create order",
+        "updateSuccess": "Order updated successfully",
+        "updateError": "Failed to update order",
+        "confirmSuccess": "Order confirmed successfully",
+        "confirmError": "Failed to confirm order",
+        "transitSuccess": "Order marked as in transit",
+        "transitError": "Failed to update order status",
+        "shipSuccess": "Order shipped successfully",
+        "shipError": "Failed to ship order",
+        "completeSuccess": "Order completed successfully",
+        "completeError": "Failed to complete order",
+        "cancelSuccess": "Order cancelled successfully",
+        "cancelError": "Failed to cancel order",
+        "returnSuccess": "Order returned successfully",
+        "returnError": "Failed to process return",
+        "validationError": "Validation Error",
+        "atLeastOneItem": "Please add at least one item to the order"
+      }
+    }
   }
 }

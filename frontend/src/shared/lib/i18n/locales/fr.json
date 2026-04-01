@@ -1294,5 +1294,191 @@
         }
       }
     }
+  },
+  "sales": {
+    "shared": {
+      "loading": "Chargement...",
+      "close": "Fermer",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "saveChanges": "Enregistrer les modifications",
+      "create": "Créer",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "view": "Voir",
+      "back": "Retour",
+      "confirm": "Confirmer",
+      "search": "Rechercher",
+      "noResults": "Aucun résultat trouvé",
+      "required": "*",
+      "optional": "(Facultatif)"
+    },
+    "orders": {
+      "page": {
+        "title": "Commandes de vente",
+        "description": "Gérez vos commandes, suivez les expéditions et traitez les retours.",
+        "newOrder": "Nouvelle commande",
+        "viewAllOrders": "Voir toutes les commandes"
+      },
+      "cards": {
+        "totalOrders": {
+          "title": "Total des commandes",
+          "description": "commandes totales"
+        },
+        "pendingOrders": {
+          "title": "Commandes en attente",
+          "description": "en attente de traitement"
+        },
+        "completedOrders": {
+          "title": "Commandes terminées",
+          "description": "traitées avec succès"
+        },
+        "totalRevenue": {
+          "title": "Revenu total",
+          "description": "revenu à vie"
+        }
+      },
+      "status": {
+        "pending": "En attente",
+        "confirmed": "Confirmée",
+        "intransit": "En transit",
+        "shipped": "Expédiée",
+        "completed": "Terminée",
+        "cancelled": "Annulée",
+        "returned": "Retournée"
+      },
+      "paymentStatus": {
+        "unpaid": "Non payée",
+        "partiallypaid": "Partiellement payée",
+        "paid": "Payée"
+      },
+      "table": {
+        "columns": {
+          "orderNumber": "N° commande",
+          "customer": "Client",
+          "date": "Date",
+          "items": "Articles",
+          "total": "Total",
+          "status": "Statut",
+          "paymentStatus": "Paiement",
+          "actions": "Actions"
+        },
+        "walkIn": "Client de passage",
+        "emptyState": {
+          "title": "Aucune commande ne correspond à vos filtres",
+          "description": "Essayez d'ajuster vos filtres ou la plage de dates.",
+          "noFiltersTitle": "Aucune commande",
+          "noFiltersDescription": "Créez votre première commande pour commencer."
+        },
+        "filters": {
+          "status": "Statut",
+          "customer": "Client",
+          "dateFrom": "Date début",
+          "dateTo": "Date fin",
+          "allStatuses": "Tous les statuts",
+          "allCustomers": "Tous les clients",
+          "clearFilters": "Effacer les filtres"
+        }
+      },
+      "actions": {
+        "confirm": "Confirmer la commande",
+        "markInTransit": "Marquer en transit",
+        "ship": "Expédier la commande",
+        "complete": "Terminer la commande",
+        "cancel": "Annuler la commande",
+        "return": "Retourner la commande",
+        "edit": "Modifier",
+        "view": "Voir"
+      },
+      "confirmDialog": {
+        "confirmTitle": "Confirmer la commande",
+        "confirmMessage": "Êtes-vous sûr de vouloir confirmer cette commande ? Cela changera le statut à Confirmée.",
+        "transitTitle": "Marquer en transit",
+        "transitMessage": "Êtes-vous sûr de vouloir marquer cette commande comme en transit ?",
+        "shipTitle": "Expédier la commande",
+        "shipMessage": "Êtes-vous sûr de vouloir marquer cette commande comme expédiée ?",
+        "trackingNumber": "Numéro de suivi",
+        "trackingNumberPlaceholder": "Entrez le numéro de suivi (facultatif)",
+        "completeTitle": "Terminer la commande",
+        "completeMessage": "Êtes-vous sûr de vouloir terminer cette commande ? Cette action finalise la commande.",
+        "cancelTitle": "Annuler la commande",
+        "cancelMessage": "Êtes-vous sûr de vouloir annuler cette commande ? Cette action est irréversible et restaurera l'inventaire.",
+        "returnTitle": "Retourner la commande",
+        "returnMessage": "Êtes-vous sûr de vouloir traiter un retour pour cette commande ? Cela restaurera l'inventaire."
+      },
+      "create": {
+        "title": "Créer une commande",
+        "walkInToggle": "Vente de passage",
+        "walkInDescription": "Pas de fiche client requise. La commande sera terminée immédiatement.",
+        "selectCustomer": "Client",
+        "selectCustomerPlaceholder": "Sélectionner un client...",
+        "notes": "Notes de commande",
+        "notesPlaceholder": "Ajoutez des notes sur cette commande...",
+        "orderSummary": "Résumé de la commande",
+        "subtotal": "Sous-total",
+        "total": "Total",
+        "createOrder": "Créer la commande",
+        "completeSale": "Finaliser la vente",
+        "creating": "Création..."
+      },
+      "items": {
+        "title": "Articles de la commande",
+        "addItem": "Ajouter un article",
+        "product": "Produit",
+        "selectProduct": "Sélectionner un produit...",
+        "location": "Emplacement",
+        "selectLocation": "Sélectionner un emplacement...",
+        "quantity": "Qté",
+        "unitPrice": "Prix unitaire",
+        "subtotal": "Sous-total",
+        "remove": "Supprimer",
+        "availableStock": "Disponible : {{count}} unités",
+        "noStock": "Aucun stock disponible",
+        "selectProductFirst": "Sélectionnez d'abord un produit",
+        "duplicateWarning": "Cette combinaison produit et emplacement existe déjà",
+        "noItems": "Aucun article ajouté",
+        "noItemsDescription": "Ajoutez au moins un article pour créer une commande."
+      },
+      "detail": {
+        "title": "Commande #{{orderNumber}}",
+        "orderInfo": "Informations de la commande",
+        "customer": "Client",
+        "orderDate": "Date de commande",
+        "status": "Statut",
+        "paymentStatus": "Statut de paiement",
+        "notes": "Notes",
+        "noNotes": "Aucune note pour cette commande",
+        "lineItems": "Articles",
+        "orderTotal": "Total de la commande",
+        "notFound": "Commande introuvable",
+        "notFoundDescription": "La commande que vous recherchez n'existe pas ou a été supprimée."
+      },
+      "edit": {
+        "title": "Modifier la commande #{{orderNumber}}",
+        "onlyPendingCanEdit": "Seules les commandes en attente peuvent être modifiées.",
+        "saveChanges": "Enregistrer les modifications",
+        "saving": "Enregistrement..."
+      },
+      "toasts": {
+        "createSuccess": "Commande créée avec succès",
+        "createError": "Échec de la création de la commande",
+        "updateSuccess": "Commande mise à jour avec succès",
+        "updateError": "Échec de la mise à jour de la commande",
+        "confirmSuccess": "Commande confirmée avec succès",
+        "confirmError": "Échec de la confirmation de la commande",
+        "transitSuccess": "Commande marquée comme en transit",
+        "transitError": "Échec de la mise à jour du statut",
+        "shipSuccess": "Commande expédiée avec succès",
+        "shipError": "Échec de l'expédition de la commande",
+        "completeSuccess": "Commande terminée avec succès",
+        "completeError": "Échec de la finalisation de la commande",
+        "cancelSuccess": "Commande annulée avec succès",
+        "cancelError": "Échec de l'annulation de la commande",
+        "returnSuccess": "Commande retournée avec succès",
+        "returnError": "Échec du traitement du retour",
+        "validationError": "Erreur de validation",
+        "atLeastOneItem": "Veuillez ajouter au moins un article à la commande"
+      }
+    }
   }
 }
