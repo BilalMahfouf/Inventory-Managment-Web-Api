@@ -7,9 +7,16 @@ namespace Application.Sales.Queries;
 public interface ISalesOrderQueries
 {
     Task<Result<PagedList<SalesOrderTableResponse>>> GetSalesOrdersAsync(
-        GetSalesOrdersRequest request,
+        TableRequest request,
+        SalesOrderStatus? status,
+        int? customerId,
+        DateTime? dateFrom,
+        DateTime? dateTo,
         CancellationToken cancellationToken = default);
     Task<Result<SalesOrderReadResponse>> GetSalesOrderByIdAsync(
         int orderId,
         CancellationToken cancellationToken = default);
+    Task<Result<object>> GetDahsboardSummaryAsync(
+               CancellationToken cancellationToken = default);
+
 }

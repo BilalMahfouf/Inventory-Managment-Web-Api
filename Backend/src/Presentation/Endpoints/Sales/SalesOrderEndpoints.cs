@@ -7,7 +7,7 @@ public sealed class SalesOrderEndpoints : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("api/orders")
+        var group = app.MapGroup("api/sales-orders")
             .WithTags("Sales")
             .RequireAuthorization();
 
@@ -216,17 +216,15 @@ public sealed class SalesOrderEndpoints : ICarterModule
                 string? sortOrder,
                 CancellationToken cancellationToken = default) =>
             {
-                var request = new GetSalesOrdersRequest(
+                var request = TableRequest.Create(pageSize, pageNumber, null, sortColumn, sortOrder);
+
+                var response = await query.GetSalesOrdersAsync(
+                    request,
                     status,
                     customerId,
                     dateFrom,
                     dateTo,
-                    pageNumber,
-                    pageSize,
-                    sortColumn,
-                    sortOrder);
-
-                var response = await query.GetSalesOrdersAsync(request, cancellationToken);
+                    cancellationToken);
 
                 if (response.IsSuccess)
                 {
@@ -240,5 +238,24 @@ public sealed class SalesOrderEndpoints : ICarterModule
             .Produces<PagedList<SalesOrderTableResponse>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
+
+        group.MapGet("/summary", async (
+                       ISalesOrderQueries query,
+                       CancellationToken cancellationToken = default) =>
+                   {
+                       var response = await query.GetDahsboardSummaryAsync(cancellationToken);
+
+                       if (response.IsSuccess)
+                       {
+                           return Results.Ok(response.Value);
+                       }
+
+                       return response.Problem();
+                   })
+                   .WithSummary("Get sales summary")
+                   .WithDescription("Returns sales summary metrics.")
+                   .Produces<object>(StatusCodes.Status200OK)
+                   .ProducesProblem(StatusCodes.Status404NotFound)
+                   .ProducesProblem(StatusCodes.Status500InternalServerError);
     }
 }

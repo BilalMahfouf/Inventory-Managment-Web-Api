@@ -16,7 +16,12 @@ public class SalesOrder : Entity
 
     public PaymentStatus PaymentStatus { get; private set; }
 
-    public decimal TotalAmount => _items.Sum(i => i.LineAmount);
+    public decimal TotalAmount
+    {
+        get => _items.Sum(i => i.LineAmount);
+        private set { }
+    }
+
 
     public string? Description { get; private set; }
     public string? ShippingAddress { get; private set; }

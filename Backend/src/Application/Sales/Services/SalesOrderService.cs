@@ -126,11 +126,6 @@ public sealed class SalesOrderService
                 return Result.Failure(Error.NotFound($"Order with Id {orderId}"));
             }
 
-            if (order.SalesStatus != SalesOrderStatus.Pending)
-            {
-                return Result.Failure("Only pending orders can be updated.", ErrorType.Conflict);
-            }
-
             order.UpdatePendingDetails(
                 request.CustomerId,
                 request.Description,

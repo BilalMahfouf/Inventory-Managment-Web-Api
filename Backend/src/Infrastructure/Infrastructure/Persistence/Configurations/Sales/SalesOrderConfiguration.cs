@@ -22,6 +22,7 @@ namespace Infrastructure.Infrastructure.Persistence.Configurations.Sales
             entity.Property(e => e.IsWalkIn).HasDefaultValue(false);
             entity.Property(e => e.ShippingAddress).HasMaxLength(500);
             entity.Property(e => e.TrackingNumber).HasMaxLength(150);
+            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.CreatedByUser).WithMany()
                 .HasForeignKey(d => d.CreatedByUserId)

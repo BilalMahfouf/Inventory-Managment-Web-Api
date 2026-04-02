@@ -19,33 +19,37 @@ internal class SalesOrderQueries : ISalesOrderQueries
     }
 
     public async Task<Result<PagedList<SalesOrderTableResponse>>> GetSalesOrdersAsync(
-        GetSalesOrdersRequest request,
+        TableRequest request,
+        SalesOrderStatus? status,
+        int? customerId,
+        DateTime? dateFrom,
+        DateTime? dateTo,
         CancellationToken cancellationToken = default)
     {
-        var page = request.PageNumber is null || request.PageNumber <= 0 ? 1 : request.PageNumber.Value;
-        var pageSize = request.PageSize is null || request.PageSize <= 0 ? 10 : request.PageSize.Value;
+        var page = request.Page <= 0 ? 1 : request.Page;
+        var pageSize = request.PageSize <= 0 ? 10 : request.PageSize;
 
         var query = _context.SalesOrders.AsNoTracking();
 
-        if (request.Status is not null)
+        if (status is not null)
         {
-            query = query.Where(e => e.SalesStatus == request.Status.Value);
+            query = query.Where(e => e.SalesStatus == status.Value);
         }
 
-        if (request.CustomerId is not null)
+        if (customerId is not null)
         {
-            query = query.Where(e => e.CustomerId == request.CustomerId.Value);
+            query = query.Where(e => e.CustomerId == customerId.Value);
         }
 
-        if (request.DateFrom is not null)
+        if (dateFrom is not null)
         {
-            var fromDate = request.DateFrom.Value.Date;
+            var fromDate = dateFrom.Value.Date;
             query = query.Where(e => e.OrderDate >= fromDate);
         }
 
-        if (request.DateTo is not null)
+        if (dateTo is not null)
         {
-            var nextDate = request.DateTo.Value.Date.AddDays(1);
+            var nextDate = dateTo.Value.Date.AddDays(1);
             query = query.Where(e => e.OrderDate < nextDate);
         }
 
@@ -144,4 +148,29 @@ internal class SalesOrderQueries : ISalesOrderQueries
 
         return Result<SalesOrderReadResponse>.Success(order);
     }
+
+    public async Task<Result<object>> GetDahsboardSummaryAsync(
+           CancellationToken cancellationToken = default)
+    {
+        var totalOrders = await _context.SalesOrders.CountAsync(cancellationToken);
+        var pendingOrders = await _context.SalesOrders
+            .CountAsync(e => e.SalesStatus == SalesOrderStatus.Pending
+            , cancellationToken);
+
+        var averageOrderValue = await _context.SalesOrders
+            .AverageAsync(e => e.TotalAmount, cancellationToken);
+
+        var revenueThisMonth = await _context.SalesOrders
+            .Where(e => e.OrderDate >= DateTime.UtcNow.AddMonths(-1))
+            .SumAsync(e => e.TotalAmount, cancellationToken);
+        var dashboardSummary = new
+        {
+            TotalOrders = totalOrders,
+            PendingOrders = pendingOrders,
+            AverageOrderValue = averageOrderValue,
+            RevenueThisMonth = revenueThisMonth
+        };
+        return Result<object>.Success(dashboardSummary);
+    }
+
 }
