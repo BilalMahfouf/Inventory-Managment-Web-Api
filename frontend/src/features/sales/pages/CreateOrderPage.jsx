@@ -32,12 +32,28 @@ export default function CreateOrderPage() {
   const [notes, setNotes] = useState('');
 
   // Fetch customers for dropdown
-  const { data: customersResponse, isLoading: customersLoading } = useQuery({
+  const {
+    data: customersResponse,
+    isLoading: customersLoading,
+    isError: customersQueryError,
+    error: customersQueryErrorDetails,
+  } = useQuery({
     queryKey: queryKeys.customers.table({ page: 1, pageSize: 100 }),
     queryFn: () => getCustomers({ page: 1, pageSize: 100 }),
   });
 
-  const customers = customersResponse?.success ? customersResponse.data?.items || [] : [];
+  const customersPayload = customersResponse?.success ? customersResponse?.data : null;
+  const customers = Array.isArray(customersPayload?.item)
+    ? customersPayload.item
+    : Array.isArray(customersPayload?.items)
+      ? customersPayload.items
+      : [];
+
+  const customersErrorMessage = customersQueryError
+    ? customersQueryErrorDetails?.message || 'Failed to load customers.'
+    : customersResponse?.success === false
+      ? customersResponse?.error || 'Failed to load customers.'
+      : null;
 
   const calculateTotal = () => {
     return items.reduce((sum, item) => {
@@ -90,13 +106,13 @@ export default function CreateOrderPage() {
       if (result.success) {
         navigate(`/orders/${result.data?.id || ''}`);
       }
-    } catch (error) {
+    } catch {
       // Error handling is done in the hook
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="w-full max-w-none px-2 md:px-4">
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <Button
@@ -161,11 +177,17 @@ export default function CreateOrderPage() {
             <select
               value={customerId}
               onChange={e => setCustomerId(e.target.value)}
-              disabled={customersLoading}
+              disabled={customersLoading || !!customersErrorMessage}
               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
             >
               <option value="">
-                {t(i18nKeyContainer.sales.orders.create.selectCustomerPlaceholder)}
+                {customersLoading
+                  ? 'Loading customers...'
+                  : customersErrorMessage
+                    ? 'Failed to load customers'
+                    : customers.length === 0
+                      ? 'No customers found'
+                      : t(i18nKeyContainer.sales.orders.create.selectCustomerPlaceholder)}
               </option>
               {customers.map(customer => (
                 <option key={customer.id} value={customer.id}>
@@ -173,11 +195,14 @@ export default function CreateOrderPage() {
                 </option>
               ))}
             </select>
+            {customersErrorMessage && (
+              <p className="mt-2 text-sm text-red-600">{customersErrorMessage}</p>
+            )}
           </div>
         )}
 
         {/* Order Items */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 md:p-4 lg:p-5">
           <OrderItemsForm value={items} onChange={setItems} />
         </div>
 
