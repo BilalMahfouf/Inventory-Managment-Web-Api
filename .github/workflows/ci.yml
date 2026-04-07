@@ -25,10 +25,10 @@ jobs:
         run:  dotnet restore ${{ env.SOLUTION_PATH }}
 
       -  name: Build
-         run:  dotnet build ${{ env.SOLUTION_PATH }} --no-restore --configuration Release
+         run:  dotnet build ${{ env.SOLUTION_PATH }} --no-restore 
 
-      -  name: Run tests
-         run:  dotnet test ${{ env.SOLUTION_PATH }} --no-build --configuration Release  --logger "trx;LogFileName=results.trx"
+      -  name: Run unit tests
+         run:  dotnet test ${{ env.SOLUTION_PATH }} --no-build --logger "trx;LogFileName=results.trx"
 
       -  name: Upload test results
          uses: actions/upload-artifact@v4
@@ -36,4 +36,5 @@ jobs:
          with:
           name: test-results
           path: "**/*.trx"
+
 
