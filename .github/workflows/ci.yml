@@ -2,6 +2,7 @@ name: Continuous Integration
 env:
   DOTNET_VERSION: 10.x
   SOLUTION_PATH: Backend/InventoryManagentSystemWebApi1.sln
+  TESTS_FOLDER_PATH: Backend/Tests/
 
 on:
   pull_request:
@@ -25,10 +26,13 @@ jobs:
         run:  dotnet restore ${{ env.SOLUTION_PATH }}
 
       -  name: Build
-         run:  dotnet build ${{ env.SOLUTION_PATH }} --no-restore 
+         run:  dotnet build ${{ env.SOLUTION_PATH }} --no-restore
 
       -  name: Run unit tests
-         run:  dotnet test ${{ env.SOLUTION_PATH }} --no-build --logger "trx;LogFileName=results.trx"
+         run:  dotnet test ${{ env.TESTS_FOLDER_PATH }}Application.Tests1 --no-build --logger "trx;LogFileName=unit_results.trx"
+
+      - name: Run Integration tests
+        run:  dotnet test ${{ env.TESTS_FOLDER_PATH }}Application.IntegrationTests --no-build --logger "trx;LogFileName=Integration_results.trx"
 
       -  name: Upload test results
          uses: actions/upload-artifact@v4
@@ -36,5 +40,6 @@ jobs:
          with:
           name: test-results
           path: "**/*.trx"
+
 
 
