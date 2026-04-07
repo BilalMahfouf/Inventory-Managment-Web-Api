@@ -146,6 +146,8 @@ public sealed class SalesOrderService
                         item.OrderedQuantity,
                         StockMovementTypeEnum.SalesOrder,
                         $"Sales order {order.Id} update restore");
+
+                    _uow.SalesOrderItems.Delete(item);
                     order.RemoveItem(item);
                 }
 
