@@ -93,6 +93,7 @@ public class SalesOrder : Entity
 
     public static SalesOrder CreateWalkIn(
         List<SalesOrderItemRequest> items,
+        PaymentStatus paymentStatus,
         string? description = null)
     {
         if (items is null || items.Count == 0)
@@ -105,6 +106,7 @@ public class SalesOrder : Entity
             OrderDate = DateTime.UtcNow,
             SalesStatus = SalesOrderStatus.Completed,
             SalesStatusUpdatedAt = DateTime.UtcNow,
+            PaymentStatus=paymentStatus
         };
 
         foreach (var item in items)

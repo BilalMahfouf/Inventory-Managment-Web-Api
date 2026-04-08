@@ -120,7 +120,7 @@ internal class SalesOrderQueries : ISalesOrderQueries
                 CustomerEmail = e.Customer != null ? e.Customer.Email : null,
                 IsWalkIn = e.IsWalkIn,
                 OrderDate = e.OrderDate,
-                TotalAmount = e.Items.Sum(i => i.LineAmount),
+                TotalAmount = e.TotalAmount,
                 SalesStatus = e.SalesStatus.ToString(),
                 PaymentStatus = e.PaymentStatus.ToString(),
                 Description = e.Description,
@@ -163,12 +163,18 @@ internal class SalesOrderQueries : ISalesOrderQueries
         var revenueThisMonth = await _context.SalesOrders
             .Where(e => e.OrderDate >= DateTime.UtcNow.AddMonths(-1))
             .SumAsync(e => e.TotalAmount, cancellationToken);
+        var completedOrders = await _context.SalesOrders
+           .CountAsync(
+            e => e.SalesStatus == SalesOrderStatus.Completed,
+            cancellationToken);
+
         var dashboardSummary = new
         {
             TotalOrders = totalOrders,
             PendingOrders = pendingOrders,
             AverageOrderValue = averageOrderValue,
-            RevenueThisMonth = revenueThisMonth
+            RevenueThisMonth = revenueThisMonth,
+            CompletedOrders = completedOrders,
         };
         return Result<object>.Success(dashboardSummary);
     }

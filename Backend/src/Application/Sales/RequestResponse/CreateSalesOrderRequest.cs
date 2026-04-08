@@ -5,4 +5,5 @@ public sealed record CreateSalesOrderRequest(
     string? Description,
     bool IsWalkIn,
     string? ShippingAddress,
+    PaymentStatus PaymentStatus,
     IEnumerable<SalesOrderItemRequest> Items);

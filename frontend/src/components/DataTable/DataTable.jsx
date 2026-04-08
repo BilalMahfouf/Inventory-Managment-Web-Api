@@ -33,6 +33,7 @@ const DataTable = ({
   onView = null,
   onEdit = null,
   onDelete = null,
+  customActions = null,
   actionsColumnHeader = 'Actions',
 }) => {
   const [sorting, setSorting] = useState([]);
@@ -45,77 +46,129 @@ const DataTable = ({
     () => ({
       id: 'actions',
       header: actionsColumnHeader,
-      cell: ({ row }) => (
-        <div className='relative'>
-          <button
-            onClick={() =>
-              setOpenDropdown(openDropdown === row.id ? null : row.id)
-            }
-            className='p-1 hover:bg-gray-100 rounded-md transition-colors cursor-pointer'
-            aria-label='Actions menu'
-          >
-            <MoreHorizontal className='w-5 h-5 text-gray-600' />
-          </button>
+      cell: ({ row }) => {
+        const rowActions =
+          typeof customActions === 'function'
+            ? customActions(row.original)
+            : Array.isArray(customActions)
+              ? customActions
+              : [];
 
-          {openDropdown === row.id && (
-            <>
-              <div
-                className='fixed inset-0 z-10 '
-                onClick={() => setOpenDropdown(null)}
-              />
-              <div className='absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg border border-gray-200 z-20'>
-                {onView && (
-                  <button
-                    onClick={() => {
-                      onView(row.original);
-                      setOpenDropdown(null);
-                    }}
-                    className='w-full px-4 py-2 cursor-pointer text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors'
-                  >
-                    <Eye className='w-4 h-4' />
-                    View
-                  </button>
-                )}
-                {onEdit && (
-                  <button
-                    onClick={() => {
-                      onEdit(row.original);
-                      setOpenDropdown(null);
-                    }}
-                    className='w-full px-4 py-2 text-left cursor-pointer text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors'
-                  >
-                    <Pencil className='w-4 h-4' />
-                    Edit
-                  </button>
-                )}
-                {onDelete && (
-                  <button
-                    onClick={() => {
-                      onDelete(row.original);
-                      setOpenDropdown(null);
-                    }}
-                    className='w-full px-4 cursor-pointer py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors'
-                  >
-                    <Trash2 className='w-4 h-4' />
-                    Delete
-                  </button>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-      ),
+        return (
+          <div className='relative'>
+            <button
+              onClick={() =>
+                setOpenDropdown(openDropdown === row.id ? null : row.id)
+              }
+              className='p-1 hover:bg-gray-100 rounded-md transition-colors cursor-pointer'
+              aria-label='Actions menu'
+            >
+              <MoreHorizontal className='w-5 h-5 text-gray-600' />
+            </button>
+
+            {openDropdown === row.id && (
+              <>
+                <div
+                  className='fixed inset-0 z-10 '
+                  onClick={() => setOpenDropdown(null)}
+                />
+                <div className='absolute right-0 mt-2 w-52 bg-white rounded-md shadow-lg border border-gray-200 z-20'>
+                  {onView && (
+                    <button
+                      onClick={() => {
+                        onView(row.original);
+                        setOpenDropdown(null);
+                      }}
+                      className='w-full px-4 py-2 cursor-pointer text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors'
+                    >
+                      <Eye className='w-4 h-4' />
+                      View
+                    </button>
+                  )}
+                  {onEdit && (
+                    <button
+                      onClick={() => {
+                        onEdit(row.original);
+                        setOpenDropdown(null);
+                      }}
+                      className='w-full px-4 py-2 text-left cursor-pointer text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors'
+                    >
+                      <Pencil className='w-4 h-4' />
+                      Edit
+                    </button>
+                  )}
+                  {rowActions.map((action, index) => {
+                    if (
+                      !action?.label ||
+                      typeof action?.onClick !== 'function'
+                    ) {
+                      return null;
+                    }
+
+                    if (action.hidden) {
+                      return null;
+                    }
+
+                    const Icon = action.icon;
+                    const isDestructive = action.variant === 'destructive';
+
+                    return (
+                      <button
+                        key={action.key || `${action.label}-${index}`}
+                        onClick={() => {
+                          if (action.disabled) return;
+                          action.onClick(row.original);
+                          setOpenDropdown(null);
+                        }}
+                        disabled={Boolean(action.disabled)}
+                        className={`w-full px-4 py-2 text-left cursor-pointer text-sm flex items-center gap-2 transition-colors ${
+                          isDestructive
+                            ? 'text-red-600 hover:bg-red-50'
+                            : 'text-gray-700 hover:bg-gray-100'
+                        } ${action.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      >
+                        {Icon && <Icon className='w-4 h-4' />}
+                        {action.label}
+                      </button>
+                    );
+                  })}
+                  {onDelete && (
+                    <button
+                      onClick={() => {
+                        onDelete(row.original);
+                        setOpenDropdown(null);
+                      }}
+                      className='w-full px-4 cursor-pointer py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors'
+                    >
+                      <Trash2 className='w-4 h-4' />
+                      Delete
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        );
+      },
     }),
-    [onView, onEdit, onDelete, actionsColumnHeader, openDropdown]
+    [onView, onEdit, onDelete, customActions, actionsColumnHeader, openDropdown]
   );
 
   // Combine columns with actions column
   const tableColumns = useMemo(() => {
-    if (enableActions && (onView || onEdit || onDelete)) {
+    if (enableActions && (onView || onEdit || onDelete || customActions)) {
       return [...columns, actionsColumn];
     }
     return columns;
-  }, [columns, actionsColumn, enableActions, onView, onEdit, onDelete]);
+  }, [
+    columns,
+    actionsColumn,
+    enableActions,
+    onView,
+    onEdit,
+    onDelete,
+    customActions,
+  ]);
 
   // Handle sorting changes - reset page to initial value when sorting
   const handleSortingChange = updater => {

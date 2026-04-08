@@ -48,13 +48,13 @@ public sealed class SalesOrderService
                 }
 
                 var inventory = await _uow.Inventories.FindAsync(
-                    e => e.Id == item.InventoryId,
+                    e => e.ProductId == item.ProductId && e.LocationId == item.LocationId,
                     cancellationToken,
                     includeProperties: nameof(Inventory.Product));
 
                 if (inventory is null)
                 {
-                    return Result<int>.Failure(Error.NotFound($"Inventory with id {item.InventoryId}"));
+                    return Result<int>.Failure(Error.NotFound("Inventory not found"));
                 }
 
                 if (inventory.ProductId != item.ProductId)
@@ -83,7 +83,10 @@ public sealed class SalesOrderService
             SalesOrder order;
             if (request.IsWalkIn)
             {
-                order = SalesOrder.CreateWalkIn(items, request.Description);
+                order = SalesOrder.CreateWalkIn(
+                    items,
+                    request.PaymentStatus,
+                    request.Description);
             }
             else
             {
@@ -152,11 +155,11 @@ public sealed class SalesOrderService
                 }
 
                 var mergedItems = request.Items
-                    .GroupBy(i => new { i.ProductId, i.InventoryId })
+                    .GroupBy(i => new { i.ProductId, i.LocationId })
                     .Select(g => new
                     {
                         g.Key.ProductId,
-                        g.Key.InventoryId,
+                        g.Key.LocationId,
                         Quantity = g.Sum(x => x.Quantity),
                     })
                     .ToList();
@@ -169,13 +172,14 @@ public sealed class SalesOrderService
                     }
 
                     var inventory = await _uow.Inventories.FindAsync(
-                        e => e.Id == item.InventoryId,
+                        e => e.LocationId == item.LocationId
+                        && e.ProductId == item.ProductId,
                         cancellationToken,
                         includeProperties: nameof(Inventory.Product));
 
                     if (inventory is null)
                     {
-                        return Result.Failure(Error.NotFound($"Inventory with id {item.InventoryId}"));
+                        return Result.Failure(Error.NotFound($"Inventory with id {item.LocationId}"));
                     }
 
                     if (inventory.ProductId != item.ProductId)

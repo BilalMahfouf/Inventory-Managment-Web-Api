@@ -2,5 +2,5 @@
 
 public sealed record SalesOrderItemRequest(
 	int ProductId,
-	int InventoryId,
+	int LocationId,
 	decimal Quantity);
