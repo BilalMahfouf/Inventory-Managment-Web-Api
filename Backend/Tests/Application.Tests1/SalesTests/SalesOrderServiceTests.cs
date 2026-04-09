@@ -1,4 +1,5 @@
 using Application.Inventories;
+using Application.Sales;
 using Application.Sales.RequestResponse;
 using Application.Sales.Services;
 using Application.Shared.Contracts;
@@ -23,11 +24,13 @@ public class SalesOrderServiceTests
 {
     private readonly Mock<IUnitOfWork> _uowMock = new();
     private readonly Mock<IBaseRepository<SalesOrder>> _salesOrderRepositoryMock = new();
+    private readonly Mock<ISalesOrderItemRepository> _salesOrderItemRepositoryMock = new();
     private readonly Mock<IInventoryRepository> _inventoryRepositoryMock = new();
 
     private SalesOrderService CreateService()
     {
         _uowMock.SetupGet(u => u.SalesOrders).Returns(_salesOrderRepositoryMock.Object);
+        _uowMock.SetupGet(u => u.SalesOrderItems).Returns(_salesOrderItemRepositoryMock.Object);
         _uowMock.SetupGet(u => u.Inventories).Returns(_inventoryRepositoryMock.Object);
         _uowMock.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
@@ -118,9 +121,10 @@ public class SalesOrderServiceTests
             Description: "Test Order",
             IsWalkIn: false,
             ShippingAddress: "Main Street",
+            PaymentStatus: PaymentStatus.Unpaid,
             Items: new List<AppSalesOrderItemRequest>
             {
-                new(ProductId: 1, InventoryId: 99, Quantity: 10),
+                new(ProductId: 1, LocationId: 99, Quantity: 10),
             });
 
         _inventoryRepositoryMock.Setup(r => r.FindAsync(
@@ -144,6 +148,7 @@ public class SalesOrderServiceTests
             Description: "Test Order",
             IsWalkIn: false,
             ShippingAddress: "Main Street",
+            PaymentStatus: PaymentStatus.Unpaid,
             Items: null!);
 
         var service = CreateService();
@@ -162,6 +167,7 @@ public class SalesOrderServiceTests
             Description: "Test Order",
             IsWalkIn: false,
             ShippingAddress: "Main Street",
+            PaymentStatus: PaymentStatus.Unpaid,
             Items: new List<AppSalesOrderItemRequest>());
 
         var service = CreateService();
@@ -181,9 +187,10 @@ public class SalesOrderServiceTests
             Description: "Test Order",
             IsWalkIn: false,
             ShippingAddress: "Main Street",
+            PaymentStatus: PaymentStatus.Unpaid,
             Items: new List<AppSalesOrderItemRequest>
             {
-                new(ProductId: 1, InventoryId: 1, Quantity: 10),
+                new(ProductId: 1, LocationId: 1, Quantity: 10),
             });
 
         _inventoryRepositoryMock.Setup(r => r.FindAsync(
@@ -207,9 +214,10 @@ public class SalesOrderServiceTests
             Description: "Order",
             IsWalkIn: false,
             ShippingAddress: "Main Street",
+            PaymentStatus: PaymentStatus.Unpaid,
             Items: new List<AppSalesOrderItemRequest>
             {
-                new(ProductId: 1, InventoryId: 1, Quantity: 1),
+                new(ProductId: 1, LocationId: 1, Quantity: 1),
             });
 
         var service = CreateService();
@@ -228,9 +236,10 @@ public class SalesOrderServiceTests
             Description: "Order",
             IsWalkIn: true,
             ShippingAddress: null,
+            PaymentStatus: PaymentStatus.Unpaid,
             Items: new List<AppSalesOrderItemRequest>
             {
-                new(ProductId: 1, InventoryId: 1, Quantity: 1),
+                new(ProductId: 1, LocationId: 1, Quantity: 1),
             });
 
         var service = CreateService();
@@ -249,9 +258,10 @@ public class SalesOrderServiceTests
             Description: "Order",
             IsWalkIn: false,
             ShippingAddress: "Address",
+            PaymentStatus: PaymentStatus.Unpaid,
             Items: new List<AppSalesOrderItemRequest>
             {
-                new(ProductId: 1, InventoryId: 1, Quantity: 0),
+                new(ProductId: 1, LocationId: 1, Quantity: 0),
             });
 
         var service = CreateService();
@@ -270,9 +280,10 @@ public class SalesOrderServiceTests
             Description: "Order",
             IsWalkIn: false,
             ShippingAddress: "Address",
+            PaymentStatus: PaymentStatus.Unpaid,
             Items: new List<AppSalesOrderItemRequest>
             {
-                new(ProductId: 2, InventoryId: 1, Quantity: 3),
+                new(ProductId: 2, LocationId: 1, Quantity: 3),
             });
 
         var inventory = CreateInventory(inventoryId: 1, productId: 1, quantityOnHand: 100);
@@ -297,9 +308,10 @@ public class SalesOrderServiceTests
             Description: "Order",
             IsWalkIn: false,
             ShippingAddress: "Address",
+            PaymentStatus: PaymentStatus.Unpaid,
             Items: new List<AppSalesOrderItemRequest>
             {
-                new(ProductId: 1, InventoryId: 1, Quantity: 50),
+                new(ProductId: 1, LocationId: 1, Quantity: 50),
             });
 
         var inventory = CreateInventory(inventoryId: 1, productId: 1, quantityOnHand: 10);
@@ -324,9 +336,10 @@ public class SalesOrderServiceTests
             Description: "Order",
             IsWalkIn: false,
             ShippingAddress: "Address",
+            PaymentStatus: PaymentStatus.Unpaid,
             Items: new List<AppSalesOrderItemRequest>
             {
-                new(ProductId: 1, InventoryId: 11, Quantity: 4),
+                new(ProductId: 1, LocationId: 11, Quantity: 4),
             });
 
         var inventory = CreateInventory(inventoryId: 11, productId: 1, quantityOnHand: 30);
@@ -357,9 +370,10 @@ public class SalesOrderServiceTests
             Description: "Walk in",
             IsWalkIn: true,
             ShippingAddress: null,
+            PaymentStatus: PaymentStatus.Unpaid,
             Items: new List<AppSalesOrderItemRequest>
             {
-                new(ProductId: 1, InventoryId: 11, Quantity: 2),
+                new(ProductId: 1, LocationId: 11, Quantity: 2),
             });
 
         var inventory = CreateInventory(inventoryId: 11, productId: 1, quantityOnHand: 30);
@@ -390,9 +404,10 @@ public class SalesOrderServiceTests
             Description: "Test Order",
             IsWalkIn: false,
             ShippingAddress: "Main Street",
+            PaymentStatus: PaymentStatus.Unpaid,
             Items: new List<AppSalesOrderItemRequest>
             {
-                new(ProductId: 1, InventoryId: 1, Quantity: 10),
+                new(ProductId: 1, LocationId: 1, Quantity: 10),
             });
 
         _inventoryRepositoryMock.Setup(r => r.FindAsync(
@@ -434,6 +449,7 @@ public class SalesOrderServiceTests
             {
                 CreateDomainOrderItemRequest(inventory, 2),
             },
+            PaymentStatus.Paid,
             "Walk in");
 
         _salesOrderRepositoryMock.Setup(r => r.FindAsync(
@@ -513,7 +529,7 @@ public class SalesOrderServiceTests
             "Address",
             new List<AppSalesOrderItemRequest>
             {
-                new(ProductId: 1, InventoryId: 1, Quantity: 0),
+                new(ProductId: 1, LocationId: 1, Quantity: 0),
             });
 
         var service = CreateService();
@@ -547,7 +563,7 @@ public class SalesOrderServiceTests
             "Address",
             new List<AppSalesOrderItemRequest>
             {
-                new(ProductId: 2, InventoryId: 2, Quantity: 2),
+                new(ProductId: 2, LocationId: 2, Quantity: 2),
             });
 
         var service = CreateService();
@@ -583,7 +599,7 @@ public class SalesOrderServiceTests
             "Address",
             new List<AppSalesOrderItemRequest>
             {
-                new(ProductId: 2, InventoryId: 2, Quantity: 2),
+                new(ProductId: 2, LocationId: 2, Quantity: 2),
             });
 
         var service = CreateService();
@@ -619,7 +635,7 @@ public class SalesOrderServiceTests
             "Address",
             new List<AppSalesOrderItemRequest>
             {
-                new(ProductId: 2, InventoryId: 2, Quantity: 2),
+                new(ProductId: 2, LocationId: 2, Quantity: 2),
             });
 
         var service = CreateService();
@@ -656,7 +672,7 @@ public class SalesOrderServiceTests
             "Address",
             new List<AppSalesOrderItemRequest>
             {
-                new(ProductId: 2, InventoryId: 2, Quantity: 2),
+                new(ProductId: 2, LocationId: 2, Quantity: 2),
             });
 
         var service = CreateService();
@@ -716,8 +732,8 @@ public class SalesOrderServiceTests
             "Address",
             new List<AppSalesOrderItemRequest>
             {
-                new(ProductId: 2, InventoryId: 2, Quantity: 2),
-                new(ProductId: 2, InventoryId: 2, Quantity: 3),
+                new(ProductId: 2, LocationId: 2, Quantity: 2),
+                new(ProductId: 2, LocationId: 2, Quantity: 3),
             });
 
         var service = CreateService();

@@ -31,7 +31,8 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Order description",
             false,
             "Main shipping address",
-            [new AppSalesOrderItemRequest(product.Id, inventory.Id, 4m)]);
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(product.Id, inventory.LocationId, 4m)]);
 
         // Act
         var result = await SalesOrderService.CreateSalesOrderAsync(request);
@@ -64,7 +65,8 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Walk-in order",
             true,
             null,
-            [new AppSalesOrderItemRequest(product.Id, inventory.Id, 2m)]);
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(product.Id, inventory.LocationId, 2m)]);
 
         // Act
         var result = await SalesOrderService.CreateSalesOrderAsync(request);
@@ -92,6 +94,7 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Order",
             false,
             "Address",
+            PaymentStatus.Unpaid,
             null!);
 
         // Act
@@ -111,6 +114,7 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Order",
             false,
             "Address",
+            PaymentStatus.Unpaid,
             []);
 
         // Act
@@ -130,6 +134,7 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Order",
             false,
             "Address",
+            PaymentStatus.Unpaid,
             [new AppSalesOrderItemRequest(1, 1, 1m)]);
 
         // Act
@@ -149,6 +154,7 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Order",
             true,
             null,
+            PaymentStatus.Unpaid,
             [new AppSalesOrderItemRequest(1, 1, 1m)]);
 
         // Act
@@ -170,7 +176,8 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Order",
             false,
             "Address",
-            [new AppSalesOrderItemRequest(product.Id, inventory.Id, -3m)]);
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(product.Id, inventory.LocationId, -3m)]);
 
         // Act
         var result = await SalesOrderService.CreateSalesOrderAsync(request);
@@ -192,6 +199,7 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Order",
             false,
             "Address",
+            PaymentStatus.Unpaid,
             [new AppSalesOrderItemRequest(product.Id, 999_999, 1m)]);
 
         // Act
@@ -203,7 +211,7 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async Task CreateSalesOrderAsync_InventoryProductMismatch_ReturnsValidationFailure()
+    public async Task CreateSalesOrderAsync_InventoryProductMismatch_ReturnsNotFoundFailure()
     {
         // Arrange
         var customer = await CreateCustomerAsync();
@@ -214,14 +222,15 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Order",
             false,
             "Address",
-            [new AppSalesOrderItemRequest(inventory.ProductId + 100, inventory.Id, 1m)]);
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(inventory.ProductId + 100, inventory.LocationId, 1m)]);
 
         // Act
         var result = await SalesOrderService.CreateSalesOrderAsync(request);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Error.Type.Should().Be(ErrorType.Validation);
+        result.Error.Type.Should().Be(ErrorType.NotFound);
     }
 
     [Fact]
@@ -236,7 +245,8 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Order",
             false,
             "Address",
-            [new AppSalesOrderItemRequest(product.Id, inventory.Id, 10m)]);
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(product.Id, inventory.LocationId, 10m)]);
 
         // Act
         var result = await SalesOrderService.CreateSalesOrderAsync(request);
@@ -258,7 +268,8 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Duplicate check",
             false,
             "Address",
-            [new AppSalesOrderItemRequest(product.Id, inventory.Id, 1m)]);
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(product.Id, inventory.LocationId, 1m)]);
 
         // Act
         var firstResult = await SalesOrderService.CreateSalesOrderAsync(request);
@@ -286,7 +297,8 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Original description",
             false,
             "Original address",
-            [new AppSalesOrderItemRequest(firstInventory.ProductId, firstInventory.Id, 3m)]));
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(firstInventory.ProductId, firstInventory.LocationId, 3m)]));
 
         createResult.IsSuccess.Should().BeTrue();
 
@@ -295,8 +307,8 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Updated description",
             "Updated address",
             [
-                new AppSalesOrderItemRequest(secondInventory.ProductId, secondInventory.Id, 1m),
-                new AppSalesOrderItemRequest(secondInventory.ProductId, secondInventory.Id, 2m),
+                new AppSalesOrderItemRequest(secondInventory.ProductId, secondInventory.LocationId, 1m),
+                new AppSalesOrderItemRequest(secondInventory.ProductId, secondInventory.LocationId, 2m),
             ]);
 
         // Act
@@ -351,7 +363,8 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Walk-in",
             true,
             null,
-            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.Id, 2m)]));
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.LocationId, 2m)]));
 
         walkInOrderResult.IsSuccess.Should().BeTrue();
 
@@ -359,7 +372,7 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             null,
             "Updated",
             "Address",
-            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.Id, 1m)]);
+            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.LocationId, 1m)]);
 
         // Act
         var result = await SalesOrderService.UpdateSalesOrderAsync(walkInOrderResult.Value, updateRequest);
@@ -381,7 +394,8 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Seed",
             false,
             "Address",
-            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.Id, 2m)]));
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.LocationId, 2m)]));
 
         createResult.IsSuccess.Should().BeTrue();
 
@@ -536,7 +550,8 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Seed",
             false,
             "Address",
-            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.Id, 5m)]));
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.LocationId, 5m)]));
 
         createResult.IsSuccess.Should().BeTrue();
 
@@ -625,7 +640,8 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Query me",
             false,
             "Address",
-            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.Id, 2m)]));
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.LocationId, 2m)]));
 
         createResult.IsSuccess.Should().BeTrue();
 
@@ -687,14 +703,16 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Customer order",
             false,
             "Address",
-            [new AppSalesOrderItemRequest(inventoryOne.ProductId, inventoryOne.Id, 2m)]));
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(inventoryOne.ProductId, inventoryOne.LocationId, 2m)]));
 
         var walkInCreate = await SalesOrderService.CreateSalesOrderAsync(new CreateSalesOrderRequest(
             null,
             "Walk-in order",
             true,
             null,
-            [new AppSalesOrderItemRequest(inventoryTwo.ProductId, inventoryTwo.Id, 1m)]));
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(inventoryTwo.ProductId, inventoryTwo.LocationId, 1m)]));
 
         nonWalkInCreate.IsSuccess.Should().BeTrue();
         walkInCreate.IsSuccess.Should().BeTrue();
@@ -727,7 +745,8 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Seed pending",
             false,
             "Address",
-            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.Id, quantity)]));
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.LocationId, quantity)]));
 
         createResult.IsSuccess.Should().BeTrue(createResult.Error.Description);
 
@@ -743,7 +762,8 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
             "Seed walk-in",
             true,
             null,
-            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.Id, 1m)]));
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.LocationId, 1m)]));
 
         createResult.IsSuccess.Should().BeTrue(createResult.Error.Description);
 
