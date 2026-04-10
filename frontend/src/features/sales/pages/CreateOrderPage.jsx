@@ -11,6 +11,7 @@ import { getCustomers } from '@features/customers/services/customerApi';
 import { useToast } from '@shared/context/ToastContext';
 import { queryKeys } from '@shared/lib/queryKeys';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { formatDzdCurrency } from '@shared/utils/currencyFormatter';
 
 const PAYMENT_STATUS_OPTIONS = [
   {
@@ -38,10 +39,11 @@ const DEFAULT_PAYMENT_STATUS = PAYMENT_STATUS_OPTIONS[0].value;
  * @route /sales-orders/new
  */
 export default function CreateOrderPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { showError } = useToast();
   const createOrder = useCreateOrder();
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
 
   const [isWalkIn, setIsWalkIn] = useState(false);
   const [customerId, setCustomerId] = useState('');
@@ -288,7 +290,9 @@ export default function CreateOrderPage() {
           </h3>
           <div className='flex justify-between items-center text-lg font-bold'>
             <span>{t(i18nKeyContainer.sales.orders.create.total)}:</span>
-            <span className='text-2xl'>${calculateTotal().toFixed(2)}</span>
+            <span className='text-2xl'>
+              {formatDzdCurrency(calculateTotal(), { locale: activeLocale })}
+            </span>
           </div>
         </div>
 

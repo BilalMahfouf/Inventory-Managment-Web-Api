@@ -7,6 +7,7 @@ import { getProductById } from '@features/products/services/productApi';
 import { useToast } from '@shared/context/ToastContext';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { formatDzdCurrency } from '@shared/utils/currencyFormatter';
 
 /**
  * ProductInfoTab Component
@@ -26,7 +27,8 @@ const ProductInfoTab = ({
   disabled = false,
   showSearch = true,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
   const { showSuccess, showError } = useToast();
   const [productSearchTerm, setProductSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
@@ -41,8 +43,13 @@ const ProductInfoTab = ({
   const handleProductSearch = async () => {
     if (!productSearchTerm.trim()) {
       showError(
-        t(i18nKeyContainer.inventory.stockTransfers.form.toasts.searchErrorTitle),
-        t(i18nKeyContainer.inventory.stockTransfers.form.toasts.searchErrorMessage)
+        t(
+          i18nKeyContainer.inventory.stockTransfers.form.toasts.searchErrorTitle
+        ),
+        t(
+          i18nKeyContainer.inventory.stockTransfers.form.toasts
+            .searchErrorMessage
+        )
       );
       return;
     }
@@ -52,7 +59,10 @@ const ProductInfoTab = ({
       const searchId = parseInt(productSearchTerm);
       if (isNaN(searchId)) {
         showError(
-          t(i18nKeyContainer.inventory.stockTransfers.form.toasts.invalidInputTitle),
+          t(
+            i18nKeyContainer.inventory.stockTransfers.form.toasts
+              .invalidInputTitle
+          ),
           t(
             i18nKeyContainer.inventory.stockTransfers.form.toasts
               .invalidInputMessage
@@ -66,15 +76,25 @@ const ProductInfoTab = ({
       if (product) {
         onProductSelect(product);
         showSuccess(
-          t(i18nKeyContainer.inventory.stockTransfers.form.toasts.productFoundTitle),
-          t(i18nKeyContainer.inventory.stockTransfers.form.toasts.productFoundMessage, {
-            name: product.name,
-          })
+          t(
+            i18nKeyContainer.inventory.stockTransfers.form.toasts
+              .productFoundTitle
+          ),
+          t(
+            i18nKeyContainer.inventory.stockTransfers.form.toasts
+              .productFoundMessage,
+            {
+              name: product.name,
+            }
+          )
         );
         setProductSearchTerm(''); // Clear search after successful selection
       } else {
         showError(
-          t(i18nKeyContainer.inventory.stockTransfers.form.toasts.productNotFoundTitle),
+          t(
+            i18nKeyContainer.inventory.stockTransfers.form.toasts
+              .productNotFoundTitle
+          ),
           t(
             i18nKeyContainer.inventory.stockTransfers.form.toasts
               .productNotFoundMessage
@@ -83,9 +103,15 @@ const ProductInfoTab = ({
       }
     } catch (error) {
       showError(
-        t(i18nKeyContainer.inventory.stockTransfers.form.toasts.searchFailedTitle),
+        t(
+          i18nKeyContainer.inventory.stockTransfers.form.toasts
+            .searchFailedTitle
+        ),
         error.message ||
-          t(i18nKeyContainer.inventory.stockTransfers.form.toasts.searchFailedMessage)
+          t(
+            i18nKeyContainer.inventory.stockTransfers.form.toasts
+              .searchFailedMessage
+          )
       );
       onProductSelect(null);
     } finally {
@@ -107,7 +133,10 @@ const ProductInfoTab = ({
       <div className='flex items-center gap-2 mb-6'>
         <Package className='h-5 w-5' />
         <h3 className='text-lg font-semibold'>
-          {t(i18nKeyContainer.inventory.stockTransfers.form.sections.productInformation)}
+          {t(
+            i18nKeyContainer.inventory.stockTransfers.form.sections
+              .productInformation
+          )}
         </h3>
       </div>
 
@@ -115,7 +144,10 @@ const ProductInfoTab = ({
       {showSearch && (
         <div className='mb-6'>
           <label className='block text-sm font-medium mb-2'>
-            {t(i18nKeyContainer.inventory.stockTransfers.form.fields.searchProduct)}{' '}
+            {t(
+              i18nKeyContainer.inventory.stockTransfers.form.fields
+                .searchProduct
+            )}{' '}
             <span className='text-red-500'>
               {t(i18nKeyContainer.inventory.shared.required)}
             </span>
@@ -145,7 +177,10 @@ const ProductInfoTab = ({
             </Button>
           </div>
           <p className='text-sm text-gray-500 mt-2'>
-            {t(i18nKeyContainer.inventory.stockTransfers.form.placeholders.searchPrompt)}
+            {t(
+              i18nKeyContainer.inventory.stockTransfers.form.placeholders
+                .searchPrompt
+            )}
           </p>
         </div>
       )}
@@ -154,12 +189,18 @@ const ProductInfoTab = ({
       {selectedProduct && (
         <div className='bg-blue-50 border border-blue-200 rounded-lg p-6'>
           <h4 className='font-semibold text-blue-900 mb-4'>
-            {t(i18nKeyContainer.inventory.stockTransfers.form.sections.selectedProduct)}
+            {t(
+              i18nKeyContainer.inventory.stockTransfers.form.sections
+                .selectedProduct
+            )}
           </h4>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <div>
               <p className='text-sm text-gray-600 mb-1'>
-                {t(i18nKeyContainer.inventory.stockTransfers.form.fields.productName)}
+                {t(
+                  i18nKeyContainer.inventory.stockTransfers.form.fields
+                    .productName
+                )}
               </p>
               <p className='font-medium text-gray-900'>
                 {selectedProduct.name}
@@ -173,7 +214,9 @@ const ProductInfoTab = ({
             </div>
             <div>
               <p className='text-sm text-gray-600 mb-1'>
-                {t(i18nKeyContainer.inventory.stockTransfers.form.fields.category)}
+                {t(
+                  i18nKeyContainer.inventory.stockTransfers.form.fields.category
+                )}
               </p>
               <p className='font-medium text-gray-900'>
                 {selectedProduct.categoryName ||
@@ -182,22 +225,32 @@ const ProductInfoTab = ({
             </div>
             <div>
               <p className='text-sm text-gray-600 mb-1'>
-                {t(i18nKeyContainer.inventory.stockTransfers.form.fields.productId)}
+                {t(
+                  i18nKeyContainer.inventory.stockTransfers.form.fields
+                    .productId
+                )}
               </p>
               <p className='font-medium text-gray-900'>#{selectedProduct.id}</p>
             </div>
 
             <div>
               <p className='text-sm text-gray-600 mb-1'>
-                {t(i18nKeyContainer.inventory.stockTransfers.form.fields.unitPrice)}
+                {t(
+                  i18nKeyContainer.inventory.stockTransfers.form.fields
+                    .unitPrice
+                )}
               </p>
               <p className='font-medium text-gray-900'>
-                ${selectedProduct.unitPrice?.toFixed(2) || '0.00'}
+                {formatDzdCurrency(selectedProduct.unitPrice || 0, {
+                  locale: activeLocale,
+                })}
               </p>
             </div>
             <div>
               <p className='text-sm text-gray-600 mb-1'>
-                {t(i18nKeyContainer.inventory.stockTransfers.form.fields.status)}
+                {t(
+                  i18nKeyContainer.inventory.stockTransfers.form.fields.status
+                )}
               </p>
               <span
                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -220,7 +273,10 @@ const ProductInfoTab = ({
         <div className='text-center py-8 text-gray-500'>
           <Package className='h-12 w-12 mx-auto mb-3 text-gray-400' />
           <p>
-            {t(i18nKeyContainer.inventory.stockTransfers.form.placeholders.searchToStart)}
+            {t(
+              i18nKeyContainer.inventory.stockTransfers.form.placeholders
+                .searchToStart
+            )}
           </p>
         </div>
       )}

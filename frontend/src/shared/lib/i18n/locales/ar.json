@@ -497,7 +497,7 @@
       "loading": "جارٍ التحميل...",
       "notAvailable": "غير متاح",
       "required": "*",
-      "currencySymbol": "$",
+      "currencySymbol": "دج",
       "status": {
         "active": "نشط",
         "inactive": "غير نشط"

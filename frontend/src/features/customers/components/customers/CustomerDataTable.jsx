@@ -13,13 +13,14 @@ import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
 import { formatAppDate } from '@shared/utils/dateFormatter';
+import { formatDzdCurrency } from '@shared/utils/currencyFormatter';
 
 const getStatusLabel = (isActive, t) =>
   isActive
     ? t(i18nKeyContainer.customers.shared.status.active)
     : t(i18nKeyContainer.customers.shared.status.inactive);
 
-const getDefaultColumns = t => [
+const getDefaultColumns = (t, locale) => [
   {
     accessorKey: 'name',
     header: t(i18nKeyContainer.customers.table.columns.customer),
@@ -47,7 +48,8 @@ const getDefaultColumns = t => [
   {
     accessorKey: 'totalSpent',
     header: t(i18nKeyContainer.customers.table.columns.totalSpent),
-    cell: ({ getValue }) => `$${Number(getValue() || 0).toFixed(2)}`,
+    cell: ({ getValue }) =>
+      formatDzdCurrency(Number(getValue() || 0), { locale }),
   },
   {
     accessorKey: 'isActive',
@@ -73,7 +75,8 @@ const getDefaultColumns = t => [
 ];
 
 export default function CustomerDataTable() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [currentCustomerId, setCurrentCustomerId] = useState(0);
   const [_viewDialogOpen, setViewDialogOpen] = useState(false);
@@ -125,7 +128,9 @@ export default function CustomerDataTable() {
         t(i18nKeyContainer.customers.table.toasts.deleteSuccessMessage)
       );
       setDeleteDialogOpen(false);
-      await queryClient.invalidateQueries({ queryKey: queryKeys.customers.all });
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.customers.all,
+      });
     },
   });
 
@@ -141,7 +146,7 @@ export default function CustomerDataTable() {
     <>
       <DataTable
         data={tableProps.data}
-        columns={getDefaultColumns(t)}
+        columns={getDefaultColumns(t, activeLocale)}
         totalRows={tableProps.totalRows}
         pageIndex={tableProps.pageIndex}
         pageSize={tableProps.pageSize}
@@ -162,7 +167,9 @@ export default function CustomerDataTable() {
           isOpen={editDialogOpen}
           onClose={() => setEditDialogOpen(false)}
           onSuccess={() => {
-            queryClient.invalidateQueries({ queryKey: queryKeys.customers.all });
+            queryClient.invalidateQueries({
+              queryKey: queryKeys.customers.all,
+            });
           }}
           customerId={currentCustomerId}
         />

@@ -10,13 +10,14 @@ import {
   ShoppingCart,
   Clock,
   CheckCircle,
-  DollarSign,
+  Wallet,
   Plus,
   ArrowRight,
 } from 'lucide-react';
 import { divStyles } from '@shared/utils/uiVariables';
 import { queryKeys } from '@shared/lib/queryKeys';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { formatDzdCurrency } from '@shared/utils/currencyFormatter';
 
 export default function SalesPage() {
   const { t, i18n } = useTranslation();
@@ -89,14 +90,11 @@ export default function SalesPage() {
         />
         <InfoCard
           title={t(i18nKeyContainer.sales.orders.cards.revenueThisMonth.title)}
-          iconComponent={DollarSign}
+          iconComponent={Wallet}
           number={
             loading
               ? '...'
-              : `$${revenueThisMonth.toLocaleString(activeLocale, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}`
+              : formatDzdCurrency(revenueThisMonth, { locale: activeLocale })
           }
           description={t(
             i18nKeyContainer.sales.orders.cards.revenueThisMonth.description

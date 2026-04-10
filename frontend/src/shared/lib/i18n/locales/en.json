@@ -497,7 +497,7 @@
       "loading": "Loading...",
       "notAvailable": "N/A",
       "required": "*",
-      "currencySymbol": "$",
+      "currencySymbol": "DA",
       "status": {
         "active": "Active",
         "inactive": "Inactive"

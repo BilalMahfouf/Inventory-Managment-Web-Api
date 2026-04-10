@@ -18,6 +18,7 @@ import StockMovementHistoryTable from '@features/products/components/ProductsTab
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { formatDzdCurrency } from '@shared/utils/currencyFormatter';
 
 export default function InventoryPage() {
   const { t, i18n } = useTranslation();
@@ -51,7 +52,9 @@ export default function InventoryPage() {
         <InfoCard
           title={t(i18nKeyContainer.inventory.cards.totalInventoryItems.title)}
           iconComponent={Package}
-          number={loading ? '...' : totalInventoryItems.toLocaleString(activeLocale)}
+          number={
+            loading ? '...' : totalInventoryItems.toLocaleString(activeLocale)
+          }
           description={t(
             i18nKeyContainer.inventory.cards.totalInventoryItems.description
           )}
@@ -63,10 +66,9 @@ export default function InventoryPage() {
           number={
             loading
               ? '...'
-              : `$${totalPotentialProfit.toLocaleString(activeLocale, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}`
+              : formatDzdCurrency(totalPotentialProfit, {
+                  locale: activeLocale,
+                })
           }
           description={t(
             i18nKeyContainer.inventory.cards.totalPotentialProfit.description
@@ -77,13 +79,17 @@ export default function InventoryPage() {
           title={t(i18nKeyContainer.inventory.cards.lowStockItems.title)}
           iconComponent={AlertTriangle}
           number={loading ? '...' : lowStockCount.toLocaleString(activeLocale)}
-          description={t(i18nKeyContainer.inventory.cards.lowStockItems.description)}
+          description={t(
+            i18nKeyContainer.inventory.cards.lowStockItems.description
+          )}
           className='flex-1'
         />
         <InfoCard
           title={t(i18nKeyContainer.inventory.cards.outOfStockItems.title)}
           iconComponent={XCircle}
-          number={loading ? '...' : outOfStockCount.toLocaleString(activeLocale)}
+          number={
+            loading ? '...' : outOfStockCount.toLocaleString(activeLocale)
+          }
           description={t(
             i18nKeyContainer.inventory.cards.outOfStockItems.description
           )}
@@ -155,7 +161,9 @@ export default function InventoryPage() {
                 <h3 className='text-2xl font-semibold leading-none tracking-tight'>
                   {t(i18nKeyContainer.inventory.page.sections.stockAlerts)}
                 </h3>
-                <div>{t(i18nKeyContainer.inventory.page.placeholders.stockAlerts)}</div>
+                <div>
+                  {t(i18nKeyContainer.inventory.page.placeholders.stockAlerts)}
+                </div>
               </div>
             </TabPanel>
             <TabPanel>
@@ -175,7 +183,9 @@ export default function InventoryPage() {
           isOpen={isAddModalOpen}
           onClose={() => setIsAddModalOpen(false)}
           onSuccess={() => {
-            queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+            queryClient.invalidateQueries({
+              queryKey: queryKeys.inventory.all,
+            });
           }}
         />
       )}

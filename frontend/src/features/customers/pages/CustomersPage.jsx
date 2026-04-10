@@ -5,7 +5,7 @@ import PageHeader from '@/components/ui/PageHeader';
 import Button from '@components/Buttons/Button';
 import { getCustomerSummary } from '@features/customers/services/customerApi';
 import { divStyles } from '@shared/utils/uiVariables';
-import { DollarSign, Plus, User2 } from 'lucide-react';
+import { Wallet, Plus, User2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import {
@@ -17,6 +17,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { formatDzdCurrency } from '@shared/utils/currencyFormatter';
 
 export default function CustomersPage() {
   const { t, i18n } = useTranslation();
@@ -102,13 +103,15 @@ export default function CustomersPage() {
         />
         <InfoCard
           title={t(i18nKeyContainer.customers.cards.totalRevenue.title)}
-          iconComponent={DollarSign}
+          iconComponent={Wallet}
           number={
             loading
               ? t(i18nKeyContainer.customers.shared.loading)
-              : `${t(i18nKeyContainer.customers.shared.currencySymbol)}${totalRevenue.toLocaleString(activeLocale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+              : formatDzdCurrency(totalRevenue, { locale: activeLocale })
           }
-          description={t(i18nKeyContainer.customers.cards.totalRevenue.description)}
+          description={t(
+            i18nKeyContainer.customers.cards.totalRevenue.description
+          )}
           className='flex-1'
         />
         <InfoCard
@@ -119,7 +122,9 @@ export default function CustomersPage() {
               ? t(i18nKeyContainer.customers.shared.loading)
               : newCustomersLastMonth.toLocaleString(activeLocale)
           }
-          description={t(i18nKeyContainer.customers.cards.newCustomers.description)}
+          description={t(
+            i18nKeyContainer.customers.cards.newCustomers.description
+          )}
           className='flex-1'
         />
         <InfoCard
@@ -130,7 +135,9 @@ export default function CustomersPage() {
               ? t(i18nKeyContainer.customers.shared.loading)
               : t(i18nKeyContainer.customers.cards.outOfStockItems.value)
           }
-          description={t(i18nKeyContainer.customers.cards.outOfStockItems.description)}
+          description={t(
+            i18nKeyContainer.customers.cards.outOfStockItems.description
+          )}
           className='flex-1'
         />
       </div>
@@ -168,10 +175,14 @@ export default function CustomersPage() {
             <TabPanel>
               <div className='mb-9 flex items-center justify-between'>
                 <h3 className='text-2xl font-semibold leading-none tracking-tight'>
-                  {t(i18nKeyContainer.customers.page.sections.customerCategories)}
+                  {t(
+                    i18nKeyContainer.customers.page.sections.customerCategories
+                  )}
                 </h3>
                 <Button LeftIcon={Plus} onClick={handleOpenAddCategory}>
-                  {t(i18nKeyContainer.customers.categoryManagement.page.addButton)}
+                  {t(
+                    i18nKeyContainer.customers.categoryManagement.page.addButton
+                  )}
                 </Button>
               </div>
               <CustomerCategoryDataTable
@@ -186,7 +197,9 @@ export default function CustomersPage() {
                 </h3>
               </div>
               <div>
-                {t(i18nKeyContainer.customers.page.placeholders.customerContacts)}
+                {t(
+                  i18nKeyContainer.customers.page.placeholders.customerContacts
+                )}
               </div>
             </TabPanel>
           </div>

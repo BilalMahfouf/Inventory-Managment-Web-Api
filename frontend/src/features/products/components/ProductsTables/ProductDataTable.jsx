@@ -12,8 +12,10 @@ import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
 import { formatAppDate } from '@shared/utils/dateFormatter';
+import { formatDzdCurrency } from '@shared/utils/currencyFormatter';
 export default function ProductDataTable() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(0);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
@@ -22,7 +24,10 @@ export default function ProductDataTable() {
   const { showError, showSuccess } = useToast();
   const queryClient = useQueryClient();
 
-  const columns = useMemo(() => getDefaultColumns(t), [t]);
+  const columns = useMemo(
+    () => getDefaultColumns(t, activeLocale),
+    [t, activeLocale]
+  );
 
   const fetchProducts = async ({
     page,
@@ -62,8 +67,7 @@ export default function ProductDataTable() {
         t(i18nKeyContainer.products.productTable.toasts.deleteCancelledTitle),
         error?.message ||
           t(
-            i18nKeyContainer.products.productTable.toasts
-              .deleteCancelledMessage
+            i18nKeyContainer.products.productTable.toasts.deleteCancelledMessage
           )
       );
       setDeleteDialogOpen(false);
@@ -91,7 +95,7 @@ export default function ProductDataTable() {
     <>
       <DataTable
         data={tableProps.data}
-      columns={columns}
+        columns={columns}
         totalRows={tableProps.totalRows}
         pageIndex={tableProps.pageIndex}
         pageSize={tableProps.pageSize}
@@ -130,7 +134,10 @@ export default function ProductDataTable() {
           onClose={() => {
             setDeleteDialogOpen(false);
             showError(
-              t(i18nKeyContainer.products.productTable.toasts.deleteCancelledTitle),
+              t(
+                i18nKeyContainer.products.productTable.toasts
+                  .deleteCancelledTitle
+              ),
               t(
                 i18nKeyContainer.products.productTable.toasts
                   .deleteCancelledMessage
@@ -138,14 +145,16 @@ export default function ProductDataTable() {
             );
           }}
           title={t(i18nKeyContainer.products.productTable.dialogs.deleteTitle)}
-          message={t(i18nKeyContainer.products.productTable.dialogs.deleteMessage)}
+          message={t(
+            i18nKeyContainer.products.productTable.dialogs.deleteMessage
+          )}
         />
       )}
     </>
   );
 }
 
-const getDefaultColumns = t => [
+const getDefaultColumns = (t, locale) => [
   {
     accessorKey: 'sku',
     header: t(i18nKeyContainer.products.productTable.columns.sku),
@@ -167,12 +176,12 @@ const getDefaultColumns = t => [
   {
     accessorKey: 'price',
     header: t(i18nKeyContainer.products.productTable.columns.price),
-    cell: ({ getValue }) => `$${getValue().toFixed(2)}`,
+    cell: ({ getValue }) => formatDzdCurrency(getValue(), { locale }),
   },
   {
     accessorKey: 'cost',
     header: t(i18nKeyContainer.products.productTable.columns.cost),
-    cell: ({ getValue }) => `$${getValue().toFixed(2)}`,
+    cell: ({ getValue }) => formatDzdCurrency(getValue(), { locale }),
   },
 
   {

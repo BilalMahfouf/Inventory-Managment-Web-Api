@@ -6,9 +6,11 @@ import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import TopProductItem from './TopProductItem';
 import dashboardApi from '@features/dashboard/services/dashboardApi';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { formatDzdCurrency } from '@shared/utils/currencyFormatter';
 
 const TopSellingProducts = ({ className = '' }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: queryKeys.dashboard.topSellingProducts(7),
@@ -30,7 +32,9 @@ const TopSellingProducts = ({ className = '' }) => {
           rank={product.rank || index + 1}
           productName={product.name}
           unitsSold={product.totalSoldUnits}
-          revenue={`$${product.totalRevenue}`}
+          revenue={formatDzdCurrency(product.totalRevenue, {
+            locale: activeLocale,
+          })}
         />
       ))}
     </div>

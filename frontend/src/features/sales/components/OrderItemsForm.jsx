@@ -11,6 +11,10 @@ import {
 } from '@features/products/services/productApi';
 import { queryKeys } from '@shared/lib/queryKeys';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import {
+  formatDzdCurrency,
+  getDzdCurrencySuffix,
+} from '@shared/utils/currencyFormatter';
 
 const PRODUCT_SEARCH_PAGE_SIZE = 20;
 const PRODUCT_SEARCH_DEBOUNCE_MS = 400;
@@ -47,6 +51,9 @@ function getProductPrice(product) {
 }
 
 function ProductDisplayCard({ product, t }) {
+  const { i18n } = useTranslation();
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
+
   if (!product) {
     return null;
   }
@@ -59,8 +66,8 @@ function ProductDisplayCard({ product, t }) {
       <p className='text-xs text-gray-600'>SKU: {product?.sku || 'N/A'}</p>
       <p className='text-xs text-gray-500'>ID: {product?.id ?? '-'}</p>
       <p className='text-xs text-gray-500'>
-        {t(i18nKeyContainer.sales.orders.items.unitPrice)}: $
-        {getProductPrice(product).toFixed(2)}
+        {t(i18nKeyContainer.sales.orders.items.unitPrice)}:{' '}
+        {formatDzdCurrency(getProductPrice(product), { locale: activeLocale })}
       </p>
     </div>
   );
@@ -273,7 +280,8 @@ function ProductSearchBlock({
  * @param {boolean} props.disabled - Disable all inputs
  */
 const OrderItemsForm = ({ value = [], onChange, disabled = false }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
 
   const addItem = () => {
     onChange([
@@ -416,6 +424,7 @@ const OrderItemsForm = ({ value = [], onChange, disabled = false }) => {
                       item.productId,
                       item.locationId
                     )}
+                    activeLocale={activeLocale}
                     t={t}
                   />
                 ))}
@@ -427,7 +436,7 @@ const OrderItemsForm = ({ value = [], onChange, disabled = false }) => {
               {t(i18nKeyContainer.sales.orders.create.total)}:
             </span>
             <span className='text-lg font-bold text-gray-900'>
-              ${calculateTotal().toFixed(2)}
+              {formatDzdCurrency(calculateTotal(), { locale: activeLocale })}
             </span>
           </div>
         </div>
@@ -450,6 +459,7 @@ const OrderItemRow = ({
   onRemove,
   calculateSubtotal,
   isDuplicate,
+  activeLocale,
   t,
 }) => {
   const [searchMode, setSearchMode] = useState('sku');
@@ -821,8 +831,8 @@ const OrderItemRow = ({
           {t(i18nKeyContainer.sales.orders.items.unitPrice)}
         </div>
         <div className='relative'>
-          <span className='absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-sm'>
-            $
+          <span className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 text-sm pointer-events-none'>
+            {getDzdCurrencySuffix(activeLocale)}
           </span>
           <input
             type='number'
@@ -833,7 +843,7 @@ const OrderItemRow = ({
               onUnitPriceChange(index, parseFloat(e.target.value) || 0)
             }
             disabled={disabled}
-            className='h-10 block w-full pl-7 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm disabled:bg-gray-100'
+            className='h-10 block w-full pr-12 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm disabled:bg-gray-100'
           />
         </div>
       </td>
@@ -843,7 +853,7 @@ const OrderItemRow = ({
           {t(i18nKeyContainer.sales.orders.items.subtotal)}
         </div>
         <div className='text-base font-semibold text-gray-900'>
-          ${calculateSubtotal(item).toFixed(2)}
+          {formatDzdCurrency(calculateSubtotal(item), { locale: activeLocale })}
         </div>
       </td>
 

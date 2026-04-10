@@ -26,6 +26,7 @@ import {
 } from '@features/sales/utils/orderConstants';
 import { queryKeys } from '@shared/lib/queryKeys';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { formatDzdCurrency } from '@shared/utils/currencyFormatter';
 
 /**
  * OrdersDataTable Component
@@ -36,8 +37,9 @@ import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
  * @param {Object} props.initialFilters - Optional default filters
  */
 export default function OrdersDataTable({ initialFilters = {} }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
   const transition = useOrderTransition();
   const [filters, setFilters] = useState({
     status: initialFilters.status || '',
@@ -235,7 +237,9 @@ export default function OrdersDataTable({ initialFilters = {} }) {
       cell: ({ row }) => {
         const rawTotal = row.original.totalAmount ?? row.original.total ?? 0;
         const total = Number(rawTotal);
-        return `$${(Number.isFinite(total) ? total : 0).toFixed(2)}`;
+        return formatDzdCurrency(Number.isFinite(total) ? total : 0, {
+          locale: activeLocale,
+        });
       },
     },
     {

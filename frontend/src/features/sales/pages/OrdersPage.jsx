@@ -1,13 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import {
-  Plus,
-  ShoppingCart,
-  Clock,
-  CheckCircle,
-  DollarSign,
-} from 'lucide-react';
+import { Plus, ShoppingCart, Clock, CheckCircle, Wallet } from 'lucide-react';
 import PageHeader from '@components/ui/PageHeader';
 import InfoCard from '@components/ui/InfoCard';
 import Button from '@components/Buttons/Button';
@@ -15,6 +9,7 @@ import OrdersDataTable from '@features/sales/components/OrdersDataTable';
 import { getOrdersDahsobardSummary } from '@features/sales/services/salesOrderApi';
 import { queryKeys } from '@shared/lib/queryKeys';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { formatDzdCurrency } from '@shared/utils/currencyFormatter';
 
 /**
  * OrdersPage Component
@@ -93,14 +88,11 @@ export default function OrdersPage() {
         />
         <InfoCard
           title={t(i18nKeyContainer.sales.orders.cards.revenueThisMonth.title)}
-          iconComponent={DollarSign}
+          iconComponent={Wallet}
           number={
             summaryLoading
               ? '...'
-              : `$${totalRevenue.toLocaleString(activeLocale, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}`
+              : formatDzdCurrency(totalRevenue, { locale: activeLocale })
           }
           description={t(
             i18nKeyContainer.sales.orders.cards.revenueThisMonth.description

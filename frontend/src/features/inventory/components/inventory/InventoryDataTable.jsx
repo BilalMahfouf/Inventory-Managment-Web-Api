@@ -14,6 +14,7 @@ import { useToast } from '@shared/context/ToastContext';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { formatDzdCurrency } from '@shared/utils/currencyFormatter';
 
 const getLocalizedInventoryStatus = (status, t) => {
   if (status === 'In Stock') {
@@ -31,7 +32,7 @@ const getLocalizedInventoryStatus = (status, t) => {
   return status;
 };
 
-const getDefaultColumns = t => [
+const getDefaultColumns = (t, locale) => [
   {
     accessorKey: 'product',
     header: t(i18nKeyContainer.inventory.inventoryTable.columns.product),
@@ -90,13 +91,16 @@ const getDefaultColumns = t => [
   },
   {
     accessorKey: 'potentialProfit',
-    header: t(i18nKeyContainer.inventory.inventoryTable.columns.potentialProfit),
-    cell: ({ getValue }) => `$${getValue().toFixed(2)}`,
+    header: t(
+      i18nKeyContainer.inventory.inventoryTable.columns.potentialProfit
+    ),
+    cell: ({ getValue }) => formatDzdCurrency(getValue(), { locale }),
   },
 ];
 
 export default function InventoryDataTable() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [currentInventoryId, setCurrentInventoryId] = useState(0);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
@@ -110,12 +114,20 @@ export default function InventoryDataTable() {
       if (response.success) {
         setDeleteDialogOpen(false);
         showSuccess(
-          t(i18nKeyContainer.inventory.inventoryTable.toasts.deleteSuccessTitle),
-          t(i18nKeyContainer.inventory.inventoryTable.toasts.deleteSuccessMessage, {
-            id: currentInventoryId,
-          })
+          t(
+            i18nKeyContainer.inventory.inventoryTable.toasts.deleteSuccessTitle
+          ),
+          t(
+            i18nKeyContainer.inventory.inventoryTable.toasts
+              .deleteSuccessMessage,
+            {
+              id: currentInventoryId,
+            }
+          )
         );
-        await queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+        await queryClient.invalidateQueries({
+          queryKey: queryKeys.inventory.all,
+        });
         return;
       }
 
@@ -170,7 +182,7 @@ export default function InventoryDataTable() {
     <>
       <DataTable
         data={tableProps.data}
-        columns={getDefaultColumns(t)}
+        columns={getDefaultColumns(t, activeLocale)}
         totalRows={tableProps.totalRows}
         pageIndex={tableProps.pageIndex}
         pageSize={tableProps.pageSize}
@@ -200,7 +212,9 @@ export default function InventoryDataTable() {
           onClose={() => setEditDialogOpen(false)}
           inventoryId={currentInventoryId}
           onSuccess={() => {
-            queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+            queryClient.invalidateQueries({
+              queryKey: queryKeys.inventory.all,
+            });
           }}
         />
       )}
@@ -208,7 +222,9 @@ export default function InventoryDataTable() {
         <ConfirmationDialog
           isOpen={deleteDialogOpen}
           onClose={() => setDeleteDialogOpen(false)}
-          title={t(i18nKeyContainer.inventory.inventoryTable.dialogs.deleteTitle)}
+          title={t(
+            i18nKeyContainer.inventory.inventoryTable.dialogs.deleteTitle
+          )}
           message={t(
             i18nKeyContainer.inventory.inventoryTable.dialogs.deleteMessage
           )}

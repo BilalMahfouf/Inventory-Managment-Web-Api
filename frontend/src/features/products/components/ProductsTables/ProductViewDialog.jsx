@@ -13,6 +13,7 @@ import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 import { getProductById } from '@features/products/services/productApi';
 import { queryKeys } from '@shared/lib/queryKeys';
 import { formatAppDate } from '@shared/utils/dateFormatter';
+import { formatDzdCurrency } from '@shared/utils/currencyFormatter';
 /**
  * ProductViewDialog Component
  *
@@ -63,6 +64,7 @@ import { formatAppDate } from '@shared/utils/dateFormatter';
  */
 const ProductViewDialog = ({ open, onOpenChange, productId }) => {
   const { t, i18n } = useTranslation();
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
   const [activeTab, setActiveTab] = useState('basic');
   const defaultProduct = {
     id: 0,
@@ -117,8 +119,6 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
     },
   ];
 
-  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='max-w-4xl max-h-[90vh] overflow-hidden flex flex-col'>
@@ -160,7 +160,10 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
               <div>
                 <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
                   <Package className='w-5 h-5' />
-                  {t(i18nKeyContainer.products.productView.sections.productInformation)}
+                  {t(
+                    i18nKeyContainer.products.productView.sections
+                      .productInformation
+                  )}
                 </h3>
 
                 {/* Status Badges */}
@@ -183,10 +186,13 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                 <div className='grid grid-cols-2 gap-6'>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      {t(i18nKeyContainer.products.productView.fields.productName)}
+                      {t(
+                        i18nKeyContainer.products.productView.fields.productName
+                      )}
                     </label>
                     <p className='text-gray-900'>
-                      {product.name || t(i18nKeyContainer.products.shared.hyphen)}
+                      {product.name ||
+                        t(i18nKeyContainer.products.shared.hyphen)}
                     </p>
                   </div>
 
@@ -195,7 +201,8 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                       {t(i18nKeyContainer.products.productView.fields.sku)}
                     </label>
                     <p className='text-gray-900'>
-                      {product.sku || t(i18nKeyContainer.products.shared.hyphen)}
+                      {product.sku ||
+                        t(i18nKeyContainer.products.shared.hyphen)}
                     </p>
                   </div>
 
@@ -211,7 +218,10 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
 
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      {t(i18nKeyContainer.products.productView.fields.unitOfMeasure)}
+                      {t(
+                        i18nKeyContainer.products.productView.fields
+                          .unitOfMeasure
+                      )}
                     </label>
                     <p className='text-gray-900'>
                       {product.unitOfMeasureName ||
@@ -223,7 +233,9 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                 {/* Description */}
                 <div className='mt-6'>
                   <label className='block text-sm font-medium text-gray-700 mb-1'>
-                    {t(i18nKeyContainer.products.productView.fields.description)}
+                    {t(
+                      i18nKeyContainer.products.productView.fields.description
+                    )}
                   </label>
                   <p className='text-gray-600 text-sm'>
                     {product.description ||
@@ -260,7 +272,10 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
           {activeTab === 'pricing' && (
             <div className='space-y-6'>
               <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
-                {t(i18nKeyContainer.products.productView.sections.pricingInformation)}
+                {t(
+                  i18nKeyContainer.products.productView.sections
+                    .pricingInformation
+                )}
               </h3>
 
               {/* Main Pricing */}
@@ -270,16 +285,22 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                     {t(i18nKeyContainer.products.productView.fields.costPrice)}
                   </label>
                   <p className='text-2xl font-semibold text-gray-900'>
-                    ${product.costPrice?.toFixed(2) || '0.00'}
+                    {formatDzdCurrency(product.costPrice || 0, {
+                      locale: activeLocale,
+                    })}
                   </p>
                 </div>
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700 mb-1'>
-                    {t(i18nKeyContainer.products.productView.fields.sellingPrice)}
+                    {t(
+                      i18nKeyContainer.products.productView.fields.sellingPrice
+                    )}
                   </label>
                   <p className='text-2xl font-semibold text-gray-900'>
-                    ${product.unitPrice?.toFixed(2) || '0.00'}
+                    {formatDzdCurrency(product.unitPrice || 0, {
+                      locale: activeLocale,
+                    })}
                   </p>
                 </div>
               </div>
@@ -288,7 +309,9 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
               <div className='grid grid-cols-3 gap-4 mt-6'>
                 <div className='bg-blue-50 p-4 rounded-lg'>
                   <label className='block text-sm font-medium text-blue-700 mb-1'>
-                    {t(i18nKeyContainer.products.productView.fields.profitMargin)}
+                    {t(
+                      i18nKeyContainer.products.productView.fields.profitMargin
+                    )}
                   </label>
                   <p className='text-2xl font-bold text-blue-600'>
                     {profitMargin}%
@@ -297,10 +320,14 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
 
                 <div className='bg-green-50 p-4 rounded-lg'>
                   <label className='block text-sm font-medium text-green-700 mb-1'>
-                    {t(i18nKeyContainer.products.productView.fields.profitPerUnit)}
+                    {t(
+                      i18nKeyContainer.products.productView.fields.profitPerUnit
+                    )}
                   </label>
                   <p className='text-2xl font-bold text-green-600'>
-                    ${profitPerUnit.toFixed(2)}
+                    {formatDzdCurrency(profitPerUnit, {
+                      locale: activeLocale,
+                    })}
                   </p>
                 </div>
 
@@ -323,11 +350,16 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                 {/* Created Information */}
                 <div className='space-y-4'>
                   <h4 className='font-semibold text-gray-900'>
-                    {t(i18nKeyContainer.products.productView.sections.creationDetails)}
+                    {t(
+                      i18nKeyContainer.products.productView.sections
+                        .creationDetails
+                    )}
                   </h4>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      {t(i18nKeyContainer.products.productView.fields.createdAt)}
+                      {t(
+                        i18nKeyContainer.products.productView.fields.createdAt
+                      )}
                     </label>
                     <p className='text-gray-900'>
                       {formatAppDate(product.createdAt, {
@@ -339,7 +371,9 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      {t(i18nKeyContainer.products.productView.fields.createdBy)}
+                      {t(
+                        i18nKeyContainer.products.productView.fields.createdBy
+                      )}
                     </label>
                     <p className='text-gray-900'>
                       {product.createdByUserName ||
@@ -348,7 +382,10 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      {t(i18nKeyContainer.products.productView.fields.createdByUserId)}
+                      {t(
+                        i18nKeyContainer.products.productView.fields
+                          .createdByUserId
+                      )}
                     </label>
                     <p className='text-gray-900 font-mono text-xs'>
                       {product.createdByUserId ||
@@ -360,11 +397,16 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                 {/* Updated Information */}
                 <div className='space-y-4'>
                   <h4 className='font-semibold text-gray-900'>
-                    {t(i18nKeyContainer.products.productView.sections.lastUpdateDetails)}
+                    {t(
+                      i18nKeyContainer.products.productView.sections
+                        .lastUpdateDetails
+                    )}
                   </h4>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      {t(i18nKeyContainer.products.productView.fields.updatedAt)}
+                      {t(
+                        i18nKeyContainer.products.productView.fields.updatedAt
+                      )}
                     </label>
                     <p className='text-gray-900'>
                       {formatAppDate(product.updatedAt, {
@@ -376,7 +418,9 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      {t(i18nKeyContainer.products.productView.fields.updatedBy)}
+                      {t(
+                        i18nKeyContainer.products.productView.fields.updatedBy
+                      )}
                     </label>
                     <p className='text-gray-900'>
                       {product.updatedByUserName ||
@@ -385,7 +429,10 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      {t(i18nKeyContainer.products.productView.fields.updatedByUserId)}
+                      {t(
+                        i18nKeyContainer.products.productView.fields
+                          .updatedByUserId
+                      )}
                     </label>
                     <p className='text-gray-900 font-mono text-xs'>
                       {product.updatedByUserId ||
@@ -398,12 +445,17 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
               {/* System Information */}
               <div className='border-t pt-6 mt-6'>
                 <h4 className='font-semibold text-gray-900 mb-4'>
-                  {t(i18nKeyContainer.products.productView.sections.systemInformation)}
+                  {t(
+                    i18nKeyContainer.products.productView.sections
+                      .systemInformation
+                  )}
                 </h4>
                 <div className='grid grid-cols-2 gap-6'>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      {t(i18nKeyContainer.products.productView.fields.productId)}
+                      {t(
+                        i18nKeyContainer.products.productView.fields.productId
+                      )}
                     </label>
                     <p className='text-gray-900 font-mono text-xs'>
                       {product.id || t(i18nKeyContainer.products.shared.hyphen)}
@@ -411,7 +463,9 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                   </div>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      {t(i18nKeyContainer.products.productView.fields.categoryId)}
+                      {t(
+                        i18nKeyContainer.products.productView.fields.categoryId
+                      )}
                     </label>
                     <p className='text-gray-900 font-mono text-xs'>
                       {product.categoryId ||
@@ -454,19 +508,27 @@ const ProductViewDialog = ({ open, onOpenChange, productId }) => {
                     <div className='grid grid-cols-2 gap-4'>
                       <div>
                         <label className='block text-sm font-medium text-red-700 mb-1'>
-                          {t(i18nKeyContainer.products.productView.fields.deletedAt)}
+                          {t(
+                            i18nKeyContainer.products.productView.fields
+                              .deletedAt
+                          )}
                         </label>
                         <p className='text-red-900 text-sm'>
                           {formatAppDate(product.deleteAt, {
                             locale: activeLocale,
                             withTime: true,
-                            fallback: t(i18nKeyContainer.products.shared.hyphen),
+                            fallback: t(
+                              i18nKeyContainer.products.shared.hyphen
+                            ),
                           })}
                         </p>
                       </div>
                       <div>
                         <label className='block text-sm font-medium text-red-700 mb-1'>
-                          {t(i18nKeyContainer.products.productView.fields.deletedBy)}
+                          {t(
+                            i18nKeyContainer.products.productView.fields
+                              .deletedBy
+                          )}
                         </label>
                         <p className='text-red-900 text-sm'>
                           {product.deletedByUserName ||

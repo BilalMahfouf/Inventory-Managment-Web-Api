@@ -17,6 +17,7 @@ import OrderActionBar from '@features/sales/components/OrderActionBar';
 import { useOrder } from '@features/sales/hooks/useOrders';
 import { ORDER_STATUS } from '@features/sales/utils/orderConstants';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { formatDzdCurrency } from '@shared/utils/currencyFormatter';
 
 /**
  * OrderDetailPage Component
@@ -26,9 +27,10 @@ import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
  * @route /sales-orders/:id
  */
 export default function OrderDetailPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
 
   const { data: orderResponse, isLoading, error } = useOrder(id);
 
@@ -265,10 +267,17 @@ export default function OrderDetailPage() {
                   </td>
                   <td className='px-4 py-3'>{item.quantity}</td>
                   <td className='px-4 py-3'>
-                    ${(item.unitPrice || 0).toFixed(2)}
+                    {formatDzdCurrency(item.unitPrice || 0, {
+                      locale: activeLocale,
+                    })}
                   </td>
                   <td className='px-4 py-3 font-medium'>
-                    ${((item.quantity || 0) * (item.unitPrice || 0)).toFixed(2)}
+                    {formatDzdCurrency(
+                      (item.quantity || 0) * (item.unitPrice || 0),
+                      {
+                        locale: activeLocale,
+                      }
+                    )}
                   </td>
                 </tr>
               ))}
@@ -279,7 +288,7 @@ export default function OrderDetailPage() {
                   {t(i18nKeyContainer.sales.orders.detail.orderTotal)}:
                 </td>
                 <td className='px-4 py-3 font-bold text-lg'>
-                  ${orderTotal.toFixed(2)}
+                  {formatDzdCurrency(orderTotal, { locale: activeLocale })}
                 </td>
               </tr>
             </tfoot>

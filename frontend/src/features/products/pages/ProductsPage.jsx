@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import PageHeader from '@components/ui/PageHeader';
 import InfoCard from '@components/ui/InfoCard';
 import {
-  DollarSign,
+  Wallet,
   Info,
   Package,
   Plus,
@@ -24,6 +24,7 @@ import AddUnitOfMeasureButton from '@features/products/components/unitOfMeasure/
 import ProductCategoryDataTable from '@features/products/components/productCategories/ProductCategoryDataTable';
 import AddProductCategoryButton from '@features/products/components/productCategories/AddProductCategoryButton';
 import { queryKeys } from '@shared/lib/queryKeys';
+import { formatDzdCurrency } from '@shared/utils/currencyFormatter';
 export default function ProductsPage() {
   const { t, i18n } = useTranslation();
 
@@ -56,26 +57,34 @@ export default function ProductsPage() {
         <InfoCard
           title={t(i18nKeyContainer.products.cards.totalProducts.title)}
           iconComponent={Package}
-          number={loading ? '...' : totalProductsCount.toLocaleString(activeLocale)}
-          description={t(i18nKeyContainer.products.cards.totalProducts.description)}
+          number={
+            loading ? '...' : totalProductsCount.toLocaleString(activeLocale)
+          }
+          description={t(
+            i18nKeyContainer.products.cards.totalProducts.description
+          )}
           className='flex-1'
         />
         <InfoCard
           title={t(i18nKeyContainer.products.cards.inventoryValue.title)}
-          iconComponent={DollarSign}
+          iconComponent={Wallet}
           number={
             loading
               ? '...'
-              : `$${inventoryValue.toLocaleString(activeLocale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+              : formatDzdCurrency(inventoryValue, { locale: activeLocale })
           }
-          description={t(i18nKeyContainer.products.cards.inventoryValue.description)}
+          description={t(
+            i18nKeyContainer.products.cards.inventoryValue.description
+          )}
           className='flex-1'
           numberClassName='text-green-600'
           iconClassName='text-green-600'
         />
         <InfoCard
           title={t(i18nKeyContainer.products.cards.lowStockItems.title)}
-          description={t(i18nKeyContainer.products.cards.lowStockItems.description)}
+          description={t(
+            i18nKeyContainer.products.cards.lowStockItems.description
+          )}
           number={loading ? '...' : lowStockCount}
           iconComponent={TriangleAlert}
           className='flex-1'
@@ -84,11 +93,13 @@ export default function ProductsPage() {
         />
         <InfoCard
           title={t(i18nKeyContainer.products.cards.profitPotential.title)}
-          description={t(i18nKeyContainer.products.cards.profitPotential.description)}
+          description={t(
+            i18nKeyContainer.products.cards.profitPotential.description
+          )}
           number={
             loading
               ? '...'
-              : `$${profitPotential.toLocaleString(activeLocale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+              : formatDzdCurrency(profitPotential, { locale: activeLocale })
           }
           iconComponent={TrendingUp}
           className='flex-1'
@@ -140,7 +151,9 @@ export default function ProductsPage() {
           <TabPanel>
             <div className='mb-9 flex items-center justify-between'>
               <h3 className='text-2xl font-semibold leading-none tracking-tight'>
-                {t(i18nKeyContainer.products.page.sections.stockMovementHistory)}
+                {t(
+                  i18nKeyContainer.products.page.sections.stockMovementHistory
+                )}
               </h3>
             </div>
             <StockMovementHistoryTable />
@@ -169,7 +182,9 @@ export default function ProductsPage() {
                 {t(i18nKeyContainer.products.page.sections.productImages)}
               </h3>
             </div>
-            <div>{t(i18nKeyContainer.products.page.placeholders.productImages)}</div>
+            <div>
+              {t(i18nKeyContainer.products.page.placeholders.productImages)}
+            </div>
           </TabPanel>
         </div>
       </Tabs>

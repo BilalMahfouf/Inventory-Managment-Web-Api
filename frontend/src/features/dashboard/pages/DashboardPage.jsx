@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import InfoCard from '@components/ui/InfoCard';
 import {
   Clock3,
-  DollarSign,
+  Wallet,
   FileText,
   Package,
   ShoppingCart,
@@ -24,9 +24,11 @@ import TodaysPerformanceContainer from '@features/dashboard/components/TodaysPer
 import AddProductButton from '@features/products/components/products/AddProductButton';
 import { useTranslation } from 'react-i18next';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
+import { formatDzdCurrency } from '@shared/utils/currencyFormatter';
 
 export default function DashboardPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const activeLocale = i18n.resolvedLanguage || i18n.language || 'en';
   const { data: summary, isLoading: loading } = useQuery({
     queryKey: queryKeys.dashboard.summary(),
     queryFn: dashboardApi.getSummary,
@@ -63,7 +65,9 @@ export default function DashboardPage() {
           className='flex-1'
           title={t(i18nKeyContainer.dashboard.cards.totalProducts.title)}
           number={loading ? '?' : activeProducts}
-          description={t(i18nKeyContainer.dashboard.cards.totalProducts.description)}
+          description={t(
+            i18nKeyContainer.dashboard.cards.totalProducts.description
+          )}
           status={false}
           statusLabel='-12%'
           iconComponent={Package}
@@ -72,7 +76,9 @@ export default function DashboardPage() {
           className='flex-1'
           title={t(i18nKeyContainer.dashboard.cards.totalCustomers.title)}
           number={loading ? '?' : activeCustomers}
-          description={t(i18nKeyContainer.dashboard.cards.totalCustomers.description)}
+          description={t(
+            i18nKeyContainer.dashboard.cards.totalCustomers.description
+          )}
           status={true}
           statusLabel='+12%'
           iconComponent={Users2}
@@ -81,7 +87,9 @@ export default function DashboardPage() {
           className='flex-1'
           title={t(i18nKeyContainer.dashboard.cards.lowStockItems.title)}
           number={loading ? '?' : lowStockProducts}
-          description={t(i18nKeyContainer.dashboard.cards.lowStockItems.description)}
+          description={t(
+            i18nKeyContainer.dashboard.cards.lowStockItems.description
+          )}
           status={false}
           statusLabel='-4%'
           iconComponent={TriangleAlert}
@@ -90,7 +98,9 @@ export default function DashboardPage() {
           className='flex-1'
           title={t(i18nKeyContainer.dashboard.cards.totalSalesOrders.title)}
           number={loading ? '?' : totalSalesOrders}
-          description={t(i18nKeyContainer.dashboard.cards.totalSalesOrders.description)}
+          description={t(
+            i18nKeyContainer.dashboard.cards.totalSalesOrders.description
+          )}
           status={true}
           statusLabel='+8%'
           iconComponent={ShoppingCart}
@@ -98,11 +108,17 @@ export default function DashboardPage() {
         <InfoCard
           className='flex-1'
           title={t(i18nKeyContainer.dashboard.cards.totalRevenues.title)}
-          number={loading ? '?' : `$${totalRevenues}`}
-          description={t(i18nKeyContainer.dashboard.cards.totalRevenues.description)}
+          number={
+            loading
+              ? '?'
+              : formatDzdCurrency(totalRevenues, { locale: activeLocale })
+          }
+          description={t(
+            i18nKeyContainer.dashboard.cards.totalRevenues.description
+          )}
           status={true}
           statusLabel='+8%'
-          iconComponent={DollarSign}
+          iconComponent={Wallet}
           iconClassName='text-green-500'
           numberClassName='text-green-700'
         />
@@ -110,7 +126,9 @@ export default function DashboardPage() {
           className='flex-1'
           title={t(i18nKeyContainer.dashboard.cards.pendingOrders.title)}
           number={loading ? '?' : pendingSalesOrders}
-          description={t(i18nKeyContainer.dashboard.cards.pendingOrders.description)}
+          description={t(
+            i18nKeyContainer.dashboard.cards.pendingOrders.description
+          )}
           status={true}
           statusLabel='+8%'
           iconComponent={Clock3}
@@ -121,7 +139,9 @@ export default function DashboardPage() {
           className='flex-1'
           title={t(i18nKeyContainer.dashboard.cards.fulfilledOrders.title)}
           number={loading ? '?' : completedSalesOrders}
-          description={t(i18nKeyContainer.dashboard.cards.fulfilledOrders.description)}
+          description={t(
+            i18nKeyContainer.dashboard.cards.fulfilledOrders.description
+          )}
           status={true}
           statusLabel='+8%'
           iconComponent={BadgeCheck}
@@ -131,7 +151,9 @@ export default function DashboardPage() {
           className='flex-1'
           title={t(i18nKeyContainer.dashboard.cards.activeSuppliers.title)}
           number={loading ? '?' : activeSuppliers}
-          description={t(i18nKeyContainer.dashboard.cards.activeSuppliers.description)}
+          description={t(
+            i18nKeyContainer.dashboard.cards.activeSuppliers.description
+          )}
           status={true}
           statusLabel='+8%'
           iconComponent={Truck}
