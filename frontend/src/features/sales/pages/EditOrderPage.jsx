@@ -17,7 +17,7 @@ import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
  * Edit page for modifying order items and notes.
  * Only accessible for orders with Pending status.
  *
- * @route /orders/:id/edit
+ * @route /sales-orders/:id/edit
  */
 export default function EditOrderPage() {
   const { t } = useTranslation();
@@ -38,7 +38,7 @@ export default function EditOrderPage() {
   // Redirect if not pending
   useEffect(() => {
     if (order && order.status !== ORDER_STATUS.Pending) {
-      navigate(`/orders/${id}`);
+      navigate(`/sales-orders/${id}`);
     }
   }, [order, id, navigate]);
 
@@ -102,7 +102,7 @@ export default function EditOrderPage() {
     try {
       const result = await updateOrder.mutateAsync({ id, data: orderData });
       if (result.success) {
-        navigate(`/orders/${id}`);
+        navigate(`/sales-orders/${id}`);
       }
     } catch {
       // Error handling is done in the hook
@@ -121,7 +121,7 @@ export default function EditOrderPage() {
             variant='ghost'
             size='sm'
             LeftIcon={ArrowLeft}
-            onClick={() => navigate('/orders')}
+            onClick={() => navigate('/sales-orders')}
           >
             {t(i18nKeyContainer.sales.shared.back)}
           </Button>
@@ -143,7 +143,7 @@ export default function EditOrderPage() {
           variant='ghost'
           size='sm'
           LeftIcon={ArrowLeft}
-          onClick={() => navigate(`/orders/${id}`)}
+          onClick={() => navigate(`/sales-orders/${id}`)}
         >
           {t(i18nKeyContainer.sales.shared.back)}
         </Button>
@@ -168,7 +168,7 @@ export default function EditOrderPage() {
           <OrderActionBar
             order={order}
             mode='compact'
-            onTransitionSuccess={() => navigate(`/orders/${id}`)}
+            onTransitionSuccess={() => navigate(`/sales-orders/${id}`)}
           />
         </div>
 
@@ -234,7 +234,7 @@ export default function EditOrderPage() {
           <Button
             type='button'
             variant='secondary'
-            onClick={() => navigate(`/orders/${id}`)}
+            onClick={() => navigate(`/sales-orders/${id}`)}
             disabled={updateOrder.isPending}
           >
             {t(i18nKeyContainer.sales.shared.cancel)}

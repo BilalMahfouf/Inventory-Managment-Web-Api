@@ -6,7 +6,14 @@ import InfoCard from '@/components/ui/InfoCard';
 import PageHeader from '@/components/ui/PageHeader';
 import Button from '@/components/Buttons/Button';
 import OrdersDataTable from '@features/sales/components/OrdersDataTable';
-import { ShoppingCart, Clock, CheckCircle, DollarSign, Plus, ArrowRight } from 'lucide-react';
+import {
+  ShoppingCart,
+  Clock,
+  CheckCircle,
+  DollarSign,
+  Plus,
+  ArrowRight,
+} from 'lucide-react';
 import { divStyles } from '@shared/utils/uiVariables';
 import { queryKeys } from '@shared/lib/queryKeys';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
@@ -24,7 +31,8 @@ export default function SalesPage() {
   const summary = summaryResponse?.isSuccess ? summaryResponse.data : null;
   const totalOrders = summary?.totalOrders ?? 0;
   const pendingOrders = summary?.pendingOrders ?? 0;
-  const completedOrders = summary?.fulfilledOrders ?? summary?.completedOrders ?? 0;
+  const completedOrders =
+    summary?.fulfilledOrders ?? summary?.completedOrders ?? 0;
   const revenueThisMonth = summary?.revenueThisMonth ?? 0;
 
   return (
@@ -39,11 +47,11 @@ export default function SalesPage() {
           <Button
             variant='secondary'
             RightIcon={ArrowRight}
-            onClick={() => navigate('/orders')}
+            onClick={() => navigate('/sales-orders')}
           >
             {t(i18nKeyContainer.sales.orders.page.viewAllOrders)}
           </Button>
-          <Button LeftIcon={Plus} onClick={() => navigate('/orders/new')}>
+          <Button LeftIcon={Plus} onClick={() => navigate('/sales-orders/new')}>
             {t(i18nKeyContainer.sales.orders.page.newOrder)}
           </Button>
         </div>
@@ -54,21 +62,29 @@ export default function SalesPage() {
           title={t(i18nKeyContainer.sales.orders.cards.totalOrders.title)}
           iconComponent={ShoppingCart}
           number={loading ? '...' : totalOrders.toLocaleString(activeLocale)}
-          description={t(i18nKeyContainer.sales.orders.cards.totalOrders.description)}
+          description={t(
+            i18nKeyContainer.sales.orders.cards.totalOrders.description
+          )}
           className='flex-1'
         />
         <InfoCard
           title={t(i18nKeyContainer.sales.orders.cards.pendingOrders.title)}
           iconComponent={Clock}
           number={loading ? '...' : pendingOrders.toLocaleString(activeLocale)}
-          description={t(i18nKeyContainer.sales.orders.cards.pendingOrders.description)}
+          description={t(
+            i18nKeyContainer.sales.orders.cards.pendingOrders.description
+          )}
           className='flex-1'
         />
         <InfoCard
           title={t(i18nKeyContainer.sales.orders.cards.completedOrders.title)}
           iconComponent={CheckCircle}
-          number={loading ? '...' : completedOrders.toLocaleString(activeLocale)}
-          description={t(i18nKeyContainer.sales.orders.cards.completedOrders.description)}
+          number={
+            loading ? '...' : completedOrders.toLocaleString(activeLocale)
+          }
+          description={t(
+            i18nKeyContainer.sales.orders.cards.completedOrders.description
+          )}
           className='flex-1'
         />
         <InfoCard
@@ -82,7 +98,9 @@ export default function SalesPage() {
                   maximumFractionDigits: 2,
                 })}`
           }
-          description={t(i18nKeyContainer.sales.orders.cards.totalRevenue.description)}
+          description={t(
+            i18nKeyContainer.sales.orders.cards.totalRevenue.description
+          )}
           className='flex-1'
         />
       </div>

@@ -6,7 +6,6 @@ import ForgotPasswordPage from '@features/auth/pages/ForgotPasswordPage';
 import DashboardPage from '@features/dashboard/pages/DashboardPage';
 import ProductsPage from '@features/products/pages/ProductsPage';
 import InventoryPage from '@features/inventory/pages/InventoryPage';
-import SalesPage from '@features/sales/pages/SalesPage';
 import OrdersPage from '@features/sales/pages/OrdersPage';
 import CreateOrderPage from '@features/sales/pages/CreateOrderPage';
 import OrderDetailPage from '@features/sales/pages/OrderDetailPage';
@@ -22,7 +21,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/login',
-    element: <Navigate to="/" replace />,
+    element: <Navigate to='/' replace />,
   },
   {
     path: '/forgot-password',
@@ -48,15 +47,31 @@ export const router = createBrowserRouter([
           },
           {
             path: '/sales',
-            element: <SalesPage />,
+            element: <Navigate to='/sales-orders' replace />,
           },
           {
             path: '/orders',
+            element: <Navigate to='/sales-orders' replace />,
+          },
+          {
+            path: '/sales-orders',
             element: <OrdersPage />,
           },
           {
-            path: '/orders/new',
+            path: '/sales-orders/new',
             element: <CreateOrderPage />,
+          },
+          {
+            path: '/sales-orders/:id',
+            element: <OrderDetailPage />,
+          },
+          {
+            path: '/sales-orders/:id/edit',
+            element: <EditOrderPage />,
+          },
+          {
+            path: '/orders/new',
+            element: <Navigate to='/sales-orders/new' replace />,
           },
           {
             path: '/orders/:id',

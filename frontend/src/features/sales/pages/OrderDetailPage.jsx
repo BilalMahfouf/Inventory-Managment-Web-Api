@@ -23,7 +23,7 @@ import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
  *
  * View page for displaying order details and allowing status transitions.
  *
- * @route /orders/:id
+ * @route /sales-orders/:id
  */
 export default function OrderDetailPage() {
   const { t } = useTranslation();
@@ -46,7 +46,7 @@ export default function OrderDetailPage() {
             variant='ghost'
             size='sm'
             LeftIcon={ArrowLeft}
-            onClick={() => navigate('/orders')}
+            onClick={() => navigate('/sales-orders')}
           >
             {t(i18nKeyContainer.sales.shared.back)}
           </Button>
@@ -76,7 +76,7 @@ export default function OrderDetailPage() {
             variant='ghost'
             size='sm'
             LeftIcon={ArrowLeft}
-            onClick={() => navigate('/orders')}
+            onClick={() => navigate('/sales-orders')}
           >
             {t(i18nKeyContainer.sales.shared.back)}
           </Button>
@@ -96,7 +96,7 @@ export default function OrderDetailPage() {
             <Button
               variant='secondary'
               size='sm'
-              onClick={() => navigate(`/orders/${id}/edit`)}
+              onClick={() => navigate(`/sales-orders/${id}/edit`)}
             >
               {t(i18nKeyContainer.sales.orders.actions.edit)}
             </Button>

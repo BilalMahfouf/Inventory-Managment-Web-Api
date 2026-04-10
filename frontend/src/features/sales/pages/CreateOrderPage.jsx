@@ -35,7 +35,7 @@ const DEFAULT_PAYMENT_STATUS = PAYMENT_STATUS_OPTIONS[0].value;
  * Form page for creating new sales orders.
  * Supports walk-in sales and customer orders.
  *
- * @route /orders/new
+ * @route /sales-orders/new
  */
 export default function CreateOrderPage() {
   const { t } = useTranslation();
@@ -137,7 +137,7 @@ export default function CreateOrderPage() {
     try {
       const result = await createOrder.mutateAsync(orderData);
       if (result.success) {
-        navigate(`/orders/${result.data?.id || ''}`);
+        navigate(`/sales-orders/${result.data?.id || ''}`);
       }
     } catch {
       // Error handling is done in the hook
@@ -152,7 +152,7 @@ export default function CreateOrderPage() {
           variant='ghost'
           size='sm'
           LeftIcon={ArrowLeft}
-          onClick={() => navigate('/orders')}
+          onClick={() => navigate('/sales-orders')}
         >
           {t(i18nKeyContainer.sales.shared.back)}
         </Button>
@@ -297,7 +297,7 @@ export default function CreateOrderPage() {
           <Button
             type='button'
             variant='secondary'
-            onClick={() => navigate('/orders')}
+            onClick={() => navigate('/sales-orders')}
             disabled={createOrder.isPending}
           >
             {t(i18nKeyContainer.sales.shared.cancel)}

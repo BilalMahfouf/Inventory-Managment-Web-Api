@@ -190,7 +190,7 @@ export default function OrdersDataTable({ initialFilters = {} }) {
       header: t(i18nKeyContainer.sales.orders.table.columns.orderNumber),
       cell: ({ row }) => (
         <button
-          onClick={() => navigate(`/orders/${row.original.id}`)}
+          onClick={() => navigate(`/sales-orders/${row.original.id}`)}
           className='font-medium text-blue-600 hover:text-blue-800 hover:underline'
         >
           #{row.original.orderNumber || row.original.id}
@@ -273,12 +273,12 @@ export default function OrdersDataTable({ initialFilters = {} }) {
   });
 
   const handleView = row => {
-    navigate(`/orders/${row.id}`);
+    navigate(`/sales-orders/${row.id}`);
   };
 
   const handleEdit = row => {
     if (row.status === ORDER_STATUS.Pending) {
-      navigate(`/orders/${row.id}/edit`);
+      navigate(`/sales-orders/${row.id}/edit`);
     }
   };
 
