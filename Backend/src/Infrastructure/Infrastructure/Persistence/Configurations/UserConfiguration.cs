@@ -19,10 +19,8 @@ namespace Infrastructure.Persistence.Configurations
 
             entity.HasIndex(e => e.Email, "UQ_Users_Email").IsUnique();
 
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt);
+            entity.Property(e => e.DeletedAt);
             entity.Property(e => e.Email).HasMaxLength(255);
             entity.Property(e => e.FirstName).HasMaxLength(100);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
@@ -30,7 +28,7 @@ namespace Infrastructure.Persistence.Configurations
             entity.Property(e => e.UserName).HasMaxLength(100);
             entity.Property(e => e.PasswordHash).HasMaxLength(255);
             entity.Property(e => e.RoleId).HasDefaultValue(1);
-            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt);
 
             entity.HasOne(d => d.CreatedByUser).WithMany()
                 .HasForeignKey(d => d.CreatedByUserId)

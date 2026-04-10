@@ -5,7 +5,6 @@ using Domain.Shared.Errors;
 using Domain.Shared.Results;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace Infrastructure.Queries;
 
@@ -67,21 +66,7 @@ internal class SalesOrderQueries : ISalesOrderQueries
             PaymentStatus = so.PaymentStatus.ToString(),
         });
 
-        Expression<Func<SalesOrderTableResponse, object>> orderSelector =
-            request.SortColumn?.ToLower() switch
-            {
-                "customername" => r => r.CustomerName!,
-                "orderdate" => r => r.OrderDate,
-                "totalamount" => r => r.TotalAmount,
-                "items" => r => r.Items,
-                "status" => r => r.Status,
-                "paymentstatus" => r => r.PaymentStatus,
-                _ => r => r.Id,
-            };
-
-        projectedQuery = request.SortOrder?.ToLower() == "desc"
-            ? projectedQuery.OrderByDescending(orderSelector)
-            : projectedQuery.OrderBy(orderSelector);
+        projectedQuery = ApplyOrdering(projectedQuery, request.SortColumn, request.SortOrder);
 
         var count = await projectedQuery.CountAsync(cancellationToken);
         if (count == 0)
@@ -103,6 +88,25 @@ internal class SalesOrderQueries : ISalesOrderQueries
         };
 
         return Result<PagedList<SalesOrderTableResponse>>.Success(result);
+    }
+
+    private static IQueryable<SalesOrderTableResponse> ApplyOrdering(
+        IQueryable<SalesOrderTableResponse> query,
+        string? sortColumn,
+        string? sortOrder)
+    {
+        bool desc = sortOrder?.ToLower() == "desc";
+
+        return sortColumn?.ToLower() switch
+        {
+            "customername" => desc ? query.OrderByDescending(r => r.CustomerName) : query.OrderBy(r => r.CustomerName),
+            "orderdate" => desc ? query.OrderByDescending(r => r.OrderDate) : query.OrderBy(r => r.OrderDate),
+            "totalamount" => desc ? query.OrderByDescending(r => r.TotalAmount) : query.OrderBy(r => r.TotalAmount),
+            "items" => desc ? query.OrderByDescending(r => r.Items) : query.OrderBy(r => r.Items),
+            "status" => desc ? query.OrderByDescending(r => r.Status) : query.OrderBy(r => r.Status),
+            "paymentstatus" => desc ? query.OrderByDescending(r => r.PaymentStatus) : query.OrderBy(r => r.PaymentStatus),
+            _ => desc ? query.OrderByDescending(r => r.Id) : query.OrderBy(r => r.Id),
+        };
     }
 
     public async Task<Result<SalesOrderReadResponse>> GetSalesOrderByIdAsync(

@@ -17,10 +17,8 @@ namespace Infrastructure.Persistence.Configurations
 
             entity.HasIndex(e => e.Name, "IX_Locations_Name");
 
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt);
+            entity.Property(e => e.DeletedAt);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.Name).HasMaxLength(255);
 

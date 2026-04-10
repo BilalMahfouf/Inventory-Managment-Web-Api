@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
@@ -77,28 +76,7 @@ public class InventoryQueries : IInventoryQueries
                     EF.Functions.Like(x.Location, searchPattern));
             }
 
-            Expression<Func<InventoryTableResponse, object>> orderBy =
-                    request.SortColumn?.ToLower() switch
-                    {
-                        "sku" => x => x.Sku,
-                        "product" => x => x.Product,
-                        "location" => x => x.Location,
-                        "quantity" => x => x.Quantity,
-                        "reorder" => x => x.Reorder,
-                        "max" => x => x.Max,
-                        "status" => x => x.Status,
-                        "stockpercentage" => x => x.StockPercentage,
-                        "potentialprofit" => x => x.PotentialProfit,
-                        _ => x => x.Id // Default sorting by Id
-                    };
-            if (request.SortOrder?.ToLower() == "desc")
-            {
-                query = query.OrderByDescending(orderBy);
-            }
-            else
-            {
-                query = query.OrderBy(orderBy);
-            }
+            query = ApplyInventoryOrdering(query, request.SortColumn, request.SortOrder);
             query = query
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize);
@@ -224,25 +202,7 @@ public class InventoryQueries : IInventoryQueries
             CreatedAt = st.CreatedAt,
             UserName = st.CreatedByUser.UserName
         });
-            Expression<Func<StockTransfersReadResponse, object>>
-                orderSelector = request.SortColumn switch
-                {
-                    "fromlocation" => x => x.FromLocation,
-                    "tolocation" => x => x.ToLocation,
-                    "product" => x => x.Product,
-                    "quantiry" => x => x.Quantity,
-                    "createdAt" => x => x.CreatedAt,
-                    "username" => x => x.UserName,
-                    _ => x => x.Id
-                };
-            if (request.SortOrder?.ToLower() == "desc")
-            {
-                query = query.OrderByDescending(orderSelector);
-            }
-            else
-            {
-                query = query.OrderBy(orderSelector);
-            }
+            query = ApplyStockTransfersOrdering(query, request.SortColumn, request.SortOrder);
 
             query = query.Skip((request.Page - 1) * request.PageSize)
                .Take(request.PageSize);
@@ -298,5 +258,46 @@ public class InventoryQueries : IInventoryQueries
             return Result<LowStockNotificationDetails>.Failure(Error.Exception(nameof(GetLowStockMessageDetailsAsync), ex));
         }
 
+    }
+
+    private static IQueryable<InventoryTableResponse> ApplyInventoryOrdering(
+        IQueryable<InventoryTableResponse> query,
+        string? sortColumn,
+        string? sortOrder)
+    {
+        bool desc = sortOrder?.ToLower() == "desc";
+
+        return sortColumn?.ToLower() switch
+        {
+            "sku" => desc ? query.OrderByDescending(x => x.Sku) : query.OrderBy(x => x.Sku),
+            "product" => desc ? query.OrderByDescending(x => x.Product) : query.OrderBy(x => x.Product),
+            "location" => desc ? query.OrderByDescending(x => x.Location) : query.OrderBy(x => x.Location),
+            "quantity" => desc ? query.OrderByDescending(x => x.Quantity) : query.OrderBy(x => x.Quantity),
+            "reorder" => desc ? query.OrderByDescending(x => x.Reorder) : query.OrderBy(x => x.Reorder),
+            "max" => desc ? query.OrderByDescending(x => x.Max) : query.OrderBy(x => x.Max),
+            "status" => desc ? query.OrderByDescending(x => x.Status) : query.OrderBy(x => x.Status),
+            "stockpercentage" => desc ? query.OrderByDescending(x => x.StockPercentage) : query.OrderBy(x => x.StockPercentage),
+            "potentialprofit" => desc ? query.OrderByDescending(x => x.PotentialProfit) : query.OrderBy(x => x.PotentialProfit),
+            _ => desc ? query.OrderByDescending(x => x.Id) : query.OrderBy(x => x.Id),
+        };
+    }
+
+    private static IQueryable<StockTransfersReadResponse> ApplyStockTransfersOrdering(
+        IQueryable<StockTransfersReadResponse> query,
+        string? sortColumn,
+        string? sortOrder)
+    {
+        bool desc = sortOrder?.ToLower() == "desc";
+
+        return sortColumn?.ToLower() switch
+        {
+            "fromlocation" => desc ? query.OrderByDescending(x => x.FromLocation) : query.OrderBy(x => x.FromLocation),
+            "tolocation" => desc ? query.OrderByDescending(x => x.ToLocation) : query.OrderBy(x => x.ToLocation),
+            "product" => desc ? query.OrderByDescending(x => x.Product) : query.OrderBy(x => x.Product),
+            "quantity" => desc ? query.OrderByDescending(x => x.Quantity) : query.OrderBy(x => x.Quantity),
+            "createdat" => desc ? query.OrderByDescending(x => x.CreatedAt) : query.OrderBy(x => x.CreatedAt),
+            "username" => desc ? query.OrderByDescending(x => x.UserName) : query.OrderBy(x => x.UserName),
+            _ => desc ? query.OrderByDescending(x => x.Id) : query.OrderBy(x => x.Id),
+        };
     }
 }

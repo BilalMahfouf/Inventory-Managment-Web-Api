@@ -13,8 +13,6 @@ namespace Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Inventory> entity)
         {
-            entity.ToTable("Inventory");
-
             entity.HasIndex(e => e.LocationId, "IX_Inventory_LocationId");
 
             entity.HasIndex(e => e.ProductId, "IX_Inventory_ProductId");
@@ -27,15 +25,13 @@ namespace Infrastructure.Persistence.Configurations
 
             entity.HasIndex(e => new { e.ProductId, e.LocationId }, "UQ_Inventory_ProductLocation").IsUnique();
 
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.MaxLevel).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.QuantityOnHand).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.ReorderLevel).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("((0))");
-            entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt);
+            entity.Property(e => e.MaxLevel);
+            entity.Property(e => e.QuantityOnHand);
+            entity.Property(e => e.ReorderLevel);
+            entity.Property(e => e.UpdatedAt);
+            entity.Property(e => e.IsDeleted);
+            entity.Property(e => e.DeletedAt);
 
             entity.HasOne(d => d.CreatedByUser).WithMany()
                 .HasForeignKey(d => d.CreatedByUserId)

@@ -15,9 +15,7 @@ namespace Infrastructure.Persistence.Configurations
         {
             entity.HasIndex(e => e.ProductId, "IX_ProductImages_ProductId");
 
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt);
            
 
             entity.HasOne(d => d.CreatedByUser).WithMany()

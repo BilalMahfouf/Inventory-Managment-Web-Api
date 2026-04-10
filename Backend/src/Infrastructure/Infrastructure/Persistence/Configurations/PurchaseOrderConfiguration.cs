@@ -15,12 +15,10 @@ namespace Infrastructure.Persistence.Configurations
         {
             entity.HasIndex(e => e.SupplierId, "IX_PurchaseOrders_SupplierId");
 
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.OrderDate).HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt);
+            entity.Property(e => e.OrderDate);
             entity.Property(e => e.PurchaseStatus).HasDefaultValue((byte)1);
-            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.TotalAmount);
 
             entity.HasOne(d => d.CreatedByUser).WithMany()
                 .HasForeignKey(d => d.CreatedByUserId)

@@ -17,10 +17,8 @@ namespace Infrastructure.Persistence.Configurations
 
             entity.Property(e => e.ContactName).HasMaxLength(100);
             entity.Property(e => e.ContactType).HasMaxLength(50);
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt);
+            entity.Property(e => e.DeletedAt);
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.JobTitle).HasMaxLength(100);

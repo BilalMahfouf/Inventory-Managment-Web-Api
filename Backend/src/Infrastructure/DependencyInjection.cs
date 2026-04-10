@@ -52,9 +52,11 @@ namespace Infrastructure
             });
 
             services.AddScoped<InsertOutboxMessagesInterceptors>();
-            var connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
+            var connectionString = configuration.GetConnectionString("DefaultConnectionPgSql")
+                ?? throw new InvalidOperationException("Connection string 'DefaultConnectionPgSql' is not configured.");
             services.AddDbContext<InventoryManagmentDBContext>((sp, options) => options
-            .UseSqlServer(connectionString)
+            .UseNpgsql(connectionString)
+            .UseSnakeCaseNamingConvention()
             .AddInterceptors(sp.GetRequiredService<InsertOutboxMessagesInterceptors>()));
 
             services.AddAuthentication(options =>

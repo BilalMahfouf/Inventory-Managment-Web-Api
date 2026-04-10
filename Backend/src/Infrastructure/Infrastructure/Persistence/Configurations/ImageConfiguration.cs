@@ -12,8 +12,6 @@ namespace Infrastructure.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Image> builder)
         {
-            builder.ToTable("ima");
-
             builder.HasKey(i => i.Id);
 
             builder.Property(i => i.FileName)

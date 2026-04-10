@@ -4,7 +4,6 @@ using Application.Shared.Paging;
 using Domain.Shared.Results;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace Infrastructure.Queries;
 
@@ -97,24 +96,7 @@ public class ProductQueries : IProductQueries
                          });
 
 
-            Expression<Func<ProductTableResponse, object>> orderSelector =
-               request.SortColumn?.ToLower() switch
-               {
-                   "sku" => p => p.SKU,
-                   "product" => p => p.Product,
-                   "price" => p => p.Price,
-                   "stock" => p => p.Stock,
-                   "createdAt" => p => p.CreatedAt,
-                   _ => p => p.Id
-               };
-            if (request.SortOrder?.ToLower() == "desc")
-            {
-                query = query.OrderByDescending(orderSelector);
-            }
-            else
-            {
-                query = query.OrderBy(orderSelector);
-            }
+            query = ApplyProductOrdering(query, request.SortColumn, request.SortOrder);
 
             query = query.Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize);
@@ -169,22 +151,7 @@ public class ProductQueries : IProductQueries
                             CreatedAt = e.CreatedAt,
                             CreatedByUser = e.CreatedByUser.UserName,
                         });
-            Expression<Func<StockMovementsHistoryTableResponse, object>> orderSelector =
-               request.SortColumn?.ToLower() switch
-               {
-                   "product" => p => p.Product,
-                   "quantity" => p => p.Quantity,
-                   "date" => p => p.CreatedAt,
-                   _ => p => p.Id
-               };
-            if (request.SortOrder?.ToLower() == "desc")
-            {
-                query = query.OrderByDescending(orderSelector);
-            }
-            else
-            {
-                query = query.OrderBy(orderSelector);
-            }
+            query = ApplyStockMovementsHistoryOrdering(query, request.SortColumn, request.SortOrder);
 
             query = query.Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize);
@@ -209,6 +176,41 @@ public class ProductQueries : IProductQueries
             return Result<PagedList<StockMovementsHistoryTableResponse>>
                 .Exception(nameof(GetStockMovementsHistoryAsync), ex);
         }
+    }
+
+    private static IQueryable<ProductTableResponse> ApplyProductOrdering(
+        IQueryable<ProductTableResponse> query,
+        string? sortColumn,
+        string? sortOrder)
+    {
+        bool desc = sortOrder?.ToLower() == "desc";
+
+        return sortColumn?.ToLower() switch
+        {
+            "sku" => desc ? query.OrderByDescending(p => p.SKU) : query.OrderBy(p => p.SKU),
+            "product" => desc ? query.OrderByDescending(p => p.Product) : query.OrderBy(p => p.Product),
+            "price" => desc ? query.OrderByDescending(p => p.Price) : query.OrderBy(p => p.Price),
+            "stock" => desc ? query.OrderByDescending(p => p.Stock) : query.OrderBy(p => p.Stock),
+            "createdat" => desc ? query.OrderByDescending(p => p.CreatedAt) : query.OrderBy(p => p.CreatedAt),
+            _ => desc ? query.OrderByDescending(p => p.Id) : query.OrderBy(p => p.Id),
+        };
+    }
+
+    private static IQueryable<StockMovementsHistoryTableResponse> ApplyStockMovementsHistoryOrdering(
+        IQueryable<StockMovementsHistoryTableResponse> query,
+        string? sortColumn,
+        string? sortOrder)
+    {
+        bool desc = sortOrder?.ToLower() == "desc";
+
+        return sortColumn?.ToLower() switch
+        {
+            "product" => desc ? query.OrderByDescending(p => p.Product) : query.OrderBy(p => p.Product),
+            "quantity" => desc ? query.OrderByDescending(p => p.Quantity) : query.OrderBy(p => p.Quantity),
+            "date" => desc ? query.OrderByDescending(p => p.CreatedAt) : query.OrderBy(p => p.CreatedAt),
+            "createdat" => desc ? query.OrderByDescending(p => p.CreatedAt) : query.OrderBy(p => p.CreatedAt),
+            _ => desc ? query.OrderByDescending(p => p.Id) : query.OrderBy(p => p.Id),
+        };
     }
 
     public async Task<Result<ProductReadResponse>> GetByIdAsync(int id,

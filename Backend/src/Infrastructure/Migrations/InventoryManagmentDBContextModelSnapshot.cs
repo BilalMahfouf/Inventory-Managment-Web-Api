@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -18,61 +18,71 @@ namespace Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.1")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("ProductVersion", "10.0.5")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Domain.Customers.Entities.Customer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<byte>("CreditStatus")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("smallint")
+                        .HasColumnName("credit_status");
 
                     b.Property<int?>("CustomerCategoryId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("customer_category_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("email");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("phone");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Address", "Domain.Customers.Entities.Customer.Address#Address", b1 =>
                         {
@@ -81,1702 +91,2113 @@ namespace Infrastructure.Migrations
                             b1.Property<string>("City")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)")
-                                .HasColumnName("Address_City");
+                                .HasColumnType("character varying(100)")
+                                .HasColumnName("address_city");
 
                             b1.Property<string>("State")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)")
-                                .HasColumnName("Address_State");
+                                .HasColumnType("character varying(100)")
+                                .HasColumnName("address_state");
 
                             b1.Property<string>("Street")
                                 .IsRequired()
                                 .HasMaxLength(255)
-                                .HasColumnType("nvarchar(255)")
-                                .HasColumnName("Address_Street");
+                                .HasColumnType("character varying(255)")
+                                .HasColumnName("address_street");
 
                             b1.Property<string>("ZipCode")
                                 .IsRequired()
                                 .HasMaxLength(20)
-                                .HasColumnType("nvarchar(20)")
-                                .HasColumnName("Address_PostalCode");
+                                .HasColumnType("character varying(20)")
+                                .HasColumnName("address_zip_code");
                         });
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_customers");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_customers_created_by_user_id");
 
-                    b.HasIndex("CustomerCategoryId");
+                    b.HasIndex("CustomerCategoryId")
+                        .HasDatabaseName("ix_customers_customer_category_id");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("DeletedByUserId")
+                        .HasDatabaseName("ix_customers_deleted_by_user_id");
 
-                    b.HasIndex(new[] { "Email" }, "IX_Customers_Email");
+                    b.HasIndex(new[] { "Email" }, "IX_Customers_Email")
+                        .HasDatabaseName("ix_customers_email");
 
-                    b.HasIndex(new[] { "Name" }, "IX_Customers_Name");
+                    b.HasIndex(new[] { "Name" }, "IX_Customers_Name")
+                        .HasDatabaseName("ix_customers_name");
 
-                    b.ToTable("Customers");
+                    b.ToTable("customers", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Customers.Entities.CustomerCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("description");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<bool>("IsIndividual")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_individual");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_customer_categories");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_customer_categories_created_by_user_id");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("DeletedByUserId")
+                        .HasDatabaseName("ix_customer_categories_deleted_by_user_id");
 
                     b.HasIndex(new[] { "Name" }, "UQ_CustomerCategories_Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_customer_categories_name");
 
-                    b.ToTable("CustomerCategories");
+                    b.ToTable("customer_categories", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Customers.Entities.CustomerContact", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ContactName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("contact_name");
 
                     b.Property<string>("ContactType")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("contact_type");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<int>("CustomerId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("customer_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("email");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<bool>("IsPrimary")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_primary");
 
                     b.Property<string>("JobTitle")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("job_title");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("phone");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_customer_contacts");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_customer_contacts_created_by_user_id");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("DeletedByUserId")
+                        .HasDatabaseName("ix_customer_contacts_deleted_by_user_id");
 
-                    b.HasIndex(new[] { "CustomerId" }, "IX_CustomerContact_CustomerId");
+                    b.HasIndex(new[] { "CustomerId" }, "IX_CustomerContact_CustomerId")
+                        .HasDatabaseName("ix_customer_contacts_customer_id");
 
-                    b.ToTable("CustomerContact", (string)null);
+                    b.ToTable("customer_contacts", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Inventories.Entities.AlertRule", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AlertType")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("alert_type");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<int>("LocationId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("location_id");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("product_id");
 
                     b.Property<int>("Threshold")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("threshold");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_alert_rules");
 
-                    b.HasIndex(new[] { "AlertType" }, "IX_AlertRules_AlertType");
+                    b.HasIndex(new[] { "AlertType" }, "IX_AlertRules_AlertType")
+                        .HasDatabaseName("ix_alert_rules_alert_type");
 
-                    b.HasIndex(new[] { "LocationId" }, "IX_AlertRules_LocationId");
+                    b.HasIndex(new[] { "LocationId" }, "IX_AlertRules_LocationId")
+                        .HasDatabaseName("ix_alert_rules_location_id");
 
-                    b.HasIndex(new[] { "ProductId" }, "IX_AlertRules_ProductId");
+                    b.HasIndex(new[] { "ProductId" }, "IX_AlertRules_ProductId")
+                        .HasDatabaseName("ix_alert_rules_product_id");
 
-                    b.ToTable("AlertRules");
+                    b.ToTable("alert_rules", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Inventories.Entities.AlertType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Category")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("category");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("description");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_alert_types");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_alert_types_created_by_user_id");
 
-                    b.ToTable("AlertTypes");
+                    b.ToTable("alert_types", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Inventories.Entities.Inventory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValueSql("((0))");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<int>("LocationId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("location_id");
 
                     b.Property<decimal>("MaxLevel")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("max_level");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("product_id");
 
                     b.Property<decimal>("QuantityOnHand")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("quantity_on_hand");
 
                     b.Property<decimal>("QuantityReserved")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("quantity_reserved");
 
                     b.Property<decimal>("ReorderLevel")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("reorder_level");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("updated_by_user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_inventories");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_inventories_created_by_user_id");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("DeletedByUserId")
+                        .HasDatabaseName("ix_inventories_deleted_by_user_id");
 
-                    b.HasIndex("UpdatedByUserId");
+                    b.HasIndex("UpdatedByUserId")
+                        .HasDatabaseName("ix_inventories_updated_by_user_id");
 
-                    b.HasIndex(new[] { "LocationId" }, "IX_Inventory_LocationId");
+                    b.HasIndex(new[] { "LocationId" }, "IX_Inventory_LocationId")
+                        .HasDatabaseName("ix_inventories_location_id");
 
-                    b.HasIndex(new[] { "ProductId" }, "IX_Inventory_ProductId");
+                    b.HasIndex(new[] { "ProductId" }, "IX_Inventory_ProductId")
+                        .HasDatabaseName("ix_inventories_product_id");
 
-                    b.HasIndex(new[] { "ProductId", "LocationId" }, "IX_Inventory_Product_Location_Quantity");
+                    b.HasIndex(new[] { "ProductId", "LocationId" }, "IX_Inventory_Product_Location_Quantity")
+                        .HasDatabaseName("ix_inventories_product_id_location_id");
 
-                    b.HasIndex(new[] { "QuantityOnHand" }, "IX_Inventory_QuantityOnHand");
+                    b.HasIndex(new[] { "QuantityOnHand" }, "IX_Inventory_QuantityOnHand")
+                        .HasDatabaseName("ix_inventories_quantity_on_hand");
 
-                    b.HasIndex(new[] { "ReorderLevel" }, "IX_Inventory_ReorderLevel");
+                    b.HasIndex(new[] { "ReorderLevel" }, "IX_Inventory_ReorderLevel")
+                        .HasDatabaseName("ix_inventories_reorder_level");
 
                     b.HasIndex(new[] { "ProductId", "LocationId" }, "UQ_Inventory_ProductLocation")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_inventories_product_id_location_id1");
 
-                    b.ToTable("Inventory", (string)null);
+                    b.ToTable("inventories", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Inventories.Entities.Location", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("address");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<int>("LocationTypeId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("location_type_id");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_locations");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_locations_created_by_user_id");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("DeletedByUserId")
+                        .HasDatabaseName("ix_locations_deleted_by_user_id");
 
-                    b.HasIndex(new[] { "LocationTypeId" }, "IX_Locations_LocationTypeId");
+                    b.HasIndex(new[] { "LocationTypeId" }, "IX_Locations_LocationTypeId")
+                        .HasDatabaseName("ix_locations_location_type_id");
 
-                    b.HasIndex(new[] { "Name" }, "IX_Locations_Name");
+                    b.HasIndex(new[] { "Name" }, "IX_Locations_Name")
+                        .HasDatabaseName("ix_locations_name");
 
-                    b.ToTable("Locations");
+                    b.ToTable("locations", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Inventories.Entities.LocationType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("description");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_location_types");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_location_types_created_by_user_id");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("DeletedByUserId")
+                        .HasDatabaseName("ix_location_types_deleted_by_user_id");
 
                     b.HasIndex(new[] { "Name" }, "UQ_LocationTypes_Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_location_types_name");
 
-                    b.ToTable("LocationTypes");
+                    b.ToTable("location_types", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Inventories.Entities.StockMovement", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<int>("InventoryId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("inventory_id");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<int>("MovementTypeId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("movement_type_id");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("notes");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("product_id");
 
                     b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("quantity");
 
                     b.Property<byte>("StockMovmentStatus")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("smallint")
+                        .HasColumnName("stock_movment_status");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_stock_movements");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_stock_movements_created_by_user_id");
 
-                    b.HasIndex(new[] { "InventoryId" }, "IX_StockMovements_InventoryId");
+                    b.HasIndex(new[] { "InventoryId" }, "IX_StockMovements_InventoryId")
+                        .HasDatabaseName("ix_stock_movements_inventory_id");
 
-                    b.HasIndex(new[] { "MovementTypeId" }, "IX_StockMovements_MovementTypeId");
+                    b.HasIndex(new[] { "MovementTypeId" }, "IX_StockMovements_MovementTypeId")
+                        .HasDatabaseName("ix_stock_movements_movement_type_id");
 
-                    b.HasIndex(new[] { "ProductId" }, "IX_StockMovements_ProductId");
+                    b.HasIndex(new[] { "ProductId" }, "IX_StockMovements_ProductId")
+                        .HasDatabaseName("ix_stock_movements_product_id");
 
-                    b.HasIndex(new[] { "ProductId", "CreatedAt" }, "IX_StockMovements_Product_Date");
+                    b.HasIndex(new[] { "ProductId", "CreatedAt" }, "IX_StockMovements_Product_Date")
+                        .HasDatabaseName("ix_stock_movements_product_id_created_at");
 
-                    b.ToTable("StockMovements");
+                    b.ToTable("stock_movements", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Inventories.Entities.StockMovementType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("description");
 
                     b.Property<byte>("Direction")
-                        .HasColumnType("tinyint")
+                        .HasColumnType("smallint")
+                        .HasColumnName("direction")
                         .HasComment("  1 is IN ,2 is OUT, 3 is ADJUST");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_stock_movement_types");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_stock_movement_types_created_by_user_id");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("DeletedByUserId")
+                        .HasDatabaseName("ix_stock_movement_types_deleted_by_user_id");
 
                     b.HasIndex(new[] { "Name" }, "UQ_StockMovementTypes_Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_stock_movement_types_name");
 
-                    b.ToTable("StockMovementTypes");
+                    b.ToTable("stock_movement_types", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Inventories.Entities.StockTransfer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<int>("FromLocationId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("from_location_id");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("product_id");
 
                     b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("quantity");
 
                     b.Property<int>("ToLocationId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("to_location_id");
 
                     b.Property<byte>("TransferStatus")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint")
-                        .HasDefaultValue((byte)1);
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((byte)1)
+                        .HasColumnName("transfer_status");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_stock_transfers");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_stock_transfers_created_by_user_id");
 
-                    b.HasIndex(new[] { "FromLocationId" }, "IX_StockTransfers_FromLocationId");
+                    b.HasIndex(new[] { "FromLocationId" }, "IX_StockTransfers_FromLocationId")
+                        .HasDatabaseName("ix_stock_transfers_from_location_id");
 
-                    b.HasIndex(new[] { "ProductId" }, "IX_StockTransfers_ProductId");
+                    b.HasIndex(new[] { "ProductId" }, "IX_StockTransfers_ProductId")
+                        .HasDatabaseName("ix_stock_transfers_product_id");
 
-                    b.HasIndex(new[] { "ToLocationId" }, "IX_StockTransfers_ToLocationId");
+                    b.HasIndex(new[] { "ToLocationId" }, "IX_StockTransfers_ToLocationId")
+                        .HasDatabaseName("ix_stock_transfers_to_location_id");
 
-                    b.ToTable("StockTransfers");
+                    b.ToTable("stock_transfers", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Products.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("category_id");
 
                     b.Property<decimal>("Cost")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("cost");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("description");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
 
                     b.Property<string>("Sku")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("SKU");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("sku");
 
                     b.Property<int>("UnitOfMeasureId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("unit_of_measure_id");
 
                     b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("unit_price");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("updated_by_user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_products");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_products_created_by_user_id");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("DeletedByUserId")
+                        .HasDatabaseName("ix_products_deleted_by_user_id");
 
-                    b.HasIndex("UpdatedByUserId");
+                    b.HasIndex("UpdatedByUserId")
+                        .HasDatabaseName("ix_products_updated_by_user_id");
 
-                    b.HasIndex(new[] { "CategoryId" }, "IX_Products_CategoryId");
+                    b.HasIndex(new[] { "CategoryId" }, "IX_Products_CategoryId")
+                        .HasDatabaseName("ix_products_category_id");
 
-                    b.HasIndex(new[] { "CategoryId", "IsActive" }, "IX_Products_Category_Active");
+                    b.HasIndex(new[] { "CategoryId", "IsActive" }, "IX_Products_Category_Active")
+                        .HasDatabaseName("ix_products_category_id_is_active");
 
-                    b.HasIndex(new[] { "IsDeleted" }, "IX_Products_IsDeleted");
+                    b.HasIndex(new[] { "IsDeleted" }, "IX_Products_IsDeleted")
+                        .HasDatabaseName("ix_products_is_deleted");
 
-                    b.HasIndex(new[] { "Name" }, "IX_Products_Name");
+                    b.HasIndex(new[] { "Name" }, "IX_Products_Name")
+                        .HasDatabaseName("ix_products_name");
 
-                    b.HasIndex(new[] { "Sku" }, "IX_Products_SKU");
+                    b.HasIndex(new[] { "Sku" }, "IX_Products_SKU")
+                        .HasDatabaseName("ix_products_sku");
 
-                    b.HasIndex(new[] { "UnitOfMeasureId" }, "IX_Products_UnitOfMeasureId");
+                    b.HasIndex(new[] { "UnitOfMeasureId" }, "IX_Products_UnitOfMeasureId")
+                        .HasDatabaseName("ix_products_unit_of_measure_id");
 
                     b.HasIndex(new[] { "Sku" }, "UQ_Products_SKU")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_products_sku1");
 
-                    b.ToTable("Products");
+                    b.ToTable("products", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Products.Entities.ProductCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("description");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
 
                     b.Property<int?>("ParentId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("parent_id");
 
                     b.Property<byte>("Type")
-                        .HasColumnType("tinyint")
+                        .HasColumnType("smallint")
+                        .HasColumnName("type")
                         .HasComment("  1 is MainCategory ,2 is SubCategory");
 
                     b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("update_at");
 
                     b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("updated_by_user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_product_categories");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_product_categories_created_by_user_id");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("DeletedByUserId")
+                        .HasDatabaseName("ix_product_categories_deleted_by_user_id");
 
-                    b.HasIndex("UpdatedByUserId");
+                    b.HasIndex("UpdatedByUserId")
+                        .HasDatabaseName("ix_product_categories_updated_by_user_id");
 
-                    b.HasIndex(new[] { "ParentId" }, "IX_ProductCategories_ParentId");
+                    b.HasIndex(new[] { "ParentId" }, "IX_ProductCategories_ParentId")
+                        .HasDatabaseName("ix_product_categories_parent_id");
 
-                    b.ToTable("ProductCategories");
+                    b.ToTable("product_categories", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Products.Entities.ProductImage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<int?>("ImageId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("image_id");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<bool>("IsPrimary")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_primary");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("product_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_product_images");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_product_images_created_by_user_id");
 
-                    b.HasIndex("ImageId");
+                    b.HasIndex("ImageId")
+                        .HasDatabaseName("ix_product_images_image_id");
 
-                    b.HasIndex(new[] { "ProductId" }, "IX_ProductImages_ProductId");
+                    b.HasIndex(new[] { "ProductId" }, "IX_ProductImages_ProductId")
+                        .HasDatabaseName("ix_product_images_product_id");
 
-                    b.ToTable("ProductImages");
+                    b.ToTable("product_images", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Products.Entities.ProductSupplier", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<int>("LeadTimeDays")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("lead_time_days");
 
                     b.Property<int>("MinOrderQuantity")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("min_order_quantity");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("product_id");
 
                     b.Property<int>("SupplierId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("supplier_id");
 
                     b.Property<string>("SupplierProductCode")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("supplier_product_code");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_product_suppliers");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_product_suppliers_created_by_user_id");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("DeletedByUserId")
+                        .HasDatabaseName("ix_product_suppliers_deleted_by_user_id");
 
-                    b.HasIndex(new[] { "ProductId" }, "IX_ProductSuppliers_ProductId");
+                    b.HasIndex(new[] { "ProductId" }, "IX_ProductSuppliers_ProductId")
+                        .HasDatabaseName("ix_product_suppliers_product_id");
 
-                    b.HasIndex(new[] { "ProductId", "SupplierId" }, "IX_ProductSuppliers_ProductId_SupplierId");
+                    b.HasIndex(new[] { "ProductId", "SupplierId" }, "IX_ProductSuppliers_ProductId_SupplierId")
+                        .HasDatabaseName("ix_product_suppliers_product_id_supplier_id");
 
-                    b.HasIndex(new[] { "SupplierId" }, "IX_ProductSuppliers_SupplierId");
+                    b.HasIndex(new[] { "SupplierId" }, "IX_ProductSuppliers_SupplierId")
+                        .HasDatabaseName("ix_product_suppliers_supplier_id");
 
-                    b.ToTable("ProductSuppliers");
+                    b.ToTable("product_suppliers", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Products.Entities.UnitOfMeasure", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("description");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("name");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("updated_by_user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_unit_of_measures");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_unit_of_measures_created_by_user_id");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("DeletedByUserId")
+                        .HasDatabaseName("ix_unit_of_measures_deleted_by_user_id");
 
-                    b.HasIndex("UpdatedByUserId");
+                    b.HasIndex("UpdatedByUserId")
+                        .HasDatabaseName("ix_unit_of_measures_updated_by_user_id");
 
                     b.HasIndex(new[] { "Name" }, "UQ_UnitOfMeasures_Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_unit_of_measures_name");
 
-                    b.ToTable("UnitOfMeasures");
+                    b.ToTable("unit_of_measures", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Purchasing.Entities.PurchaseOrder", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("description");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("order_date");
 
                     b.Property<byte>("PurchaseStatus")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint")
-                        .HasDefaultValue((byte)1);
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((byte)1)
+                        .HasColumnName("purchase_status");
 
                     b.Property<int>("SupplierId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("supplier_id");
 
                     b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("total_amount");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_purchase_orders");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_purchase_orders_created_by_user_id");
 
-                    b.HasIndex(new[] { "SupplierId" }, "IX_PurchaseOrders_SupplierId");
+                    b.HasIndex(new[] { "SupplierId" }, "IX_PurchaseOrders_SupplierId")
+                        .HasDatabaseName("ix_purchase_orders_supplier_id");
 
-                    b.ToTable("PurchaseOrders");
+                    b.ToTable("purchase_orders", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Purchasing.Entities.PurchaseOrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<decimal>("LineAmount")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("line_amount");
 
                     b.Property<decimal>("OrderedQuantity")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("ordered_quantity");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("product_id");
 
                     b.Property<int>("PurchaseOrderId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("purchase_order_id");
 
                     b.Property<decimal>("ReceivedQuantity")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("received_quantity");
 
                     b.Property<decimal>("UnitCost")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("unit_cost");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_purchase_order_items");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_purchase_order_items_created_by_user_id");
 
-                    b.HasIndex(new[] { "PurchaseOrderId", "ProductId" }, "IX_PurchaseOrderItems_Order_Product");
+                    b.HasIndex(new[] { "PurchaseOrderId", "ProductId" }, "IX_PurchaseOrderItems_Order_Product")
+                        .HasDatabaseName("ix_purchase_order_items_purchase_order_id_product_id");
 
-                    b.HasIndex(new[] { "ProductId" }, "IX_PurchaseOrderItems_ProductId");
+                    b.HasIndex(new[] { "ProductId" }, "IX_PurchaseOrderItems_ProductId")
+                        .HasDatabaseName("ix_purchase_order_items_product_id");
 
-                    b.HasIndex(new[] { "PurchaseOrderId" }, "IX_PurchaseOrderItems_PurchaseOrderId");
+                    b.HasIndex(new[] { "PurchaseOrderId" }, "IX_PurchaseOrderItems_PurchaseOrderId")
+                        .HasDatabaseName("ix_purchase_order_items_purchase_order_id");
 
-                    b.ToTable("PurchaseOrderItems");
+                    b.ToTable("purchase_order_items", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Sales.Entities.SalesOrder", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<int?>("CustomerId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("customer_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("description");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<bool>("IsWalkIn")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_walk_in");
 
                     b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("order_date");
 
                     b.Property<byte>("PaymentStatus")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint")
-                        .HasDefaultValue((byte)1);
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((byte)1)
+                        .HasColumnName("payment_status");
 
                     b.Property<byte>("SalesStatus")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint")
-                        .HasDefaultValue((byte)1);
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((byte)1)
+                        .HasColumnName("sales_status");
 
                     b.Property<DateTime?>("SalesStatusUpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("sales_status_updated_at");
 
                     b.Property<string>("ShippingAddress")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("shipping_address");
 
                     b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("total_amount");
 
                     b.Property<string>("TrackingNumber")
                         .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("tracking_number");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_sales_orders");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_sales_orders_created_by_user_id");
 
-                    b.HasIndex(new[] { "CustomerId" }, "IX_SalesOrders_CustomerId");
+                    b.HasIndex(new[] { "CustomerId" }, "IX_SalesOrders_CustomerId")
+                        .HasDatabaseName("ix_sales_orders_customer_id");
 
-                    b.ToTable("SalesOrders");
+                    b.ToTable("sales_orders", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Sales.Entities.SalesOrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<int>("InventoryId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("inventory_id");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<decimal>("LineAmount")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("line_amount");
 
                     b.Property<int>("LocationId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("location_id");
 
                     b.Property<decimal>("OrderedQuantity")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("ordered_quantity");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("product_id");
 
                     b.Property<decimal?>("ReceivedQuantity")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("received_quantity");
 
                     b.Property<int>("SalesOrderId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("sales_order_id");
 
                     b.Property<decimal>("UnitCost")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric")
+                        .HasColumnName("unit_cost");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_sales_order_items");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_sales_order_items_created_by_user_id");
 
-                    b.HasIndex(new[] { "InventoryId" }, "IX_SalesOrderItems_InventoryId");
+                    b.HasIndex(new[] { "InventoryId" }, "IX_SalesOrderItems_InventoryId")
+                        .HasDatabaseName("ix_sales_order_items_inventory_id");
 
-                    b.HasIndex(new[] { "SalesOrderId", "ProductId" }, "IX_SalesOrderItems_Order_Product");
+                    b.HasIndex(new[] { "SalesOrderId", "ProductId" }, "IX_SalesOrderItems_Order_Product")
+                        .HasDatabaseName("ix_sales_order_items_sales_order_id_product_id");
 
-                    b.HasIndex(new[] { "ProductId" }, "IX_SalesOrderItems_ProductId");
+                    b.HasIndex(new[] { "ProductId" }, "IX_SalesOrderItems_ProductId")
+                        .HasDatabaseName("ix_sales_order_items_product_id");
 
-                    b.HasIndex(new[] { "SalesOrderId" }, "IX_SalesOrderItems_SalesOrderId");
+                    b.HasIndex(new[] { "SalesOrderId" }, "IX_SalesOrderItems_SalesOrderId")
+                        .HasDatabaseName("ix_sales_order_items_sales_order_id");
 
-                    b.ToTable("SalesOrderItems");
+                    b.ToTable("sales_order_items", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Shared.Entities.AuditLog", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Action")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("action");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<int?>("EntityId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("entity_id");
 
                     b.Property<string>("EntityType")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("entity_type");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("NewValues")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("new_values");
 
                     b.Property<string>("OldValues")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("old_values");
 
                     b.Property<DateTime?>("Timestamp")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("timestamp");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_audit_logs");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_audit_logs_created_by_user_id");
 
-                    b.HasIndex(new[] { "UserId" }, "IX_AuditLogs_UserId");
+                    b.HasIndex(new[] { "UserId" }, "IX_AuditLogs_UserId")
+                        .HasDatabaseName("ix_audit_logs_user_id");
 
-                    b.ToTable("AuditLogs");
+                    b.ToTable("audit_logs", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Shared.Entities.Image", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("FileName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("file_name");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("MimeType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("mime_type");
 
                     b.Property<long>("SizeInBytes")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("size_in_bytes");
 
                     b.Property<string>("StoragePath")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("storage_path");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_image");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_image_created_by_user_id");
 
-                    b.ToTable("Image");
+                    b.ToTable("image", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Suppliers.Entities.Supplier", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("address");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("email");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("phone");
 
                     b.Property<int>("SupplierTypeId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("supplier_type_id");
 
                     b.Property<string>("Terms")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("terms");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("updated_by_user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_suppliers");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_suppliers_created_by_user_id");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("DeletedByUserId")
+                        .HasDatabaseName("ix_suppliers_deleted_by_user_id");
 
-                    b.HasIndex("UpdatedByUserId");
+                    b.HasIndex("UpdatedByUserId")
+                        .HasDatabaseName("ix_suppliers_updated_by_user_id");
 
-                    b.HasIndex(new[] { "Email" }, "IX_Suppliers_Email");
+                    b.HasIndex(new[] { "Email" }, "IX_Suppliers_Email")
+                        .HasDatabaseName("ix_suppliers_email");
 
-                    b.HasIndex(new[] { "Name" }, "IX_Suppliers_Name");
+                    b.HasIndex(new[] { "Name" }, "IX_Suppliers_Name")
+                        .HasDatabaseName("ix_suppliers_name");
 
-                    b.HasIndex(new[] { "SupplierTypeId" }, "IX_Suppliers_SupplierTypeId");
+                    b.HasIndex(new[] { "SupplierTypeId" }, "IX_Suppliers_SupplierTypeId")
+                        .HasDatabaseName("ix_suppliers_supplier_type_id");
 
-                    b.ToTable("Suppliers");
+                    b.ToTable("suppliers", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Suppliers.Entities.SupplierContact", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ContactName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("contact_name");
 
                     b.Property<string>("ContactType")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("contact_type");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("email");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<bool>("IsPrimary")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_primary");
 
                     b.Property<string>("JobTitle")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("job_title");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("phone");
 
                     b.Property<int>("SupplierId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("supplier_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_supplier_contacts");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_supplier_contacts_created_by_user_id");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("DeletedByUserId")
+                        .HasDatabaseName("ix_supplier_contacts_deleted_by_user_id");
 
-                    b.HasIndex(new[] { "SupplierId" }, "IX_SupplierContacts_SupplierId");
+                    b.HasIndex(new[] { "SupplierId" }, "IX_SupplierContacts_SupplierId")
+                        .HasDatabaseName("ix_supplier_contacts_supplier_id");
 
-                    b.ToTable("SupplierContacts");
+                    b.ToTable("supplier_contacts", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Suppliers.Entities.SupplierType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("description");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<bool>("IsIndividual")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_individual");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_supplier_types");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_supplier_types_created_by_user_id");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("DeletedByUserId")
+                        .HasDatabaseName("ix_supplier_types_deleted_by_user_id");
 
                     b.HasIndex(new[] { "Name" }, "UQ_SupplierTypes_Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_supplier_types_name");
 
-                    b.ToTable("SupplierTypes");
+                    b.ToTable("supplier_types", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Users.Entities.ConfirmEmailToken", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<DateTime>("ExpiredAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expired_at");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<bool>("IsLocked")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_locked");
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("token");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_confirm_email_tokens");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_confirm_email_tokens_user_id");
 
-                    b.ToTable("ConfirmEmailTokens");
+                    b.ToTable("confirm_email_tokens", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Users.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int?>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("email");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("email_confirmed");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("first_name");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("last_name");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("password_hash");
 
                     b.Property<int>("RoleId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("role_id");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("updated_by_user_id");
 
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("user_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_users");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_users_created_by_user_id");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("DeletedByUserId")
+                        .HasDatabaseName("ix_users_deleted_by_user_id");
 
-                    b.HasIndex("UpdatedByUserId");
+                    b.HasIndex("UpdatedByUserId")
+                        .HasDatabaseName("ix_users_updated_by_user_id");
 
-                    b.HasIndex(new[] { "Email" }, "IX_Users_Email");
+                    b.HasIndex(new[] { "Email" }, "IX_Users_Email")
+                        .HasDatabaseName("ix_users_email");
 
-                    b.HasIndex(new[] { "RoleId" }, "IX_Users_RoleId");
+                    b.HasIndex(new[] { "RoleId" }, "IX_Users_RoleId")
+                        .HasDatabaseName("ix_users_role_id");
 
                     b.HasIndex(new[] { "Email" }, "UQ_Users_Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_email1");
 
-                    b.ToTable("Users");
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Users.Entities.UserRole", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int?>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_user_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("description");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("updated_by_user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_user_roles");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_user_roles_created_by_user_id");
 
-                    b.HasIndex("DeletedByUserId");
+                    b.HasIndex("DeletedByUserId")
+                        .HasDatabaseName("ix_user_roles_deleted_by_user_id");
 
-                    b.HasIndex("UpdatedByUserId");
+                    b.HasIndex("UpdatedByUserId")
+                        .HasDatabaseName("ix_user_roles_updated_by_user_id");
 
                     b.HasIndex(new[] { "Name" }, "UQ_UserRoles_Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_user_roles_name");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("user_roles", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Users.Entities.UserSession", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("deleted_by_user_id");
 
                     b.Property<DateTime?>("ExpiresAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("token");
 
                     b.Property<byte>("TokenType")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("smallint")
+                        .HasColumnName("token_type");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_user_sessions");
 
-                    b.HasIndex(new[] { "Token" }, "IX_UserSessions_Token");
+                    b.HasIndex(new[] { "Token" }, "IX_UserSessions_Token")
+                        .HasDatabaseName("ix_user_sessions_token");
 
-                    b.HasIndex(new[] { "UserId" }, "IX_UserSessions_UserId");
+                    b.HasIndex(new[] { "UserId" }, "IX_UserSessions_UserId")
+                        .HasDatabaseName("ix_user_sessions_user_id");
 
-                    b.ToTable("UserSessions");
+                    b.ToTable("user_sessions", (string)null);
                 });
 
             modelBuilder.Entity("Infrastructure.Outbox.OutboxMessages", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("content");
 
                     b.Property<DateTime>("CreatedOnUtc")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on_utc");
 
                     b.Property<string>("Errors")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text")
+                        .HasColumnName("errors");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
 
                     b.Property<DateTime?>("ProcessedOnUtc")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("processed_on_utc");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_outbox_messages");
 
-                    b.ToTable("OutboxMessages", (string)null);
+                    b.ToTable("outbox_messages", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Customers.Entities.Customer", b =>
@@ -1789,7 +2210,8 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.Customers.Entities.CustomerCategory", "CustomerCategory")
                         .WithMany()
-                        .HasForeignKey("CustomerCategoryId");
+                        .HasForeignKey("CustomerCategoryId")
+                        .HasConstraintName("fk_customers_customer_categories_customer_category_id");
 
                     b.HasOne("Domain.Users.Entities.User", "DeletedByUser")
                         .WithMany()
@@ -1895,7 +2317,8 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.Users.Entities.User", "DeletedByUser")
                         .WithMany()
-                        .HasForeignKey("DeletedByUserId");
+                        .HasForeignKey("DeletedByUserId")
+                        .HasConstraintName("fk_inventories_users_deleted_by_user_id");
 
                     b.HasOne("Domain.Inventories.Entities.Location", "Location")
                         .WithMany()
@@ -2119,7 +2542,8 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Users.Entities.User", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_product_categories_users_updated_by_user_id");
 
                     b.Navigation("CreatedByUser");
 
@@ -2141,7 +2565,8 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Shared.Entities.Image", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .HasConstraintName("fk_product_images_image_image_id");
 
                     b.HasOne("Domain.Products.Entities.Product", "Product")
                         .WithMany()
@@ -2206,7 +2631,8 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Users.Entities.User", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_unit_of_measures_users_updated_by_user_id");
 
                     b.Navigation("CreatedByUser");
 
@@ -2340,7 +2766,8 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_image_users_created_by_user_id");
 
                     b.Navigation("CreatedByUser");
                 });
@@ -2428,7 +2855,8 @@ namespace Infrastructure.Migrations
                         .WithMany("ConfirmEmailTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_confirm_email_tokens_users_user_id");
 
                     b.Navigation("User");
                 });
@@ -2470,7 +2898,8 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Users.Entities.User", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_user_roles_users_created_by_user_id");
 
                     b.HasOne("Domain.Users.Entities.User", "DeletedByUser")
                         .WithMany()
@@ -2480,7 +2909,8 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Users.Entities.User", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_user_roles_users_updated_by_user_id");
 
                     b.Navigation("CreatedByUser");
 

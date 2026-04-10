@@ -17,10 +17,8 @@ namespace Infrastructure.Persistence.Configurations
 
             entity.HasIndex(e => e.UserId, "IX_UserSessions_UserId");
 
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.ExpiresAt).HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt);
+            entity.Property(e => e.ExpiresAt);
             entity.Property(e => e.Token).HasMaxLength(500);
             entity.Property(e => e.TokenType).IsRequired();
 

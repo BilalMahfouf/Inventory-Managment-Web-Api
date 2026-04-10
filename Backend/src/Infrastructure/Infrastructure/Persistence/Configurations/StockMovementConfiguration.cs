@@ -22,11 +22,9 @@ namespace Infrastructure.Persistence.Configurations
 
             entity.HasIndex(e => new { e.ProductId, e.CreatedAt }, "IX_StockMovements_Product_Date");
 
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt);
             entity.Property(e => e.Notes).HasMaxLength(500);
-            entity.Property(e => e.Quantity).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Quantity);
             entity.Property(e => e.StockMovmentStatus)
                 .HasConversion<byte>();
 

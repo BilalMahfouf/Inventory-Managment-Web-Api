@@ -16,13 +16,9 @@ namespace Infrastructure.Persistence.Configurations
             entity.HasIndex(e => e.UserId, "IX_AuditLogs_UserId");
 
             entity.Property(e => e.Action).HasMaxLength(100);
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt);
             entity.Property(e => e.EntityType).HasMaxLength(100);
-            entity.Property(e => e.Timestamp)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+            entity.Property(e => e.Timestamp);
 
             entity.HasOne(d => d.CreatedByUser).WithMany()
                 .HasForeignKey(d => d.CreatedByUserId)

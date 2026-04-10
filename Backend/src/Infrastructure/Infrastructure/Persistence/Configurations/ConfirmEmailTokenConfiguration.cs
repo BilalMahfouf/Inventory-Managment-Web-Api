@@ -14,8 +14,6 @@ namespace Infrastructure.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<ConfirmEmailToken> builder)
         {
-            builder.ToTable("ConfirmEmailTokens");
-
             builder.HasKey(e => e.Id);
 
             builder.Property(e => e.Token)
@@ -26,8 +24,8 @@ namespace Infrastructure.Infrastructure.Persistence.Configurations
                 .IsRequired();
 
             builder.Property(e => e.CreatedAt)
-               .HasDefaultValueSql("(getdate())")
-               .HasColumnType("datetime");
+
+;
 
             builder.Property(e => e.ExpiredAt)
                 .IsRequired();

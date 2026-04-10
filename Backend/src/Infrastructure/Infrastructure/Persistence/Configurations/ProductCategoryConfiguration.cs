@@ -15,18 +15,15 @@ namespace Infrastructure.Persistence.Configurations
         {
             entity.HasIndex(e => e.ParentId, "IX_ProductCategories_ParentId");
 
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt);
 
             entity.Property(e => e.Type)
                 .HasComment("  1 is MainCategory ,2 is SubCategory")
                 .HasConversion<byte>();
             
-            entity.Property(e => e.UpdateAt)
-                .HasColumnType("datetime");
+            entity.Property(e => e.UpdateAt);
 
-            entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+            entity.Property(e => e.DeletedAt);
             entity.Property(e => e.Name).HasMaxLength(100);
 
             entity.HasOne(d => d.CreatedByUser).WithMany()

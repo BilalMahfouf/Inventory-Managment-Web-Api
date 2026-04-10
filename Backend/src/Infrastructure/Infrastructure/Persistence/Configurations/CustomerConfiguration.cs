@@ -18,19 +18,17 @@ namespace Infrastructure.Persistence.Configurations
             entity.HasIndex(e => e.Name, "IX_Customers_Name");
             entity.ComplexProperty(c => c.Address, cb =>
             {
-                cb.Property(c => c.Street).HasMaxLength(255).HasColumnName("Address_Street");
-                cb.Property(c => c.City).HasMaxLength(100).HasColumnName("Address_City");
-                cb.Property(c => c.State).HasMaxLength(100).HasColumnName("Address_State");
-                cb.Property(c => c.ZipCode).HasMaxLength(20).HasColumnName("Address_PostalCode");
+                cb.Property(c => c.Street).HasMaxLength(255);
+                cb.Property(c => c.City).HasMaxLength(100);
+                cb.Property(c => c.State).HasMaxLength(100);
+                cb.Property(c => c.ZipCode).HasMaxLength(20);
             });
 
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt);
             entity.Property(e => e.CreditStatus)
             .HasConversion<byte>();
 
-            entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+            entity.Property(e => e.DeletedAt);
             entity.Property(e => e.Email).HasMaxLength(255);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.Name).HasMaxLength(255);

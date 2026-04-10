@@ -25,18 +25,14 @@ namespace Infrastructure.Persistence.Configurations
 
             entity.HasIndex(e => e.Sku, "UQ_Products_SKU").IsUnique();
 
-            entity.Property(e => e.Cost).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+            entity.Property(e => e.Cost);
+            entity.Property(e => e.CreatedAt);
+            entity.Property(e => e.DeletedAt);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.Name).HasMaxLength(255);
-            entity.Property(e => e.Sku)
-                .HasMaxLength(100)
-                .HasColumnName("SKU");
-            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+            entity.Property(e => e.Sku).HasMaxLength(100);
+            entity.Property(e => e.UnitPrice);
+            entity.Property(e => e.UpdatedAt);
 
             entity.HasOne(d => d.Category).WithMany()
                 .HasForeignKey(d => d.CategoryId)

@@ -20,10 +20,8 @@ namespace Infrastructure.Persistence.Configurations
 
             entity.HasIndex(e => e.ToLocationId, "IX_StockTransfers_ToLocationId");
 
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.Quantity).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.CreatedAt);
+            entity.Property(e => e.Quantity);
             entity.Property(e => e.TransferStatus)
                 .HasDefaultValue(TransferStatus.Pending)
                 .HasConversion<byte>();

@@ -15,10 +15,8 @@ namespace Infrastructure.Persistence.Configurations
         {
             entity.HasIndex(e => e.Name, "UQ_LocationTypes_Name").IsUnique();
 
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt);
+            entity.Property(e => e.DeletedAt);
             entity.Property(e => e.Description).HasMaxLength(255);
             entity.Property(e => e.Name).HasMaxLength(100);
 

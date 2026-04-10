@@ -19,10 +19,8 @@ namespace Infrastructure.Persistence.Configurations
 
             entity.HasIndex(e => e.SupplierId, "IX_ProductSuppliers_SupplierId");
 
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt);
+            entity.Property(e => e.DeletedAt);
             entity.Property(e => e.SupplierProductCode).HasMaxLength(100);
 
             entity.HasOne(d => d.CreatedByUser).WithMany()

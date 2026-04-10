@@ -18,13 +18,11 @@ namespace Infrastructure.Infrastructure.Persistence.Configurations.Sales
 
             entity.HasIndex(e => e.SalesOrderId, "IX_SalesOrderItems_SalesOrderId");
 
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.LineAmount).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.OrderedQuantity).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.ReceivedQuantity).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.UnitCost).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.CreatedAt);
+            entity.Property(e => e.LineAmount);
+            entity.Property(e => e.OrderedQuantity);
+            entity.Property(e => e.ReceivedQuantity);
+            entity.Property(e => e.UnitCost);
 
             entity.HasOne(d => d.CreatedByUser).WithMany()
                 .HasForeignKey(d => d.CreatedByUserId)

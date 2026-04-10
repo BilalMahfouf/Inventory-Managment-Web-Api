@@ -13,16 +13,12 @@ namespace Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<CustomerContact> entity)
         {
-            entity.ToTable("CustomerContact");
-
             entity.HasIndex(e => e.CustomerId, "IX_CustomerContact_CustomerId");
 
             entity.Property(e => e.ContactName).HasMaxLength(100);
             entity.Property(e => e.ContactType).HasMaxLength(50);
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt);
+            entity.Property(e => e.DeletedAt);
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.JobTitle).HasMaxLength(100);

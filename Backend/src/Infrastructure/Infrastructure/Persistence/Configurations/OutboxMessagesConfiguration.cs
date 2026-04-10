@@ -11,8 +11,6 @@ public partial class OutboxMessagesConfiguration : IEntityTypeConfiguration<Outb
 {
     public void Configure(EntityTypeBuilder<OutboxMessages> builder)
     {
-        builder.ToTable("OutboxMessages");
-
         builder.HasKey(e => e.Id);
         builder.Property(e => e.Name).IsRequired().HasMaxLength(200);
         builder.Property(e => e.Content).IsRequired();

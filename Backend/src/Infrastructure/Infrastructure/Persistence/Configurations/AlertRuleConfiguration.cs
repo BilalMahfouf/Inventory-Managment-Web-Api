@@ -19,9 +19,7 @@ namespace Infrastructure.Persistence.Configurations
 
             entity.HasIndex(e => e.ProductId, "IX_AlertRules_ProductId");
 
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
 
             entity.HasOne(d => d.AlertTypeNavigation).WithMany()

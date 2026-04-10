@@ -15,10 +15,9 @@ namespace Infrastructure.Persistence.Configurations
         {
             entity.HasIndex(e => e.Name, "UQ_UserRoles_Name").IsUnique();
 
-            entity.Property(e => e.CreatedAt).HasColumnType("datetime")
-                .HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
-            entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt);
+            entity.Property(e => e.UpdatedAt);
+            entity.Property(e => e.DeletedAt);
             entity.Property(e => e.Name).HasMaxLength(100);
 
             entity.HasOne(d => d.DeletedByUser).WithMany()

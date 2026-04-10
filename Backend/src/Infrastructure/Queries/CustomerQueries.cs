@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -89,25 +88,7 @@ internal class CustomerQueries : ICustomerQueries
     };
 
 
-            Expression<Func<CustomerTableReadResponse, object>> orderSelector =
-                request.SortColumn?.ToLower() switch
-                {
-                    "name" => x => x.Name,
-                    "customercategoryname" => x => x.CustomerCategoryName,
-                    "totalorders" => x => x.TotalOrders,
-                    "totalspent" => x => x.TotalSpent,
-                    "createdat" => x => x.CreatedAt,
-                    _ => x => x.Id
-
-                };
-            if (request.SortOrder?.ToLower() == "desc")
-            {
-                query = query.OrderByDescending(orderSelector);
-            }
-            else
-            {
-                query = query.OrderBy(orderSelector);
-            }
+            query = ApplyOrdering(query, request.SortColumn, request.SortOrder);
 
             query = query.Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize);
@@ -136,6 +117,24 @@ internal class CustomerQueries : ICustomerQueries
         }
 
 
+    }
+
+    private static IQueryable<CustomerTableReadResponse> ApplyOrdering(
+        IQueryable<CustomerTableReadResponse> query,
+        string? sortColumn,
+        string? sortOrder)
+    {
+        bool desc = sortOrder?.ToLower() == "desc";
+
+        return sortColumn?.ToLower() switch
+        {
+            "name" => desc ? query.OrderByDescending(x => x.Name) : query.OrderBy(x => x.Name),
+            "customercategoryname" => desc ? query.OrderByDescending(x => x.CustomerCategoryName) : query.OrderBy(x => x.CustomerCategoryName),
+            "totalorders" => desc ? query.OrderByDescending(x => x.TotalOrders) : query.OrderBy(x => x.TotalOrders),
+            "totalspent" => desc ? query.OrderByDescending(x => x.TotalSpent) : query.OrderBy(x => x.TotalSpent),
+            "createdat" => desc ? query.OrderByDescending(x => x.CreatedAt) : query.OrderBy(x => x.CreatedAt),
+            _ => desc ? query.OrderByDescending(x => x.Id) : query.OrderBy(x => x.Id),
+        };
     }
 
     public async Task<Result<CustomerReadResponse>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
