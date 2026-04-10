@@ -88,7 +88,7 @@ export default function SalesPage() {
           className='flex-1'
         />
         <InfoCard
-          title={t(i18nKeyContainer.sales.orders.cards.totalRevenue.title)}
+          title={t(i18nKeyContainer.sales.orders.cards.revenueThisMonth.title)}
           iconComponent={DollarSign}
           number={
             loading
@@ -99,7 +99,7 @@ export default function SalesPage() {
                 })}`
           }
           description={t(
-            i18nKeyContainer.sales.orders.cards.totalRevenue.description
+            i18nKeyContainer.sales.orders.cards.revenueThisMonth.description
           )}
           className='flex-1'
         />

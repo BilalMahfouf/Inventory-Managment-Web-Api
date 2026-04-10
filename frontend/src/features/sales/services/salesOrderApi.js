@@ -136,6 +136,13 @@ function mapUpdateOrderPayloadToApi(orderData) {
     shippingAddress: orderData?.shippingAddress ?? null,
   };
 
+  if (
+    orderData?.paymentStatus !== undefined &&
+    orderData?.paymentStatus !== null
+  ) {
+    payload.paymentStatus = toFiniteNumber(orderData.paymentStatus, 1);
+  }
+
   if (Array.isArray(orderData?.items)) {
     payload.items = mapOrderItemsPayload(orderData.items);
   }

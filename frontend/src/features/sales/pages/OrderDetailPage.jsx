@@ -40,7 +40,7 @@ export default function OrderDetailPage() {
 
   if (error || !order) {
     return (
-      <div className='max-w-4xl mx-auto'>
+      <div className='w-full max-w-none px-2 md:px-4'>
         <div className='flex items-center gap-4 mb-6'>
           <Button
             variant='ghost'
@@ -68,7 +68,7 @@ export default function OrderDetailPage() {
   const orderTotal = Number(order.totalAmount ?? order.total ?? 0);
 
   return (
-    <div className='max-w-4xl mx-auto'>
+    <div className='w-full max-w-none px-2 md:px-4'>
       {/* Header */}
       <div className='flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4'>
         <div className='flex items-center gap-4'>
@@ -295,7 +295,7 @@ export default function OrderDetailPage() {
  */
 function OrderDetailSkeleton() {
   return (
-    <div className='max-w-4xl mx-auto animate-pulse'>
+    <div className='w-full max-w-none px-2 md:px-4 animate-pulse'>
       <div className='flex items-center gap-4 mb-6'>
         <div className='h-8 w-20 bg-gray-200 rounded'></div>
         <div className='h-8 w-48 bg-gray-200 rounded'></div>

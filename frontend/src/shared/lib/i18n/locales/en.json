@@ -1333,6 +1333,10 @@
           "title": "Completed Orders",
           "description": "successfully fulfilled"
         },
+        "revenueThisMonth": {
+          "title": "Revenue This Month",
+          "description": "current month revenue"
+        },
         "totalRevenue": {
           "title": "Total Revenue",
           "description": "lifetime revenue"

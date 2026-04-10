@@ -1333,6 +1333,10 @@
           "title": "Commandes terminées",
           "description": "traitées avec succès"
         },
+        "revenueThisMonth": {
+          "title": "Revenus de ce mois",
+          "description": "revenu du mois en cours"
+        },
         "totalRevenue": {
           "title": "Revenu total",
           "description": "revenu à vie"

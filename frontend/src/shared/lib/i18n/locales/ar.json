@@ -1333,6 +1333,10 @@
           "title": "الطلبات المكتملة",
           "description": "تم تنفيذها بنجاح"
         },
+        "revenueThisMonth": {
+          "title": "إيرادات هذا الشهر",
+          "description": "إيرادات الشهر الحالي"
+        },
         "totalRevenue": {
           "title": "إجمالي الإيرادات",
           "description": "الإيرادات الكلية"

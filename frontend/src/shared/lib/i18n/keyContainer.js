@@ -1491,6 +1491,10 @@ const i18nKeyContainer = {
           title: 'sales.orders.cards.completedOrders.title',
           description: 'sales.orders.cards.completedOrders.description',
         },
+        revenueThisMonth: {
+          title: 'sales.orders.cards.revenueThisMonth.title',
+          description: 'sales.orders.cards.revenueThisMonth.description',
+        },
         totalRevenue: {
           title: 'sales.orders.cards.totalRevenue.title',
           description: 'sales.orders.cards.totalRevenue.description',

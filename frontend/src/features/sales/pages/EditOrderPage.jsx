@@ -11,6 +11,29 @@ import { ORDER_STATUS } from '@features/sales/utils/orderConstants';
 import { useToast } from '@shared/context/ToastContext';
 import i18nKeyContainer from '@shared/lib/i18n/keyContainer';
 
+const PAYMENT_STATUS_OPTIONS = [
+  {
+    value: 1,
+    labelKey: i18nKeyContainer.sales.orders.paymentStatus.unpaid,
+  },
+  {
+    value: 2,
+    labelKey: i18nKeyContainer.sales.orders.paymentStatus.partiallypaid,
+  },
+  {
+    value: 3,
+    labelKey: i18nKeyContainer.sales.orders.paymentStatus.paid,
+  },
+];
+
+const DEFAULT_PAYMENT_STATUS = PAYMENT_STATUS_OPTIONS[0].value;
+
+const PAYMENT_STATUS_VALUE_MAP = {
+  Unpaid: 1,
+  PartiallyPaid: 2,
+  Paid: 3,
+};
+
 /**
  * EditOrderPage Component
  *
@@ -31,7 +54,10 @@ export default function EditOrderPage() {
   const [items, setItems] = useState([]);
   const [notes, setNotes] = useState('');
   const [shippingAddress, setShippingAddress] = useState('');
-  const [initialized, setInitialized] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState(
+    String(DEFAULT_PAYMENT_STATUS)
+  );
+  const [initializedOrderId, setInitializedOrderId] = useState(null);
 
   const order = orderResponse?.success ? orderResponse.data : null;
 
@@ -44,22 +70,32 @@ export default function EditOrderPage() {
 
   // Initialize form with order data
   useEffect(() => {
-    if (order && !initialized) {
+    if (order?.id && initializedOrderId !== order.id) {
       setItems(
-        (order.items || []).map(item => ({
+        (order.items || []).map((item, index) => ({
           id: item.id,
           productId: item.productId?.toString() || '',
           locationId: item.locationId?.toString() || '',
+          productName: item.productName || item.product?.name || '',
+          locationName: item.locationName || item.location?.name || '',
           quantity: item.quantity || 1,
           unitPrice: item.unitPrice || 0,
-          _tempId: item.id || Date.now(),
+          _tempId: item.id
+            ? `order-item-${item.id}`
+            : `order-item-${order.id}-${index}`,
         }))
       );
-      setNotes(order.notes || '');
+      setNotes(order.notes || order.description || '');
       setShippingAddress(order.shippingAddress || '');
-      setInitialized(true);
+      setPaymentStatus(
+        String(
+          PAYMENT_STATUS_VALUE_MAP[order.paymentStatus] ||
+            DEFAULT_PAYMENT_STATUS
+        )
+      );
+      setInitializedOrderId(order.id);
     }
-  }, [order, initialized]);
+  }, [order, initializedOrderId]);
 
   const validateForm = () => {
     if (items.length === 0) {
@@ -88,10 +124,18 @@ export default function EditOrderPage() {
 
     if (!validateForm()) return;
 
+    const parsedPaymentStatus = Number(paymentStatus);
+    const normalizedPaymentStatus = PAYMENT_STATUS_OPTIONS.some(
+      option => option.value === parsedPaymentStatus
+    )
+      ? parsedPaymentStatus
+      : DEFAULT_PAYMENT_STATUS;
+
     const orderData = {
       customerId: order.isWalkIn ? null : order.customerId || null,
       description: notes || null,
       shippingAddress: shippingAddress || null,
+      paymentStatus: normalizedPaymentStatus,
       items: items.map(item => ({
         productId: parseInt(item.productId),
         locationId: parseInt(item.locationId),
@@ -115,7 +159,7 @@ export default function EditOrderPage() {
 
   if (!order) {
     return (
-      <div className='max-w-4xl mx-auto'>
+      <div className='w-full max-w-none px-2 md:px-4'>
         <div className='flex items-center gap-4 mb-6'>
           <Button
             variant='ghost'
@@ -136,7 +180,7 @@ export default function EditOrderPage() {
   }
 
   return (
-    <div className='max-w-4xl mx-auto'>
+    <div className='w-full max-w-none px-2 md:px-4'>
       {/* Header */}
       <div className='flex items-center gap-4 mb-6'>
         <Button
@@ -186,8 +230,26 @@ export default function EditOrderPage() {
           </p>
         </div>
 
-        {/* Order Items */}
+        {/* Payment Status */}
         <div className='bg-white rounded-lg shadow-sm border border-gray-200 p-6'>
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
+            {t(i18nKeyContainer.sales.orders.detail.paymentStatus)}
+          </label>
+          <select
+            value={paymentStatus}
+            onChange={e => setPaymentStatus(e.target.value)}
+            className='block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm'
+          >
+            {PAYMENT_STATUS_OPTIONS.map(option => (
+              <option key={option.value} value={option.value}>
+                {t(option.labelKey)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Order Items */}
+        <div className='bg-white rounded-lg shadow-sm border border-gray-200 p-3 md:p-4 lg:p-5'>
           <OrderItemsForm value={items} onChange={setItems} />
         </div>
 
@@ -259,7 +321,7 @@ export default function EditOrderPage() {
  */
 function EditOrderSkeleton() {
   return (
-    <div className='max-w-4xl mx-auto animate-pulse'>
+    <div className='w-full max-w-none px-2 md:px-4 animate-pulse'>
       <div className='flex items-center gap-4 mb-6'>
         <div className='h-8 w-20 bg-gray-200 rounded'></div>
         <div className='h-8 w-48 bg-gray-200 rounded'></div>

@@ -161,7 +161,8 @@ internal class SalesOrderQueries : ISalesOrderQueries
             .AverageAsync(e => e.TotalAmount, cancellationToken);
 
         var revenueThisMonth = await _context.SalesOrders
-            .Where(e => e.OrderDate >= DateTime.UtcNow.AddMonths(-1))
+            .Where(e => e.OrderDate >= DateTime.UtcNow.AddMonths(-1)
+            && e.OrderDate <= DateTime.UtcNow.AddMonths(1))
             .SumAsync(e => e.TotalAmount, cancellationToken);
         var completedOrders = await _context.SalesOrders
            .CountAsync(

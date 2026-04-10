@@ -52,12 +52,15 @@ function ProductDisplayCard({ product, t }) {
   }
 
   return (
-    <div className="rounded-lg border border-blue-200 bg-blue-50/60 px-3 py-2">
-      <p className="text-sm font-semibold text-gray-900">{getProductName(product)}</p>
-      <p className="text-xs text-gray-600">SKU: {product?.sku || 'N/A'}</p>
-      <p className="text-xs text-gray-500">ID: {product?.id ?? '-'}</p>
-      <p className="text-xs text-gray-500">
-        {t(i18nKeyContainer.sales.orders.items.unitPrice)}: ${getProductPrice(product).toFixed(2)}
+    <div className='rounded-lg border border-blue-200 bg-blue-50/60 px-3 py-2'>
+      <p className='text-sm font-semibold text-gray-900'>
+        {getProductName(product)}
+      </p>
+      <p className='text-xs text-gray-600'>SKU: {product?.sku || 'N/A'}</p>
+      <p className='text-xs text-gray-500'>ID: {product?.id ?? '-'}</p>
+      <p className='text-xs text-gray-500'>
+        {t(i18nKeyContainer.sales.orders.items.unitPrice)}: $
+        {getProductPrice(product).toFixed(2)}
       </p>
     </div>
   );
@@ -100,9 +103,9 @@ async function searchProductById(searchTerm) {
 
 function SearchModeToggle({ mode, onChange, disabled, t }) {
   return (
-    <div className="inline-flex rounded-lg border border-gray-300 p-1 bg-gray-50">
+    <div className='inline-flex rounded-lg border border-gray-300 p-1 bg-gray-50'>
       <button
-        type="button"
+        type='button'
         onClick={() => onChange('id')}
         disabled={disabled}
         className={cn(
@@ -115,7 +118,7 @@ function SearchModeToggle({ mode, onChange, disabled, t }) {
         {t(i18nKeyContainer.sales.orders.items.searchById)}
       </button>
       <button
-        type="button"
+        type='button'
         onClick={() => onChange('sku')}
         disabled={disabled}
         className={cn(
@@ -152,9 +155,9 @@ function ProductSearchBlock({
       : t(i18nKeyContainer.sales.orders.items.searchPlaceholderSku);
 
   return (
-    <div className="space-y-3">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-        <div className="w-full sm:max-w-56">
+    <div className='space-y-3'>
+      <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3'>
+        <div className='w-full sm:max-w-56'>
           <SearchModeToggle
             mode={mode}
             onChange={value => {
@@ -165,84 +168,95 @@ function ProductSearchBlock({
             t={t}
           />
         </div>
-        <div className="flex w-full gap-2">
+        <div className='flex w-full gap-2'>
           <input
-            type="text"
+            type='text'
             value={searchInput}
             onChange={event => setSearchInput(event.target.value)}
             onKeyDown={onSearchKeyDown}
             disabled={disabled}
             placeholder={placeholder}
-            className="h-10 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm disabled:bg-gray-100"
+            className='h-10 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm disabled:bg-gray-100'
           />
           <button
-            type="button"
+            type='button'
             onClick={() => onSearch(mode, false)}
             disabled={disabled || !searchInput.trim() || loading}
-            className="inline-flex h-10 items-center gap-1 px-3 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400"
+            className='inline-flex h-10 items-center gap-1 px-3 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400'
           >
-            <Search className="h-4 w-4" />
+            <Search className='h-4 w-4' />
             {t(i18nKeyContainer.sales.orders.items.search)}
           </button>
         </div>
       </div>
 
       {mode === 'sku' && (
-        <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
+        <div className='rounded-lg border border-gray-200 bg-white overflow-hidden'>
           {!searchTerm && (
-            <p className="px-3 py-2 text-sm text-gray-500">
+            <p className='px-3 py-2 text-sm text-gray-500'>
               {t(i18nKeyContainer.sales.orders.items.searchToLoadProducts)}
             </p>
           )}
 
           {searchTerm && loading && (
-            <p className="px-3 py-2 text-sm text-gray-500">
+            <p className='px-3 py-2 text-sm text-gray-500'>
               {t(i18nKeyContainer.sales.orders.items.searchingProducts)}
             </p>
           )}
 
           {searchTerm && !loading && errorMessage && (
-            <p className="px-3 py-2 text-sm text-red-600">
+            <p className='px-3 py-2 text-sm text-red-600'>
               {t(i18nKeyContainer.sales.orders.items.searchFailed)}
             </p>
           )}
 
-          {searchTerm && !loading && !errorMessage && productResults.length === 0 && (
-            <p className="px-3 py-2 text-sm text-gray-500">
-              {t(i18nKeyContainer.sales.orders.items.noMatchingProducts)}
-            </p>
-          )}
+          {searchTerm &&
+            !loading &&
+            !errorMessage &&
+            productResults.length === 0 && (
+              <p className='px-3 py-2 text-sm text-gray-500'>
+                {t(i18nKeyContainer.sales.orders.items.noMatchingProducts)}
+              </p>
+            )}
 
-          {searchTerm && !loading && !errorMessage && productResults.length > 0 && (
-            <div className="max-h-56 overflow-y-auto divide-y divide-gray-100">
-              {productResults.map(product => {
-                const isSelected = Number(selectedProduct?.id) === Number(product.id);
+          {searchTerm &&
+            !loading &&
+            !errorMessage &&
+            productResults.length > 0 && (
+              <div className='max-h-56 overflow-y-auto divide-y divide-gray-100'>
+                {productResults.map(product => {
+                  const isSelected =
+                    Number(selectedProduct?.id) === Number(product.id);
 
-                return (
-                  <button
-                    key={product.id}
-                    type="button"
-                    onClick={() => onProductPick(product)}
-                    disabled={disabled}
-                    className={cn(
-                      'w-full text-left px-3 py-2 transition-colors',
-                      isSelected
-                        ? 'bg-blue-50 hover:bg-blue-100'
-                        : 'hover:bg-gray-50'
-                    )}
-                  >
-                    <p className="text-sm font-semibold text-gray-900">{getProductName(product)}</p>
-                    <p className="text-xs text-gray-600">SKU: {product?.sku || 'N/A'}</p>
-                  </button>
-                );
-              })}
-            </div>
-          )}
+                  return (
+                    <button
+                      key={product.id}
+                      type='button'
+                      onClick={() => onProductPick(product)}
+                      disabled={disabled}
+                      className={cn(
+                        'w-full text-left px-3 py-2 transition-colors',
+                        isSelected
+                          ? 'bg-blue-50 hover:bg-blue-100'
+                          : 'hover:bg-gray-50'
+                      )}
+                    >
+                      <p className='text-sm font-semibold text-gray-900'>
+                        {getProductName(product)}
+                      </p>
+                      <p className='text-xs text-gray-600'>
+                        SKU: {product?.sku || 'N/A'}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
         </div>
       )}
 
       <ProductDisplayCard product={selectedProduct} t={t} />
-      {errorMessage && <p className="text-sm text-red-600">{errorMessage}</p>}
+      {errorMessage && <p className='text-sm text-red-600'>{errorMessage}</p>}
     </div>
   );
 }
@@ -294,7 +308,9 @@ const OrderItemsForm = ({ value = [], onChange, disabled = false }) => {
   const handleProductSelect = (index, product) => {
     updateItemFields(index, {
       productId: String(product.id),
+      productName: getProductName(product),
       locationId: '',
+      locationName: '',
       unitPrice: getProductPrice(product),
     });
   };
@@ -318,16 +334,16 @@ const OrderItemsForm = ({ value = [], onChange, disabled = false }) => {
   };
 
   return (
-    <div className="space-y-4 w-full">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-medium">
+    <div className='space-y-4 w-full'>
+      <div className='flex items-center justify-between'>
+        <h3 className='text-lg font-medium'>
           {t(i18nKeyContainer.sales.orders.items.title)}
         </h3>
         {!disabled && (
           <Button
-            type="button"
-            variant="secondary"
-            size="sm"
+            type='button'
+            variant='secondary'
+            size='sm'
             LeftIcon={Plus}
             onClick={addItem}
           >
@@ -337,68 +353,80 @@ const OrderItemsForm = ({ value = [], onChange, disabled = false }) => {
       </div>
 
       {value.length === 0 ? (
-        <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-          <Package className="mx-auto h-12 w-12 text-gray-400" />
-          <h4 className="mt-2 text-sm font-medium text-gray-900">
+        <div className='text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300'>
+          <Package className='mx-auto h-12 w-12 text-gray-400' />
+          <h4 className='mt-2 text-sm font-medium text-gray-900'>
             {t(i18nKeyContainer.sales.orders.items.noItems)}
           </h4>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className='mt-1 text-sm text-gray-500'>
             {t(i18nKeyContainer.sales.orders.items.noItemsDescription)}
           </p>
         </div>
       ) : (
-        <div className="rounded-xl border border-gray-200 overflow-hidden bg-white shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[1120px] divide-y divide-gray-200">
-            <thead className="hidden md:table-header-group bg-gray-50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t(i18nKeyContainer.sales.orders.items.product)}
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t(i18nKeyContainer.sales.orders.items.location)}
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
-                  {t(i18nKeyContainer.sales.orders.items.quantity)}
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
-                  {t(i18nKeyContainer.sales.orders.items.unitPrice)}
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
-                  {t(i18nKeyContainer.sales.orders.items.subtotal)}
-                </th>
-                {!disabled && (
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
-                    <span className="sr-only">{t(i18nKeyContainer.sales.orders.items.remove)}</span>
+        <div className='rounded-xl border border-gray-200 overflow-hidden bg-white shadow-sm'>
+          <div className='overflow-x-auto'>
+            <table className='w-full min-w-[1120px] divide-y divide-gray-200'>
+              <thead className='hidden md:table-header-group bg-gray-50'>
+                <tr>
+                  <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                    {t(i18nKeyContainer.sales.orders.items.product)}
                   </th>
-                )}
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {value.map((item, index) => (
-                <OrderItemRow
-                  key={item._tempId || item.id || index}
-                  item={item}
-                  index={index}
-                  disabled={disabled}
-                  onProductSelect={handleProductSelect}
-                  onLocationChange={(idx, locId) => updateItem(idx, 'locationId', locId)}
-                  onQuantityChange={(idx, qty) => updateItem(idx, 'quantity', qty)}
-                  onUnitPriceChange={(idx, price) => updateItem(idx, 'unitPrice', price)}
-                  onRemove={removeItem}
-                  calculateSubtotal={calculateSubtotal}
-                  isDuplicate={isDuplicate(index, item.productId, item.locationId)}
-                  t={t}
-                />
-              ))}
-            </tbody>
+                  <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                    {t(i18nKeyContainer.sales.orders.items.location)}
+                  </th>
+                  <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24'>
+                    {t(i18nKeyContainer.sales.orders.items.quantity)}
+                  </th>
+                  <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32'>
+                    {t(i18nKeyContainer.sales.orders.items.unitPrice)}
+                  </th>
+                  <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32'>
+                    {t(i18nKeyContainer.sales.orders.items.subtotal)}
+                  </th>
+                  {!disabled && (
+                    <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16'>
+                      <span className='sr-only'>
+                        {t(i18nKeyContainer.sales.orders.items.remove)}
+                      </span>
+                    </th>
+                  )}
+                </tr>
+              </thead>
+              <tbody className='bg-white divide-y divide-gray-200'>
+                {value.map((item, index) => (
+                  <OrderItemRow
+                    key={item._tempId || item.id || index}
+                    item={item}
+                    index={index}
+                    disabled={disabled}
+                    onProductSelect={handleProductSelect}
+                    onLocationChange={(idx, locId) =>
+                      updateItem(idx, 'locationId', locId)
+                    }
+                    onQuantityChange={(idx, qty) =>
+                      updateItem(idx, 'quantity', qty)
+                    }
+                    onUnitPriceChange={(idx, price) =>
+                      updateItem(idx, 'unitPrice', price)
+                    }
+                    onRemove={removeItem}
+                    calculateSubtotal={calculateSubtotal}
+                    isDuplicate={isDuplicate(
+                      index,
+                      item.productId,
+                      item.locationId
+                    )}
+                    t={t}
+                  />
+                ))}
+              </tbody>
             </table>
           </div>
-          <div className="px-4 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700">
+          <div className='px-4 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between'>
+            <span className='text-sm font-medium text-gray-700'>
               {t(i18nKeyContainer.sales.orders.create.total)}:
             </span>
-            <span className="text-lg font-bold text-gray-900">
+            <span className='text-lg font-bold text-gray-900'>
               ${calculateTotal().toFixed(2)}
             </span>
           </div>
@@ -428,8 +456,43 @@ const OrderItemRow = ({
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProductData, setSelectedProductData] = useState(null);
+  const [hasPrefilledSearch, setHasPrefilledSearch] = useState(false);
   const [idSearchLoading, setIdSearchLoading] = useState(false);
   const [idSearchError, setIdSearchError] = useState('');
+
+  const itemProductName = item.productName || item.product?.name || '';
+  const itemProductSku = item.sku || item.product?.sku || '';
+
+  useEffect(() => {
+    if (!item.productId || hasPrefilledSearch) {
+      return;
+    }
+
+    setSelectedProductData({
+      id: Number(item.productId),
+      product: itemProductName || undefined,
+      name: itemProductName || undefined,
+      sku: itemProductSku || undefined,
+      price: Number(item.unitPrice) || 0,
+      unitPrice: Number(item.unitPrice) || 0,
+    });
+
+    if (itemProductName) {
+      setSearchMode('sku');
+      setSearchInput(itemProductName);
+    } else {
+      setSearchMode('id');
+      setSearchInput(String(item.productId));
+    }
+
+    setHasPrefilledSearch(true);
+  }, [
+    hasPrefilledSearch,
+    item.productId,
+    item.unitPrice,
+    itemProductName,
+    itemProductSku,
+  ]);
 
   useEffect(() => {
     if (searchMode !== 'sku') {
@@ -505,7 +568,9 @@ const OrderItemRow = ({
     try {
       const product = await searchProductById(trimmed);
       if (!product) {
-        setIdSearchError(t(i18nKeyContainer.sales.orders.items.productNotFound));
+        setIdSearchError(
+          t(i18nKeyContainer.sales.orders.items.productNotFound)
+        );
         return;
       }
 
@@ -556,10 +621,26 @@ const OrderItemRow = ({
     product => Number(product.id) === Number(item.productId)
   );
 
-  const selectedProduct = selectedProductFromResults || selectedProductData;
+  const selectedProductFromItem = item.productId
+    ? {
+        id: Number(item.productId),
+        product: itemProductName || undefined,
+        name: itemProductName || undefined,
+        sku: itemProductSku || undefined,
+        price: Number(item.unitPrice) || 0,
+        unitPrice: Number(item.unitPrice) || 0,
+      }
+    : null;
 
-  const productSearchLoading = searchMode === 'id' ? idSearchLoading : skuSearchLoading;
-  const productSearchErrorMessage = searchMode === 'id' ? idSearchError : skuSearchErrorMessage;
+  const selectedProduct =
+    selectedProductFromResults ||
+    selectedProductData ||
+    selectedProductFromItem;
+
+  const productSearchLoading =
+    searchMode === 'id' ? idSearchLoading : skuSearchLoading;
+  const productSearchErrorMessage =
+    searchMode === 'id' ? idSearchError : skuSearchErrorMessage;
 
   // Fetch inventory for selected product
   const {
@@ -585,14 +666,13 @@ const OrderItemRow = ({
   const inventoryPayload = unwrapPayload(inventoryData);
   const inventoryList = extractArray(inventoryPayload);
 
-  const locations =
-    !inventoryErrorMessage
-      ? inventoryList.map(inv => ({
-          id: inv.locationId,
-          name: inv.locationName,
-          stock: inv.quantityOnHand,
-        }))
-      : [];
+  const locations = !inventoryErrorMessage
+    ? inventoryList.map(inv => ({
+        id: inv.locationId,
+        name: inv.locationName,
+        stock: inv.quantityOnHand,
+      }))
+    : [];
 
   const showNoInventoryAvailable =
     !!item.productId &&
@@ -608,13 +688,17 @@ const OrderItemRow = ({
 
   // Cap quantity at available stock
   useEffect(() => {
-    if (item.locationId && item.quantity > availableStock && availableStock > 0) {
+    if (
+      item.locationId &&
+      item.quantity > availableStock &&
+      availableStock > 0
+    ) {
       onQuantityChange(index, availableStock);
     }
   }, [item.locationId, item.quantity, availableStock, index, onQuantityChange]);
 
   const locationSelect = (
-    <div className="space-y-2">
+    <div className='space-y-2'>
       <select
         value={item.locationId}
         onChange={e => onLocationChange(index, e.target.value)}
@@ -625,9 +709,9 @@ const OrderItemRow = ({
           inventoryFetching ||
           showNoInventoryAvailable
         }
-        className="h-10 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm disabled:bg-gray-100"
+        className='h-10 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm disabled:bg-gray-100'
       >
-        <option value="">
+        <option value=''>
           {!item.productId
             ? t(i18nKeyContainer.sales.orders.items.selectProductFirst)
             : inventoryLoading
@@ -646,13 +730,13 @@ const OrderItemRow = ({
       </select>
 
       {showNoInventoryAvailable && (
-        <p className="text-sm text-amber-700">
+        <p className='text-sm text-amber-700'>
           {t(i18nKeyContainer.sales.orders.items.noInventoryAvailable)}
         </p>
       )}
 
       {item.locationId && (
-        <p className="text-sm text-gray-600">
+        <p className='text-sm text-gray-600'>
           {availableStock > 0
             ? t(i18nKeyContainer.sales.orders.items.availableStock, {
                 count: availableStock,
@@ -662,18 +746,18 @@ const OrderItemRow = ({
       )}
 
       {isDuplicate && (
-        <p className="text-sm text-yellow-700">
+        <p className='text-sm text-yellow-700'>
           {t(i18nKeyContainer.sales.orders.items.duplicateWarning)}
         </p>
       )}
 
       {inventoryErrorMessage && (
-        <div className="flex items-center gap-2">
-          <p className="text-sm text-red-600">{inventoryErrorMessage}</p>
+        <div className='flex items-center gap-2'>
+          <p className='text-sm text-red-600'>{inventoryErrorMessage}</p>
           <button
-            type="button"
+            type='button'
             onClick={() => refetchInventory()}
-            className="text-sm text-blue-600 hover:text-blue-700"
+            className='text-sm text-blue-600 hover:text-blue-700'
           >
             {t(i18nKeyContainer.sales.orders.items.retry)}
           </button>
@@ -683,9 +767,14 @@ const OrderItemRow = ({
   );
 
   return (
-    <tr className={cn('block md:table-row border-b border-gray-100 md:border-b-0', isDuplicate && 'bg-yellow-50/40')}>
-      <td className="block md:table-cell px-4 py-4 align-top">
-        <div className="md:hidden text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider">
+    <tr
+      className={cn(
+        'block md:table-row border-b border-gray-100 md:border-b-0',
+        isDuplicate && 'bg-yellow-50/40'
+      )}
+    >
+      <td className='block md:table-cell px-4 py-4 align-top'>
+        <div className='md:hidden text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider'>
           {t(i18nKeyContainer.sales.orders.items.product)}
         </div>
         <ProductSearchBlock
@@ -705,69 +794,71 @@ const OrderItemRow = ({
         />
       </td>
 
-      <td className="block md:table-cell px-4 py-4 align-top">
-        <div className="md:hidden text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider">
+      <td className='block md:table-cell px-4 py-4 align-top'>
+        <div className='md:hidden text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider'>
           {t(i18nKeyContainer.sales.orders.items.location)}
         </div>
         {locationSelect}
       </td>
 
-      <td className="block md:table-cell px-4 py-4 align-top md:w-32">
-        <div className="md:hidden text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider">
+      <td className='block md:table-cell px-4 py-4 align-top md:w-32'>
+        <div className='md:hidden text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider'>
           {t(i18nKeyContainer.sales.orders.items.quantity)}
         </div>
         <input
-          type="number"
-          min="1"
+          type='number'
+          min='1'
           max={availableStock || undefined}
           value={item.quantity}
           onChange={e => onQuantityChange(index, parseInt(e.target.value) || 1)}
           disabled={disabled || !item.locationId}
-          className="h-10 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm disabled:bg-gray-100"
+          className='h-10 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm disabled:bg-gray-100'
         />
       </td>
 
-      <td className="block md:table-cell px-4 py-4 align-top md:w-40">
-        <div className="md:hidden text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider">
+      <td className='block md:table-cell px-4 py-4 align-top md:w-40'>
+        <div className='md:hidden text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider'>
           {t(i18nKeyContainer.sales.orders.items.unitPrice)}
         </div>
-        <div className="relative">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-sm">
+        <div className='relative'>
+          <span className='absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-sm'>
             $
           </span>
           <input
-            type="number"
-            min="0"
-            step="0.01"
+            type='number'
+            min='0'
+            step='0.01'
             value={item.unitPrice}
-            onChange={e => onUnitPriceChange(index, parseFloat(e.target.value) || 0)}
+            onChange={e =>
+              onUnitPriceChange(index, parseFloat(e.target.value) || 0)
+            }
             disabled={disabled}
-            className="h-10 block w-full pl-7 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm disabled:bg-gray-100"
+            className='h-10 block w-full pl-7 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm disabled:bg-gray-100'
           />
         </div>
       </td>
 
-      <td className="block md:table-cell px-4 py-4 align-top md:w-40">
-        <div className="md:hidden text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider">
+      <td className='block md:table-cell px-4 py-4 align-top md:w-40'>
+        <div className='md:hidden text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider'>
           {t(i18nKeyContainer.sales.orders.items.subtotal)}
         </div>
-        <div className="text-base font-semibold text-gray-900">
+        <div className='text-base font-semibold text-gray-900'>
           ${calculateSubtotal(item).toFixed(2)}
         </div>
       </td>
 
       {!disabled && (
-        <td className="block md:table-cell px-4 py-4 align-top md:w-16">
-          <div className="md:hidden text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider">
+        <td className='block md:table-cell px-4 py-4 align-top md:w-16'>
+          <div className='md:hidden text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider'>
             {t(i18nKeyContainer.sales.orders.items.remove)}
           </div>
           <button
-            type="button"
+            type='button'
             onClick={() => onRemove(index)}
-            className="text-red-500 hover:text-red-700 transition-colors p-2 rounded-lg hover:bg-red-50"
+            className='text-red-500 hover:text-red-700 transition-colors p-2 rounded-lg hover:bg-red-50'
             title={t(i18nKeyContainer.sales.orders.items.remove)}
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className='h-4 w-4' />
           </button>
         </td>
       )}
