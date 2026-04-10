@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -40,6 +40,157 @@ const DataTable = ({
   const [globalFilter, setGlobalFilter] = useState('');
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [dropdownPosition, setDropdownPosition] = useState({
+    top: 0,
+    left: 0,
+    maxHeight: 240,
+  });
+  const triggerRefs = useRef(new Map());
+  const dropdownRef = useRef(null);
+
+  const DROPDOWN_VIEWPORT_MARGIN = 8;
+  const DROPDOWN_GAP = 8;
+  const DROPDOWN_MIN_HEIGHT = 140;
+  const DROPDOWN_DEFAULT_HEIGHT = 240;
+  const ACTION_MENU_WIDTH = 208;
+
+  const setTriggerRef = useCallback((rowId, node) => {
+    if (node) {
+      triggerRefs.current.set(rowId, node);
+      return;
+    }
+
+    triggerRefs.current.delete(rowId);
+  }, []);
+
+  const updateDropdownPosition = useCallback(
+    (rowId, { attemptScroll = false } = {}) => {
+      const triggerNode = triggerRefs.current.get(rowId);
+
+      if (!triggerNode) {
+        return;
+      }
+
+      const rect = triggerNode.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const viewportWidth = window.innerWidth;
+      const spaceBelow =
+        viewportHeight - rect.bottom - DROPDOWN_VIEWPORT_MARGIN;
+      const spaceAbove = rect.top - DROPDOWN_VIEWPORT_MARGIN;
+      const shouldOpenAbove =
+        spaceBelow < DROPDOWN_MIN_HEIGHT && spaceAbove > spaceBelow;
+      const availableSpace = shouldOpenAbove ? spaceAbove : spaceBelow;
+      const maxHeight = Math.max(
+        DROPDOWN_MIN_HEIGHT,
+        Math.floor(availableSpace - DROPDOWN_GAP)
+      );
+      const measuredMenuHeight =
+        dropdownRef.current?.offsetHeight ?? DROPDOWN_DEFAULT_HEIGHT;
+      const menuHeight = Math.min(measuredMenuHeight, maxHeight);
+
+      let left = rect.right - ACTION_MENU_WIDTH;
+      left = Math.max(
+        DROPDOWN_VIEWPORT_MARGIN,
+        Math.min(
+          left,
+          viewportWidth - ACTION_MENU_WIDTH - DROPDOWN_VIEWPORT_MARGIN
+        )
+      );
+
+      let top = shouldOpenAbove
+        ? rect.top - menuHeight - DROPDOWN_GAP
+        : rect.bottom + DROPDOWN_GAP;
+      const maxTop = viewportHeight - menuHeight - DROPDOWN_VIEWPORT_MARGIN;
+      top = Math.min(
+        Math.max(top, DROPDOWN_VIEWPORT_MARGIN),
+        Math.max(DROPDOWN_VIEWPORT_MARGIN, maxTop)
+      );
+
+      setDropdownPosition(prev => {
+        if (
+          prev.top === top &&
+          prev.left === left &&
+          prev.maxHeight === maxHeight
+        ) {
+          return prev;
+        }
+
+        return {
+          top,
+          left,
+          maxHeight,
+        };
+      });
+
+      if (!attemptScroll) {
+        return;
+      }
+
+      const bottomOverflow =
+        top + menuHeight - (viewportHeight - DROPDOWN_VIEWPORT_MARGIN);
+      const topOverflow = DROPDOWN_VIEWPORT_MARGIN - top;
+
+      if (bottomOverflow > 0 || topOverflow > 0) {
+        triggerNode.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        window.requestAnimationFrame(() => {
+          updateDropdownPosition(rowId, { attemptScroll: false });
+        });
+      }
+    },
+    []
+  );
+
+  useEffect(() => {
+    if (openDropdown === null) {
+      return undefined;
+    }
+
+    const handleOutsideClick = event => {
+      const triggerNode = triggerRefs.current.get(openDropdown);
+
+      if (
+        dropdownRef.current?.contains(event.target) ||
+        triggerNode?.contains(event.target)
+      ) {
+        return;
+      }
+
+      setOpenDropdown(null);
+    };
+
+    const handleWindowChange = () => {
+      updateDropdownPosition(openDropdown);
+    };
+
+    const handleKeyDown = event => {
+      if (event.key === 'Escape') {
+        setOpenDropdown(null);
+      }
+    };
+
+    const frameId = window.requestAnimationFrame(() => {
+      updateDropdownPosition(openDropdown, { attemptScroll: true });
+    });
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('touchstart', handleOutsideClick);
+    document.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('resize', handleWindowChange);
+    window.addEventListener('scroll', handleWindowChange, true);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
+      document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('resize', handleWindowChange);
+      window.removeEventListener('scroll', handleWindowChange, true);
+    };
+  }, [openDropdown, updateDropdownPosition]);
+
+  useEffect(() => {
+    setOpenDropdown(null);
+  }, [pageIndex, pageSize, data]);
 
   // Actions column definition
   const actionsColumn = useMemo(
@@ -57,101 +208,112 @@ const DataTable = ({
         return (
           <div className='relative'>
             <button
-              onClick={() =>
-                setOpenDropdown(openDropdown === row.id ? null : row.id)
-              }
+              ref={node => setTriggerRef(row.id, node)}
+              onClick={event => {
+                event.stopPropagation();
+                setOpenDropdown(openDropdown === row.id ? null : row.id);
+              }}
               className='p-1 hover:bg-gray-100 rounded-md transition-colors cursor-pointer'
               aria-label='Actions menu'
+              aria-expanded={openDropdown === row.id}
             >
               <MoreHorizontal className='w-5 h-5 text-gray-600' />
             </button>
 
             {openDropdown === row.id && (
-              <>
-                <div
-                  className='fixed inset-0 z-10 '
-                  onClick={() => setOpenDropdown(null)}
-                />
-                <div className='absolute right-0 mt-2 w-52 bg-white rounded-md shadow-lg border border-gray-200 z-20'>
-                  {onView && (
+              <div
+                ref={dropdownRef}
+                className='fixed w-52 bg-white rounded-md shadow-lg border border-gray-200 z-40 overflow-y-auto'
+                style={{
+                  top: `${dropdownPosition.top}px`,
+                  left: `${dropdownPosition.left}px`,
+                  maxHeight: `${dropdownPosition.maxHeight}px`,
+                }}
+              >
+                {onView && (
+                  <button
+                    onClick={() => {
+                      onView(row.original);
+                      setOpenDropdown(null);
+                    }}
+                    className='w-full px-4 py-2 cursor-pointer text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors'
+                  >
+                    <Eye className='w-4 h-4' />
+                    View
+                  </button>
+                )}
+                {onEdit && (
+                  <button
+                    onClick={() => {
+                      onEdit(row.original);
+                      setOpenDropdown(null);
+                    }}
+                    className='w-full px-4 py-2 text-left cursor-pointer text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors'
+                  >
+                    <Pencil className='w-4 h-4' />
+                    Edit
+                  </button>
+                )}
+                {rowActions.map((action, index) => {
+                  if (!action?.label || typeof action?.onClick !== 'function') {
+                    return null;
+                  }
+
+                  if (action.hidden) {
+                    return null;
+                  }
+
+                  const Icon = action.icon;
+                  const isDestructive = action.variant === 'destructive';
+
+                  return (
                     <button
+                      key={action.key || `${action.label}-${index}`}
                       onClick={() => {
-                        onView(row.original);
+                        if (action.disabled) return;
+                        action.onClick(row.original);
                         setOpenDropdown(null);
                       }}
-                      className='w-full px-4 py-2 cursor-pointer text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors'
+                      disabled={Boolean(action.disabled)}
+                      className={`w-full px-4 py-2 text-left cursor-pointer text-sm flex items-center gap-2 transition-colors ${
+                        isDestructive
+                          ? 'text-red-600 hover:bg-red-50'
+                          : 'text-gray-700 hover:bg-gray-100'
+                      } ${action.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                      <Eye className='w-4 h-4' />
-                      View
+                      {Icon && <Icon className='w-4 h-4' />}
+                      {action.label}
                     </button>
-                  )}
-                  {onEdit && (
-                    <button
-                      onClick={() => {
-                        onEdit(row.original);
-                        setOpenDropdown(null);
-                      }}
-                      className='w-full px-4 py-2 text-left cursor-pointer text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors'
-                    >
-                      <Pencil className='w-4 h-4' />
-                      Edit
-                    </button>
-                  )}
-                  {rowActions.map((action, index) => {
-                    if (
-                      !action?.label ||
-                      typeof action?.onClick !== 'function'
-                    ) {
-                      return null;
-                    }
-
-                    if (action.hidden) {
-                      return null;
-                    }
-
-                    const Icon = action.icon;
-                    const isDestructive = action.variant === 'destructive';
-
-                    return (
-                      <button
-                        key={action.key || `${action.label}-${index}`}
-                        onClick={() => {
-                          if (action.disabled) return;
-                          action.onClick(row.original);
-                          setOpenDropdown(null);
-                        }}
-                        disabled={Boolean(action.disabled)}
-                        className={`w-full px-4 py-2 text-left cursor-pointer text-sm flex items-center gap-2 transition-colors ${
-                          isDestructive
-                            ? 'text-red-600 hover:bg-red-50'
-                            : 'text-gray-700 hover:bg-gray-100'
-                        } ${action.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      >
-                        {Icon && <Icon className='w-4 h-4' />}
-                        {action.label}
-                      </button>
-                    );
-                  })}
-                  {onDelete && (
-                    <button
-                      onClick={() => {
-                        onDelete(row.original);
-                        setOpenDropdown(null);
-                      }}
-                      className='w-full px-4 cursor-pointer py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors'
-                    >
-                      <Trash2 className='w-4 h-4' />
-                      Delete
-                    </button>
-                  )}
-                </div>
-              </>
+                  );
+                })}
+                {onDelete && (
+                  <button
+                    onClick={() => {
+                      onDelete(row.original);
+                      setOpenDropdown(null);
+                    }}
+                    className='w-full px-4 cursor-pointer py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors'
+                  >
+                    <Trash2 className='w-4 h-4' />
+                    Delete
+                  </button>
+                )}
+              </div>
             )}
           </div>
         );
       },
     }),
-    [onView, onEdit, onDelete, customActions, actionsColumnHeader, openDropdown]
+    [
+      onView,
+      onEdit,
+      onDelete,
+      customActions,
+      actionsColumnHeader,
+      openDropdown,
+      dropdownPosition,
+      setTriggerRef,
+    ]
   );
 
   // Combine columns with actions column
