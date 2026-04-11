@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Design;
 #nullable enable
 
 namespace Infrastructure.Persistence;
@@ -137,3 +138,20 @@ public partial class InventoryManagmentDBContext : DbContext
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
+
+//public class InventoryManagmentDBContextFactory : IDesignTimeDbContextFactory<InventoryManagmentDBContext>
+//{
+//    public InventoryManagmentDBContext CreateDbContext(string[] args)
+//    {
+//        var optionsBuilder = new DbContextOptionsBuilder<InventoryManagmentDBContext>();
+//        var connectionString = Environment.GetEnvironmentVariable("DefaultConnectionPgSql");
+
+//        Console.WriteLine($"Connection string : {connectionString}");
+
+//        optionsBuilder
+//            .UseNpgsql(connectionString)
+//            .UseSnakeCaseNamingConvention();
+
+//        return new InventoryManagmentDBContext(optionsBuilder.Options);
+//    }
+//}

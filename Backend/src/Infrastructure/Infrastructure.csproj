@@ -7,25 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Isopoh.Cryptography.Argon2" Version="*" />
-    <PackageReference Include="MailKit" Version="*" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="*" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="*" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="*">
+    <PackageReference Include="Isopoh.Cryptography.Argon2" Version="2.0.0" />
+    <PackageReference Include="MailKit" Version="4.15.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="EFCore.NamingConventions" Version="*" />
+    <PackageReference Include="EFCore.NamingConventions" Version="10.0.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="*" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="*">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MimeKit" Version="*" />
+    <PackageReference Include="MimeKit" Version="4.15.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="Quartz" Version="3.15.1" />
-    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.15.1" />
+    <PackageReference Include="Quartz" Version="3.17.1" />
+    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.17.1" />
   </ItemGroup>
 
   <ItemGroup>

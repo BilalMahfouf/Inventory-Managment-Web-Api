@@ -33,6 +33,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Quartz;
+using Quartz.Logging;
 using System.Text;
 
 namespace Infrastructure
@@ -51,13 +52,18 @@ namespace Infrastructure
                 options.LifeTime = byte.Parse(Environment.GetEnvironmentVariable("JWT_ACCESS_TOKEN_LIFETIME_MINUTES") ?? "15");
             });
 
-            services.AddScoped<InsertOutboxMessagesInterceptors>();
-            var connectionString = configuration.GetConnectionString("DefaultConnectionPgSql")
+            services.AddSingleton<InsertOutboxMessagesInterceptors>();
+            var connectionString = Environment.GetEnvironmentVariable("DefaultConnectionPgSql")
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnectionPgSql' is not configured.");
-            services.AddDbContext<InventoryManagmentDBContext>((sp, options) => options
-            .UseNpgsql(connectionString)
-            .UseSnakeCaseNamingConvention()
-            .AddInterceptors(sp.GetRequiredService<InsertOutboxMessagesInterceptors>()));
+            Console.WriteLine(connectionString);
+            services.AddDbContext<InventoryManagmentDBContext>((sp, options) =>
+            {
+                options
+                .UseNpgsql(connectionString)
+                .UseSnakeCaseNamingConvention();
+                options.AddInterceptors(sp.GetRequiredService<InsertOutboxMessagesInterceptors>());
+
+            });
 
             services.AddAuthentication(options =>
             {
