@@ -77,7 +77,7 @@ IProductCategoryQueries query)
             }
             if (request.ParentId != null)
             {
-                if (!(await _repository.IsExistAsync(e => e.ParentId
+                if (!(await _repository.IsExistAsync(e => e.Id
                 == request.ParentId, cancellationToken)))
                 {
                     return Result<ProductCategoryReadResponse>
