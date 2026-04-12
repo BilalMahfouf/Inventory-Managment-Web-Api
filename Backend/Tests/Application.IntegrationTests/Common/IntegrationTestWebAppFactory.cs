@@ -6,13 +6,12 @@ using Domain.Products.Enums;
 using Domain.Users.Entities;
 using Infrastructure.Interceptors;
 using Infrastructure.Persistence;
-using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Testcontainers.MsSql;
+using Testcontainers.PostgreSql;
 
 namespace Application.IntegrationTests.Common;
 
@@ -30,8 +29,10 @@ public sealed class IntegrationTestWebAppFactory : WebApplicationFactory<Present
 
     public static int SeedUserId => _seedUserId;
 
-    private readonly MsSqlContainer _sqlContainer = new MsSqlBuilder()
-        .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+    private readonly PostgreSqlContainer _postgreSqlContainer = new PostgreSqlBuilder()
+        .WithImage("postgres:17-alpine")
+        .WithDatabase(TestDatabaseName)
+        .WithUsername("postgres")
         .WithPassword("IntegrationTests_123!")
         .Build();
 
@@ -52,14 +53,15 @@ public sealed class IntegrationTestWebAppFactory : WebApplicationFactory<Present
 
             services.AddScoped<ICurrentUserService, TestCurrentUserService>();
             services.AddDbContext<InventoryManagmentDBContext>((sp, options) => options
-                .UseSqlServer(connectionString)
+                .UseNpgsql(connectionString)
+                .UseSnakeCaseNamingConvention()
                 .AddInterceptors(sp.GetRequiredService<InsertOutboxMessagesInterceptors>()));
         });
     }
 
     public async Task InitializeAsync()
     {
-        await _sqlContainer.StartAsync();
+        await _postgreSqlContainer.StartAsync();
         var connectionString = BuildTestConnectionString();
         SetRequiredEnvironmentVariables(connectionString);
 
@@ -70,7 +72,7 @@ public sealed class IntegrationTestWebAppFactory : WebApplicationFactory<Present
         {
             await context.Database.MigrateAsync();
         }
-        catch (SqlException ex) when (IsBrokenMigrationChain(ex))
+        catch (Exception ex) when (IsBrokenMigrationChain(ex))
         {
             // Fallback for legacy migration chains that cannot initialize a fresh database.
             await context.Database.EnsureDeletedAsync();
@@ -82,14 +84,14 @@ public sealed class IntegrationTestWebAppFactory : WebApplicationFactory<Present
 
     async Task IAsyncLifetime.DisposeAsync()
     {
-        await _sqlContainer.StopAsync();
-        await _sqlContainer.DisposeAsync();
+        await _postgreSqlContainer.StopAsync();
+        await _postgreSqlContainer.DisposeAsync();
         await base.DisposeAsync();
     }
 
     private static void SetRequiredEnvironmentVariables(string connectionString)
     {
-        Environment.SetEnvironmentVariable("DefaultConnection", connectionString);
+        Environment.SetEnvironmentVariable("DefaultConnectionPgSql", connectionString);
         Environment.SetEnvironmentVariable("JWT_SECRET_KEY", "integration-tests-jwt-secret-key-1234567890");
         Environment.SetEnvironmentVariable("JWT_ISSUER", "integration-tests");
         Environment.SetEnvironmentVariable("JWT_AUDIENCE", "integration-tests");
@@ -100,13 +102,7 @@ public sealed class IntegrationTestWebAppFactory : WebApplicationFactory<Present
 
     private string BuildTestConnectionString()
     {
-        var builder = new SqlConnectionStringBuilder(_sqlContainer.GetConnectionString())
-        {
-            InitialCatalog = TestDatabaseName,
-            TrustServerCertificate = true,
-        };
-
-        return builder.ConnectionString;
+        return _postgreSqlContainer.GetConnectionString();
     }
 
     private static async Task SeedReferenceDataAsync(InventoryManagmentDBContext context)
@@ -249,9 +245,21 @@ public sealed class IntegrationTestWebAppFactory : WebApplicationFactory<Present
         public int UserId => _seedUserId;
     }
 
-    private static bool IsBrokenMigrationChain(SqlException ex)
+    private static bool IsBrokenMigrationChain(Exception ex)
     {
-        return ex.Message.Contains("Cannot find the object", StringComparison.OrdinalIgnoreCase)
-            || ex.Message.Contains("Invalid object name", StringComparison.OrdinalIgnoreCase);
+        return ContainsBrokenMigrationMessage(ex);
+    }
+
+    private static bool ContainsBrokenMigrationMessage(Exception ex)
+    {
+        if (ex.Message.Contains("Cannot find the object", StringComparison.OrdinalIgnoreCase)
+            || ex.Message.Contains("Invalid object name", StringComparison.OrdinalIgnoreCase)
+            || ex.Message.Contains("relation", StringComparison.OrdinalIgnoreCase)
+            || ex.Message.Contains("does not exist", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return ex.InnerException is not null && ContainsBrokenMigrationMessage(ex.InnerException);
     }
 }
