@@ -5,7 +5,6 @@ using Application.Dashboard.Services;
 using Application.Images.Contracts;
 using Application.Images.Services;
 using Application.Inventories;
-using Application.Inventories.DomainEventsHandlers;
 using Application.Locations.Services;
 using Application.Products.Contracts;
 using Application.Products.Services;
@@ -18,6 +17,7 @@ using Application.Users.Contracts;
 using Application.Users.Services;
 using Application.Users.Validators;
 using Application.Users.Validators.Configuration;
+using Domain.Shared.Events;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -53,10 +53,12 @@ namespace Application
             services.AddScoped<CustomerCategoryService>();
             services.AddScoped<SalesOrderService>();
 
-            services.AddMediatR(cfg =>
-            {
-                cfg.RegisterServicesFromAssembly(typeof(LowStockDomainEventHandler).Assembly);
-            });
+            services.Scan(scan => scan
+                .FromAssembliesOf(typeof(DependencyInjection))
+                .AddClasses(classes => classes
+                    .AssignableTo(typeof(IDomainEventHandler<>)), publicOnly: false)
+                .AsImplementedInterfaces()
+                .WithScopedLifetime());
 
 
             return services;

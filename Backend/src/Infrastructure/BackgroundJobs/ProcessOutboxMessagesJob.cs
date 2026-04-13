@@ -1,14 +1,9 @@
 ﻿using Domain.Shared.Events;
 using Infrastructure.Outbox;
 using Infrastructure.Persistence;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 using Quartz;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Infrastructure.BackgroundJobs;
 
@@ -16,10 +11,10 @@ namespace Infrastructure.BackgroundJobs;
 public class ProcessOutboxMessagesJob : IJob
 {
     private readonly InventoryManagmentDBContext _dbContext;
-    private readonly IPublisher _publisher;
+    private readonly IDomainEventPublisher _publisher;
 
     public ProcessOutboxMessagesJob(
-        IPublisher publisher,
+        IDomainEventPublisher publisher,
         InventoryManagmentDBContext context)
     {
         _publisher = publisher;
@@ -44,14 +39,13 @@ public class ProcessOutboxMessagesJob : IJob
 
         foreach (var outboxMessage in outboxMessages)
         {
-            var domainEventType = Type.GetType(outboxMessage.Name);
             var domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(
                 outboxMessage.Content, _serializerSettings);
             if (domainEvent is null)
             {
                 continue;
             }
-            await _publisher.Publish(domainEvent, context.CancellationToken);
+            await _publisher.PublishAsync(domainEvent, context.CancellationToken);
             outboxMessage.ProcessedOnUtc = DateTime.UtcNow;
         }
         await _dbContext.SaveChangesAsync(context.CancellationToken);

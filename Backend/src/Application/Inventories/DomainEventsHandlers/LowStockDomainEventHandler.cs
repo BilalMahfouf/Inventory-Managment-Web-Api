@@ -5,12 +5,12 @@ using Application.Inventories;
 using Application.Shared.Contracts;
 using Application.Shared.DTOs;
 using Domain.Inventories;
-using MediatR;
+using Domain.Shared.Events;
 
 namespace Application.Inventories.DomainEventsHandlers;
 
 public sealed class LowStockDomainEventHandler
-    : INotificationHandler<LowStockDomainEvent>
+    : IDomainEventHandler<LowStockDomainEvent>
 
 {
     private readonly INotificationService _notificationService;

@@ -3,8 +3,6 @@ using Application.Shared.Contracts;
 using Application.Inventories;
 using Application.Products.Contracts;
 using Application.Sales;
-using Application.Users.Contracts;
-using Application.Shared.Contracts;
 using Application.Users.DTOs.Response;
 using Domain.Shared.Abstractions;
 using Domain.Shared.Entities;

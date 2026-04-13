@@ -7,9 +7,11 @@ using Application.Sales.Queries;
 using Application.Shared.Contracts;
 using Application.StockMovements.Contracts;
 using Application.Users.Contracts;
+using Domain.Shared.Events;
 using Infrastructure.Authentication;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.Common;
+using Infrastructure.CQRS;
 using Infrastructure.Hubs;
 using Infrastructure.Interceptors;
 using Infrastructure.Persistence;
@@ -106,6 +108,8 @@ namespace Infrastructure
             services.AddScoped<ITransferQueries, TransferQueries>();
             services.AddScoped<ICustomerQueries, CustomerQueries>();
             services.AddScoped<ISalesOrderQueries, SalesOrderQueries>();
+            services.AddTransient<IDomainEventPublisher, DomainEventPublisher>();
+            services.AddTransient<IDomainEventDispatcher, DomainEventsDispatcher>();
 
             // Email Options config 
             services.Configure<EmailOptions>(options =>

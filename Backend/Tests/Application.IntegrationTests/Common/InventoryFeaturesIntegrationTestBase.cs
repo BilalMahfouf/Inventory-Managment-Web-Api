@@ -31,6 +31,8 @@ public abstract class InventoryFeaturesIntegrationTestBase : IClassFixture<Integ
 
     protected InventoryManagmentDBContext AppDbContext { get; }
 
+    protected IServiceProvider Services => _scope.ServiceProvider;
+
     protected static int TestUserId => IntegrationTestWebAppFactory.SeedUserId;
 
     public async Task InitializeAsync()

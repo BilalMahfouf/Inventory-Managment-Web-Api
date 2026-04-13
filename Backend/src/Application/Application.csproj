@@ -9,8 +9,8 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="*" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="*" />
-    <PackageReference Include="MediatR" Version="*" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="*" />
+    <PackageReference Include="Scrutor" Version="*" />
   </ItemGroup>
 
   <ItemGroup>

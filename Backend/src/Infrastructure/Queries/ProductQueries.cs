@@ -249,12 +249,16 @@ public class ProductQueries : IProductQueries
 
                 UpdatedAt = product.UpdatedAt,
                 UpdatedByUserId = product.UpdatedByUserId,
-                UpdatedByUserName = product.UpdatedByUser.UserName,
+                UpdatedByUserName = product.UpdatedByUser != null
+                    ? product.UpdatedByUser.UserName
+                    : null,
 
                 IsDeleted = product.IsDeleted,
                 DeleteAt = product.DeletedAt,
                 DeletedByUserId = product.DeletedByUserId,
-                DeletedByUserName = product.DeletedByUser.UserName,
+                DeletedByUserName = product.DeletedByUser != null
+                    ? product.DeletedByUser.UserName
+                    : null,
                 })
                 .AsNoTracking()
                 .FirstOrDefaultAsync(cancellationToken);
