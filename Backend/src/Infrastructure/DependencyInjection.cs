@@ -31,6 +31,7 @@ using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Quartz;
 using Quartz.Logging;
@@ -42,7 +43,8 @@ namespace Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(
             this IServiceCollection services
-            , IConfiguration configuration)
+            , IConfiguration configuration
+            , IHostEnvironment environment)
         {
             services.Configure<JwtOptions>(options =>
             {
@@ -115,24 +117,27 @@ namespace Infrastructure
             });
 
 
-            // Quartz Background jobs Configuration
-            services.AddQuartz(configure =>
+            if (!environment.IsEnvironment("Testing"))
             {
-                var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
-                configure.
-                AddJob<ProcessOutboxMessagesJob>((sp, opts) =>
+                // Quartz Background jobs are disabled in integration-test hosts to avoid startup races.
+                services.AddQuartz(configure =>
                 {
-                    opts.WithIdentity(jobKey);
-                })
-                .AddTrigger(trigger =>
-                trigger.ForJob(jobKey)
-                .WithSimpleSchedule(schedule =>
-                schedule.WithIntervalInSeconds(10)
-                .RepeatForever()));
-            });
-            services.AddQuartzHostedService(opt =>
-            opt.WaitForJobsToComplete = true
-            );
+                    var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
+                    configure.
+                    AddJob<ProcessOutboxMessagesJob>((sp, opts) =>
+                    {
+                        opts.WithIdentity(jobKey);
+                    })
+                    .AddTrigger(trigger =>
+                    trigger.ForJob(jobKey)
+                    .WithSimpleSchedule(schedule =>
+                    schedule.WithIntervalInSeconds(10)
+                    .RepeatForever()));
+                });
+                services.AddQuartzHostedService(opt =>
+                opt.WaitForJobsToComplete = true
+                );
+            }
 
             services.AddSignalR();
             services.AddScoped<INotificationService, NotificationService>();

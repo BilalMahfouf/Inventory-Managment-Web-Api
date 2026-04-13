@@ -101,6 +101,16 @@ namespace Application.Users.Services
                         .Select(e => e.ErrorMessage));
                     return Result<UserReadResponse>.Failure(Error.Validation(errorMessage));
                 }
+
+                var isUserNameNotUnique = await _uow.Users
+                    .IsExistAsync(e => e.UserName == request.UserName);
+                if (isUserNameNotUnique)
+                {
+                    return Result<UserReadResponse>
+                        .Failure(Error.Conflict("User.UserNameNotUnique",
+                        $"User with username {request.UserName} already exist"));
+                }
+
                 var newUser = new User()
                 {
                     UserName = request.UserName,

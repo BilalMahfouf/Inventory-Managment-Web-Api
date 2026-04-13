@@ -24,7 +24,7 @@ builder.Services.AddCarter(configurator: c =>
 builder.Services.AddOpenApi();
 
 
-builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddInfrastructureServices(builder.Configuration, builder.Environment);
 builder.Services.AddApplicationServices();
 
 

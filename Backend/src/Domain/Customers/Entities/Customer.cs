@@ -91,6 +91,9 @@ public  class Customer : Entity
         if(Email != email)
         {
             // add email validation here if needed
+            Email = email;
+            return;
         }
+
     }
 }

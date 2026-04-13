@@ -35,7 +35,7 @@ namespace Application.StockMovements.Services
                 Id = stockMovementType.Id,
                 Name = stockMovementType.Name,
                 Description = stockMovementType.Description,
-                Direction = nameof(stockMovementType.Direction),
+                Direction = stockMovementType.Direction.ToString(),
                 CreatedAt = stockMovementType.CreatedAt,
                 CreatedByUserId = stockMovementType.CreatedByUserId,
                 CreatedByUserName = stockMovementType.CreatedByUser?.UserName,

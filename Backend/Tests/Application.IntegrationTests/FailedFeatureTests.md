@@ -1,58 +1,67 @@
-# Failed Product Feature Tests Report
+# Failed Customer Feature Tests Report
 
 Date: 2026-04-12
 Command:
 
 ```bash
-dotnet test Tests/Application.IntegrationTests/Application.IntegrationTests.csproj --filter "FullyQualifiedName~ProductFeatureTests|FullyQualifiedName~ProductCategoryFeatureTests" -v normal
+dotnet test Tests/Application.IntegrationTests/Application.IntegrationTests.csproj --filter "FullyQualifiedName~CustomerFeatureTests" -v minimal
 ```
 
 ## Summary
 
-- Total tests: 34
-- Passed: 33
+- Total tests: 27
+- Passed: 26
 - Failed: 1
 
-The remaining failure is a business-logic defect in Product Category creation with parent categories.
+The single remaining failure is a business-logic defect in Customer update behavior.
 
 ## Failing Test
 
-- Test: `Application.IntegrationTests.Services.ProductCategoryFeatureTests.AddAsync_ValidParent_CreatesChildCategory`
-- File: `Tests/Application.IntegrationTests/Services/ProductCategoryFeatureTests.cs`
-- Failure: expected success when creating a child category with an existing parent id, but service returns failure.
+- Test: `Application.IntegrationTests.Services.CustomerFeatureTests.UpdateAsync_ValidRequest_UpdatesPersistedCustomerFields`
+- File: `Tests/Application.IntegrationTests/Services/CustomerFeatureTests.cs`
+- Assertion failure: persisted email does not change after a successful update.
+
+Observed values:
+
+- Actual persisted email: `customer-d8c9cade@ims.local`
+- Expected updated email: `updated-customer@ims.local`
 
 ## Expected Behavior
 
-When `ParentId` points to an existing category, `AddAsync` should create a child category successfully.
+Calling `CustomerService.UpdateAsync` with a new email should persist the new email value in `customers.email`.
 
 ## Actual Behavior
 
-`AddAsync` rejects valid parent ids and returns a `NotFound` result.
+`UpdateAsync` returns success, but the customer email in the database remains unchanged.
 
 ## Root Cause
 
-In `ProductCategoryService.AddAsync`, parent validation checks the wrong field:
+`Customer.Update(...)` delegates email handling to `UpdateEmail(email)`, but `UpdateEmail` never assigns the new value.
 
-- File: `src/Application/Products/Services/ProductCategoryService.cs`
-- Logic currently checks:
+File:
+
+- `src/Domain/Customers/Entities/Customer.cs`
+
+Current logic:
 
 ```csharp
-await _repository.IsExistAsync(e => e.ParentId == request.ParentId, cancellationToken)
+public void UpdateEmail(string email)
+{
+	_EnsureCustomerIsActive();
+	if(Email != email)
+	{
+		// add email validation here if needed
+	}
+}
 ```
 
-This checks whether **any existing category has that parent id**, instead of checking whether a category with that **id** exists.
-
-For a valid top-level parent (whose `ParentId` is `null`), this condition is false, so child creation fails incorrectly.
-
-## Correct Validation Direction
-
-The existence check should validate parent entity id:
+Missing assignment:
 
 ```csharp
-await _repository.IsExistAsync(e => e.Id == request.ParentId, cancellationToken)
+Email = email;
 ```
 
 ## Impact
 
-- Cannot create first-level subcategories under valid parent categories.
-- Breaks core Product Category hierarchy management.
+- Customer email cannot be updated even though update API/service reports success.
+- Downstream query/read models keep stale customer contact data.
