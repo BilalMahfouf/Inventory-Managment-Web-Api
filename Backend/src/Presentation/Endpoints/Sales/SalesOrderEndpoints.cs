@@ -1,4 +1,5 @@
 using Carter;
+using Microsoft.AspNetCore.Mvc;
 using Presentation.Extensions;
 
 namespace Presentation.Endpoints.Sales;
@@ -257,5 +258,27 @@ public sealed class SalesOrderEndpoints : ICarterModule
                    .Produces<object>(StatusCodes.Status200OK)
                    .ProducesProblem(StatusCodes.Status404NotFound)
                    .ProducesProblem(StatusCodes.Status500InternalServerError);
+        group.MapPatch("/{id:int}/payment", async (
+            int id,
+            [FromBody] UpdatePaymentRequest request,
+            SalesOrderService service,
+            CancellationToken ct) =>
+        {
+            var command = new UpdatePaymentCommand(id, request.Amount, request.PaymentStatus);
+            var result = await service.UpdatePaymentAsync(command, ct);
+            if (result.IsSuccess)
+            {
+                return Results.NoContent();
+            }
+            return result.Problem();
+        }).WithSummary("Update payment")
+                   .WithDescription("Updates the payment details for a sales order.")
+                   .Produces(StatusCodes.Status204NoContent)
+                   .ProducesProblem(StatusCodes.Status404NotFound)
+                   .ProducesProblem(StatusCodes.Status400BadRequest)
+                   .ProducesProblem(StatusCodes.Status500InternalServerError);
+
     }
+    public sealed record UpdatePaymentRequest(decimal Amount,
+        PaymentStatus PaymentStatus);
 }

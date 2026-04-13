@@ -21,6 +21,7 @@ public class SalesOrder : Entity
         get => _items.Sum(i => i.LineAmount);
         private set { }
     }
+    public decimal TotalPaidAmount { get; private set; }
 
 
     public string? Description { get; private set; }
@@ -106,7 +107,7 @@ public class SalesOrder : Entity
             OrderDate = DateTime.UtcNow,
             SalesStatus = SalesOrderStatus.Completed,
             SalesStatusUpdatedAt = DateTime.UtcNow,
-            PaymentStatus=paymentStatus
+            PaymentStatus = paymentStatus
         };
 
         foreach (var item in items)
@@ -309,5 +310,27 @@ public class SalesOrder : Entity
         {
             throw new DomainException("Only pending orders can modify items.");
         }
+    }
+
+    public void UpdatePayment(decimal amount, PaymentStatus paymentStatus)
+    {
+        if (amount > TotalAmount)
+        {
+            throw new DomainException("Payment amount cannot exceed total amount.");
+        }
+        if (PaymentStatus == PaymentStatus.Paid)
+        {
+            throw new DomainException("Payment is already completed for this order.");
+        }
+        if (amount < TotalAmount && paymentStatus == PaymentStatus.Paid)
+        {
+            throw new DomainException("Cannot mark as paid when the amount is less than total.");
+        }
+        if (amount > 0 && paymentStatus == PaymentStatus.Unpaid)
+        {
+            throw new DomainException("Cannot mark as unpaid when there is a payment amount.");
+        }
+        TotalPaidAmount = amount;
+        PaymentStatus = paymentStatus;
     }
 }

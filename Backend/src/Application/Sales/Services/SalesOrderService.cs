@@ -313,4 +313,16 @@ public sealed class SalesOrderService
             return Result.Failure(Error.Exception(nameof(ExecuteTransitionAsync), ex));
         }
     }
+    public async Task<Result> UpdatePaymentAsync(UpdatePaymentCommand command, CancellationToken cancellationToken = default)
+    {
+        if (command.AmountPaid < 0)
+        {
+            return Result.Failure(Error.Validation("Amount paid cannot be negative."));
+        }
+        return await ExecuteTransitionAsync(
+            command.Id,
+            order => order.UpdatePayment(command.AmountPaid, command.PaymentStatus),
+            cancellationToken);
+    }
 }
+public sealed record UpdatePaymentCommand(int Id, decimal AmountPaid, PaymentStatus PaymentStatus);

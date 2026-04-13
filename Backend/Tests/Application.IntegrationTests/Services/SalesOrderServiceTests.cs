@@ -629,6 +629,197 @@ public sealed class SalesOrderServiceTests : BaseIntegrationTest
     }
 
     [Fact]
+    public async Task UpdatePaymentAsync_NegativeAmount_ReturnsValidationFailure()
+    {
+        // Act
+        var result = await SalesOrderService.UpdatePaymentAsync(new(999_999, -1m, PaymentStatus.Unpaid));
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Type.Should().Be(ErrorType.Validation);
+    }
+
+    [Fact]
+    public async Task UpdatePaymentAsync_NonExistingOrder_ReturnsNotFoundFailure()
+    {
+        // Act
+        var result = await SalesOrderService.UpdatePaymentAsync(new(999_999, 0m, PaymentStatus.Unpaid));
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Type.Should().Be(ErrorType.NotFound);
+    }
+
+    [Fact]
+    public async Task UpdatePaymentAsync_ValidPartialPayment_UpdatesAmountAndStatus()
+    {
+        // Arrange
+        var customer = await CreateCustomerAsync();
+        var (_, inventory) = await CreateProductInventoryAsync(quantityOnHand: 40m, unitPrice: 10m);
+
+        var createResult = await SalesOrderService.CreateSalesOrderAsync(new CreateSalesOrderRequest(
+            customer.Id,
+            "Seed",
+            false,
+            "Address",
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.LocationId, 3m)]));
+
+        createResult.IsSuccess.Should().BeTrue();
+
+        // Act
+        var updateResult = await SalesOrderService.UpdatePaymentAsync(new(createResult.Value, 15m, PaymentStatus.PartiallyPaid));
+
+        // Assert
+        updateResult.IsSuccess.Should().BeTrue(updateResult.Error.Description);
+
+        AppDbContext.ChangeTracker.Clear();
+        var order = await AppDbContext.SalesOrders
+            .Include(e => e.Items)
+            .SingleAsync(e => e.Id == createResult.Value);
+
+        order.TotalAmount.Should().Be(30m);
+        order.TotalPaidAmount.Should().Be(15m);
+        order.PaymentStatus.Should().Be(PaymentStatus.PartiallyPaid);
+    }
+
+    [Fact]
+    public async Task UpdatePaymentAsync_ValidFullPayment_UpdatesAmountAndStatus()
+    {
+        // Arrange
+        var customer = await CreateCustomerAsync();
+        var (_, inventory) = await CreateProductInventoryAsync(quantityOnHand: 40m, unitPrice: 10m);
+
+        var createResult = await SalesOrderService.CreateSalesOrderAsync(new CreateSalesOrderRequest(
+            customer.Id,
+            "Seed",
+            false,
+            "Address",
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.LocationId, 3m)]));
+
+        createResult.IsSuccess.Should().BeTrue();
+
+        // Act
+        var updateResult = await SalesOrderService.UpdatePaymentAsync(new(createResult.Value, 30m, PaymentStatus.Paid));
+
+        // Assert
+        updateResult.IsSuccess.Should().BeTrue(updateResult.Error.Description);
+
+        AppDbContext.ChangeTracker.Clear();
+        var order = await AppDbContext.SalesOrders
+            .Include(e => e.Items)
+            .SingleAsync(e => e.Id == createResult.Value);
+
+        order.TotalAmount.Should().Be(30m);
+        order.TotalPaidAmount.Should().Be(30m);
+        order.PaymentStatus.Should().Be(PaymentStatus.Paid);
+    }
+
+    [Fact]
+    public async Task UpdatePaymentAsync_AmountExceedsTotal_ReturnsConflictFailure()
+    {
+        // Arrange
+        var customer = await CreateCustomerAsync();
+        var (_, inventory) = await CreateProductInventoryAsync(quantityOnHand: 40m, unitPrice: 10m);
+
+        var createResult = await SalesOrderService.CreateSalesOrderAsync(new CreateSalesOrderRequest(
+            customer.Id,
+            "Seed",
+            false,
+            "Address",
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.LocationId, 3m)]));
+
+        createResult.IsSuccess.Should().BeTrue();
+
+        // Act
+        var updateResult = await SalesOrderService.UpdatePaymentAsync(new(createResult.Value, 31m, PaymentStatus.Paid));
+
+        // Assert
+        updateResult.IsSuccess.Should().BeFalse();
+        updateResult.Error.Type.Should().Be(ErrorType.Conflict);
+    }
+
+    [Fact]
+    public async Task UpdatePaymentAsync_MarkAsPaidWithLessThanTotal_ReturnsConflictFailure()
+    {
+        // Arrange
+        var customer = await CreateCustomerAsync();
+        var (_, inventory) = await CreateProductInventoryAsync(quantityOnHand: 40m, unitPrice: 10m);
+
+        var createResult = await SalesOrderService.CreateSalesOrderAsync(new CreateSalesOrderRequest(
+            customer.Id,
+            "Seed",
+            false,
+            "Address",
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.LocationId, 3m)]));
+
+        createResult.IsSuccess.Should().BeTrue();
+
+        // Act
+        var updateResult = await SalesOrderService.UpdatePaymentAsync(new(createResult.Value, 10m, PaymentStatus.Paid));
+
+        // Assert
+        updateResult.IsSuccess.Should().BeFalse();
+        updateResult.Error.Type.Should().Be(ErrorType.Conflict);
+    }
+
+    [Fact]
+    public async Task UpdatePaymentAsync_MarkAsUnpaidWithPositiveAmount_ReturnsConflictFailure()
+    {
+        // Arrange
+        var customer = await CreateCustomerAsync();
+        var (_, inventory) = await CreateProductInventoryAsync(quantityOnHand: 40m, unitPrice: 10m);
+
+        var createResult = await SalesOrderService.CreateSalesOrderAsync(new CreateSalesOrderRequest(
+            customer.Id,
+            "Seed",
+            false,
+            "Address",
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.LocationId, 3m)]));
+
+        createResult.IsSuccess.Should().BeTrue();
+
+        // Act
+        var updateResult = await SalesOrderService.UpdatePaymentAsync(new(createResult.Value, 10m, PaymentStatus.Unpaid));
+
+        // Assert
+        updateResult.IsSuccess.Should().BeFalse();
+        updateResult.Error.Type.Should().Be(ErrorType.Conflict);
+    }
+
+    [Fact]
+    public async Task UpdatePaymentAsync_AlreadyPaidOrder_ReturnsConflictFailure()
+    {
+        // Arrange
+        var customer = await CreateCustomerAsync();
+        var (_, inventory) = await CreateProductInventoryAsync(quantityOnHand: 40m, unitPrice: 10m);
+
+        var createResult = await SalesOrderService.CreateSalesOrderAsync(new CreateSalesOrderRequest(
+            customer.Id,
+            "Seed",
+            false,
+            "Address",
+            PaymentStatus.Unpaid,
+            [new AppSalesOrderItemRequest(inventory.ProductId, inventory.LocationId, 3m)]));
+
+        createResult.IsSuccess.Should().BeTrue();
+
+        var firstUpdateResult = await SalesOrderService.UpdatePaymentAsync(new(createResult.Value, 30m, PaymentStatus.Paid));
+        firstUpdateResult.IsSuccess.Should().BeTrue(firstUpdateResult.Error.Description);
+
+        // Act
+        var secondUpdateResult = await SalesOrderService.UpdatePaymentAsync(new(createResult.Value, 30m, PaymentStatus.Paid));
+
+        // Assert
+        secondUpdateResult.IsSuccess.Should().BeFalse();
+        secondUpdateResult.Error.Type.Should().Be(ErrorType.Conflict);
+    }
+
+    [Fact]
     public async Task GetSalesOrderByIdAsync_ExistingOrder_ReturnsExpectedAggregate()
     {
         // Arrange
