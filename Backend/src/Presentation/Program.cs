@@ -37,7 +37,8 @@ builder.Services.AddCors(options =>
             builder.WithOrigins(
                 "http://localhost:5173",
                 "https://localhost:5173",
-                allowedOrigins)
+                allowedOrigins,
+                "https://inventory-managment-web-api-eta.vercel.app")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();

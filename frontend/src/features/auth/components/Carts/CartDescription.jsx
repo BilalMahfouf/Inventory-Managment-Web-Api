@@ -24,6 +24,11 @@ const loginMutation = useMutation({
 async function onSubmitHandler(e)
 {
     e.preventDefault();
+    if (loginMutation.isPending) {
+        return;
+    }
+
+    setError("");
     const response =await loginMutation.mutateAsync({email:email,password:password});
     if(!response.success){
         setError(response.error);
@@ -46,7 +51,13 @@ async function onSubmitHandler(e)
 
             <Link content="forget password" to="/forgot-password" />
 
-            <Button children="Login" type="submit" className="w-[400px]" />
+            <Button
+                children={loginMutation.isPending ? "Logging in..." : "Login"}
+                type="submit"
+                className="w-[400px]"
+                loading={loginMutation.isPending}
+                disabled={loginMutation.isPending}
+            />
             <Button children="Contact Support" type="button" variant="secondary" className="w-[400px]" />
             </form>
             </div>
