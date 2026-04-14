@@ -27,13 +27,17 @@ builder.Services.AddOpenApi();
 builder.Services.AddInfrastructureServices(builder.Configuration, builder.Environment);
 builder.Services.AddApplicationServices();
 
+var allowedOrigins = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? "";
 
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
         builder =>
         {
-            builder.WithOrigins("http://localhost:5173", "https://localhost:5173")
+            builder.WithOrigins(
+                "http://localhost:5173",
+                "https://localhost:5173",
+                allowedOrigins)
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
