@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import Alert from './alert';
+import Alert from './Alert';
 import dashboardApi from '@features/dashboard/services/dashboardApi';
 import { queryKeys } from '@shared/lib/queryKeys';
 
