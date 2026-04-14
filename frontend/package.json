@@ -45,6 +45,7 @@
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "tailwindcss": "^4.1.13",
+    "update-browserslist-db": "^1.2.3",
     "vite": "^7.1.2",
     "vite-tsconfig-paths": "^5.1.4"
   }
