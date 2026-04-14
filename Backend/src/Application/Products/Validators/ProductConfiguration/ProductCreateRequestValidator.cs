@@ -35,7 +35,7 @@ namespace Application.Products.Validators.ProductConfiguration
             RuleFor(p=> p.ReorderLevel)
                 .GreaterThanOrEqualTo(0).WithMessage("Reorder level must be a non-negative value.");
             RuleFor(p => p.MaxLevel)
-                .GreaterThan(0).WithMessage("Max level must be a positive value.");
+                .GreaterThanOrEqualTo(0).WithMessage("Max level must be a positive value.");
 
         }
     }

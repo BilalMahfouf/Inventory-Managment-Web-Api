@@ -1392,7 +1392,8 @@
         "cancel": "إلغاء الطلب",
         "return": "إرجاع الطلب",
         "edit": "تعديل",
-        "view": "عرض"
+        "view": "عرض",
+        "updatePayment": "تحديث الدفع"
       },
       "confirmDialog": {
         "confirmTitle": "تأكيد الطلب",
@@ -1500,7 +1501,19 @@
         "returnSuccess": "تم إرجاع الطلب بنجاح",
         "returnError": "فشل في معالجة الإرجاع",
         "validationError": "خطأ في التحقق",
-        "atLeastOneItem": "يرجى إضافة عنصر واحد على الأقل إلى الطلب"
+        "atLeastOneItem": "يرجى إضافة عنصر واحد على الأقل إلى الطلب",
+        "updatePaymentSuccess": "تم تحديث الدفع بنجاح",
+        "updatePaymentError": "فشل تحديث الدفع"
+      },
+      "updatePayment": {
+        "title": "تحديث الدفع",
+        "description": "قم بتعديل حالة الدفع والمبلغ لهذا الطلب.",
+        "paymentStatusLabel": "حالة الدفع",
+        "amountLabel": "المبلغ",
+        "amountPlaceholder": "أدخل المبلغ المدفوع",
+        "totalAmountLabel": "إجمالي الطلب",
+        "partialAmountHint": "في حالة الدفع الجزئي يجب أن يكون المبلغ أكبر من 0 وأقل من الإجمالي.",
+        "partialAmountInvalid": "أدخل مبلغاً صالحاً لحالة الدفع المحددة."
       }
     }
   }

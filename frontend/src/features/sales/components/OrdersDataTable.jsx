@@ -6,6 +6,7 @@ import {
   Filter,
   X,
   Check,
+  Wallet,
   Truck,
   Package,
   XCircle,
@@ -17,6 +18,7 @@ import Button from '@components/Buttons/Button';
 import ConfirmationDialog from '@components/ui/ConfirmationDialog';
 import StatusBadge from './StatusBadge';
 import PaymentStatusBadge from './PaymentStatusBadge';
+import UpdatePaymentModal from './UpdatePaymentModal';
 import { useOrderTransition } from '@features/sales/hooks/useOrders';
 import { getOrders } from '@features/sales/services/salesOrderApi';
 import {
@@ -50,7 +52,17 @@ export default function OrdersDataTable({ initialFilters = {} }) {
   const [showFilters, setShowFilters] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
   const [shipOrder, setShipOrder] = useState(null);
+  const [updatePaymentOrder, setUpdatePaymentOrder] = useState(null);
   const [trackingNumber, setTrackingNumber] = useState('');
+
+  const isPaidPaymentStatus = paymentStatus => {
+    const numericStatus = Number(paymentStatus);
+    if (numericStatus === 3) {
+      return true;
+    }
+
+    return String(paymentStatus || '').toLowerCase() === 'paid';
+  };
 
   const getRowQuickActions = status => {
     const allowedActions = STATUS_TRANSITIONS[status] || [];
@@ -81,6 +93,8 @@ export default function OrdersDataTable({ initialFilters = {} }) {
     switch (action) {
       case 'confirm':
         return Check;
+      case 'updatePayment':
+        return Wallet;
       case 'transit':
         return Truck;
       case 'ship':
@@ -129,6 +143,11 @@ export default function OrdersDataTable({ initialFilters = {} }) {
   };
 
   const handleTransitionClick = (row, action) => {
+    if (action === 'updatePayment') {
+      setUpdatePaymentOrder(row);
+      return;
+    }
+
     if (action === 'ship') {
       setShipOrder(row);
       setTrackingNumber('');
@@ -170,9 +189,18 @@ export default function OrdersDataTable({ initialFilters = {} }) {
 
   const getTableActions = row => {
     const quickActions = getRowQuickActions(row.status);
+    const rowActions = [...quickActions];
 
-    return quickActions.map(action => {
+    if (!isPaidPaymentStatus(row.paymentStatus)) {
+      rowActions.unshift('updatePayment');
+    }
+
+    return rowActions.map(action => {
       const config = ACTION_CONFIG[action];
+      if (!config) {
+        return null;
+      }
+
       const Icon = getActionIcon(action);
 
       return {
@@ -183,7 +211,7 @@ export default function OrdersDataTable({ initialFilters = {} }) {
         disabled: transition.isPending,
         onClick: () => handleTransitionClick(row, action),
       };
-    });
+    }).filter(Boolean);
   };
 
   const getColumns = () => [
@@ -544,6 +572,12 @@ export default function OrdersDataTable({ initialFilters = {} }) {
               </div>
             </div>
           )}
+
+          <UpdatePaymentModal
+            isOpen={!!updatePaymentOrder}
+            order={updatePaymentOrder}
+            onClose={() => setUpdatePaymentOrder(null)}
+          />
         </>
       )}
     </div>

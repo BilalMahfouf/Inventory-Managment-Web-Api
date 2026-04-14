@@ -46,6 +46,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.ApplyMigrations();
+    app.InitData();
     app.MapOpenApi();
     app.MapScalarApiReference();
 }

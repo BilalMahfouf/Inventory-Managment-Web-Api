@@ -14,6 +14,7 @@ import {
     completeOrder,
     cancelOrder,
     returnOrder,
+    updateOrderPayment,
 } from '@features/sales/services/salesOrderApi';
 
 /**
@@ -186,6 +187,41 @@ export function useOrderTransition() {
             const { action } = variables;
             const keys = toastKeys[action];
             showError(t(keys.error), error.message);
+        },
+    });
+}
+
+/**
+ * Hook for updating order payment status and amount
+ */
+export function useUpdateOrderPayment() {
+    const queryClient = useQueryClient();
+    const { showSuccess, showError } = useToast();
+    const { t } = useTranslation();
+
+    return useMutation({
+        mutationFn: ({ orderId, data }) => updateOrderPayment(orderId, data),
+        onSuccess: (result, variables) => {
+            if (result.success) {
+                showSuccess(
+                    t(i18nKeyContainer.sales.orders.toasts.updatePaymentSuccess)
+                );
+                queryClient.invalidateQueries({ queryKey: queryKeys.sales.all });
+                queryClient.invalidateQueries({
+                    queryKey: queryKeys.sales.detail(variables.orderId),
+                });
+            } else {
+                showError(
+                    t(i18nKeyContainer.sales.orders.toasts.updatePaymentError),
+                    result.error
+                );
+            }
+        },
+        onError: error => {
+            showError(
+                t(i18nKeyContainer.sales.orders.toasts.updatePaymentError),
+                error.message
+            );
         },
     });
 }

@@ -15,6 +15,7 @@ using Infrastructure.CQRS;
 using Infrastructure.Hubs;
 using Infrastructure.Interceptors;
 using Infrastructure.Persistence;
+using Infrastructure.Seeding;
 using Infrastructure.Queries;
 using Infrastructure.Repositories.Base;
 using Infrastructure.Repositories.Inventories;
@@ -108,6 +109,7 @@ namespace Infrastructure
             services.AddScoped<ITransferQueries, TransferQueries>();
             services.AddScoped<ICustomerQueries, CustomerQueries>();
             services.AddScoped<ISalesOrderQueries, SalesOrderQueries>();
+            services.AddScoped<IDataSeeder, DataSeeder>();
             services.AddTransient<IDomainEventPublisher, DomainEventPublisher>();
             services.AddTransient<IDomainEventDispatcher, DomainEventsDispatcher>();
 

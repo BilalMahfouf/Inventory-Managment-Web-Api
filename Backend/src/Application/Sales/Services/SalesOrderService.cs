@@ -322,7 +322,8 @@ public sealed class SalesOrderService
         return await ExecuteTransitionAsync(
             command.Id,
             order => order.UpdatePayment(command.AmountPaid, command.PaymentStatus),
-            cancellationToken);
+            cancellationToken,
+            "Items");
     }
 }
 public sealed record UpdatePaymentCommand(int Id, decimal AmountPaid, PaymentStatus PaymentStatus);

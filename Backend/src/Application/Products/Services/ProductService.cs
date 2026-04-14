@@ -1,9 +1,6 @@
 ﻿using Application.Products.Contracts;
 using Application.Shared.Contracts;
-using Application.Products.Contracts;
-using Application.Products.Contracts;
 using Application.Users.Contracts;
-using Application.Shared.Contracts;
 using Application.Inventories.DTOs;
 using Application.Products.DTOs.Request.Products;
 using Application.Products.DTOs.Response.Products;

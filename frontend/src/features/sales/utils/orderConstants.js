@@ -66,6 +66,11 @@ export const STATUS_TRANSITIONS = {
 
 // Action metadata for button rendering
 export const ACTION_CONFIG = {
+    updatePayment: {
+        labelKey: 'sales.orders.actions.updatePayment',
+        variant: 'default',
+        requiresConfirmation: false,
+    },
     confirm: {
         labelKey: 'sales.orders.actions.confirm',
         variant: 'default',

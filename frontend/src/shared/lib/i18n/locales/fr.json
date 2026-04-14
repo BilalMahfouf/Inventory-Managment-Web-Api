@@ -1392,7 +1392,8 @@
         "cancel": "Annuler la commande",
         "return": "Retourner la commande",
         "edit": "Modifier",
-        "view": "Voir"
+        "view": "Voir",
+        "updatePayment": "Mettre à jour le paiement"
       },
       "confirmDialog": {
         "confirmTitle": "Confirmer la commande",
@@ -1500,7 +1501,19 @@
         "returnSuccess": "Commande retournée avec succès",
         "returnError": "Échec du traitement du retour",
         "validationError": "Erreur de validation",
-        "atLeastOneItem": "Veuillez ajouter au moins un article à la commande"
+        "atLeastOneItem": "Veuillez ajouter au moins un article à la commande",
+        "updatePaymentSuccess": "Paiement mis à jour avec succès",
+        "updatePaymentError": "Échec de la mise à jour du paiement"
+      },
+      "updatePayment": {
+        "title": "Mettre à jour le paiement",
+        "description": "Ajustez le statut et le montant du paiement pour cette commande.",
+        "paymentStatusLabel": "Statut de paiement",
+        "amountLabel": "Montant",
+        "amountPlaceholder": "Saisissez le montant payé",
+        "totalAmountLabel": "Total de la commande",
+        "partialAmountHint": "Pour un paiement partiel, le montant doit être supérieur à 0 et inférieur au total.",
+        "partialAmountInvalid": "Saisissez un montant valide pour le statut de paiement sélectionné."
       }
     }
   }
