@@ -50,12 +50,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.ApplyMigrations();
     app.InitData();
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
 
+ app.ApplyMigrations();
 
 app.UseHttpsRedirection();
 
