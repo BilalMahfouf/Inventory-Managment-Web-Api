@@ -1,7 +1,7 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 @plugin "tailwindcss-animate";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 /* Custom global styles */
@@ -16,9 +16,6 @@
   --color-secondary-info: #7c3aed;
   --color-background: HSL(0, 0%, 98%);
   --color-text-tertiary: #6b7280;
-}
-body {
-  background-color: bg-gradient-to-br;
 }
 
 @theme inline {

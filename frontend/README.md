@@ -1,12 +1,33 @@
-# React + Vite
+# Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite frontend for the Inventory Management System.
 
-Currently, two official plugins are available:
+## Local Development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Install dependencies:
 
-## Expanding the ESLint configuration
+	npm install
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+2. Run the app:
+
+	npm run dev
+
+## Production Build
+
+Build the app:
+
+npm run build
+
+Preview the production build locally:
+
+npm run preview
+
+## Vercel Deployment
+
+This project is configured for Vercel via `vercel.json`.
+
+Required environment variable in Vercel Project Settings:
+
+- `VITE_API_ORIGIN`: Public API origin (example: `https://api.example.com`)
+
+After setting env vars, deploy normally with Vercel.
