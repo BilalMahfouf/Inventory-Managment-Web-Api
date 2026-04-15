@@ -205,14 +205,17 @@ public class Inventory : Entity, IModifiableEntity
     decimal maxLevel
         )
     {
-        EnsureQuantityIsLessThanMaxLevel(quantityOnHand);
+        if(quantityOnHand > maxLevel)
+        {
+            throw new DomainException("Quantity on hand cannot exceed maximum level");
+        }
         if (maxLevel < reorderLevel)
         {
             throw new DomainException("Max level cannot be less than reorder level");
         }
+        MaxLevel = maxLevel;
         UpdateStock(quantityOnHand);
         ReorderLevel = reorderLevel;
-        MaxLevel = maxLevel;
 
     }
     public void Delete()
