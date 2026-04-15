@@ -390,6 +390,41 @@ const AddProduct = ({ isOpen, onClose, productId = 0 }) => {
   }, [id, productResponse]);
 
   const locations = mode === 'add' ? baseLocations : productLocations;
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const hasOption = (items, value) =>
+      items.some(item => Number(item.id) === Number(value));
+
+    setFormData(prev => {
+      let changed = false;
+      const next = { ...prev };
+
+      if (categories.length > 0 && !hasOption(categories, prev.category)) {
+        next.category = Number(categories[0].id) || 0;
+        changed = true;
+      }
+
+      if (
+        unitOfMeasurement.length > 0 &&
+        !hasOption(unitOfMeasurement, prev.unitOfMeasurement)
+      ) {
+        next.unitOfMeasurement = Number(unitOfMeasurement[0].id) || 0;
+        changed = true;
+      }
+
+      if (locations.length > 0 && !hasOption(locations, prev.storageLocation)) {
+        next.storageLocation = Number(locations[0].id) || 0;
+        changed = true;
+      }
+
+      return changed ? next : prev;
+    });
+  }, [isOpen, categories, unitOfMeasurement, locations]);
+
   const isSubmitDisabled =
     isLoading ||
     !formData.productName.trim() ||
