@@ -23,7 +23,7 @@ public class ProductQueries : IProductQueries
             var totalProductsCount = await _context.Products.CountAsync(cancellationToken);
             var inventoryValue = await (from i in _context.Inventories
                                         join p in _context.Products on i.ProductId equals p.Id
-                                        select i.QuantityOnHand * p.UnitPrice)
+                                        select i.QuantityOnHand * p.Cost)
                                         .SumAsync(cancellationToken);
             var lowStockProductsCount = await _context.Inventories
               .Where(i => i.QuantityOnHand <= i.ReorderLevel).AsNoTracking()
