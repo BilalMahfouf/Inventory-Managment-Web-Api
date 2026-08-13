@@ -24,8 +24,20 @@
     </PackageReference>
     <PackageReference Include="MimeKit" Version="4.15.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="PuppeteerSharp" Version="*" />
+    <PackageReference Include="Handlebars.Net" Version="*" />
     <PackageReference Include="Quartz" Version="3.17.1" />
     <PackageReference Include="Quartz.Extensions.Hosting" Version="3.17.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Services/PdfGeneration/Templates/**/*.hbs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Infrastructure.IntegrationTests</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
 
   <ItemGroup>

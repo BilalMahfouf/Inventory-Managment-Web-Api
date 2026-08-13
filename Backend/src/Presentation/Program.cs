@@ -48,14 +48,14 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.ApplyMigrations();
+
 if (app.Environment.IsDevelopment())
 {
     app.InitData();
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
-
- app.ApplyMigrations();
 
 app.UseHttpsRedirection();
 

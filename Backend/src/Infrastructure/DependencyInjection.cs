@@ -2,6 +2,7 @@
 using Application.Dashboard.Contracts;
 using Application.Images.Contracts;
 using Application.Inventories;
+using Application.PdfGeneration.Contracts;
 using Application.Products.Contracts;
 using Application.Sales.Queries;
 using Application.Shared.Contracts;
@@ -16,6 +17,7 @@ using Infrastructure.Hubs;
 using Infrastructure.Interceptors;
 using Infrastructure.Persistence;
 using Infrastructure.Seeding;
+using Infrastructure.Services.PdfGeneration;
 using Infrastructure.Queries;
 using Infrastructure.Repositories.Base;
 using Infrastructure.Repositories.Inventories;
@@ -144,6 +146,9 @@ namespace Infrastructure
                 opt.WaitForJobsToComplete = true
                 );
             }
+
+            services.AddSingleton<BrowserManager>();
+            services.AddSingleton<IPdfGenerator, PdfGenerator>();
 
             services.AddSignalR();
             services.AddScoped<INotificationService, NotificationService>();

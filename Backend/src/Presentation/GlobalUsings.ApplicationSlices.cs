@@ -64,6 +64,8 @@ global using Application.Sales.Queries;
 global using Application.Sales.RequestResponse;
 global using Application.Sales.Services;
 
+global using Application.PdfGeneration;
+global using Application.PdfGeneration.Contracts;
 global using Application.Shared.Contracts;
 global using Application.Shared.DTOs;
 global using Application.Shared.Helpers;
